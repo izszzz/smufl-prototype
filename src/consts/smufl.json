@@ -1,0 +1,33 @@
+{
+	"staves":{
+		"staff":{
+			"fiveLines":{
+				"wide": {
+					"code":"E01A",
+					"width": 12
+				},
+				"default":{ 
+					"code": "E014",
+					"width": 8
+				},
+				"narrow": {
+					"code": "E020",
+					"width": 4
+				}
+			}
+		}
+	},
+	"barLines": {
+		"single": "E030",
+		"final": "E032"
+	},
+	"clefs":{
+		"gClef": {
+			"code":	"E050",
+			"size": "wide"
+		}
+	},
+	"timeSignatures":{
+		"fourOverFour": "F5FE"
+	}
+}

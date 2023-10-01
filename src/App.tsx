@@ -1,24 +1,18 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useRef } from 'react';
 import './App.css';
+import Score from './models/score';
+import SVGRenderer from './models/renderer/svg/renderer';
 
 function App() {
+  const ref = useRef(null);
+  useEffect(()=>{
+    const score = new Score({title: ""});
+    if(ref.current){
+      const svg_renderer = new SVGRenderer(ref.current, score);
+    }
+  }, [ref]);
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div ref={ref} className="App bravura" style={{padding: "30px"}}>
     </div>
   );
 }
