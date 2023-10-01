@@ -16,7 +16,7 @@ class SVGRenderer{
 		// const root = this.createRoot();
 		// this.svg.appendChild(root).appendChild(track);
 		const svgScore = new SVGScore(this);
-		this.svg.appendChild(svgScore.element);
+		this.svg.appendChild(svgScore.rootElement);
 
 		element.appendChild(this.svg);
 	}
@@ -57,6 +57,11 @@ class SVGRenderer{
 	private createSVG = () =>  SVGRenderer.createSVGElement("svg");
 	private createGroup = () => SVGRenderer.createSVGElement("g");
 	
+	createTransform(x: number, y:number){
+		const transform = this.svg.createSVGTransform()
+		transform.setTranslate(x, y)
+		return transform;
+	}
 	static createUnicodeText(unicode: string){
 		return SVGRenderer.createText(`&#x${unicode}`)
 	}

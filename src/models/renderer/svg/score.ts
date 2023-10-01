@@ -2,16 +2,15 @@ import SVGRenderer from "./renderer";
 import SVGTrack from "./track";
 
 class SVGScore {
-	element = SVGRenderer.createSVGElement("g");
+	rootElement = SVGRenderer.createSVGElement("g");
 	tracks: SVGTrack[] = [];
 	svgRenderer: SVGRenderer;
 	constructor (svgRenderer: SVGRenderer){
 		this.svgRenderer = svgRenderer
-		const transform = svgRenderer.svg.createSVGTransform()
-		transform.setTranslate(0, 40);
-		this.element.transform.baseVal.appendItem(transform);
-		this.tracks = [new SVGTrack()]
-		this.tracks.map(track => this.element.appendChild(track.element));
+		const transform = svgRenderer.createTransform(0, 40)
+		this.rootElement.transform.baseVal.appendItem(transform);
+		this.tracks = [new SVGTrack(svgRenderer)]
+		this.tracks.map(track => this.rootElement.appendChild(track.rootElement));
 	}
 }
 
