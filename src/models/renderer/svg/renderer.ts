@@ -22,7 +22,7 @@ class SVGRenderer{
 	}
 	private createRoot = () =>{
 		const group = this.createGroup()
-		group.setAttribute("transform", "translate(0 40)")	
+		group.setAttribute("transform", "translate(2 40)")	
 		return group
 	}
 	private createTrack = () => {

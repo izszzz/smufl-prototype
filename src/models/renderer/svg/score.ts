@@ -11,6 +11,7 @@ class SVGScore {
 		this.rootElement.transform.baseVal.appendItem(transform);
 		this.tracks = [new SVGTrack(svgRenderer)]
 		this.tracks.map(track => this.rootElement.appendChild(track.rootElement));
+		
 	}
 }
 

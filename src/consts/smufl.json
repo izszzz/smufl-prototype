@@ -24,10 +24,22 @@
 	"clefs":{
 		"gClef": {
 			"code":	"E050",
-			"size": "wide"
+			"y": -4
 		}
 	},
 	"timeSignatures":{
-		"fourOverFour": "F5FE"
+		"fourOverFour": {
+			"code": "F5FE",
+			"width": 8
+		},
+		"common":{
+			"code": "E08A",
+			"width": 8
+		}
+	},
+	"note": {
+		"individual":{
+			"quarterUp": "E1D5"
+		}
 	}
 }

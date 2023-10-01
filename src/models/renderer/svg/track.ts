@@ -1,54 +1,45 @@
 import SVGRenderer from "./renderer";
 import smufl from "../../../consts/smufl.json"
+import SVGNote from "./note";
 
-class SVGTrack{
+class SVGTrack {
 	rootElement = SVGRenderer.createSVGElement("g");
-	elements: SVGElement[] = [];
-	width = 0;
 	svgRenderer: SVGRenderer;
+	notes: SVGNote[] =[];
 	constructor(svgRenderer: SVGRenderer){
 		this.svgRenderer = svgRenderer;
-		this.rootElement.appendChild(SVGRenderer.createUnicodeText(smufl.barLines.single))
-		this.rootElement.appendChild(this.addPaddingLeft(this.createGClef(4, 0), 0, 0));
-		this.rootElement.appendChild(this.addPaddingLeft(this.createFourOverFour(4, 0), 16, 0));
-		this.elements.push(
-			SVGRenderer.createUnicodeText(smufl.barLines.single), 
-			this.createNarrowSpace(),
-			this.createGClef(0, 0),
-			this.createFourOverFour(0, 0)
+		const elements:({unicode: string, width: number})[] = []
+		this.notes = [new SVGNote(svgRenderer)]
+
+		elements.push(
+			{unicode: smufl.barLines.single, width: 0}, 
+			{unicode: smufl.staves.staff.fiveLines.narrow.code, width: smufl.staves.staff.fiveLines.narrow.width},
+			{unicode: smufl.staves.staff.fiveLines.wide.code, width: 0},
+			{unicode: smufl.clefs.gClef.code, width: smufl.staves.staff.fiveLines.wide.width},
+			{unicode: smufl.staves.staff.fiveLines.narrow.code, width: smufl.staves.staff.fiveLines.narrow.width},
+			{unicode: smufl.staves.staff.fiveLines.default.code, width: 0},
+			{unicode: smufl.timeSignatures.fourOverFour.code, width: smufl.staves.staff.fiveLines.default.width},
+			{unicode: smufl.staves.staff.fiveLines.narrow.code, width: smufl.staves.staff.fiveLines.narrow.width},
+			// TODO: staveとnoteを連動させる
+			{unicode: smufl.staves.staff.fiveLines.default.code, width: 0},
+			...this.notes.map(note=>(
+				{unicode: note.unicode, width: smufl.staves.staff.fiveLines.default.width}
+			))
 		);
-		const element = this.rootElement.firstChild?.nextSibling as SVGGElement;
-		console.log(element as SVGGElement)
-		console.log(element.transform.baseVal.getItem(0))
-	}
-	createGClef = (x: number, y:number) => {
-		const group = SVGRenderer.createSVGElement("g");
-		const text = SVGRenderer.createUnicodeText(smufl.clefs.gClef.code);
-		const stave = SVGRenderer.createUnicodeText(smufl.staves.staff.fiveLines.wide.code);
-		const transform = this.svgRenderer.createTransform(x, y)
-		group.transform.baseVal.appendItem(transform)
-		group.appendChild(text);
-		group.appendChild(stave);
-		return group
-	}
-	createFourOverFour = (x: number, y: number) =>{
-		const group = SVGRenderer.createSVGElement("g");
-		const text = SVGRenderer.createUnicodeText(smufl.timeSignatures.fourOverFour);
-		const stave = SVGRenderer.createUnicodeText(smufl.staves.staff.fiveLines.default.code);
-		const transform = this.svgRenderer.createTransform(x, y)
-		group.transform.baseVal.appendItem(transform)
-		group.appendChild(text);
-		group.appendChild(stave);
-		return group
-	}
-	createNarrowSpace = () => SVGRenderer.createUnicodeText(smufl.staves.staff.fiveLines.narrow.code)
-	addPaddingLeft = (element: SVGElement, x: number, y:number) => {
-		const group = SVGRenderer.createSVGElement("g");
-		group.appendChild(SVGRenderer.createUnicodeText(smufl.staves.staff.fiveLines.narrow.code));
-		group.appendChild(element);
-		const transform = this.svgRenderer.createTransform(x, y)
-		group.transform.baseVal.appendItem(transform)
-		return group
+
+		elements.forEach((el)=>{
+			const element=SVGRenderer.createUnicodeText(el.unicode)
+			element.transform.baseVal.appendItem(this.svgRenderer.createTransform(0, 0))
+			element.setAttribute("width", String(el.width));
+			this.rootElement.appendChild(element)
+
+			const prev = element.previousSibling as SVGGElement | null
+			if (!prev) return;
+			const {e, f} = prev.transform.baseVal.getItem(0).matrix;
+			element.transform.baseVal.clear();
+			element.transform.baseVal.appendItem(this.svgRenderer.createTransform(e + Number(prev.getAttribute("width")), f))
+		});
+		this.notes.map(note => this.rootElement.appendChild(note.rootElement))
 	}
 }
 
