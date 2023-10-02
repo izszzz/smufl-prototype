@@ -19,39 +19,32 @@
 	},
 	"barLines": {
 		"single": { 
-			"code": "E030",
-			"width": 4
+			"code": "E030"
 		},
 		"final": {
 			"code": "E032",
-			"width": 4
+			"text-anchor": "end",
+			"x": 4
 		}
 	},
 	"clefs":{
 		"gClef": {
 			"code":	"E050",
-			"width": 12,
-			"defaultAttributes":{
-				"x": 0,
-				"y": -4
-			}
+			"y": -4
 		}
 	},
 	"timeSignatures":{
 		"fourOverFour": {
-			"code": "F5FE",
-			"width": 8
+			"code": "F5FE"
 		},
 		"common":{
-			"code": "E08A",
-			"width": 8
+			"code": "E08A"
 		}
 	},
 	"note": {
 		"individual":{
 			"quarterUp": {
-				"code":"E1D5",
-				"width": 8
+				"code":"E1D5"
 			}
 		}
 	}

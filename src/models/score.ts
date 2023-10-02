@@ -1,13 +1,13 @@
 // @ts-ignore
-import { Midi, Track as MidiTrack } from "@tonejs/midi";
+import { Midi, Track as MidiTrack, Score as MidiScore } from "@tonejs/midi";
 import Track from "./track";
 
 class Score {
 	title: string;
 	tracks: Track[] = [];
-	constructor({title}: {title: string}){
+	constructor({title, midi}: {title: string, midi: MidiScore}){
 		this.title = title;
-		this.convertMidi().then((midi)=>this.generateTracks(midi.tracks));
+		this.generateTracks(midi.tracks)
 	}
 	generateTracks(tracks: MidiTrack[]){
 		this.tracks = tracks.map(track => new Track(track));

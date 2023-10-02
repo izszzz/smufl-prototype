@@ -1,27 +1,31 @@
 import SVGRenderer from "./renderer";
 import smufl from "../../../consts/smufl.json"
 import SVGNote from "./note";
+import Track from "../../track";
 
 class SVGTrack {
-	rootElement = SVGRenderer.createSVGElement("g");
+	rootElement = SVGTrack.setRootElement();
 	svgRenderer: SVGRenderer;
+	track: Track;
 	notes: SVGNote[] =[];
-	constructor(svgRenderer: SVGRenderer){
+	constructor(svgRenderer: SVGRenderer, track: Track){
 		this.svgRenderer = svgRenderer;
+		this.track = track
+
 		const elements:SVGGElement[] = []
-		this.notes = [new SVGNote(svgRenderer), new SVGNote(svgRenderer), new SVGNote(svgRenderer),new SVGNote(svgRenderer)]
+		this.notes = track.notes.map(note =>new SVGNote(svgRenderer, note))
 
 		elements.push(
-			SVGRenderer.createUnicodeTextWithStave(smufl.barLines.single),
-			SVGRenderer.createUnicodeText(smufl.staves.staff.fiveLines.narrow),
-			SVGRenderer.createUnicodeTextWithStave(smufl.clefs.gClef),
-			SVGRenderer.createUnicodeText(smufl.staves.staff.fiveLines.narrow),
-			SVGRenderer.createUnicodeTextWithStave(smufl.timeSignatures.fourOverFour),
-			SVGRenderer.createUnicodeText(smufl.staves.staff.fiveLines.narrow),
+			SVGRenderer.createUnicodeText(smufl.barLines.single),
+			// SVGRenderer.createUnicodeText(smufl.staves.staff.fiveLines.narrow),
+			SVGRenderer.createUnicodeText(smufl.clefs.gClef),
+			// SVGRenderer.createUnicodeText(smufl.staves.staff.fiveLines.narrow),
+			SVGRenderer.createUnicodeText(smufl.timeSignatures.fourOverFour),
+			// SVGRenderer.createUnicodeText(smufl.staves.staff.fiveLines.narrow),
 			...this.notes.map(note=> note.rootElement),
-			SVGRenderer.createUnicodeTextWithStave( smufl.barLines.final)
+			SVGRenderer.createUnicodeText(smufl.barLines.final)
 		);
-		/* 
+		/*  
 			text要素にgetcomputedtextlengthというメソッドがある。
 			このメソッドは、レンダリングされたあとに実行しなければ常に0が返される。
 			unicodeとstaveを同時にレンダリングするのではなく、
@@ -30,18 +34,12 @@ class SVGTrack {
 			3. unicodeのtext要素のgetcomputedtextlengthを実行
 			4. 3から取得できた文字の長さをもとに、適したstaveをレンダリングする
 		 */
-		elements.forEach((el)=>{
-			el.transform.baseVal.appendItem(this.svgRenderer.createTransform(0, 0))
-
-			this.rootElement.appendChild(el)
-
-			const prevElement = el.previousSibling as SVGGElement | null
-			if (!prevElement) return;
-			const {e, f} = prevElement.transform.baseVal.getItem(0).matrix;
-			el.transform.baseVal.clear();
-			el.transform.baseVal.appendItem(this.svgRenderer.createTransform(e + Number(prevElement.getAttribute("width")), f))
-		});
-		this.notes.map(note => this.rootElement.appendChild(note.rootElement))
+		elements.forEach(el=>this.rootElement.appendChild(el));
+	}
+	static setRootElement(){
+		const group= SVGRenderer.createSVGElement("g")
+		group.setAttribute("type", "track");
+		return group;
 	}
 }
 

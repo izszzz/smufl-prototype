@@ -1,12 +1,19 @@
 import SVGRenderer from "./renderer";
 import smufl from "../../../consts/smufl.json"
+import Note from "../../note";
 
 class SVGNote {
-	rootElement;
+	rootElement = SVGNote.setRootElement();
 	svgRenderer: SVGRenderer;
-	constructor(svgRenderer: SVGRenderer){
+	note: Note
+	constructor(svgRenderer: SVGRenderer, note: Note){
 		this.svgRenderer = svgRenderer
-		this.rootElement = SVGRenderer.createUnicodeTextWithStave(smufl.note.individual.quarterUp)
+		this.note = note
+	}
+	static setRootElement(){
+		const text =SVGRenderer.createUnicodeText(smufl.note.individual.quarterUp)
+		text.setAttribute("type", "note");
+		return text;
 	}
 }
 
