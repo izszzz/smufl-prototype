@@ -43,8 +43,23 @@
 	},
 	"note": {
 		"individual":{
-			"quarterUp": {
-				"code":"E1D5"
+			"4th": {
+				"value": 4,
+				"quarterUp": {
+					"code": "E1D5"
+				}
+			},
+			"8th":{
+				"value": 8,
+				"quarterUp": {
+					"code": "E1D7"
+				}
+			},
+			"16th":{
+				"value": 16,
+				"quarterUp": {
+					"code":"E1D5"
+				}
 			}
 		}
 	}

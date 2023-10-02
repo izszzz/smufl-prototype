@@ -25,15 +25,6 @@ class SVGTrack {
 			...this.notes.map(note=> note.rootElement),
 			SVGRenderer.createUnicodeText(smufl.barLines.final)
 		);
-		/*  
-			text要素にgetcomputedtextlengthというメソッドがある。
-			このメソッドは、レンダリングされたあとに実行しなければ常に0が返される。
-			unicodeとstaveを同時にレンダリングするのではなく、
-			1. unicodeを作成
-			2. unicodeをレンダリング
-			3. unicodeのtext要素のgetcomputedtextlengthを実行
-			4. 3から取得できた文字の長さをもとに、適したstaveをレンダリングする
-		 */
 		elements.forEach(el=>this.rootElement.appendChild(el));
 	}
 	static setRootElement(){

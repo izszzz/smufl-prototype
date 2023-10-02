@@ -8,7 +8,7 @@ class Track{
 		this.generateNotes(track.notes)
 	}
 	private generateNotes(notes: MidiNote[]){
-		 this.notes = notes.map(note=>new Note(note)) ;
+		this.notes = notes.map(note=>new Note(note.durationTicks));
 	}
 }
 

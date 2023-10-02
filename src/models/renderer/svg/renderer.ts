@@ -16,7 +16,6 @@ class SVGRenderer {
 		this.setWidth();
 		this.setStave();
 		this.setTranslate();
-		console.log(score) 
 	}
 	createTransform(x: number, y:number){
 		const transform = this.svg.createSVGTransform()
