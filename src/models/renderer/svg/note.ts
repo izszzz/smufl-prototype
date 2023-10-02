@@ -2,11 +2,11 @@ import SVGRenderer from "./renderer";
 import smufl from "../../../consts/smufl.json"
 
 class SVGNote {
-	rootElement = SVGRenderer.createSVGElement("g");
+	rootElement;
 	svgRenderer: SVGRenderer;
-	unicode: string = smufl.note.individual.quarterUp;
 	constructor(svgRenderer: SVGRenderer){
 		this.svgRenderer = svgRenderer
+		this.rootElement = SVGRenderer.createUnicodeTextWithStave(smufl.note.individual.quarterUp)
 	}
 }
 

@@ -3,7 +3,7 @@
 		"staff":{
 			"fiveLines":{
 				"wide": {
-					"code":"E01A",
+					"code": "E01A",
 					"width": 12
 				},
 				"default":{ 
@@ -18,13 +18,23 @@
 		}
 	},
 	"barLines": {
-		"single": "E030",
-		"final": "E032"
+		"single": { 
+			"code": "E030",
+			"width": 4
+		},
+		"final": {
+			"code": "E032",
+			"width": 4
+		}
 	},
 	"clefs":{
 		"gClef": {
 			"code":	"E050",
-			"y": -4
+			"width": 12,
+			"defaultAttributes":{
+				"x": 0,
+				"y": -4
+			}
 		}
 	},
 	"timeSignatures":{
@@ -39,7 +49,10 @@
 	},
 	"note": {
 		"individual":{
-			"quarterUp": "E1D5"
+			"quarterUp": {
+				"code":"E1D5",
+				"width": 8
+			}
 		}
 	}
 }
