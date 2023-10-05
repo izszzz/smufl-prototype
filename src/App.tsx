@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import './App.css';
 import Score from './models/score';
 import SVGRenderer from './models/renderer/svg/renderer';
 //@ts-ignore

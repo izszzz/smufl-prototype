@@ -1,5 +1,6 @@
 import Score from "../../score";
-import smufl from "../../../consts/smufl.json"
+import glyphNames from "../../../smufl/metadata/glyphnames.json"
+import bravuraMetadata from "../../../consts/bravura_metadata.json"
 import SVGScore from "./score";
 
 class SVGRenderer {
@@ -9,13 +10,15 @@ class SVGRenderer {
 	constructor(element: HTMLElement, score: Score){
 		this.element = element;
 		this.score = score;
-		this.svg = this.createSVG();
+		this.svg =  SVGRenderer.createSVGElement("svg");
 		const svgScore = new SVGScore(this, score);
 		this.svg.appendChild(svgScore.rootElement);
 		element.appendChild(this.svg);
-		this.setWidth();
-		this.setStave();
-		this.setTranslate();
+		document.fonts.ready.then(()=>{
+			// this.setWidth();
+			// this.setStave();
+			this.setTranslate();
+		});
 	}
 	createTransform(x: number, y:number){
 		const transform = this.svg.createSVGTransform()
@@ -27,30 +30,34 @@ class SVGRenderer {
 		Object.entries(attributes).forEach(([k, v])=>text.setAttribute(k, String(v)))
 		return text
 	}
+	static setBBox = (element: SVGElement, {bBoxNE, bBoxSW}: {bBoxNE: number[], bBoxSW: number[]}) =>{
+		const x = bBoxSW[0]
+		const y = -bBoxNE[1]
+		const width = bBoxNE[0] - bBoxSW[0]
+		const height = bBoxNE[1] - bBoxSW[1]
+		// element.setAttribute("x", String(x * 4))
+		// element.setAttribute("y", String(y * 4 + 2))
+		element.setAttribute("width", String(width*4))
+		element.setAttribute("height", String(height * 4))
+	}
 	static createText (content: string) {
 		const text = SVGRenderer.createSVGElement("text")
 		text.innerHTML = content
 		return text;
 	};
-	static createSVGElement = <K extends keyof SVGElementTagNameMap>(qualifiedName: K) => document.createElementNS("http://www.w3.org/2000/svg", qualifiedName);
-	private createSVG = () =>  SVGRenderer.createSVGElement("svg");
-	private setWidth = () => this.svg.querySelectorAll("text").forEach(text=>text.setAttribute("width", String(text.getComputedTextLength())))
-	private setStave = () => this.svg.querySelectorAll("text").forEach(text=>{
-		// control node
-		const parent = text.parentNode
-		const group = SVGRenderer.createSVGElement("g");
-		parent?.replaceChild(group, text)
-		group.appendChild(text)
+	static createSMULFElement = (glyphName: string) =>{
+		let codepoint
+		// @ts-ignore
+		codepoint = glyphNames?.[glyphName]?.codepoint
+		// @ts-ignore
+		if(!codepoint) codepoint = bravuraMetadata.ligatures?.[glyphName]?.codepoint
 
-		// set stave
-		const textWidth = Number(text.getAttribute("width"))
-		const stave = Object.entries(smufl.staves.staff.fiveLines).map(([, v])=>v).filter(({width})=>textWidth <= width).reduce((accumulator, currentValue)=> {
-			return currentValue.width < accumulator.width ? currentValue : accumulator
-		})
-		const staveElement = SVGRenderer.createUnicodeText(stave)
-		group.appendChild(staveElement)
-		group.setAttribute("width", String(staveElement.getComputedTextLength()));
-	}) 
+		const text = this.createUnicodeText({code: codepoint.replace('U+', '')})
+		// @ts-ignore
+		this.setBBox(text, bravuraMetadata.glyphBBoxes[glyphName])
+		return text;
+	}
+	static createSVGElement = <K extends keyof SVGElementTagNameMap>(qualifiedName: K) => document.createElementNS("http://www.w3.org/2000/svg", qualifiedName);
 	private setTranslate = () => {
 		const track = this.svg.querySelector("g[type='track']")
 		if(!track) return;
