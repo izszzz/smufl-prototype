@@ -1,14 +1,24 @@
+import * as R from 'remeda';
 // @ts-ignore
 import { Track as MidiTrack, Note as MidiNote } from "@tonejs/midi";
 import Note from "./note";
 
 class Track{
-	notes: Note[] = [];
+	notes: Note[];
 	constructor(track: MidiTrack){
-		this.generateNotes(track.notes)
+		this.notes = this.generateNotes(track.notes)
 	}
 	private generateNotes(notes: MidiNote[]){
-		this.notes = notes.map(note => new Note(note.durationTicks, note.midi));
+		return notes
+			.map(({durationTicks, midi}) => new Note({durationTicks, pitch: midi}))
+			.map((note, index, array)=> {
+				const prevNote = array[index - 1]
+				if(prevNote) {
+					prevNote.nextNote = note
+					note.prevNote = prevNote
+				}
+				return note
+			})
 	}
 }
 

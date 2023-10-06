@@ -9,6 +9,7 @@ class SVGRenderer {
 	element: HTMLElement;
 	score: Score
 	svg: SVGSVGElement;
+	static svgRatio =  4;
 	constructor(element: HTMLElement, score: Score){
 		this.element = element;
 		this.score = score;
@@ -33,8 +34,8 @@ class SVGRenderer {
 	static setBBox = (element: SVGElement, {bBoxNE, bBoxSW}: {bBoxNE: number[], bBoxSW: number[]}) =>{
 		const width = bBoxNE[0] - bBoxSW[0]
 		const height = bBoxNE[1] - bBoxSW[1]
-		element.setAttribute("width", String(width*4))
-		element.setAttribute("height", String(height * 4))
+		element.setAttribute("width", String(width * SVGRenderer.svgRatio))
+		element.setAttribute("height", String(height * SVGRenderer.svgRatio))
 	}
 	static createText (content: string) {
 		const text = SVGRenderer.createSVGElement("text")

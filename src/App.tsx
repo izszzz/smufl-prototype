@@ -8,7 +8,7 @@ function App() {
   const ref = useRef(null);
   useEffect(()=>{
     (async()=>{
-      const midi = await Midi.fromUrl(`${process.env.PUBLIC_URL}/tests/test.mid`)
+      const midi = await Midi.fromUrl(`${process.env.PUBLIC_URL}/tests/test1.mid`)
       const score = new Score({title: "", midi});
       if(ref.current){
         const svg_renderer = new SVGRenderer(ref.current, score);
