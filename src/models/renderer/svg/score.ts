@@ -11,7 +11,7 @@ class SVGScore {
 		this.svgRenderer = svgRenderer
 		this.rootElement.transform.baseVal.appendItem(this.svgRenderer.createTransform(0, 40));
 		this.score = score;
-		this.tracks = score.tracks.map(track=>new SVGTrack(svgRenderer, track))
+		this.tracks = score.tracks.map(track=>new SVGTrack(track))
 		this.tracks.map(track => this.rootElement.appendChild(track.rootElement));
 	}
 	setRootElement(){

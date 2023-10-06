@@ -1,38 +1,28 @@
 import SVGRenderer from "./renderer";
-import glyphNames from "../../../smufl/metadata/glyphnames.json"
-import classes from "../../../smufl/metadata/classes.json"
-import bravuraMetadata from "../../../consts/bravura_metadata.json"
+import * as R from 'remeda';
+import classes from "../../../consts/metadata/classes.json"
 import SVGNote from "./note";
 import Track from "../../track";
 
 class SVGTrack {
 	rootElement = SVGTrack.setRootElement();
-	svgRenderer: SVGRenderer;
 	track: Track;
-	staveLines: 4 | 5 | 6 = 5;
+	static staffLines: 1 | 2 | 3 | 4 | 5 | 6 = 5;
 	notes: SVGNote[] = [];
-	constructor(svgRenderer: SVGRenderer, track: Track){
-		this.svgRenderer = svgRenderer;
+	constructor( track: Track){
 		this.track = track
-		this.notes = track.notes.map(note =>new SVGNote(svgRenderer, note))
+		this.notes = track.notes.map(note =>new SVGNote(note))
 
 		const elements:SVGGElement[] = []
 		elements.push(
 			SVGRenderer.createSMULFElement("barlineSingle"),
 			SVGRenderer.createSMULFElement("gClef"),
-			SVGRenderer.createSMULFElement("timeSig4over4"),
+			SVGRenderer.createSMULFLigurtureElement("timeSig4over4"),
 			...this.notes.map(note=> note.rootElement),
 			SVGRenderer.createSMULFElement("barlineFinal")
 		);
-		elements.forEach(el=>{
-			this.rootElement.appendChild(el)
-		});
-		const a = classes.forTextBasedApplications
-			.filter(staff => staff.includes(`staff${this.staveLines}Lines`))
-			//@ts-ignore
-			.map(key => ({[key]: bravuraMetadata.glyphAdvanceWidths[key]}))
+		elements.forEach(el=>{ this.rootElement.appendChild(el) });
 		this.setStave()
-		console.log(a)
 	}
 	private setStave = () => Array.from(this.rootElement.children).forEach(text=>{
 		
@@ -42,26 +32,15 @@ class SVGTrack {
 		parent?.replaceChild(group, text)
 		group.appendChild(text)
 
-		// TODO: fix
-		const stave = classes.forTextBasedApplications
-			.filter(staff => staff.includes(`staff${this.staveLines}Lines`))
-			//@ts-ignore
-			.map(key => ([key, bravuraMetadata.glyphAdvanceWidths[key]]))
-			// bBoxの幅に4をかけるとちょうどよく表示される。
-			.filter(([, value])=> Number(text.getAttribute("width")) <= value * 4)
-			//@ts-ignore
-			.reduce((accumulator, currentValue) => {
-				if(!accumulator) return currentValue;
-				// @ts-ignore
-				return currentValue[1] < accumulator[0] ? currentValue : accumulator
-			}, null)
-			
-			if(stave){
-				const staveElement = SVGRenderer.createSMULFElement(stave[0])
-				console.log(staveElement.getAttribute("width"))
-				group.appendChild(staveElement)
-				group.setAttribute("width", String(staveElement.getAttribute("width")));
-			}
+		const staff = R.pipe(
+			classes.forTextBasedApplications,	
+			R.find(staff => R.equals(staff, `staff${SVGTrack.staffLines}Lines`))
+		)
+		if (staff){
+			const staveElement = SVGRenderer.createSMULFElement(staff)
+			group.appendChild(staveElement)
+			group.setAttribute("width", String(staveElement.getAttribute("width")));
+		}
 	}) 
 	static setRootElement(){
 		const group= SVGRenderer.createSVGElement("g")
