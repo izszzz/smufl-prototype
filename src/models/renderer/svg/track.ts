@@ -7,14 +7,13 @@ import Track from "../../track";
 import BravuraMetadata from "../../../consts/metadata/bravura_metadata.json";
 
 class SVGTrack {
-	rootElement = SVGTrack.setRootElement();
+	rootElement = SVGRenderer.createSVGElement("g", {type: "track"});
 	track: Track;
 	static staffLines: 1 | 2 | 3 | 4 | 5 | 6 = 5;
 	notes: SVGNote[] = [];
-	constructor( track: Track){
+	constructor(track: Track, svgRenderer: SVGRenderer){
 		this.track = track
-		console.log(track)
-		this.notes = track.notes.map(note =>new SVGNote(note))
+		this.notes = track.notes.map(note =>new SVGNote(note, svgRenderer))
 
 		const elements:SVGGElement[] = []
 		elements.push(
@@ -24,7 +23,7 @@ class SVGTrack {
 			...this.notes.map(note=> note.rootElement),
 			SVGRenderer.createSMULFElement("barlineFinal")
 		);
-		elements.forEach(el=>{ this.rootElement.appendChild(el) });
+		elements.forEach(el=> this.rootElement.appendChild(el));
 		this.setStave()
 	}
 	private setStave = () => Array.from(this.rootElement.children).forEach(text=>{
@@ -36,26 +35,22 @@ class SVGTrack {
 		group.appendChild(text)
 		
 		// calc staff type
-		const staff = R.pipe(
+		const staffLines = R.pipe(
 			classes.forTextBasedApplications,	
 			R.filter(staff => staff.includes( `staff${SVGTrack.staffLines}Lines`)),
 			R.map((key) => ({
 				 key, width: bravuraMetadata.glyphAdvanceWidths[key as keyof BravuraMetadata["glyphAdvanceWidths"]]
 			})),
-			R.filter(({width})=> textWidth <= width * 4 ),
+		)
+		const staff = R.pipe(
+			staffLines,
+			R.filter(({width})=> textWidth <= width * SVGRenderer.svgRatio ),
 			R.minBy((x) => x.width)
 		)
-		if (staff){
-			const staveElement = SVGRenderer.createSMULFElement(staff.key)
-			group.appendChild(staveElement)
-			group.setAttribute("width", String(staveElement.getAttribute("width")));
-		}
+		const staveElement = SVGRenderer.createSMULFElement(staff?.key ?? "staff5LinesWide")
+		group.appendChild(staveElement)
+		group.setAttribute("width", String(staveElement.getAttribute("width")));
 	}) 
-	static setRootElement(){
-		const group= SVGRenderer.createSVGElement("g")
-		group.setAttribute("type", "track");
-		return group;
-	}
 }
 
 export default SVGTrack

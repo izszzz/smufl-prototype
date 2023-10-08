@@ -1,10 +1,10 @@
-import * as R from 'remeda';
 // @ts-ignore
 import { Track as MidiTrack, Note as MidiNote } from "@tonejs/midi";
 import Note from "./note";
 
 class Track{
 	notes: Note[];
+	beat = 4;
 	constructor(track: MidiTrack){
 		this.notes = this.generateNotes(track.notes)
 	}
