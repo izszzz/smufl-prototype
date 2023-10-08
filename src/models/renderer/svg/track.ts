@@ -2,7 +2,7 @@ import * as R from 'remeda';
 import SVGRenderer from "./renderer";
 import classes from "../../../consts/metadata/classes.json"
 import bravuraMetadata from "../../../consts/metadata/bravura_metadata.json"
-import SVGNote from "./note";
+import  SVGNote  from "./note";
 import Track from "../../track";
 import BravuraMetadata from "../../../consts/metadata/bravura_metadata.json";
 
@@ -10,17 +10,23 @@ class SVGTrack {
 	rootElement = SVGRenderer.createSVGElement("g", {type: "track"});
 	track: Track;
 	static staffLines: 1 | 2 | 3 | 4 | 5 | 6 = 5;
-	notes: SVGNote[] = [];
 	constructor(track: Track, svgRenderer: SVGRenderer){
 		this.track = track
-		this.notes = track.notes.map(note =>new SVGNote(note, svgRenderer))
-
+		const a = track.notes.map(note => SVGNote(note))
 		const elements:SVGGElement[] = []
 		elements.push(
 			SVGRenderer.createSMULFElement("barlineSingle"),
 			SVGRenderer.createSMULFElement("gClef"),
 			SVGRenderer.createSMULFLigurtureElement("timeSig4over4"),
-			...this.notes.map(note=> note.rootElement),
+			...a.map(({type, y, width, children})=> {
+				const e = SVGRenderer.createSVGElement("g", {type, width: String(width * SVGRenderer.svgRatio) })
+				e.transform.baseVal.appendItem(svgRenderer.createTransform(0, y * SVGRenderer.svgRatio));
+
+				children.forEach(({x, width, height, glyphName})=>{
+					e.appendChild(SVGRenderer.createSMULFElement(glyphName, { x: String((x ?? 0) * SVGRenderer.svgRatio),width: String(width * SVGRenderer.svgRatio), height: String(height ?? 0 * SVGRenderer.svgRatio)} ))
+				})
+				return e
+			}),
 			SVGRenderer.createSMULFElement("barlineFinal")
 		);
 		elements.forEach(el=> this.rootElement.appendChild(el));

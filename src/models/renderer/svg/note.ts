@@ -1,110 +1,83 @@
-import * as R from "remeda"
-import SVGRenderer from "./renderer";
 import bravuraMetadata from "../../../consts/metadata/bravura_metadata.json"
 import Note from "../../note";
 import Classes from "../../../consts/metadata/classes.json";
+import Glyphnames from "../../../consts/metadata/glyphnames.json";
+import BravuraMetadata from "../../../consts/metadata/bravura_metadata.json";
 
 type NOTE_FRACTION = "Whole" | "Half" | "Quarter" | "8th" | "16th"
-class SVGNote {
-	note: Note;
+const MIDI_MIDDLE_C = 60;
+const BASE_WHITE_KEYS = [0, 2, 4, 5, 7, 9, 11];
+const BASE_OCTAVE_KEYS = [...Array(12)].map((_,i)=>i)
 
-	/** 
-	 * @type {SVGGElement} root svg group element.
-	 */
-	rootElement: SVGGElement = SVGRenderer.createSVGElement("g", {type: "note"}); 
-
-	/** 
-	 * @type {number} svg note pitch
-	 * 0 equal Middle C 
-	 */
-	pitch: number;
-
-	/**
-	 * @type {number} SVGNote Y-Axis
-	 * 音符のsvgを配置した際の初期位置がミの位置なので、それをドの位置に移動する
-	 */
-	y: number = 2 * bravuraMetadata.engravingDefaults.thickBarlineThickness * SVGRenderer.svgRatio
-
-	/**
-	 * @type {string} smufl claases.accidentals literal.
-	 */
-	accidental?: Classes["accidentals"][number];
-
-	/**
-	 * @type {60} midi middle C
-	 */
-	static midiMiddleC: number = 60; 
-
-	/**
-	 * @type {number} 1オクターブに含まれる白鍵の数とインデックス 
-	 */
-	static baseWhiteKeys = [0, 2, 4, 5, 7, 9, 11]
-
-	/**
-	 * @type {number} 1オクターブに含まれる鍵盤の数とインデックス
-	 */
-	static baseOctaveKeys = [...Array(12)].map((_,i)=>i)
-
-	constructor(note: Note, svgRenderer: SVGRenderer){
-		this.note = note
-		this.pitch = SVGNote.calcAjustPitch(note.pitch);
-		this.setRootElement();
-		this.rootElement.setAttribute("width", String(this.calcWidth()))
-		this.rootElement.transform.baseVal.appendItem(svgRenderer.createTransform(0, this.calcSVGNoteY()));
-	}
-
-	private setRootElement(){
-		const note = SVGRenderer.createSMULFElement(this.searchNoteGlyphName())
-		if(SVGNote.isAccidental(this.note.pitch)) {
-			this.calcAccidental()
-			const accidental = SVGRenderer.createSMULFElement(this.accidental ?? "accidentalSharp", { type: "accidental" })
-			const accidentalWidth = accidental.getAttribute("width")
-			if(accidentalWidth) note.setAttribute("x", accidentalWidth)
-			this.rootElement.appendChild(accidental)
-		}
-		this.rootElement.appendChild(note)
-	}
-	private calcAccidental(){
-		this.accidental = 
-			!this.note.prevNote ? "accidentalSharp" :
-			this.note.prevNote.pitch < this.note.pitch ? "accidentalSharp" : "accidentalFlat"
-	}
-	private calcSVGNoteY =(): number =>
-		this.y - (this.calcWhiteKeyPosition(this.pitch) + SVGNote.calcOctaveY(this.pitch)) * bravuraMetadata.engravingDefaults.thickBarlineThickness * SVGRenderer.svgRatio
-	private calcWidth = () =>
-		R.reduce(
-			Array.from(this.rootElement.children),
-			(acc, item)=> acc + Number(item.getAttribute("width") ?? 0),
-			0
-		)
-	private calcWhiteKeyPosition = (pitch: number): number => {
-		let calcPitch = pitch
-		if(this.accidental === "accidentalSharp") calcPitch -= 1
-		if(this.accidental === "accidentalFlat") calcPitch +=1
-		return SVGNote.baseWhiteKeys.indexOf(SVGNote.baseOctaveKeys.indexOf(calcPitch));
-	}
-	private searchNoteGlyphName(){
-		return Classes.forTextBasedApplications
-			.filter((glyphName) => glyphName.includes("note"))	
-			.filter((noteGlyphName) => noteGlyphName.includes(String(SVGNote.calcNoteFraction(this.note.durationTicks))))
-			.filter((noteGlyphName) => noteGlyphName.includes(String(SVGNote.calcNoteStem(this.pitch))))[0]
-	}
-	private static isAccidental = (pitch: number) =>!SVGNote.baseWhiteKeys.includes(SVGNote.calcBasePitch(pitch))
-	private static calcBasePitch = (pitch: number): number => pitch % SVGNote.baseOctaveKeys.length
-	private static calcAjustPitch = (pitch: number): number => pitch - SVGNote.midiMiddleC
-	private static calcOctave = (pitch: number): number => Math.trunc(pitch / SVGNote.baseOctaveKeys.length)
-	private static calcOctaveY = (pitch: number): number => SVGNote.calcOctave(pitch) * (SVGNote.baseWhiteKeys.length + 1)
-	private static calcNoteFraction = (durationTicks: number): NOTE_FRACTION => { 
-		// 480はmidi ticksにおける四分音符の長さ
-		// 4 は4拍 TODO: Trackに
-		const fraction = 480 * 4 / durationTicks 
-		if (fraction === 2) return "Half"
-		if (fraction === 4) return "Quarter"
-		if (fraction === 8) return "8th"
-		if (fraction === 16) return "16th"
-		return "Whole"
-	}
-	private static calcNoteStem = (pitch: number) => pitch >= 11 ? "Down" : "Up"
+export interface SMUFLElement {
+	type?: string
+	y?: number
+	x?: number
+	width: number
+	height?: number
+	children?: SMUFLElement[]
 }
+export interface SMUFLGroup extends SMUFLElement{
+}
+export interface SMUFLText extends SMUFLElement{
+	glyphName: keyof Glyphnames;
+}
+export default function SVGNote(note: Note){
+	const children: SMUFLText[] = []
+	const noteGlyphName = searchNoteGlyphName(note)
+	const noteBBox = getBBox(noteGlyphName)
+	const accidentalGlyphName: Classes["accidentals"][number] | null = isNoteAccidental(note) ? calcNoteAccidental(note) :null 
+	
+	if(accidentalGlyphName){
+		const accidentalBBox = getBBox(accidentalGlyphName)
+		children.push({type:"accidental", glyphName: accidentalGlyphName, ...accidentalBBox})
+	}
 
-export default SVGNote
+	children.push({glyphName: noteGlyphName, ...noteBBox})
+	
+	return { 
+		type: "note", 
+		y: calcNoteY(note), 
+		width: children.reduce((acc, item)=>acc + item.width, 0), 
+		children: children.map((child, i, array) => {
+			if(array[i-1]) return {...child, x: array[i-1].width}
+			return child
+		})
+	}
+}
+const searchNoteGlyphName = (note: Note) => 
+	Classes.forTextBasedApplications
+		.filter((glyphName) => glyphName.includes("note"))	
+		.filter((noteGlyphName) => noteGlyphName.includes(String(calcNoteFraction(note))))
+		.filter((noteGlyphName) => noteGlyphName.includes(String(calcNoteStem(note))))[0]
+const ajustNotePitch = ({pitch}:Note) => pitch - MIDI_MIDDLE_C
+const calcNoteBasePitch = (note: Note): number => ajustNotePitch(note) % BASE_OCTAVE_KEYS.length
+const calcNoteAccidental = ({prevNote, pitch}: Note) => !prevNote ? "accidentalSharp": prevNote.pitch < pitch ? "accidentalSharp" : "accidentalFlat";
+const calcNoteStem = (note: Note) => ajustNotePitch(note) >= 11 ? "Down" : "Up"
+const calcNoteOctave = (note: Note) => Math.trunc(ajustNotePitch(note) / BASE_OCTAVE_KEYS.length)
+const calcNoteOctaveY = (note: Note) => calcNoteOctave(note) * (BASE_WHITE_KEYS.length + 1)
+const calcNoteWhiteKeyPosition = (note: Note) => {
+	let pitch =  ajustNotePitch(note)
+	const accidental = isNoteAccidental(note) ? calcNoteAccidental(note) : null
+	if(accidental === "accidentalSharp") pitch -= 1
+	if(accidental === "accidentalFlat") pitch +=1
+	return BASE_WHITE_KEYS.indexOf(BASE_OCTAVE_KEYS.indexOf(pitch));
+}
+const calcNoteY = (note:Note) =>  (2 - (calcNoteWhiteKeyPosition(note) + calcNoteOctaveY(note))) * bravuraMetadata.engravingDefaults.thickBarlineThickness
+const calcNoteFraction = ({durationTicks}: Note): NOTE_FRACTION => {
+	// 480はmidi ticksにおける四分音符の長さ
+	// 4 は4拍 TODO: Trackに
+	const fraction = 480 * 4 / durationTicks 
+	if (fraction === 2) return "Half"
+	if (fraction === 4) return "Quarter"
+	if (fraction === 8) return "8th"
+	if (fraction === 16) return "16th"
+	return "Whole"
+}
+const isNoteAccidental = (note: Note) =>!BASE_WHITE_KEYS.includes(calcNoteBasePitch(note))
+const getBBox = (glyphName: keyof Glyphnames) => {
+	const {bBoxNE, bBoxSW}= bravuraMetadata.glyphBBoxes[glyphName as keyof BravuraMetadata["glyphBBoxes"]]
+	const width = bBoxNE[0] - bBoxSW[0] 
+	const height = bBoxNE[1] - bBoxSW[1]
+	return {width, height};
+}
