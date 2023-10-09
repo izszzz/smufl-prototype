@@ -2,6 +2,7 @@
 	"type": [
 		"score",
 		"track",
+		"staff",
 		"barline",
 		"clef",
 		"timeSig",

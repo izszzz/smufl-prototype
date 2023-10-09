@@ -1,5 +1,5 @@
 interface Metadata {
-  type: ['score', 'track', 'barline', 'clef', 'timeSig', 'note', 'accidental'],
+  type: ['score', 'track', 'staff', 'barline', 'clef', 'timeSig', 'note', 'accidental'],
   staffLines: [1, 2, 3, 4, 5, 6],
   midiMiddleC: 60,
   baseWhiteKeys: [0, 2, 4, 5, 7, 9, 11],
