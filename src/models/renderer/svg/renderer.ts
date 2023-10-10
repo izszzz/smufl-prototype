@@ -39,32 +39,26 @@ class SVGRenderer {
 			svgElement.transform.baseVal.appendItem(this.createTransform(e+Number(prevText.getAttribute("width")), f))
 		})
 	}
-	static createSMULFElement = (glyphName: keyof Glyphnames, attributes: Record<string, string> = {}) =>{
+	static createSMULFElement = (glyphName: keyof Glyphnames, attributes?: Parameters<typeof SVGRenderer.createSVGElement>[1]) =>{
 		if(!(glyphName in bravuraMetadata.glyphBBoxes)) throw new Error(`${glyphName} not exist bravurametadata`);
-		const {bBoxNE, bBoxSW}= bravuraMetadata.glyphBBoxes[glyphName as keyof BravuraMetadata["glyphBBoxes"]]
-		const width = String((bBoxNE[0] - bBoxSW[0]) * SVGRenderer.svgRatio)
-		const height = String((bBoxNE[1] - bBoxSW[1]) * SVGRenderer.svgRatio)
-		const text = this.createUnicodeText(glyphNames[glyphName].codepoint, {...attributes, width, height})
+		const text = this.createUnicodeText(glyphNames[glyphName].codepoint, attributes)
 		return text;
 	}
-	static createSMULFLigurtureElement = (ligatureName: keyof bravuraMetadata["ligatures"], attributes: Record<string, string> = {}) => {
+	static createSMULFLigurtureElement = (ligatureName: keyof bravuraMetadata["ligatures"], attributes?: Parameters<typeof SVGRenderer.createSVGElement>[1]) => {
 		if(!(ligatureName in bravuraMetadata.glyphBBoxes)) throw new Error(`${ligatureName} not exist bravurametadata`);
-		const {bBoxNE, bBoxSW}= bravuraMetadata.glyphBBoxes[ligatureName as keyof BravuraMetadata["glyphBBoxes"]]
-		const width = String((bBoxNE[0] - bBoxSW[0]) * SVGRenderer.svgRatio)
-		const height = String((bBoxNE[1] - bBoxSW[1]) * SVGRenderer.svgRatio)
-		const text = this.createUnicodeText(bravuraMetadata.ligatures[ligatureName].codepoint, {...attributes, width, height})
+		const text = this.createUnicodeText(bravuraMetadata.ligatures[ligatureName].codepoint, attributes)
 		return text;
 	}
-	private static createUnicodeText = (code: string, attributes: Record<string, string> = {} ) => {
+	private static createUnicodeText = (code: string, attributes?: Parameters<typeof SVGRenderer.createSVGElement>[1] ) => {
 		const text = SVGRenderer.createText(`&#x${code.replace('U+', '')}`, attributes)
 		return text
 	}
-	private static createText (content: string, attributes: Record<string, string> = {}) {
+	private static createText (content: string, attributes?: Parameters<typeof SVGRenderer.createSVGElement>[1]) {
 		const text = SVGRenderer.createSVGElement("text", attributes)
 		text.innerHTML = content
 		return text;
 	};
-	static createSVGElement = <K extends keyof SVGElementTagNameMap>(qualifiedName: K, attributes: Record<string, string> = {}) => {
+	static createSVGElement = <K extends keyof SVGElementTagNameMap>(qualifiedName: K, attributes: Record<string, unknown> = {}) => {
 		const element = document.createElementNS("http://www.w3.org/2000/svg", qualifiedName);
 		R.pipe(
 			attributes,
@@ -73,6 +67,5 @@ class SVGRenderer {
 		)
 		return element
 	}
-
 }
 export default SVGRenderer;

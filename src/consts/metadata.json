@@ -3,6 +3,7 @@
 		"score",
 		"track",
 		"staff",
+		"legerLine",
 		"barline",
 		"clef",
 		"timeSig",

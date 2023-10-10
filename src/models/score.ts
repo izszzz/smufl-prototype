@@ -8,6 +8,7 @@ class Score {
 	constructor({title, midi}: {title: string, midi: MidiScore}){
 		this.title = title;
 		this.generateTracks(midi.tracks)
+		console.log(midi)
 	}
 	generateTracks(tracks: MidiTrack[]){
 		this.tracks = tracks.map(track => new Track(track));
