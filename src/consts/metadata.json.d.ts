@@ -3,6 +3,7 @@ interface Metadata {
     'score',
     'track',
     'staff',
+    'bar',
     'legerLine',
     'barline',
     'clef',

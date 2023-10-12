@@ -1,24 +1,10 @@
-// @ts-ignore
-import { Track as MidiTrack, Note as MidiNote } from "@tonejs/midi";
-import Note from "./note";
+import Bar from "./bar";
 
 class Track{
-	notes: Note[];
+	bars: Bar[];
 	beat = 4;
-	constructor(track: MidiTrack){
-		this.notes = this.generateNotes(track.notes)
-	}
-	private generateNotes(notes: MidiNote[]){
-		return notes
-			.map(({durationTicks, midi}) => new Note({durationTicks, pitch: midi}))
-			.map((note, index, array)=> {
-				const prevNote = array[index - 1]
-				if(prevNote) {
-					prevNote.nextNote = note
-					note.prevNote = prevNote
-				}
-				return note
-			})
+	constructor(bars: Bar[] ){
+		this.bars = bars
 	}
 }
 

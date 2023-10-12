@@ -1,11 +1,10 @@
 import Note from "./note";
 
-interface BarConstructorArgs{
-	notes: Note[];
-}
 class Bar {
 	notes: Note[];
-	constructor({notes}:BarConstructorArgs){
+	prevBar?: Bar;
+	nextBar?: Bar;
+	constructor(notes: Note[]){
 		this.notes = notes
 	}
 }

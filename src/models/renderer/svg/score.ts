@@ -12,6 +12,7 @@ class SVGScore {
 		this.score = score;
 		this.rootElement.transform.baseVal.appendItem(this.svgRenderer.createTransform(0, 40));
 		const a = score.tracks.map(track => SVGTrack(track))
+		console.log(a)
 		this.rootElement.appendChild(this.createSMULFElements(a[0]));
 	}
 	createSMULFElements = ({width, children, element, x, y, ...props}: SMUFLGroup) => {

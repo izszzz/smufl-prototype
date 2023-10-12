@@ -4,7 +4,6 @@ import glyphNames from "../../../consts/metadata/glyphnames.json"
 import bravuraMetadata from "../../../consts/metadata/bravura_metadata.json"
 import SVGScore from "./score";
 import Glyphnames from "../../../consts/metadata/glyphnames.json";
-import BravuraMetadata from "../../../consts/metadata/bravura_metadata.json";
 
 class SVGRenderer {
 	element: HTMLElement;
@@ -14,11 +13,11 @@ class SVGRenderer {
 	constructor(element: HTMLElement, score: Score){
 		this.element = element;
 		this.score = score;
-		this.svg =  SVGRenderer.createSVGElement("svg");
+		this.svg =  SVGRenderer.createSVGElement("svg", {width: 2000});
 		const svgScore = new SVGScore(this, score);
 		this.svg.appendChild(svgScore.rootElement);
 		element.appendChild(this.svg);
-		this.setTranslate();
+		// this.setTranslate();
 	}
 	createTransform(x: number, y:number){
 		const transform = this.svg.createSVGTransform()
