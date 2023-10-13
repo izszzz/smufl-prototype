@@ -1,17 +1,17 @@
 interface NoteConstructorArgs{
-	durationTicks: number;
+	fraction: number;
 	pitch: number;
 	prevNote?: Note;
 	nextNote?: Note;
 }
 
-class Note{
-	durationTicks: number;
-	pitch: number;
-	prevNote?: Note;
-	nextNote?: Note;
-	constructor({durationTicks, pitch, prevNote, nextNote}:NoteConstructorArgs){
-		this.durationTicks = durationTicks
+class Note implements NoteConstructorArgs{
+	fraction
+	pitch
+	prevNote
+	nextNote
+	constructor({fraction, pitch, prevNote, nextNote}:NoteConstructorArgs){
+		this.fraction = fraction
 		this.pitch = pitch;
 		this.nextNote = nextNote;
 		this.prevNote = prevNote;

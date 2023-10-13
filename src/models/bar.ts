@@ -1,11 +1,18 @@
 import Note from "./note";
 
-class Bar {
-	notes: Note[];
+interface BarConstructorArgs{
+	notes: Note[]
+	timeSignature?: [number, number]
+}
+
+class Bar implements BarConstructorArgs{
+	notes
+	timeSignature
 	prevBar?: Bar;
 	nextBar?: Bar;
-	constructor(notes: Note[]){
+	constructor({notes, timeSignature}: BarConstructorArgs){
 		this.notes = notes
+		this.timeSignature = timeSignature
 	}
 }
 

@@ -4,36 +4,53 @@ import { SMUFLElement, SMUFLGroup, SMUFLText } from "./interfaces";
 import * as R from 'remeda';
 import classes from "../../../consts/metadata/classes.json"
 import bravuraMetadata from "../../../consts/metadata/bravura_metadata.json"
-import SVGNote, { getBBoxByGlyphName, getBBoxByLiguature } from "./note";
+import SVGNote, { getBBoxByGlyphName } from "./note";
 import Classes from "../../../consts/metadata/classes.json";
 import Metadata from "../../../consts/metadata.json";
+import Ranges from "../../../consts/metadata/ranges.json";
 
 export default function SVGBar(bar: Bar): SMUFLGroup{
 	const staffLineCount: Metadata["staffLines"][number] = 5;
 	const clef: Classes["clefs"][number] = "gClef";
 	const children: SMUFLElement[] = []
+	const timeSigDenominator: Ranges["timeSignatures"]["glyphs"][number] = "timeSig4"
+	const timeSigNumerator: Ranges["timeSignatures"]["glyphs"][number] = "timeSig4"
 	if(!bar.prevBar) {
-		children.push({ 
+		children.push(
+			{ 
 				type: "clef" ,
 				element: "text",
 				glyphName: clef,
 				y: -1,
 				...getBBoxByGlyphName(clef)
-			} as SMUFLText
-		)
-		children.push({
-				type: "timeSig",
-				element: "text",
-				ligatureName: "timeSig4over4",
-				...getBBoxByLiguature("timeSig4over4")
 			} as SMUFLText,
+			{ 
+				type: "timeSig",
+				element: "g",
+				y: -1,
+				children:[
+					{
+						element: "text",
+						glyphName: timeSigNumerator,
+						y: -2,
+						...getBBoxByGlyphName(timeSigNumerator)
+					}	as SMUFLText,
+					{
+						element: "text",
+						glyphName: timeSigDenominator,
+						...getBBoxByGlyphName(timeSigDenominator)
+					}	as SMUFLText
+				],
+				...getBBoxByGlyphName(timeSigNumerator),
+			} as SMUFLGroup,
+
 		)
+		
 	}
 	children.push(
 		...bar.notes.map(note => SVGNote(note)),
 	)
 	const appended = appendStaff(appendBarLine(bar, children), staffLineCount)
-	console.log(appended)
 	return ({
 		type: "bar",
 		element: "g",

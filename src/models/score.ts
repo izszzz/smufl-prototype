@@ -1,11 +1,23 @@
 import Track from "./track";
 
-class Score {
-	title: string;
-	tracks: Track[] = [];
-	constructor({title, tracks}: {title: string, tracks: Track[]}){
-		this.title = title;
+
+interface ScoreConstructorArgs{
+	tracks: Track[];
+	name?: string;
+	bpm?: number;
+	timeSignature?: [number, number]
+}
+
+class Score implements ScoreConstructorArgs {
+	name
+	bpm
+	tracks
+	timeSignature
+	constructor({name, tracks, bpm, timeSignature}: ScoreConstructorArgs){
+		this.bpm = bpm
+		this.name = name;
 		this.tracks = tracks;
+		this.timeSignature = timeSignature
 	}
 }
 

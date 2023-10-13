@@ -1,5 +1,4 @@
 import Metadata from "../../../consts/metadata.json"
-import BravuraMetadata from "../../../consts/metadata/bravura_metadata.json"
 import Glyphnames from "../../../consts/metadata/glyphnames.json"
 
 export interface SMUFLElement {
@@ -9,13 +8,12 @@ export interface SMUFLElement {
 	x?: number
 	width: number
 	height?: number
-	children?: SMUFLElement[]
 }
 export interface SMUFLGroup extends SMUFLElement{
 	element: "g"
+	children?: SMUFLElement[]
 }
 export interface SMUFLText extends SMUFLElement{
 	element: "text"
-	glyphName?: keyof Glyphnames;
-	ligatureName?: keyof BravuraMetadata["ligatures"]
+	glyphName: keyof Glyphnames;
 }

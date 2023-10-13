@@ -1,10 +1,16 @@
 import Bar from "./bar";
 
-class Track{
-	bars: Bar[];
-	beat = 4;
-	constructor(bars: Bar[] ){
+interface TrackConstructorArgs{
+	bars: Bar[]
+	timeSignature?: [number, number]
+}
+
+class Track implements TrackConstructorArgs{
+	bars;
+	timeSignature;
+	constructor({bars, timeSignature}: TrackConstructorArgs){
 		this.bars = bars
+		this.timeSignature = timeSignature
 	}
 }
 

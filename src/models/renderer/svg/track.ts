@@ -14,7 +14,7 @@ export default function SVGTrack(track: Track): SMUFLGroup {
 	return ({
 		type: "track",
 		element: "g",
-		width: 0,
+		width: children.reduce((acc, item)=>acc + item.width, 0),
 		children
 	})
 }
