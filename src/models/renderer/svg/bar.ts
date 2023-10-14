@@ -1,13 +1,12 @@
 import Bar from "../../bar";
-import BravuraMetadata from "../../../consts/metadata/bravura_metadata.json";
 import { SMUFLElement, SMUFLGroup, SMUFLText } from "./interfaces";
 import * as R from 'remeda';
-import classes from "../../../consts/metadata/classes.json"
 import bravuraMetadata from "../../../consts/metadata/bravura_metadata.json"
-import SVGNote, { getBBoxByGlyphName } from "./note";
+import SVGNote from "./note";
 import Classes from "../../../consts/metadata/classes.json";
 import Metadata from "../../../consts/metadata.json";
 import Ranges from "../../../consts/metadata/ranges.json";
+import SVGRenderer from "./renderer";
 
 export default function SVGBar(bar: Bar): SMUFLGroup{
 	const staffLineCount: Metadata["staffLines"][number] = 5;
@@ -22,7 +21,7 @@ export default function SVGBar(bar: Bar): SMUFLGroup{
 				element: "text",
 				glyphName: clef,
 				y: -1,
-				...getBBoxByGlyphName(clef)
+				...SVGRenderer.getBBoxByGlyphName(clef)
 			} as SMUFLText,
 			{ 
 				type: "timeSig",
@@ -33,15 +32,15 @@ export default function SVGBar(bar: Bar): SMUFLGroup{
 						element: "text",
 						glyphName: timeSigNumerator,
 						y: -2,
-						...getBBoxByGlyphName(timeSigNumerator)
+						...SVGRenderer.getBBoxByGlyphName(timeSigNumerator)
 					}	as SMUFLText,
 					{
 						element: "text",
 						glyphName: timeSigDenominator,
-						...getBBoxByGlyphName(timeSigDenominator)
+						...SVGRenderer.getBBoxByGlyphName(timeSigDenominator)
 					}	as SMUFLText
 				],
-				...getBBoxByGlyphName(timeSigNumerator),
+				...SVGRenderer.getBBoxByGlyphName(timeSigNumerator),
 			} as SMUFLGroup,
 
 		)
@@ -63,7 +62,7 @@ const appendBarLine = (bar: Bar,elements: SMUFLElement[]) =>{
 			type: "barline",
 			element: "text",
 			glyphName: "barlineSingle",
-			...getBBoxByGlyphName("barlineSingle")
+			...SVGRenderer.getBBoxByGlyphName("barlineSingle")
 		} as SMUFLText
 	)
 	if(!bar.nextBar)
@@ -72,17 +71,18 @@ const appendBarLine = (bar: Bar,elements: SMUFLElement[]) =>{
 				type: "barline",
 				element: "text",
 				glyphName: "barlineFinal",
-				...getBBoxByGlyphName("barlineFinal")
+				...SVGRenderer.getBBoxByGlyphName("barlineFinal")
 			} as SMUFLText
 		)
 	return elements
 }
 const appendStaff = (elements: SMUFLElement[], staffLineCount: number): SMUFLGroup[] =>{
 	const staffLines = R.pipe(
-		classes.forTextBasedApplications,	
+		Ranges.staves.glyphs,
 		R.filter(staff => staff.includes( `staff${staffLineCount}Lines`)),
 		R.map((key) => ({
-			key, width: bravuraMetadata.glyphAdvanceWidths[key as keyof BravuraMetadata["glyphAdvanceWidths"]]
+			key, 
+			width: bravuraMetadata.glyphAdvanceWidths[key]
 		}))
 	) 
 	const staffs: SMUFLGroup[] = []
@@ -103,7 +103,7 @@ const appendStaff = (elements: SMUFLElement[], staffLineCount: number): SMUFLGro
 					{
 						element: "text",
 						glyphName: staff?.key ?? "staff5LinesWide",
-						...getBBoxByGlyphName(staff?.key ?? "staff5LinesWide")
+						...SVGRenderer.getBBoxByGlyphName(staff?.key ?? "staff5LinesWide")
 					} as SMUFLText
 				]
 			}))

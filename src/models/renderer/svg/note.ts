@@ -1,24 +1,23 @@
 import bravuraMetadata from "../../../consts/metadata/bravura_metadata.json"
 import Note from "../../note";
 import Classes from "../../../consts/metadata/classes.json";
-import Glyphnames from "../../../consts/metadata/glyphnames.json";
-import BravuraMetadata from "../../../consts/metadata/bravura_metadata.json";
 import { SMUFLElement, SMUFLGroup, SMUFLText } from "./interfaces";
 import Metadata from "../../../consts/metadata.json";
 import Ranges from "../../../consts/metadata/ranges.json";
+import SVGRenderer from "./renderer";
 
 export default function SVGNote(note: Note): SMUFLGroup{
 	const children: SMUFLElement[] = []
 	const noteGlyphName = searchNoteGlyphName(note)
-	const noteBBox = getBBoxByGlyphName(noteGlyphName)
+	const noteBBox = SVGRenderer.getBBoxByGlyphName(noteGlyphName)
 	const accidentalGlyphName: Classes["accidentals"][number] | null = isNoteAccidental(note) ? calcNoteAccidental(note) :null 
 	const legerLineGlyphName: Ranges["staves"]["glyphs"][number] | null = isNoteLegerLine(note) ? searchLegerLineGlyphName(note) : null 
 	const pureNote = [{ element: "text", glyphName: noteGlyphName, ...noteBBox } as SMUFLText]
 	
 	if(accidentalGlyphName)
-		children.push({ type: "accidental", element: "text", glyphName: accidentalGlyphName, ...getBBoxByGlyphName(accidentalGlyphName)} as SMUFLText)
+		children.push({ type: "accidental", element: "text", glyphName: accidentalGlyphName, ...SVGRenderer.getBBoxByGlyphName(accidentalGlyphName)} as SMUFLText)
 	if(legerLineGlyphName)
-		pureNote.push({ type: "legerLine", element: "text", glyphName: legerLineGlyphName, ...getBBoxByGlyphName(legerLineGlyphName) } as SMUFLText)
+		pureNote.push({ type: "legerLine", element: "text", glyphName: legerLineGlyphName, ...SVGRenderer.getBBoxByGlyphName(legerLineGlyphName) } as SMUFLText)
 
 	children.push({ element: "g", ...noteBBox, children: pureNote } as SMUFLGroup)
 	
@@ -66,10 +65,3 @@ const calcNoteFraction = ({fraction}: Note): Metadata["noteFractions"][number]=>
 }
 const isNoteAccidental = (note: Note) => !(Metadata.baseWhiteKeys).some((key)=> key===calcNoteBasePitch(note))
 const isNoteLegerLine = (note: Note) => 0 === calcNotePosition(note)
-
-export const getBBoxByGlyphName = (glyphName: keyof Glyphnames) => {
-	const {bBoxNE, bBoxSW}= bravuraMetadata.glyphBBoxes[glyphName as keyof BravuraMetadata["glyphBBoxes"]]
-	const width = bBoxNE[0] - bBoxSW[0] 
-	const height = bBoxNE[1] - bBoxSW[1]
-	return {width, height};
-}

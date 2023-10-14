@@ -7,7 +7,6 @@ export interface SMUFLElement {
 	y?: number
 	x?: number
 	width: number
-	height?: number
 }
 export interface SMUFLGroup extends SMUFLElement{
 	element: "g"

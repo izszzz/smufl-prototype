@@ -15,7 +15,7 @@ function App() {
     })()
   }, [ref]);
   return (
-    <div ref={ref} className="App bravura" style={{padding: "30px"}}>
+    <div ref={ref} className="App bravura" style={{padding: "30px", height:"100vh"}}>
     </div>
   );
 }

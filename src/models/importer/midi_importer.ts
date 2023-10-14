@@ -7,7 +7,7 @@ import Note from "../note";
 
 
 export const MIDIImporter = async (): Promise<Score> => {
-	const midi = await Midi.fromUrl(`${process.env.PUBLIC_URL}/tests/test2.mid`)
+	const midi = await Midi.fromUrl(`${process.env.PUBLIC_URL}/tests/2tracktest.mid`)
 	console.log(midi)
 	const { name, tracks, header: { tempos, timeSignatures } } = midi;
 	const { bpm } = tempos[0]

@@ -6,6 +6,7 @@ import SVGScore from "./score";
 import Glyphnames from "../../../consts/metadata/glyphnames.json";
 import Metadata from "../../../consts/metadata.json";
 import { SMUFLGroup, SMUFLText } from "./interfaces";
+import BravuraMetadata from "../../../consts/metadata/bravura_metadata.json";
 
 class SVGRenderer {
 	element: HTMLElement;
@@ -13,6 +14,7 @@ class SVGRenderer {
 	svg: SVGSVGElement;
 	layoutMode: "page" | "scroll" = "page"
 	fontSize = 30;
+	fontSizeRatio = this.fontSize / Metadata.defaultFontSize
 	static svgRatio =  4;
 	constructor(element: HTMLElement, score: Score){
 		this.element = element;
@@ -21,15 +23,20 @@ class SVGRenderer {
 			"svg", 
 			{ 
 				width: "100%", 
+				height: "100%",
 				"font-size": this.fontSize
 			}
 		);
-		this.svg.appendChild(this.createSMULFElements(SVGScore(score)));
-		element.appendChild(this.svg);
-		this.svg.addEventListener("resize", ()=>{console.log("resize")})
+		this.upsertSVGElement();
+		// const resizeObserver = new ResizeObserver(([entrie])=>{
+		// 	if(svgScore.width * this.fontSizeRatio >= entrie.contentRect.width){
+		// 		console.log(entrie,"aaaaaaaaaaa")
+		// 	}
+		// })
+		// resizeObserver.observe(this.svg)
 	}
-	layout(){
-
+	ajustSpacing = ({children}: SMUFLGroup) => {
+		if(!children || children.length > 0) return;
 	}
 	createTransform(x: number, y:number){
 		const transform = this.svg.createSVGTransform()
@@ -54,6 +61,17 @@ class SVGRenderer {
 		)
 		return element
 	}
+	static getBBoxByGlyphName = (glyphName: keyof Glyphnames) => {
+		const {bBoxNE, bBoxSW}= BravuraMetadata.glyphBBoxes[glyphName as keyof BravuraMetadata["glyphBBoxes"]]
+		const width = bBoxNE[0] - bBoxSW[0] 
+		const height = bBoxNE[1] - bBoxSW[1]
+		return {width, height};
+	}
+	private upsertSVGElement = () => {
+		while (this.element.firstChild) this.element.firstChild.remove()
+		this.svg.appendChild(this.createSMULFElements(SVGScore(this.score)));
+		this.element.appendChild(this.svg);
+	}
 	private createUnicodeText = (code: string, attributes?: Parameters<typeof this.createSVGElement>[1] ) => 
 		 this.createText(code.replace('U+', '&#x'), attributes)
 	private createText (content: string, attributes?: Parameters<typeof this.createSVGElement>[1]) {
@@ -61,7 +79,7 @@ class SVGRenderer {
 		text.innerHTML = content
 		return text;
 	};
-	private createSMULFElements = ({width, children, element, ...props}: SMUFLGroup) => {
+	private createSMULFElements = ({ children, element, ...props}: SMUFLGroup) => {
 			const g = this.createSVGElement(element, props)
 			children?.forEach((child)=> {
 				if(child.element === "text") {
