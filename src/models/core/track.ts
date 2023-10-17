@@ -1,11 +1,11 @@
-import Bar from "./bar";
+import { Bar } from "./bar";
 
 interface TrackConstructorArgs{
 	bars: Bar[]
 	timeSignature?: [number, number]
 }
 
-class Track implements TrackConstructorArgs{
+export class Track implements TrackConstructorArgs{
 	bars;
 	timeSignature;
 	constructor({bars, timeSignature}: TrackConstructorArgs){
@@ -13,5 +13,3 @@ class Track implements TrackConstructorArgs{
 		this.timeSignature = timeSignature
 	}
 }
-
-export default Track;

@@ -1,11 +1,11 @@
+
 interface NoteConstructorArgs{
 	fraction: number;
 	pitch: number;
 	prevNote?: Note;
 	nextNote?: Note;
 }
-
-class Note implements NoteConstructorArgs{
+export class Note implements NoteConstructorArgs{
 	fraction
 	pitch
 	prevNote
@@ -17,5 +17,3 @@ class Note implements NoteConstructorArgs{
 		this.prevNote = prevNote;
 	}
 }
-
-export default Note;

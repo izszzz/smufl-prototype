@@ -1,9 +1,9 @@
 // @ts-ignore
 import { Midi } from "@tonejs/midi";
-import Score from "../score";
-import Track from "../track";
-import Bar from "../bar";
-import Note from "../note";
+import { Track } from "../core/track";
+import { Bar } from "../core/bar";
+import { Note } from "../core/note";
+import { Score } from "../core/score";
 
 
 export const MIDIImporter = async (): Promise<Score> => {

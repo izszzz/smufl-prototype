@@ -1,4 +1,4 @@
-import Track from "./track";
+import { Track } from "./track";
 
 
 interface ScoreConstructorArgs{
@@ -8,7 +8,7 @@ interface ScoreConstructorArgs{
 	timeSignature?: [number, number]
 }
 
-class Score implements ScoreConstructorArgs {
+export class Score implements ScoreConstructorArgs {
 	name
 	bpm
 	tracks
@@ -20,5 +20,3 @@ class Score implements ScoreConstructorArgs {
 		this.timeSignature = timeSignature
 	}
 }
-
-export default Score;

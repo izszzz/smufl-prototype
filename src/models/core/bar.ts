@@ -1,11 +1,11 @@
-import Note from "./note";
+import { Note } from "./note";
 
 interface BarConstructorArgs{
 	notes: Note[]
 	timeSignature?: [number, number]
 }
 
-class Bar implements BarConstructorArgs{
+export class Bar implements BarConstructorArgs{
 	notes
 	timeSignature
 	prevBar?: Bar;
@@ -15,5 +15,3 @@ class Bar implements BarConstructorArgs{
 		this.timeSignature = timeSignature
 	}
 }
-
-export default Bar

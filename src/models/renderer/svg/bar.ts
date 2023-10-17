@@ -1,53 +1,32 @@
-import Bar from "../../bar";
-import { SMUFLElement, SMUFLGroup, SMUFLText } from "./interfaces";
 import * as R from 'remeda';
 import bravuraMetadata from "../../../consts/metadata/bravura_metadata.json"
 import SVGNote from "./note";
-import Classes from "../../../consts/metadata/classes.json";
 import Metadata from "../../../consts/metadata.json";
 import Ranges from "../../../consts/metadata/ranges.json";
-import SVGRenderer from "./renderer";
+import { SMUFL, SMUFLElement, SMUFLGroup } from "./smufl";
+import { SMUFLBar } from '../../smufl/bar';
 
-export default function SVGBar(bar: Bar): SMUFLGroup{
+export default function SVGBar(bar: SMUFLBar): SMUFLGroup{
 	const staffLineCount: Metadata["staffLines"][number] = 5;
-	const clef: Classes["clefs"][number] = "gClef";
 	const children: SMUFLElement[] = []
-	const timeSigDenominator: Ranges["timeSignatures"]["glyphs"][number] = "timeSig4"
-	const timeSigNumerator: Ranges["timeSignatures"]["glyphs"][number] = "timeSig4"
-	if(!bar.prevBar) {
+	if(bar.clef) 
 		children.push(
-			{ 
-				type: "clef" ,
-				element: "text",
-				glyphName: clef,
-				y: -1,
-				...SVGRenderer.getBBoxByGlyphName(clef)
-			} as SMUFLText,
+			SMUFL.createText({ type: "clef" , glyphName: bar.clef, y: -1, }),
+		)
+	if(bar.timeSig)
+		children.push(
 			{ 
 				type: "timeSig",
 				element: "g",
 				y: -1,
 				children:[
-					{
-						element: "text",
-						glyphName: timeSigNumerator,
-						y: -2,
-						...SVGRenderer.getBBoxByGlyphName(timeSigNumerator)
-					}	as SMUFLText,
-					{
-						element: "text",
-						glyphName: timeSigDenominator,
-						...SVGRenderer.getBBoxByGlyphName(timeSigDenominator)
-					}	as SMUFLText
+					SMUFL.createText({ glyphName: bar.timeSig.numerator, y: -2, }),
+					SMUFL.createText({ glyphName: bar.timeSig.denominator })
 				],
-				...SVGRenderer.getBBoxByGlyphName(timeSigNumerator),
-			} as SMUFLGroup,
-
-		)
-		
-	}
+				...SMUFL.getBBoxByGlyphName(bar.timeSig?.numerator),
+			} as SMUFLGroup)
 	children.push(
-		...bar.notes.map(note => SVGNote(note)),
+		...bar.smuflNotes.map(note => SVGNote(note)),
 	)
 	const appended = appendStaff(appendBarLine(bar, children), staffLineCount)
 	return ({
@@ -57,22 +36,13 @@ export default function SVGBar(bar: Bar): SMUFLGroup{
 		children: appended
 	})
 }
-const appendBarLine = (bar: Bar,elements: SMUFLElement[]) =>{
-	elements.unshift({ 
-			type: "barline",
-			element: "text",
-			glyphName: "barlineSingle",
-			...SVGRenderer.getBBoxByGlyphName("barlineSingle")
-		} as SMUFLText
+const appendBarLine = (bar: SMUFLBar,elements: SMUFLElement[]) =>{
+	elements.unshift(
+		SMUFL.createText({ type: "barline", glyphName: bar.barline.start })
 	)
-	if(!bar.nextBar)
+	if(bar.barline.end)
 		elements.push(
-			{
-				type: "barline",
-				element: "text",
-				glyphName: "barlineFinal",
-				...SVGRenderer.getBBoxByGlyphName("barlineFinal")
-			} as SMUFLText
+			SMUFL.createText({ type: "barline", glyphName: bar.barline.end })
 		)
 	return elements
 }
@@ -100,14 +70,9 @@ const appendStaff = (elements: SMUFLElement[], staffLineCount: number): SMUFLGro
 				x: staffs.reduce((acc, value)=> acc + value.width, 0),
 				children: [
 					element,
-					{
-						element: "text",
-						glyphName: staff?.key ?? "staff5LinesWide",
-						...SVGRenderer.getBBoxByGlyphName(staff?.key ?? "staff5LinesWide")
-					} as SMUFLText
+					SMUFL.createText({ glyphName: staff?.key ?? "staff5LinesWide" })
 				]
 			}))
-
 	}
 	return staffs
 }
