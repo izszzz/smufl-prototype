@@ -1,23 +1,27 @@
 import Metadata from "../../consts/metadata.json";
 import BravuraMetadata from "../../consts/metadata/bravura_metadata.json";
-import Classes from "../../consts/metadata/classes.json";
 import Ranges from "../../consts/metadata/ranges.json";
 import { Note } from "../core/note";
+import { SMUFLElement } from "./element";
+import { SMUFLGlyph } from "./glyph";
 
-export class SMUFLNote {
-	private note: Note;
-	individualNote: Ranges["individualNotes"]["glyphs"][number] // TODO: exclude agumentationDot
-	accidental?: Classes["accidentals"][number]
-	legerLine?: Ranges["staves"]["glyphs"][number] // TODO: extract legerline
-	augmentationDot?: Extract<Ranges["individualNotes"]["glyphs"][number], "augumentationDot">
-	y: number;
+export class SMUFLNote extends SMUFLElement{
+	glyphs: SMUFLGlyph[] = [];
 	constructor(note: Note){
-		this.note = note
-		this.individualNote = this.searchNoteGlyphName(note)
+		super()
 		this.y = this.calcNoteY(note);
-		if(this.isNoteAccidental(note)) this.accidental = this.calcNoteAccidental(note)
-		if(this.isNoteLegerLine(note)) this.legerLine = this.searchLegerLineGlyphName(note)
+		const individualNote = new SMUFLGlyph(this, this.searchNoteGlyphName(note))
+		this.glyphs.push(individualNote)
+
+		if(this.isNoteAccidental(note)) {
+			const accidental = new SMUFLGlyph(this, this.calcNoteAccidental(note))
+			this.glyphs.push(accidental)
+			individualNote.x = accidental.staffWidth
+		}
+
+		if(this.isNoteLegerLine(note)) this.glyphs.push(new SMUFLGlyph(this, this.searchLegerLineGlyphName(note), {overlap: true}))
 	}
+
 	private searchNoteGlyphName = (note: Note) => 
 		Ranges.individualNotes.glyphs
 			.filter((glyphName) => glyphName !== "augmentationDot")

@@ -7,15 +7,13 @@ import { Score } from "../core/score";
 
 
 export const MIDIImporter = async (): Promise<Score> => {
-	const midi = await Midi.fromUrl(`${process.env.PUBLIC_URL}/tests/2tracktest.mid`)
+	const midi = await Midi.fromUrl(`${process.env.PUBLIC_URL}/tests/test.mid`)
 	console.log(midi)
 	const { name, tracks, header: { tempos, timeSignatures } } = midi;
-	const { bpm } = tempos[0]
-	const { timeSignature } = timeSignatures[0]
 	return new Score({
 			name, 
-			bpm,
-			timeSignature: [timeSignature[0], timeSignature[1]],
+			bpm: tempos.length ? tempos[0].bpm : undefined,
+			timeSignature: timeSignatures.length ? [timeSignatures[0].timeSignature[0], timeSignatures[0].timeSignature[1]] : undefined,
 			tracks: tracks.map(({notes: midiNotes}) =>
 				new Track({bars:(()=>{
 					const bars: Bar[] = []

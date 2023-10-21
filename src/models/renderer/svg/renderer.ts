@@ -27,7 +27,8 @@ class SVGRenderer {
 			}
 		);
 		this.upsertSVGElement();
-		console.log(new SMUFLScore(this.score))
+		console.log(new SMUFLScore(this.score, this.svg.clientWidth))
+		console.log(SVGScore(new SMUFLScore(this.score, this.svg.clientWidth)));
 	}
 	ajustSpacing = ({children: tracks}: SMUFLGroup) => {
 		if(!tracks || tracks.length > 0) return;
@@ -56,7 +57,7 @@ class SVGRenderer {
 		while (this.element.firstChild) this.element.firstChild.remove()
 		this.element
 			.appendChild(this.svg)
-			.appendChild(this.createSMULFElements(SVGScore(new SMUFLScore(this.score))));
+			.appendChild(this.createSMULFElements(SVGScore(new SMUFLScore(this.score, this.svg.clientWidth))));
 	}
 	private createUnicodeText = (code: string, attributes?: Parameters<typeof this.createSVGElement>[1] ) => 
 		 this.createText(code.replace('U+', '&#x'), attributes)
@@ -77,11 +78,11 @@ class SVGRenderer {
 			})
 			return g
 	}
-	private createSVGScore=(smuflScore: SMUFLScore)=>{
-		smuflScore.smuflTracks.map(
+	private createSVGScore=(score: SMUFLScore)=>{
+		score.tracks.map(
 			track=>
-				track.smuflBars.map(bar=>
-					bar.smuflNotes.map(note => {
+				track.bars.map(bar=>
+					bar.notes.map(note => {
 						
 					})
 				)

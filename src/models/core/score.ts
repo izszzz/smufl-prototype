@@ -1,6 +1,5 @@
 import { Track } from "./track";
 
-
 interface ScoreConstructorArgs{
 	tracks: Track[];
 	name?: string;

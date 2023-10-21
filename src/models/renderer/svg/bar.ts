@@ -5,28 +5,27 @@ import Metadata from "../../../consts/metadata.json";
 import Ranges from "../../../consts/metadata/ranges.json";
 import { SMUFL, SMUFLElement, SMUFLGroup } from "./smufl";
 import { SMUFLBar } from '../../smufl/bar';
+import { SMUFLGlyph } from '../../smufl/glyph';
 
 export default function SVGBar(bar: SMUFLBar): SMUFLGroup{
 	const staffLineCount: Metadata["staffLines"][number] = 5;
 	const children: SMUFLElement[] = []
 	if(bar.clef) 
-		children.push(
-			SMUFL.createText({ type: "clef" , glyphName: bar.clef, y: -1, }),
-		)
+		children.push(SMUFL.createText({ type: "clef" , ...bar.clef, y: -1, }))
 	if(bar.timeSig)
 		children.push(
 			{ 
 				type: "timeSig",
 				element: "g",
-				y: -1,
 				children:[
-					SMUFL.createText({ glyphName: bar.timeSig.numerator, y: -2, }),
-					SMUFL.createText({ glyphName: bar.timeSig.denominator })
+					SMUFL.createText({ ...bar.timeSig.numerator, y: -2, }),
+					SMUFL.createText({ ...bar.timeSig.denominator })
 				],
-				...SMUFL.getBBoxByGlyphName(bar.timeSig?.numerator),
+				...bar.timeSig.numerator,
+				y: -1,
 			} as SMUFLGroup)
 	children.push(
-		...bar.smuflNotes.map(note => SVGNote(note)),
+		...bar.notes.map(note => SVGNote(note)),
 	)
 	const appended = appendStaff(appendBarLine(bar, children), staffLineCount)
 	return ({
@@ -37,13 +36,8 @@ export default function SVGBar(bar: SMUFLBar): SMUFLGroup{
 	})
 }
 const appendBarLine = (bar: SMUFLBar,elements: SMUFLElement[]) =>{
-	elements.unshift(
-		SMUFL.createText({ type: "barline", glyphName: bar.barline.start })
-	)
-	if(bar.barline.end)
-		elements.push(
-			SMUFL.createText({ type: "barline", glyphName: bar.barline.end })
-		)
+	elements.unshift(SMUFL.createText({ type: "barline", ...bar.barline.start }))
+	if(bar.barline.end) elements.push(SMUFL.createText({ type: "barline", ...bar.barline.end }))
 	return elements
 }
 const appendStaff = (elements: SMUFLElement[], staffLineCount: number): SMUFLGroup[] =>{
@@ -70,7 +64,7 @@ const appendStaff = (elements: SMUFLElement[], staffLineCount: number): SMUFLGro
 				x: staffs.reduce((acc, value)=> acc + value.width, 0),
 				children: [
 					element,
-					SMUFL.createText({ glyphName: staff?.key ?? "staff5LinesWide" })
+					SMUFL.createText({ glyphName: staff?.key ?? "staff5LinesWide", ...SMUFLGlyph.getBBoxByGlyphName(staff?.key ?? "staff5LinesWide") })
 				]
 			}))
 	}

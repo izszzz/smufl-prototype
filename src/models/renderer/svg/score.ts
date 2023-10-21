@@ -3,7 +3,7 @@ import { SMUFLGroup } from "./smufl";
 import SVGTrack from "./track";
 
 function SVGScore( score:SMUFLScore): SMUFLGroup{
-	const children = score.smuflTracks.map(track => SVGTrack(track))
+	const children = score.tracks.map(track => SVGTrack(track))
 	return ({
 		type: "score", 
 		element: "g",

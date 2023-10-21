@@ -4,7 +4,7 @@ import { SMUFLGroup } from "./smufl";
 
 export default function SVGTrack(track: SMUFLTrack): SMUFLGroup {
 	let x = 0
-	const children = track.smuflBars
+	const children = track.bars
 		.map((bar)=>SVGBar(bar))
 		.map((child, i, array) => {
 			if(array[i-1]) x += array[i -1].width
