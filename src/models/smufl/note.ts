@@ -6,20 +6,13 @@ import { SMUFLElement } from "./element";
 import { SMUFLGlyph } from "./glyph";
 
 export class SMUFLNote extends SMUFLElement{
-	glyphs: SMUFLGlyph[] = [];
+	glyphs: (SMUFLGlyph| SMUFLGlyph[])[] = [];
 	constructor(note: Note){
 		super()
 		this.y = this.calcNoteY(note);
-		const individualNote = new SMUFLGlyph(this, this.searchNoteGlyphName(note))
-		this.glyphs.push(individualNote)
-
-		if(this.isNoteAccidental(note)) {
-			const accidental = new SMUFLGlyph(this, this.calcNoteAccidental(note))
-			this.glyphs.push(accidental)
-			individualNote.x = accidental.staffWidth
-		}
-
-		if(this.isNoteLegerLine(note)) this.glyphs.push(new SMUFLGlyph(this, this.searchLegerLineGlyphName(note), {overlap: true}))
+		this.glyphs.push(new SMUFLGlyph(this, this.searchNoteGlyphName(note), {y: this.y}))
+		if(this.isNoteLegerLine(note)) this.glyphs.push([this.glyphs.pop() as SMUFLGlyph, new SMUFLGlyph(this, this.searchLegerLineGlyphName(note), {y: this.y})])
+		if(this.isNoteAccidental(note)) this.glyphs.unshift(new SMUFLGlyph(this, this.calcNoteAccidental(note)))
 	}
 
 	private searchNoteGlyphName = (note: Note) => 

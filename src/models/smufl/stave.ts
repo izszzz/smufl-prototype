@@ -1,17 +1,25 @@
+import { SMUFLStaff } from "./staff";
 import { SMUFLTrack } from "./track";
 
 export class SMUFLStave{
-	staffs: number[] = []
+	staves: SMUFLStaff[][][] = []
 
 	constructor(tracks: SMUFLTrack[]) {
-		tracks.forEach(track=>{
-			track.bars.forEach((bar, i)=>{
-				if(bar.clef) this.staffs.push(bar.clef.staffWidth)
-				if(bar.timeSig) this.staffs.push(bar.timeSig.numerator.staffWidth)
-				bar.notes.forEach(note => {
-					// if(note.accidental) this.staffs.push(note.accidental.staffWidth)
-					// this.staffs.push(note.individualNote.staffWidth)
-				})
+		tracks.forEach((track, trackIndex)=>{
+			this.staves[trackIndex] = []
+			track.bars.forEach((bar, barIndex)=>{
+				this.staves[trackIndex][barIndex] = []
+					this.staves[trackIndex][barIndex].push(
+						...[...bar.glyphs, ...bar.notes.flatMap(note=>note.glyphs)].reduce<{staffs: SMUFLStaff[], prev: SMUFLStaff | null}>(
+							(acc, cur) => {
+								const staff = new SMUFLStaff(Array.isArray(cur) ? cur : [cur], acc.prev)
+								acc.staffs.push(staff)
+								acc.prev = staff
+								return acc
+							},
+							{staffs:[], prev: null}
+						).staffs
+					)
 			})
 		})
 	}

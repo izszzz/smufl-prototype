@@ -1,9 +1,7 @@
 import * as R from "remeda"
 import glyphNames from "../../../consts/metadata/glyphnames.json"
-import SVGScore from "./score";
 import Glyphnames from "../../../consts/metadata/glyphnames.json";
 import Metadata from "../../../consts/metadata.json";
-import { SMUFLGroup, SMUFLText } from "./smufl";
 import { Score } from "../../core/score";
 import { SMUFLScore } from "../../smufl/score";
 
@@ -27,11 +25,6 @@ class SVGRenderer {
 			}
 		);
 		this.upsertSVGElement();
-		console.log(new SMUFLScore(this.score, this.svg.clientWidth))
-		console.log(SVGScore(new SMUFLScore(this.score, this.svg.clientWidth)));
-	}
-	ajustSpacing = ({children: tracks}: SMUFLGroup) => {
-		if(!tracks || tracks.length > 0) return;
 	}
 	createTransform(x: number, y:number){
 		const transform = this.svg.createSVGTransform()
@@ -57,7 +50,7 @@ class SVGRenderer {
 		while (this.element.firstChild) this.element.firstChild.remove()
 		this.element
 			.appendChild(this.svg)
-			.appendChild(this.createSMULFElements(SVGScore(new SMUFLScore(this.score, this.svg.clientWidth))));
+			.appendChild(this.createSVGScore(new SMUFLScore(this.score, this.svg.clientWidth)));
 	}
 	private createUnicodeText = (code: string, attributes?: Parameters<typeof this.createSVGElement>[1] ) => 
 		 this.createText(code.replace('U+', '&#x'), attributes)
@@ -66,27 +59,23 @@ class SVGRenderer {
 		text.innerHTML = content
 		return text;
 	};
-	private createSMULFElements = ({ children, element, ...props}: SMUFLGroup) => {
-			const g = this.createSVGElement(element, props)
-			children?.forEach((child)=> {
-				if(child.element === "text") {
-					const { glyphName, type, element, ...props } = child as SMUFLText
-					g.appendChild(this.createSMULFSVGElement(glyphName, props))
-				}
-				if(child.element === "g")
-					g.appendChild(this.createSMULFElements(child as SMUFLGroup))
-			})
-			return g
-	}
 	private createSVGScore=(score: SMUFLScore)=>{
-		score.tracks.map(
-			track=>
-				track.bars.map(bar=>
-					bar.notes.map(note => {
-						
-					})
-				)
-		)
+		const root = this.createSVGElement("g")
+		score.stave.staves.forEach((trackStave, i)=>{
+			const track = this.createSVGElement("g", {type: "track", y: 15 * (i + 1)})
+			root.appendChild(track)
+			trackStave.forEach((barStave, i)=>{
+				const bar = this.createSVGElement("g", {type: "bar", y: 15 * (i + 1)})
+				track.appendChild(bar)
+				barStave.forEach(({glyphs, staffGlyph, ...props})=> {
+					const staff = this.createSVGElement("g", props)
+					bar.appendChild(staff)
+					if(staffGlyph) staff.appendChild(this.createSMULFSVGElement(staffGlyph.glyphName, R.omit(staffGlyph, ["glyphName", "parent", "options"])))
+					glyphs.forEach(glyph=> staff.appendChild(this.createSMULFSVGElement(glyph.glyphName, R.omit(glyph, ["glyphName", "parent", "options"]))))
+				})
+			})
+		})
+		return root
 	}
 }
 export default SVGRenderer;
