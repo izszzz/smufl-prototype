@@ -10,9 +10,9 @@ export class SMUFLNote extends SMUFLElement{
 	constructor(note: Note){
 		super()
 		this.y = this.calcNoteY(note);
-		this.glyphs.push(new SMUFLGlyph(this, this.searchNoteGlyphName(note), {y: this.y}))
-		if(this.isNoteLegerLine(note)) this.glyphs.push([this.glyphs.pop() as SMUFLGlyph, new SMUFLGlyph(this, this.searchLegerLineGlyphName(note), {y: this.y})])
-		if(this.isNoteAccidental(note)) this.glyphs.unshift(new SMUFLGlyph(this, this.calcNoteAccidental(note)))
+		this.glyphs.push(new SMUFLGlyph(this.searchNoteGlyphName(note), {y: this.y}))
+		if(this.isNoteLegerLine(note)) this.glyphs.push([this.glyphs.pop() as SMUFLGlyph, new SMUFLGlyph(this.searchLegerLineGlyphName(note), {y: this.y})])
+		if(this.isNoteAccidental(note)) this.glyphs.unshift(new SMUFLGlyph(this.calcNoteAccidental(note), {y: this.y}))
 	}
 
 	private searchNoteGlyphName = (note: Note) => 
@@ -23,13 +23,13 @@ export class SMUFLNote extends SMUFLElement{
 			.filter((fraction) => fraction.includes(String(this.calcNoteStem(note))))[0]
 	private searchLegerLineGlyphName = (note: Note) => 
 		Ranges.staves.glyphs
-			.filter((glyphName) => glyphName.includes("legerLine"))[0]
+			.filter((glyphName) => glyphName.includes("legerLine"))[0] // TODO: middle C以外のlegerlineも表示できるようにする
 			// .filter((legerLineGlyphName) =>calcNoteFraction(note))
 			// .filter((fraction) => fraction)[0]
 	private ajustNotePitch = ({pitch}:Note) => pitch - Metadata.midiMiddleC
 	private calcNoteBasePitch = (note: Note) => this.ajustNotePitch(note) % Metadata.baseOctaveKeys.length as Metadata["baseOctaveKeys"][number]
 	private calcNoteAccidental = ({prevNote, pitch}: Note) => !prevNote ? "accidentalSharp": prevNote.pitch < pitch ? "accidentalSharp" : "accidentalFlat";
-	private calcNoteStem = (note: Note) => this.ajustNotePitch(note) >= 11 ? "Down" : "Up"
+	private calcNoteStem = (note: Note) => this.ajustNotePitch(note) >= Metadata.baseOctaveKeys.length ? "Down" : "Up"
 	private calcNoteOctave = (note: Note) => Math.trunc(this.ajustNotePitch(note) / Metadata.baseOctaveKeys.length)
 	private calcNoteOctaveY = (note: Note) => this.calcNoteOctave(note) * (Metadata.baseWhiteKeys.length + 1)
 	private calcNotePosition = (note: Note) =>{

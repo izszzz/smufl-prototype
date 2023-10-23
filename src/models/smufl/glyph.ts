@@ -7,14 +7,12 @@ interface SMUFLGlyphOptions{
 	overlap?: boolean
 }
 export class SMUFLGlyph<T extends keyof Glyphnames = keyof Glyphnames> extends SMUFLElement{
-	parent: SMUFLElement;
 	glyphName: T;
 	options?: SMUFLGlyphOptions
-	constructor(parent: SMUFLElement, glyphName: T, options?: SMUFLGlyphOptions) {
+	constructor(glyphName: T, options?: SMUFLGlyphOptions) {
 		super()
-		const {width, height} = SMUFLGlyph.getBBoxByGlyphName(glyphName)
+		const {width, height} = this.#getBBoxByGlyphName(glyphName)
 		this.glyphName = glyphName
-		this.parent = parent
 		this.width = width
 		this.height = height
 		this.options = options
@@ -23,7 +21,7 @@ export class SMUFLGlyph<T extends keyof Glyphnames = keyof Glyphnames> extends S
 			if(options.y) this.y = options.y
 		}
 	}
-	static getBBoxByGlyphName = (glyphName: keyof Glyphnames) => {
+	#getBBoxByGlyphName = (glyphName: keyof Glyphnames) => {
 		const {bBoxNE, bBoxSW}= BravuraMetadata.glyphBBoxes[glyphName as keyof BravuraMetadata["glyphBBoxes"]]
 		const width = bBoxNE[0] - bBoxSW[0] 
 		const height = bBoxNE[1] - bBoxSW[1]

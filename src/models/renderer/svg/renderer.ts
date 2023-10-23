@@ -60,18 +60,19 @@ class SVGRenderer {
 		return text;
 	};
 	private createSVGScore=(score: SMUFLScore)=>{
+		console.log(score)
 		const root = this.createSVGElement("g")
-		score.stave.staves.forEach((trackStave, i)=>{
+		score.stave.trackStaffs.forEach((trackStave, i)=>{
 			const track = this.createSVGElement("g", {type: "track", y: 15 * (i + 1)})
 			root.appendChild(track)
-			trackStave.forEach((barStave, i)=>{
-				const bar = this.createSVGElement("g", {type: "bar", y: 15 * (i + 1)})
+			trackStave.barStaffs.forEach((barStave)=>{
+				const bar = this.createSVGElement("g", {type: "bar", x: barStave.x })
 				track.appendChild(bar)
-				barStave.forEach(({glyphs, staffGlyph, ...props})=> {
-					const staff = this.createSVGElement("g", props)
+				barStave.glyphs.forEach(({glyphs, staffGlyph, ...props}) => {
+					const staff = this.createSVGElement("g", {type: "note", ...props})
 					bar.appendChild(staff)
-					if(staffGlyph) staff.appendChild(this.createSMULFSVGElement(staffGlyph.glyphName, R.omit(staffGlyph, ["glyphName", "parent", "options"])))
-					glyphs.forEach(glyph=> staff.appendChild(this.createSMULFSVGElement(glyph.glyphName, R.omit(glyph, ["glyphName", "parent", "options"]))))
+					staff.appendChild(this.createSMULFSVGElement(staffGlyph.glyphName, R.omit(staffGlyph, ["glyphName", "options"])))
+					glyphs.forEach(glyph=> staff.appendChild(this.createSMULFSVGElement(glyph.glyphName, R.omit(glyph, ["glyphName", "options"]))))
 				})
 			})
 		})
