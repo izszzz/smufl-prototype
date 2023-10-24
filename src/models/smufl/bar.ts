@@ -14,6 +14,7 @@ export class SMUFLBar extends SMUFLElement {
 		start: new SMUFLGlyph("barlineSingle"),
 	}
 	constructor(bar: Bar){
+		console.log(bar)
 		super()
 		this.notes = bar.notes.map(note => new SMUFLNote(note))
 		if(!bar.prevBar) {

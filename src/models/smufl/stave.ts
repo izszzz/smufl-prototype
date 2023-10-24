@@ -20,7 +20,8 @@ export class SMUFLStave{
 		tracks.forEach((track)=>{
 			const {barStaffs}= track.bars.reduce<{barStaffs: BarStaff[], prev: BarStaff | null}>((acc, cur)=>
 				{
-					const staffGlyphs = [...cur.glyphs, ...cur.notes.flatMap(note=>note.glyphs)]
+					const staffGlyphs = [cur.barline.start, ...cur.glyphs, ...cur.notes.flatMap(note=>note.glyphs)]
+					if(cur.barline.end) staffGlyphs.push(cur.barline.end)
 					const {glyphs, width} = staffGlyphs.reduce<{glyphs: SMUFLStaff[], prev: SMUFLStaff | null, width: number}>(
 							(acc, cur) => {
 								const staffGlyph = new SMUFLStaff(Array.isArray(cur) ? cur : [cur], acc.prev, track.staffLineCount)
