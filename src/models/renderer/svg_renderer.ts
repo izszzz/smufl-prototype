@@ -1,19 +1,24 @@
 import * as R from "remeda"
-import glyphNames from "../../../consts/metadata/glyphnames.json"
-import Glyphnames from "../../../consts/metadata/glyphnames.json";
-import Metadata from "../../../consts/metadata.json";
-import { Score } from "../../core/score";
-import { SMUFLScore } from "../../smufl/score";
+import glyphNames from "../../consts/metadata/glyphnames.json"
+import Glyphnames from "../../consts/metadata/glyphnames.json";
+import Metadata from "../../consts/metadata.json";
+import { Score } from "../core/score";
+import { SMUFLScore } from "../smufl/score";
+import { SMUFLGlyph } from "../smufl/glyph";
+import { SMUFLLigature } from "../smufl/ligature";
+interface SVGRendererOptions{
+	layoutMode: "PAGE" | "VerticalScroll" | "HorizontalScroll"
+	fontSize: number
+}
 
 class SVGRenderer {
 	element: HTMLElement;
 	score: Score
 	svg: SVGSVGElement;
-	layoutMode: "page" | "scroll" = "page"
-	fontSize = 30;
+	layoutMode: SVGRendererOptions["layoutMode"] = "VerticalScroll"
+	fontSize: SVGRendererOptions["fontSize"] = 30;
 	fontSizeRatio = this.fontSize / Metadata.defaultFontSize
-	static svgRatio =  4;
-	constructor(element: HTMLElement, score: Score){
+	constructor(element: HTMLElement, score: Score, options?: SVGRendererOptions){
 		this.element = element;
 		this.score = score;
 		this.svg = this.createSVGElement(
@@ -25,6 +30,10 @@ class SVGRenderer {
 			}
 		);
 		this.upsertSVGElement();
+		if(options){
+			if(options.fontSize) this.fontSize = options.fontSize
+			if(options.layoutMode) this.layoutMode= options.layoutMode
+		}
 	}
 	createTransform(x: number, y:number){
 		const transform = this.svg.createSVGTransform()
@@ -63,16 +72,17 @@ class SVGRenderer {
 		console.log(score)
 		const root = this.createSVGElement("g")
 		score.stave.trackStaffs.forEach((trackStave, i)=>{
-			const track = this.createSVGElement("g", {type: "track", y: 15 * (i + 1)})
+			const track = this.createSVGElement("g", {type: "track", y: 10 * (i + 1)})
 			root.appendChild(track)
 			trackStave.barStaffs.forEach((barStave)=>{
 				const bar = this.createSVGElement("g", {type: "bar", x: barStave.x })
 				track.appendChild(bar)
-				barStave.glyphs.forEach(({glyphs, staffGlyph, ...props}) => {
+				barStave.staffs.forEach(({glyph, staffGlyph, ...props}) => {
 					const staff = this.createSVGElement("g", {type: "note", ...props})
 					bar.appendChild(staff)
-					staff.appendChild(this.createSMULFSVGElement(staffGlyph.glyphName, R.omit(staffGlyph, ["glyphName", "options"])))
-					glyphs.forEach(glyph=> staff.appendChild(this.createSMULFSVGElement(glyph.glyphName, R.omit(glyph, ["glyphName", "options"]))))
+					staff.appendChild(this.createSMULFSVGElement(staffGlyph.glyphName, {...staffGlyph}))
+					if (glyph instanceof SMUFLGlyph) staff.appendChild(this.createSMULFSVGElement(glyph.glyphName, {...glyph}))
+					if (glyph instanceof SMUFLLigature) glyph.glyphs.forEach(g => staff.appendChild(this.createSMULFSVGElement(g.glyphName, {...g})))
 				})
 			})
 		})

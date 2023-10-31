@@ -4,43 +4,28 @@ import { SMUFLElement } from "./element";
 import { SMUFLGlyph } from "./glyph";
 import BravuraMetadata from '../../consts/metadata/bravura_metadata.json';
 import Metadata from '../../consts/metadata.json';
+import { SMUFLLigature } from './ligature';
 
 export class SMUFLStaff extends SMUFLElement{
-	prev: SMUFLStaff | null;
-	glyphs: SMUFLGlyph[]
+	glyph?: SMUFLGlyph | SMUFLLigature
 	staffGlyph: SMUFLGlyph
-	lineCount: Metadata["staffLines"][number];
-	constructor(glyphs: SMUFLGlyph[], prev: SMUFLStaff | null, lineCount: Metadata["staffLines"][number]){
+	width: number;
+	constructor(width: number, lineCount:Metadata["staffLines"][number] , glyph?: SMUFLGlyph | SMUFLLigature){
 		super()
-		this.glyphs = glyphs
-		this.prev = prev
-		this.lineCount = lineCount
-
-		const maxWidthGlyph = this.#getMaxWidthGlyph(this.glyphs)
-		if(!R.isDefined(maxWidthGlyph)) throw new Error("glyphs empty")
-
-		const staffWidth = this.#calcStaffWidth(maxWidthGlyph)
-		if(!R.isDefined(staffWidth)) throw new Error("staff not exist")
-
-		this.staffGlyph = new SMUFLGlyph(staffWidth)
+		const glyphName = SMUFLStaff.getStaffGlyph(width, lineCount)?.key
+		this.staffGlyph = new SMUFLGlyph(glyphName)
 		this.width = this.staffGlyph.width
-		if(prev) this.x += prev.x + (prev.staffGlyph?.width ?? 0)
+		this.glyph = glyph
 	}
-
-	#getMaxWidthGlyph=(glyphs:SMUFLGlyph[])=>
-		R.pipe(
-			glyphs,
-			R.sortBy.strict((glyph) => glyph.width),
-			R.last()
-		)
-
-	#calcStaffWidth = (glyph: SMUFLGlyph) =>
-		R.pipe(
+	static getStaffGlyph = (width: number, lineCount: Metadata["staffLines"][number]) => {
+		const glyph = R.pipe(
 			Ranges.staves.glyphs,
-			R.filter(staff => staff.includes(`staff${this.lineCount}Line`)),
+			R.filter(staff => staff.includes(`staff${lineCount}Line`)),
 			R.map.strict((key) => ({ key, width: BravuraMetadata.glyphAdvanceWidths[key] })),
-			R.filter(({width})=>  glyph.width <= width ),
-			R.sortBy.strict((x) => x.width),
-			R.first()
-		)?.key
+			R.filter(({width: staveWidth})=>  width <= staveWidth),
+			R.minBy((x) => x.width),
+		)
+		if(R.isNil(glyph)) throw new Error()
+		return glyph
+	}
 }

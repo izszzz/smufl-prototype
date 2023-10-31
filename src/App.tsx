@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import SVGRenderer from './models/renderer/svg/renderer';
+import SVGRenderer from './models/renderer/svg_renderer';
 //@ts-ignore
 import { MIDIImporter } from './models/importer/midi_importer';
 

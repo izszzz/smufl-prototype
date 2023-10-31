@@ -1,24 +1,19 @@
+import * as R from 'remeda';
 import Glyphnames from "../../consts/metadata/glyphnames.json";
 import BravuraMetadata from '../../consts/metadata/bravura_metadata.json';
 import { SMUFLElement } from './element';
-interface SMUFLGlyphOptions{
-	x?: number
-	y?: number
-	overlap?: boolean
-}
+
 export class SMUFLGlyph<T extends keyof Glyphnames = keyof Glyphnames> extends SMUFLElement{
 	glyphName: T;
-	options?: SMUFLGlyphOptions
-	constructor(glyphName: T, options?: SMUFLGlyphOptions) {
+	constructor(glyphName: T, coord?: {x?: number, y?: number}) {
 		super()
 		const {width, height} = this.#getBBoxByGlyphName(glyphName)
 		this.glyphName = glyphName
 		this.width = width
 		this.height = height
-		this.options = options
-		if(options){
-			if(options.x) this.x = options.x
-			if(options.y) this.y = options.y
+		if(R.isDefined(coord)){
+			if(coord.x) this.x = coord.x
+			if(coord.y) this.y = coord.y
 		}
 	}
 	#getBBoxByGlyphName = (glyphName: keyof Glyphnames) => {
