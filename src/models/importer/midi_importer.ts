@@ -8,7 +8,6 @@ import { Score } from "../core/score";
 
 export const MIDIImporter = async (): Promise<Score> => {
 	const midi = await Midi.fromUrl(`${process.env.PUBLIC_URL}/tests/2tracktest.mid`)
-	console.log(midi)
 	const { name, tracks, header: { tempos, timeSignatures } } = midi;
 	return new Score({
 			name, 

@@ -3,14 +3,16 @@ import Metadata from "../../consts/metadata.json";
 import BravuraMetadata from "../../consts/metadata/bravura_metadata.json";
 import Ranges from "../../consts/metadata/ranges.json";
 import { Note } from "../core/note";
-import { SMUFLElement } from "./element";
 import { SMUFLGlyph } from "./glyph";
 import { SMUFLLigature } from './ligature';
+import { Spacing } from './spacing';
+import { SMUFLCoord } from './coord';
 
-export class SMUFLNote extends SMUFLElement{
+export class SMUFLNote extends SMUFLCoord{
 	note: Note;
 	accidental?: SMUFLGlyph
 	glyph: SMUFLGlyph | SMUFLLigature;
+	spacing = new Spacing()
 	constructor(note: Note){
 		super()
 		this.note = note

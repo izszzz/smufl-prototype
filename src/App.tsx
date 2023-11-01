@@ -8,10 +8,7 @@ function App() {
   useEffect(()=>{
     (async()=>{
       const score = await MIDIImporter()
-      console.log(score)
-      if(ref.current){
-        const svg_renderer = new SVGRenderer(ref.current, score);
-      }
+      if(ref.current) new SVGRenderer(ref.current, score);
     })()
   }, [ref]);
   return (

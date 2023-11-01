@@ -23,15 +23,16 @@ export class SMUFLStave{
 		return { barStaffs: track.bars.map((bar)=> this.#generateBarStaff(bar, track.staffLineCount)) }
 	}
 	#generateBarStaff(bar: SMUFLBar, lineCount: SMUFLTrack["staffLineCount"]): BarStaff{
-		const barStaffs = bar.glyphs.map(glyph => new SMUFLStaff(glyph.width, 5, glyph))
+		const barStaffs = bar.glyphs.map(glyph => new SMUFLStaff(glyph.staffWidth, lineCount, glyph))
 		const noteStaffs =  bar.notes.reduce<SMUFLStaff[]>((acc, cur) => {
-			[...Array(cur.spacing.left)].forEach(()=>acc.push(new SMUFLStaff(1, lineCount)))
-			if(R.isDefined(cur.accidental)) acc.push(new SMUFLStaff(cur.accidental.width,lineCount, cur.accidental))
-			acc.push(new SMUFLStaff(cur.glyph.width, lineCount, cur.glyph))
+			acc.push(...R.times(cur.spacing.left, ()=>new SMUFLStaff(1, lineCount))) // TODO: 定数
+			if(R.isDefined(cur.accidental)) acc.push(new SMUFLStaff(cur.accidental.staffWidth, lineCount, cur.accidental))
+			acc.push(new SMUFLStaff(cur.glyph.staffWidth, lineCount, cur.glyph))
+			acc.push(...R.times(cur.spacing.right, ()=>new SMUFLStaff(1, lineCount))) // TODO: 定数
 			return acc
 		}, [])
-		const staffs = [new SMUFLStaff(bar.barline.start.width, lineCount, bar.barline.start), ...barStaffs, ...noteStaffs]
-		if(bar.barline.end)staffs.push(new SMUFLStaff(bar.barline.end.width, lineCount, bar.barline.end))
+		const staffs = [new SMUFLStaff(bar.barline.start.staffWidth, lineCount, bar.barline.start), ...barStaffs, ...noteStaffs]
+		if(bar.barline.end)staffs.push(new SMUFLStaff(bar.barline.end.staffWidth, lineCount, bar.barline.end))
 
 		return {
 			staffs, 
@@ -40,13 +41,23 @@ export class SMUFLStave{
 	}
 
 	#ajustSpacing(tracks: SMUFLTrack[]): SMUFLTrack[]{
-		const verticalBars = tracks[0].bars.flatMap((_,barIndex)=> tracks.map((track)=>track.bars[barIndex]))
-		const verticalNotes = verticalBars[0].notes.flatMap((_,noteIndex)=>verticalBars.map((verticalBar)=> verticalBar.notes[noteIndex]))
-		const maxWidthVerticalNote = R.pipe(verticalNotes,R.sortBy(note=>note.width), R.last())
-		if(maxWidthVerticalNote) verticalNotes.forEach(note => {
-			if(note.width !== maxWidthVerticalNote.width) note.spacing.left += maxWidthVerticalNote.width - note.width
+		const verticalNotesCollection = tracks[0].bars.map((_, barIndex)=>tracks.map(track=>track.bars[barIndex])).map((verticalBars)=>
+			verticalBars[0].notes.map((_, noteIndex)=>
+				verticalBars.map(verticalBar=>
+					verticalBar.notes[noteIndex]
+				)
+			)
+		)
+		verticalNotesCollection.forEach(verticalBars=>{
+			verticalBars.forEach((verticalNotes)=>{
+				const maxWidthVerticalNote = R.pipe(verticalNotes, R.sortBy(note=>note.glyph.staffWidth), R.last())
+				if(maxWidthVerticalNote) verticalNotes.forEach(note => {
+					if(note.glyph.staffWidth!== maxWidthVerticalNote.glyph.staffWidth) note.spacing.right = maxWidthVerticalNote.glyph.staffWidth - note.glyph.staffWidth
+				})
+				if(verticalNotes.some(note=>R.isDefined(note.accidental))) verticalNotes.forEach(note=> { if(R.isNil(note.accidental)) note.spacing.left = 1 })
+			})
 		})
-		if(verticalNotes.some(note=>R.isDefined(note.accidental))) verticalNotes.forEach(note=> { if(R.isNil(note.accidental)) note.spacing.left += 1 })
+		
 		return tracks
 	}
 	#layout(trackStaffs: TrackStaff[]): TrackStaff[]{
@@ -57,7 +68,7 @@ export class SMUFLStave{
 				acc.prev = cur
 				acc.barStaffs.push(cur)
 				return acc
-			 },{barStaffs: [], prev: null})
+			 }, {barStaffs: [], prev: null})
 		)
 	}
 	#layoutBarStaff(barStaffs: BarStaff){
