@@ -2,13 +2,9 @@ import * as R from 'remeda';
 import Glyphnames from "../../consts/metadata/glyphnames.json";
 import BravuraMetadata from '../../consts/metadata/bravura_metadata.json';
 import { SMUFLElement } from './element';
-import { SMUFLStaff } from './staff';
 
 export class SMUFLGlyph<T extends keyof Glyphnames = keyof Glyphnames> extends SMUFLElement{
 	glyphName: T;
-	get staffWidth():number{
-		return SMUFLStaff.getStaffGlyph(this.width, 5).width // TODO: 定数
-	}
 	constructor(glyphName: T, coord?: {x?: number, y?: number}) {
 		super()
 		const {width, height} = this.#getBBoxByGlyphName(glyphName)

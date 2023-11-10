@@ -52,13 +52,8 @@ export class SMUFLNote extends SMUFLCoord{
 	#calcNoteWhiteKeyPosition = (note: Note) => 
 		(Metadata.baseWhiteKeys as number[]).indexOf((Metadata.baseOctaveKeys as number[]).indexOf(this.#calcNotePosition(note)));
 	#calcNoteY = (note:Note) =>  (2 - (this.#calcNoteWhiteKeyPosition(note) + this.#calcNoteOctaveY(note))) * BravuraMetadata.engravingDefaults.thickBarlineThickness
-	#calcNoteFraction = ({fraction}: Note): Metadata["noteFractions"][number]=> {
-		if (fraction === 2) return "Half"
-		if (fraction === 4) return "Quarter"
-		if (fraction === 8) return "8th"
-		if (fraction === 16) return "16th"
-		return "Whole"
-	}
+	#calcNoteFraction = ({fraction}: Note) => 
+		Metadata.noteFractions.find(({value}) => fraction === value)?.type
 	#isNoteAccidental = (note: Note) => !(Metadata.baseWhiteKeys).some((key)=> key===this.#calcNoteBasePitch(note))
 	#isNoteLegerLine = (note: Note) => 0 === this.#calcNotePosition(note)
 }

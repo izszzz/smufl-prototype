@@ -9,7 +9,6 @@ import { SMUFLLigature } from './ligature';
 export class SMUFLStaff extends SMUFLElement{
 	glyph?: SMUFLGlyph | SMUFLLigature
 	staffGlyph: SMUFLGlyph
-	width: number;
 	constructor(width: number, lineCount:Metadata["staffLines"][number] , glyph?: SMUFLGlyph | SMUFLLigature){
 		super()
 		const glyphName = SMUFLStaff.getStaffGlyph(width, lineCount)?.key
