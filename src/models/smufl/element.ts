@@ -17,6 +17,6 @@ export abstract class SMUFLElement extends SMUFLCoord {
 		this._height = value
 	}
 	get staffWidth(): number{
-		return SMUFLStaff.getStaffGlyph(this.width, 5).width // TODO: 定数
+		return SMUFLStaff.getStaffGlyph(this.width).width
 	}
 }

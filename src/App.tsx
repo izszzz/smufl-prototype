@@ -2,11 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import SVGRenderer from './models/renderer/svg_renderer';
 //@ts-ignore
 import { MIDIImporter } from './models/importer/midi_importer';
-import { SMUFLScore } from './models/smufl/score';
+import { SMUFLStave } from './models/smufl/stave';
 
 function App() {
   const [fontSize, setFontSize] = useState(0)
-  const [layoutType, setLayoutType] = useState<SMUFLScore["type"]>("HorizontalScroll")
+  const [layoutType, setLayoutType] = useState<SMUFLStave["type"]>("HorizontalScroll")
   const ref = useRef(null);
   useEffect(()=>{
     (async()=>{
@@ -19,7 +19,7 @@ function App() {
   }, [layoutType, fontSize, ref]);
   return (
     <div>
-      <div ref={ref} className="App bravura" style={{padding: "30px", height:"100vh"}}>
+      <div ref={ref} className="App bravura" style={{padding: "30px", height:"70vh"}}>
       </div>
       <label>
         fontSize

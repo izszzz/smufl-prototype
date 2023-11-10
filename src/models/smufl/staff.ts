@@ -16,12 +16,13 @@ export class SMUFLStaff extends SMUFLElement{
 		this.width = this.staffGlyph.width
 		this.glyph = glyph
 	}
-	static getStaffGlyph = (width: number, lineCount: Metadata["staffLines"][number]) => {
+	static getStaffGlyph = (width: number, lineCount?: Metadata["staffLines"][number]) => {
 		const glyph = R.pipe(
 			Ranges.staves.glyphs,
-			R.filter(staff => staff.includes(`staff${lineCount}Line`)),
+			R.filter(staff => staff.includes(`staff${lineCount ?? 5}Line`)),
 			R.map.strict((key) => ({ key, width: BravuraMetadata.glyphAdvanceWidths[key] })),
 			R.filter(({width: staveWidth})=>  width <= staveWidth),
+			R.uniq(),
 			R.minBy((x) => x.width),
 		)
 		if(R.isNil(glyph)) throw new Error()

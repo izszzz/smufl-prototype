@@ -6,8 +6,9 @@ import { Score } from "../core/score";
 import { SMUFLScore } from "../smufl/score";
 import { SMUFLGlyph } from "../smufl/glyph";
 import { SMUFLLigature } from "../smufl/ligature";
+import { SMUFLStave } from "../smufl/stave";
 interface SVGRendererOptions{
-	layoutType: SMUFLScore["type"]
+	layoutType: SMUFLStave["type"]
 	fontSize: number
 }
 
@@ -17,7 +18,7 @@ class SVGRenderer {
 	svg: SVGSVGElement;
 	fontSize: SVGRendererOptions["fontSize"];
 	fontSizeRatio: number;
-	layoutType: SMUFLScore["type"] = "HorizontalScroll"
+	layoutType: SMUFLStave["type"] = "HorizontalScroll"
 	constructor(element: HTMLElement, score: Score, options?: SVGRendererOptions){
 		this.element = element;
 		this.score = score;

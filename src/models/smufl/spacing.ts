@@ -7,9 +7,9 @@ export class Spacing {
 	get right (){ return this._right }
 
 	set left(value: number){
-		this._left += SMUFLStaff.getStaffGlyph(value, 1)?.width //TODO: dynamic lineCOunt
+		this._left += SMUFLStaff.getStaffGlyph(value)?.width
 	}
 	set right(value: number){
-		this._right += SMUFLStaff.getStaffGlyph(value, 1)?.width; //TODO: dynamic lineCOunt
+		this._right += SMUFLStaff.getStaffGlyph(value)?.width
 	}
 }
