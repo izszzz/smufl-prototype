@@ -2,6 +2,7 @@ import * as R from 'remeda';
 import { SMUFLStaff } from "./staff";
 import { SMUFLTrack } from "./track";
 import { SMUFLBar } from './bar';
+import { SMUFLGlyph } from './glyph';
 
 interface BarStaff{
 	x: number;
@@ -30,11 +31,11 @@ export class SMUFLStave{
 				acc.push(...R.times(cur.spacing.left, ()=> new SMUFLStaff(1, lineCount)))
 				if(R.isDefined(cur.accidental)) acc.push(new SMUFLStaff(cur.accidental.staffWidth, lineCount, cur.accidental))
 				acc.push(new SMUFLStaff(cur.glyph.staffWidth, lineCount, cur.glyph))
-				acc.push(...R.times(cur.spacing.right, ()=> new SMUFLStaff(1, lineCount)))
+				acc.push(...R.times(cur.spacing.right, ()=> new SMUFLStaff(1, lineCount, undefined)))
 				return acc
 			}, [])
 			const staffs = [new SMUFLStaff(bar.barline.start.staffWidth, lineCount, bar.barline.start), ...barStaffs, ...noteStaffs]
-			if(bar.barline.end) staffs.push(new SMUFLStaff(bar.barline.end.staffWidth, lineCount, bar.barline.end))
+			if(bar.barline.end) staffs.push(new SMUFLStaff(bar.barline.end.staffWidth, lineCount, bar.barline.end, "end"))
 
 			return {
 				staffs, 
@@ -70,8 +71,12 @@ export class SMUFLStave{
 			trackStaffs[0].barStaffs.reduce<{rows: TrackStaff[][], width: number, start: number}>((acc, cur, i)=>{
 				acc.width += cur.width
 				if(acc.width > this.clientWidth){
-					acc.width = 0
-					acc.rows.push(trackStaffs.map(({barStaffs})=>({barStaffs: barStaffs.slice(acc.start, i)})))
+					acc.width = cur.width
+					acc.rows.push(trackStaffs.map(({barStaffs})=> {
+						let slicedBarStaffs = barStaffs.slice(acc.start, i)
+						slicedBarStaffs.slice(-1)[0].staffs.push(new SMUFLStaff(0, 5, new SMUFLGlyph("barlineSingle"), "end")) 
+						return {barStaffs: slicedBarStaffs}
+					}))
 					acc.start = i
 				}
 				if(i === trackStaffs[0].barStaffs.length-1 && acc.width < this.clientWidth)
@@ -86,13 +91,8 @@ export class SMUFLStave{
 				return acc
 			}
 			const layoutStaffs = (staffs: SMUFLStaff[]): SMUFLStaff[] => staffs.reduce<{staffs: SMUFLStaff[], prev: SMUFLStaff | null}>(reduceStaffs, {staffs: [], prev: null}).staffs
-			const layoutBarStaffs = (barStaffs: BarStaff[]) => 
-				barStaffs.reduce<{staffs: BarStaff[], prev: BarStaff | null}>((acc, cur) => {
-					layoutStaffs(cur.staffs)
-					return reduceStaffs(acc, cur)
-				}, {staffs: [], prev: null}).staffs
-				return  trackStaffs.map(trackStaff => ({ barStaffs: layoutBarStaffs(trackStaff.barStaffs) })
-			)
+			const layoutBarStaffs = (barStaffs: BarStaff[]) => barStaffs.reduce<{staffs: BarStaff[], prev: BarStaff | null}>((acc, cur) => reduceStaffs(acc, {...cur, staffs: layoutStaffs(cur.staffs)}), {staffs: [], prev: null}).staffs
+			return  trackStaffs.map(trackStaff => ({ barStaffs: layoutBarStaffs(trackStaff.barStaffs) }))
 		}
 		if(this.type === "HorizontalScroll") return [layoutTrackStaffs(trackStaffs)]
 		if(this.type === "VerticalScroll") return layoutNewLine(trackStaffs).map(trackStaffs => layoutTrackStaffs(trackStaffs))

@@ -9,12 +9,20 @@ import { SMUFLLigature } from './ligature';
 export class SMUFLStaff extends SMUFLElement{
 	glyph?: SMUFLGlyph | SMUFLLigature
 	staffGlyph: SMUFLGlyph
-	constructor(width: number, lineCount:Metadata["staffLines"][number] , glyph?: SMUFLGlyph | SMUFLLigature){
+	glyphAlign: "middle" | "end" | "start"
+	constructor(width: number, lineCount:Metadata["staffLines"][number] , glyph?: SMUFLGlyph | SMUFLLigature, glyphAlign: "middle" | "end" | "start" = "start"){
 		super()
-		const glyphName = SMUFLStaff.getStaffGlyph(width, lineCount)?.key
-		this.staffGlyph = new SMUFLGlyph(glyphName)
+		this.staffGlyph = new SMUFLGlyph(SMUFLStaff.getStaffGlyph(width, lineCount)?.key)
 		this.width = this.staffGlyph.width
 		this.glyph = glyph
+		this.glyphAlign = glyphAlign
+		if(R.isDefined(this.glyph)) this.#alignGlyph(this.glyph)
+	}
+	// TODO: add middle
+	#alignGlyph = (glyph: NonNullable<SMUFLStaff["glyph"]>) =>{
+		if(this.glyphAlign === "start") return
+		if(this.glyphAlign === "middle") return
+		if(this.glyphAlign === "end") glyph.x = this.staffGlyph.width - glyph.width
 	}
 	static getStaffGlyph = (width: number, lineCount?: Metadata["staffLines"][number]) => {
 		const glyph = R.pipe(
