@@ -2,7 +2,6 @@ import * as R from 'remeda';
 import { SMUFLStaff } from "./staff";
 import { SMUFLTrack } from "./track";
 import { SMUFLBar } from './bar';
-import { SMUFLGlyph } from './glyph';
 
 interface BarStaff{
 	x: number;
@@ -31,12 +30,10 @@ export class SMUFLStave{
 				acc.push(...R.times(cur.spacing.left, ()=> new SMUFLStaff(1, lineCount)))
 				if(R.isDefined(cur.accidental)) acc.push(new SMUFLStaff(cur.accidental.staffWidth, lineCount, cur.accidental))
 				acc.push(new SMUFLStaff(cur.glyph.staffWidth, lineCount, cur.glyph))
-				acc.push(...R.times(cur.spacing.right, ()=> new SMUFLStaff(1, lineCount, undefined)))
+				acc.push(...R.times(cur.spacing.right, ()=> new SMUFLStaff(1, lineCount)))
 				return acc
 			}, [])
-			const staffs = [new SMUFLStaff(bar.barline.start.staffWidth, lineCount, bar.barline.start), ...barStaffs, ...noteStaffs]
-			if(bar.barline.end) staffs.push(new SMUFLStaff(bar.barline.end.staffWidth, lineCount, bar.barline.end, "end"))
-
+			const staffs = [...barStaffs, ...noteStaffs]
 			return {
 				staffs, 
 				x:0,
@@ -74,7 +71,6 @@ export class SMUFLStave{
 					acc.width = cur.width
 					acc.rows.push(trackStaffs.map(({barStaffs})=> {
 						let slicedBarStaffs = barStaffs.slice(acc.start, i)
-						slicedBarStaffs.slice(-1)[0].staffs.push(new SMUFLStaff(0, 5, new SMUFLGlyph("barlineSingle"), "end")) 
 						return {barStaffs: slicedBarStaffs}
 					}))
 					acc.start = i

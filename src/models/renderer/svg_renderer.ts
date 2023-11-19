@@ -71,16 +71,17 @@ class SVGRenderer {
 		return text;
 	};
 	private createSVGScore=(score: SMUFLScore)=>{
+		const createBarline = (trackRowsLength: number, glyphName: Parameters<typeof this.createSMULFSVGElement>[0], attributes: Parameters<typeof this.createSMULFSVGElement>[1]) => R.times(trackRowsLength * 3 - 2 , (i)=> this.createSMULFSVGElement(glyphName, {type: "barline", y: i * 4, ...attributes}))
 		const root = this.createSVGElement("g")
-		score.stave.trackStaffRows.forEach((trackRows, i)=>{
-			const trackRow = this.createSVGElement("g", {type: "row", y: 20 * i + 10})
-			root.appendChild(trackRow)
+		score.stave.trackStaffRows.forEach((trackRows, i, trackStaffRows)=>{
+			const trackRowElement = this.createSVGElement("g", {type: "row", y: 20 * i + 10})
+			root.appendChild(trackRowElement)
 			trackRows.forEach((trackStave, i)=>{
-				const track = this.createSVGElement("g", {type: "track", y: 10 * i})
-				trackRow.appendChild(track)
+				const trackElement = this.createSVGElement("g", {type: "track", y: 12 * i})
+				trackRowElement.appendChild(trackElement)
 				trackStave.barStaffs.forEach((barStave)=>{
 					const bar = this.createSVGElement("g", {type: "bar", x: barStave.x })
-					track.appendChild(bar)
+					trackElement.appendChild(bar)
 					barStave.staffs.forEach(({glyph, staffGlyph, ...props}) => {
 						const staff = this.createSVGElement("g", {type: "note", ...props})
 						bar.appendChild(staff)
@@ -90,6 +91,14 @@ class SVGRenderer {
 					})
 				})
 			})
+
+			// barlines
+			const firstTrackRows = R.first(trackRows)
+			if(R.isNil(firstTrackRows)) return
+			const lastBarStaff = R.last(firstTrackRows.barStaffs)
+			if(R.isNil(lastBarStaff)) return
+			firstTrackRows.barStaffs.forEach(({x})=>createBarline(trackRows.length, "barlineSingle", { x }).forEach((barline)=> trackRowElement.appendChild(barline)))
+			createBarline(trackRows.length, i === trackStaffRows.length-1	? "barlineFinal": "barlineSingle", { x: lastBarStaff.x + lastBarStaff.width }).forEach((barline)=> trackRowElement.appendChild(barline))
 		})
 		return root
 	}
