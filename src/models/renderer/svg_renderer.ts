@@ -3,12 +3,9 @@ import glyphNames from "../../consts/metadata/glyphnames.json"
 import Glyphnames from "../../consts/metadata/glyphnames.json";
 import Metadata from "../../consts/metadata.json";
 import { Score } from "../core/score";
-import { SMUFLScore } from "../smufl/score";
-import { SMUFLGlyph } from "../smufl/glyph";
-import { SMUFLLigature } from "../smufl/ligature";
-import { SMUFLStave } from "../smufl/stave";
+import * as SMUFL from "../smufl";
 interface SVGRendererOptions{
-	layoutType: SMUFLStave["type"]
+	layoutType: SMUFL.Stave["type"]
 	fontSize: number
 }
 
@@ -18,7 +15,7 @@ class SVGRenderer {
 	svg: SVGSVGElement;
 	fontSize: SVGRendererOptions["fontSize"];
 	fontSizeRatio: number;
-	layoutType: SMUFLStave["type"] = "HorizontalScroll"
+	layoutType: SMUFL.Stave["type"] = "HorizontalScroll"
 	constructor(element: HTMLElement, score: Score, options?: SVGRendererOptions){
 		this.element = element;
 		this.score = score;
@@ -61,7 +58,7 @@ class SVGRenderer {
 		while (this.element.firstChild) this.element.firstChild.remove()
 		this.element
 			.appendChild(this.svg)
-			.appendChild(this.createSVGScore(new SMUFLScore(this.score, this.svg.clientWidth / this.fontSizeRatio, this.layoutType)));
+			.appendChild(this.createSVGScore(new SMUFL.Score(this.score, this.svg.clientWidth / this.fontSizeRatio, this.layoutType)));
 	}
 	private createUnicodeText = (code: string, attributes?: Parameters<typeof this.createSVGElement>[1] ) => 
 		 this.createText(code.replace('U+', '&#x'), attributes)
@@ -70,8 +67,12 @@ class SVGRenderer {
 		text.innerHTML = content
 		return text;
 	};
-	private createSVGScore=(score: SMUFLScore)=>{
-		const createBarline = (trackRowsLength: number, glyphName: Parameters<typeof this.createSMULFSVGElement>[0], attributes: Parameters<typeof this.createSMULFSVGElement>[1]) => R.times(trackRowsLength * 3 - 2 , (i)=> this.createSMULFSVGElement(glyphName, {type: "barline", y: i * 4, ...attributes}))
+	private createSVGScore=(score: SMUFL.Score)=>{
+		const createBarline = (trackRowsLength: number, glyphName: Parameters<typeof this.createSMULFSVGElement>[0], attributes: Parameters<typeof this.createSMULFSVGElement>[1]) => 
+			R.times(
+				trackRowsLength * 3 - 2 ,
+				(i) => this.createSMULFSVGElement(glyphName, {...attributes, type: "barline", y: i * 4})
+			)
 		const root = this.createSVGElement("g")
 		score.stave.trackStaffRows.forEach((trackRows, i, trackStaffRows)=>{
 			const trackRowElement = this.createSVGElement("g", {type: "row", y: 20 * i + 10})
@@ -86,18 +87,17 @@ class SVGRenderer {
 						const staff = this.createSVGElement("g", {type: "note", ...props})
 						bar.appendChild(staff)
 						staff.appendChild(this.createSMULFSVGElement(staffGlyph.glyphName, {...staffGlyph}))
-						if (glyph instanceof SMUFLGlyph) staff.appendChild(this.createSMULFSVGElement(glyph.glyphName, {...glyph}))
-						if (glyph instanceof SMUFLLigature) glyph.glyphs.forEach(g => staff.appendChild(this.createSMULFSVGElement(g.glyphName, {...g})))
+						if (glyph instanceof SMUFL.Glyph) staff.appendChild(this.createSMULFSVGElement(glyph.glyphName, {...glyph}))
+						if (glyph instanceof SMUFL.Ligature) glyph.glyphs.forEach(g => staff.appendChild(this.createSMULFSVGElement(g.glyphName, {...g})))
 					})
 				})
 			})
 
-			// barlines
 			const firstTrackRows = R.first(trackRows)
 			if(R.isNil(firstTrackRows)) return
 			const lastBarStaff = R.last(firstTrackRows.barStaffs)
 			if(R.isNil(lastBarStaff)) return
-			firstTrackRows.barStaffs.forEach(({x})=>createBarline(trackRows.length, "barlineSingle", { x }).forEach((barline)=> trackRowElement.appendChild(barline)))
+			firstTrackRows.barStaffs.map(({x}) => createBarline(trackRows.length, "barlineSingle", { x }).forEach((barline)=> trackRowElement.appendChild(barline)))
 			createBarline(trackRows.length, i === trackStaffRows.length-1	? "barlineFinal": "barlineSingle", { x: lastBarStaff.x + lastBarStaff.width }).forEach((barline)=> trackRowElement.appendChild(barline))
 		})
 		return root

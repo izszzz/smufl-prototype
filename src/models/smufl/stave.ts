@@ -1,36 +1,36 @@
 import * as R from 'remeda';
-import { SMUFLStaff } from "./staff";
-import { SMUFLTrack } from "./track";
-import { SMUFLBar } from './bar';
+import * as  SMUFL from "./";
 
 interface BarStaff{
 	x: number;
-	staffs: SMUFLStaff[]
+	staffs: SMUFL.Staff[]
 	width: number;
 }
 interface TrackStaff{
 	barStaffs: BarStaff[]
 }
 
-export class SMUFLStave{
+export class Stave{
 	trackStaffRows: TrackStaff[][];
 	clientWidth: number 
 	type: "Pagination" | "VerticalScroll" | "HorizontalScroll"
 
-	constructor(tracks: SMUFLTrack[], clientWidth: number, type: SMUFLStave["type"]) {
+	constructor(tracks: SMUFL.Track[], clientWidth: number, type: Stave["type"]) {
 		this.type = type
 		this.clientWidth = clientWidth
 		this.trackStaffRows = this.#layout(this.#generate(this.#ajustSpacing(tracks)))
 	}
-	#generate(tracks: SMUFLTrack[]): TrackStaff[]{
-		const generateTrackStaff = (track: SMUFLTrack): TrackStaff => ({ barStaffs: track.bars.map((bar) => generateBarStaff(bar, track.staffLineCount)) })
-		const generateBarStaff = (bar: SMUFLBar, lineCount: SMUFLTrack["staffLineCount"]): BarStaff => {
-			const barStaffs = bar.glyphs.map(glyph => new SMUFLStaff(glyph.staffWidth, lineCount, glyph))
-			const noteStaffs =  bar.notes.reduce<SMUFLStaff[]>((acc, cur) => {
-				acc.push(...R.times(cur.spacing.left, ()=> new SMUFLStaff(1, lineCount)))
-				if(R.isDefined(cur.accidental)) acc.push(new SMUFLStaff(cur.accidental.staffWidth, lineCount, cur.accidental))
-				acc.push(new SMUFLStaff(cur.glyph.staffWidth, lineCount, cur.glyph))
-				acc.push(...R.times(cur.spacing.right, ()=> new SMUFLStaff(1, lineCount)))
+	#generate(tracks: SMUFL.Track[]): TrackStaff[]{
+		const generateTrackStaff = (track: SMUFL.Track): TrackStaff => ({ barStaffs: track.bars.map((bar) => generateBarStaff(bar, track.staffLineCount)) })
+		const generateBarStaff = (bar: SMUFL.Bar, lineCount: SMUFL.Track["staffLineCount"]): BarStaff => {
+			const barStaffs = bar.glyphs.map(glyph => new SMUFL.Staff(glyph.staffWidth, lineCount, glyph))
+			const noteStaffs =  bar.notes.reduce<SMUFL.Staff[]>((acc, cur) => {
+				acc.push(...R.times(cur.spacing.left, ()=> new SMUFL.Staff(1, lineCount)))
+				// TODO: linecountを指定しなくてもいいようにする
+				// TODO: staffWidthを指定しない場合はglyphのwidthから計算するようにする
+				if(R.isDefined(cur.accidental)) acc.push(new SMUFL.Staff(cur.accidental.staffWidth, lineCount, cur.accidental))
+				acc.push(new SMUFL.Staff(cur.glyph.staffWidth, lineCount, cur.glyph))
+				acc.push(...R.times(cur.spacing.right, ()=> new SMUFL.Staff(1, lineCount)))
 				return acc
 			}, [])
 			const staffs = [...barStaffs, ...noteStaffs]
@@ -43,7 +43,7 @@ export class SMUFLStave{
 		return tracks.map((track)=> generateTrackStaff(track))
 	}
 	// TODO: TrackStaff[]からスペースを調節するようにする clientWidthを参考にしてx軸をスペースでできる限り埋める
-	#ajustSpacing(tracks: SMUFLTrack[]): SMUFLTrack[]{
+	#ajustSpacing(tracks: SMUFL.Track[]): SMUFL.Track[]{
 		const verticalNotesCollection = tracks[0].bars.map((_, barIndex)=>tracks.map(track=>track.bars[barIndex])).map((verticalBars)=>
 			verticalBars[0].notes.map((_, noteIndex)=>
 				verticalBars.map(verticalBar=>
@@ -80,16 +80,17 @@ export class SMUFLStave{
 				return acc
 			}, {rows: [], width: 0, start: 0}).rows
 		const layoutTrackStaffs = (trackStaffs: TrackStaff[]): TrackStaff[] => {
-			const reduceStaffs = <CurrentValue extends SMUFLStaff | BarStaff>(acc: {staffs: CurrentValue[], prev:  CurrentValue | null}, cur: CurrentValue) => {
+			const reduceStaffs = <CurrentValue extends SMUFL.Staff | BarStaff>(acc: {staffs: CurrentValue[], prev:  CurrentValue | null}, cur: CurrentValue) => {
 				if(acc.prev) cur.x =  acc.prev.x + acc.prev.width
 				acc.prev = cur
 				acc.staffs.push(cur)
 				return acc
 			}
-			const layoutStaffs = (staffs: SMUFLStaff[]): SMUFLStaff[] => staffs.reduce<{staffs: SMUFLStaff[], prev: SMUFLStaff | null}>(reduceStaffs, {staffs: [], prev: null}).staffs
+			const layoutStaffs = (staffs: SMUFL.Staff[]): SMUFL.Staff[] => staffs.reduce<{staffs: SMUFL.Staff[], prev: SMUFL.Staff | null}>(reduceStaffs, {staffs: [], prev: null}).staffs
 			const layoutBarStaffs = (barStaffs: BarStaff[]) => barStaffs.reduce<{staffs: BarStaff[], prev: BarStaff | null}>((acc, cur) => reduceStaffs(acc, {...cur, staffs: layoutStaffs(cur.staffs)}), {staffs: [], prev: null}).staffs
 			return  trackStaffs.map(trackStaff => ({ barStaffs: layoutBarStaffs(trackStaff.barStaffs) }))
 		}
+		
 		if(this.type === "HorizontalScroll") return [layoutTrackStaffs(trackStaffs)]
 		if(this.type === "VerticalScroll") return layoutNewLine(trackStaffs).map(trackStaffs => layoutTrackStaffs(trackStaffs))
 		if(this.type === "Pagination")  return []

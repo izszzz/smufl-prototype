@@ -1,24 +1,22 @@
 import Ranges from '../../consts/metadata/ranges.json';
 import * as R from 'remeda';
-import { SMUFLElement } from "./element";
-import { SMUFLGlyph } from "./glyph";
+import * as SMUFL from "./";
 import BravuraMetadata from '../../consts/metadata/bravura_metadata.json';
 import Metadata from '../../consts/metadata.json';
-import { SMUFLLigature } from './ligature';
 
-export class SMUFLStaff extends SMUFLElement{
-	glyph?: SMUFLGlyph | SMUFLLigature
-	staffGlyph: SMUFLGlyph
+export class Staff extends SMUFL.Element{
+	glyph?: SMUFL.Glyph | SMUFL.Ligature
+	staffGlyph: SMUFL.Glyph
 	glyphAlign: "end" | "start"
-	constructor(width: number, lineCount:Metadata["staffLines"][number] , glyph?: SMUFLGlyph | SMUFLLigature, glyphAlign: SMUFLStaff["glyphAlign"] = "start"){
+	constructor(width: number, lineCount:Metadata["staffLines"][number] , glyph?: SMUFL.Glyph | SMUFL.Ligature, glyphAlign: SMUFL.Staff["glyphAlign"] = "start"){
 		super()
-		this.staffGlyph = new SMUFLGlyph(SMUFLStaff.getStaffGlyph(width, lineCount)?.key)
+		this.staffGlyph = new SMUFL.Glyph(SMUFL.Staff.getStaffGlyph(width, lineCount)?.key)
 		this.width = this.staffGlyph.width
 		this.glyph = glyph
 		this.glyphAlign = glyphAlign
 		if(R.isDefined(this.glyph)) this.#alignGlyph(this.glyph)
 	}
-	#alignGlyph = (glyph: NonNullable<SMUFLStaff["glyph"]>) =>{
+	#alignGlyph = (glyph: NonNullable<SMUFL.Staff["glyph"]>) =>{
 		if(this.glyphAlign === "start") return
 		if(this.glyphAlign === "end") glyph.x = this.staffGlyph.width - glyph.width
 	}

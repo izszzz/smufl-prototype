@@ -1,11 +1,12 @@
-import { Score } from "../core/score"
-import { SMUFLStave } from "./stave";
-import { SMUFLTrack } from "./track"
+import *  as SMUFL from "./"
+import { Score as CoreScore } from "../core/score"
 
 
-export class SMUFLScore {
-	stave: SMUFLStave
-	constructor({tracks}: Score, clientWidth: number, type: SMUFLStave["type"]){
-		this.stave = new SMUFLStave(tracks.map(track=> new SMUFLTrack(track)), clientWidth, type)
+export class Score {
+	stave: SMUFL.Stave
+	rows: SMUFL.Row[];
+	constructor({tracks}: CoreScore, clientWidth: number, type: SMUFL.Stave["type"]){
+		this.stave = new SMUFL.Stave(tracks.map(track=> new SMUFL.Track(track)), clientWidth, type)
+		this.rows = []
 	}
 }

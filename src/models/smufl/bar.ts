@@ -1,24 +1,20 @@
 import Ranges from "../../consts/metadata/ranges.json";
-import { Bar } from "../core/bar";
-import { SMUFLElement } from "./element";
-import { SMUFLGlyph } from "./glyph";
-import { SMUFLLigature } from "./ligature";
-import { SMUFLNote } from "./note"
+import { Bar as CoreBar } from "../core/bar";
+import * as SMUFL from './';
 
-export class SMUFLBar extends SMUFLElement {
-	glyphs: (SMUFLGlyph | SMUFLLigature)[] = [];
-	notes: SMUFLNote[];
+export class Bar {
+	glyphs: (SMUFL.Glyph | SMUFL.Ligature)[] = [];
+	notes: SMUFL.Note[];
 	barline: {
-		end?: SMUFLGlyph<Ranges["barlines"]["glyphs"][number]>
+		end?: SMUFL.Glyph<Ranges["barlines"]["glyphs"][number]>
 	} = {} 
-	constructor(bar: Bar){
-		super()
-		this.notes = bar.notes.map(note => new SMUFLNote(note))
-		if(!bar.prevBar) {
-			// TODO: metadataに格納する。barが先頭の場合表示するようにする
-			this.glyphs.push(new SMUFLGlyph("gClef", {y: -1}))
-			this.glyphs.push(new SMUFLLigature([new SMUFLGlyph("timeSig4", {y: -1}), new SMUFLGlyph("timeSig4", {y: -3})]))
-		}
-		if(!bar.nextBar) this.barline.end = new SMUFLGlyph("barlineFinal")
+	// TODO: barがtrackrow先頭の場合表示するようにする
+	metadata = {
+		clef: this.glyphs.push(new SMUFL.Glyph("gClef", {y: -1})),
+		timeSig: this.glyphs.push(new SMUFL.Ligature([new SMUFL.Glyph("timeSig4", {y: -1}), new SMUFL.Glyph("timeSig4", {y: -3})]))
+	}
+	constructor(bar: CoreBar){
+		this.notes = bar.notes.map(note => new SMUFL.Note(note))
+		if(!bar.nextBar) this.barline.end = new SMUFL.Glyph("barlineFinal")
 	}
 }

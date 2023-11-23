@@ -2,11 +2,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import SVGRenderer from './models/renderer/svg_renderer';
 //@ts-ignore
 import { MIDIImporter } from './models/importer/midi_importer';
-import { SMUFLStave } from './models/smufl/stave';
+import *  as SMUFL from "./models/smufl"
 
 function App() {
   const [fontSize, setFontSize] = useState(0)
-  const [layoutType, setLayoutType] = useState<SMUFLStave["type"]>("HorizontalScroll")
+  const [layoutType, setLayoutType] = useState<SMUFL.Stave["type"]>("HorizontalScroll")
   const ref = useRef(null);
   useEffect(()=>{
     (async()=>{

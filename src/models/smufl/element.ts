@@ -1,7 +1,6 @@
-import { SMUFLCoord } from "./coord"
-import { SMUFLStaff } from "./staff"
+import * as SMUFL from "../smufl";
 
-export abstract class SMUFLElement extends SMUFLCoord {
+export abstract class Element extends SMUFL.Coord {
 	_width: number = 0
 	_height: number = 0
 	get width(){
@@ -17,6 +16,6 @@ export abstract class SMUFLElement extends SMUFLCoord {
 		this._height = value
 	}
 	get staffWidth(): number{
-		return SMUFLStaff.getStaffGlyph(this.width).width
+		return SMUFL.Staff.getStaffGlyph(this.width).width
 	}
 }

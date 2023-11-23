@@ -1,9 +1,8 @@
 import * as R from 'remeda';
-import { SMUFLGlyph } from './glyph';
-import { SMUFLElement } from './element';
+import * as  SMUFL from './';
 
-export class SMUFLLigature extends SMUFLElement {
-	glyphs: SMUFLGlyph[]
+export class Ligature extends SMUFL.Element {
+	glyphs: SMUFL.Glyph[]
 	get width(): number {
 		const maxWidth = R.pipe(
 			this.glyphs,
@@ -12,7 +11,7 @@ export class SMUFLLigature extends SMUFLElement {
 		if(R.isNil(maxWidth)) throw new Error()
 		return maxWidth.width
 	}
-	constructor(glyphs: SMUFLGlyph[]){
+	constructor(glyphs: SMUFL.Glyph[]){
 		super()
 		this.glyphs = glyphs
 	}

@@ -1,9 +1,9 @@
 import * as R from 'remeda';
+import * as  SMUFL from "./";
 import Glyphnames from "../../consts/metadata/glyphnames.json";
 import BravuraMetadata from '../../consts/metadata/bravura_metadata.json';
-import { SMUFLElement } from './element';
 
-export class SMUFLGlyph<T extends keyof Glyphnames = keyof Glyphnames> extends SMUFLElement{
+export class Glyph<T extends keyof Glyphnames = keyof Glyphnames> extends SMUFL.Element{
 	glyphName: T;
 	constructor(glyphName: T, coord?: {x?: number, y?: number}) {
 		super()
