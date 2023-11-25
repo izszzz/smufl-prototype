@@ -1,5 +1,5 @@
 import Metadata from "../../consts/metadata.json";
-import { Track as CoreTrack } from "../core/track";
+import * as Core  from "../core";
 import * as  SMUFL from "./";
 
 export class Track{
@@ -9,7 +9,7 @@ export class Track{
 		timeSig: new SMUFL.Ligature([new SMUFL.Glyph("timeSig4", {y: -1}), new SMUFL.Glyph("timeSig4", {y: -3})])
 	}
 	staffLineCount: Metadata["staffLines"][number] = 5;
-	constructor(track: CoreTrack){
+	constructor(track: Core.Track){
 		this.bars = track.bars.map(bar => new SMUFL.Bar(bar))
 	}
 }

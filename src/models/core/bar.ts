@@ -8,8 +8,8 @@ interface BarConstructorArgs{
 export class Bar implements BarConstructorArgs{
 	notes
 	timeSignature
-	prevBar?: Bar;
-	nextBar?: Bar;
+	prev?: Bar;
+	next?: Bar;
 	constructor({notes, timeSignature}: BarConstructorArgs){
 		this.notes = notes
 		this.timeSignature = timeSignature

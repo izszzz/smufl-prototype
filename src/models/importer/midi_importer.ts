@@ -41,8 +41,8 @@ export const MIDIImporter = async (): Promise<Score> => {
 					bars.forEach((bar, i, array) => {
 						const prevBar = array[i - 1]
 						if(!prevBar)  return
-						bar.prevBar = prevBar
-						prevBar.nextBar = bar 
+						bar.prev = prevBar
+						prevBar.next = bar 
 					})
 					return bars
 				})()})

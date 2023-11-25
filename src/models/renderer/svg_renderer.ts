@@ -2,21 +2,21 @@ import * as R from "remeda"
 import glyphNames from "../../consts/metadata/glyphnames.json"
 import Glyphnames from "../../consts/metadata/glyphnames.json";
 import Metadata from "../../consts/metadata.json";
-import { Score } from "../core/score";
 import * as SMUFL from "../smufl";
+import * as Core from "../core";
 interface SVGRendererOptions{
-	layoutType: SMUFL.Stave["type"]
+	layoutType: SMUFL.Score["type"]
 	fontSize: number
 }
 
 class SVGRenderer {
 	element: HTMLElement;
-	score: Score
+	score: Core.Score
 	svg: SVGSVGElement;
 	fontSize: SVGRendererOptions["fontSize"];
 	fontSizeRatio: number;
-	layoutType: SMUFL.Stave["type"] = "HorizontalScroll"
-	constructor(element: HTMLElement, score: Score, options?: SVGRendererOptions){
+	layoutType: SMUFL.Score["type"] = "HorizontalScroll"
+	constructor(element: HTMLElement, score: Core.Score, options?: SVGRendererOptions){
 		this.element = element;
 		this.score = score;
 		this.fontSize = 30
@@ -67,38 +67,33 @@ class SVGRenderer {
 		text.innerHTML = content
 		return text;
 	};
+
 	private createSVGScore=(score: SMUFL.Score)=>{
-		const createBarline = (trackRowsLength: number, glyphName: Parameters<typeof this.createSMULFSVGElement>[0], attributes: Parameters<typeof this.createSMULFSVGElement>[1]) => 
-			R.times(
-				trackRowsLength * 3 - 2 ,
-				(i) => this.createSMULFSVGElement(glyphName, {...attributes, type: "barline", y: i * 4})
-			)
+		console.log(score)
+
 		const root = this.createSVGElement("g")
-		score.stave.trackStaffRows.forEach((trackRows, i, trackStaffRows)=>{
+		score.staffs.forEach((trackRows, i)=>{
 			const trackRowElement = this.createSVGElement("g", {type: "row", y: 20 * i + 10})
 			root.appendChild(trackRowElement)
-			trackRows.forEach((trackStave, i)=>{
+			trackRows.forEach((trackStaffs, i)=>{
 				const trackElement = this.createSVGElement("g", {type: "track", y: 12 * i})
 				trackRowElement.appendChild(trackElement)
-				trackStave.barStaffs.forEach((barStave)=>{
-					const bar = this.createSVGElement("g", {type: "bar", x: barStave.x })
-					trackElement.appendChild(bar)
-					barStave.staffs.forEach(({glyph, staffGlyph, ...props}) => {
-						const staff = this.createSVGElement("g", {type: "note", ...props})
-						bar.appendChild(staff)
-						staff.appendChild(this.createSMULFSVGElement(staffGlyph.glyphName, {...staffGlyph}))
-						if (glyph instanceof SMUFL.Glyph) staff.appendChild(this.createSMULFSVGElement(glyph.glyphName, {...glyph}))
-						if (glyph instanceof SMUFL.Ligature) glyph.glyphs.forEach(g => staff.appendChild(this.createSMULFSVGElement(g.glyphName, {...g})))
-					})
+				const staffs = trackStaffs.flat()
+				staffs.forEach((staff, i)=>{
+					const staffElement = this.createSVGElement("g", {type: "note", x: staffs.slice(0, i).reduce((acc, cur)=>acc+cur.width, 0)})
+					trackElement.appendChild(staffElement)
+					staffElement.appendChild(this.createSMULFSVGElement(staff.staffGlyph.glyphName, {...staff.staffGlyph}))
+					if (staff.glyph instanceof SMUFL.Glyph) staffElement.appendChild(this.createSMULFSVGElement(staff.glyph.glyphName, {...staff.glyph}))
+					if (staff.glyph instanceof SMUFL.Ligature) staff.glyph.glyphs.forEach(g => staffElement.appendChild(this.createSMULFSVGElement(g.glyphName, {...g})))
 				})
 			})
 
-			const firstTrackRows = R.first(trackRows)
-			if(R.isNil(firstTrackRows)) return
-			const lastBarStaff = R.last(firstTrackRows.barStaffs)
-			if(R.isNil(lastBarStaff)) return
-			firstTrackRows.barStaffs.map(({x}) => createBarline(trackRows.length, "barlineSingle", { x }).forEach((barline)=> trackRowElement.appendChild(barline)))
-			createBarline(trackRows.length, i === trackStaffRows.length-1	? "barlineFinal": "barlineSingle", { x: lastBarStaff.x + lastBarStaff.width }).forEach((barline)=> trackRowElement.appendChild(barline))
+			// const firstTrackRows = R.first(trackRows)
+			// if(R.isNil(firstTrackRows)) return
+			// const lastBarStaff = R.last(firstTrackRows.barStaffs)
+			// if(R.isNil(lastBarStaff)) return
+			// firstTrackRows.barStaffs.map(({x}) => createBarline(trackRows.length, "barlineSingle", { x }).forEach((barline)=> trackRowElement.appendChild(barline)))
+			// createBarline(trackRows.length, i === trackStaffRows.length-1	? "barlineFinal": "barlineSingle", { x: lastBarStaff.x + lastBarStaff.width }).forEach((barline)=> trackRowElement.appendChild(barline))
 		})
 		return root
 	}
