@@ -70,13 +70,13 @@ class SVGRenderer {
 
 	private createSVGScore=(score: SMUFL.Score)=>{
 		console.log(score)
-
 		const root = this.createSVGElement("g")
-		score.staffs.forEach((trackRows, i)=>{
+		// create staffs
+		score.rows.forEach((row, i)=>{
 			const trackRowElement = this.createSVGElement("g", {type: "row", y: 20 * i + 10})
 			root.appendChild(trackRowElement)
-			trackRows.forEach((trackStaffs, i)=>{
-				const trackElement = this.createSVGElement("g", {type: "track", y: 12 * i})
+			row.staffs.forEach((trackStaffs, i)=>{
+				const trackElement = this.createSVGElement("g", {type: "track", y: 4 * i})
 				trackRowElement.appendChild(trackElement)
 				const staffs = trackStaffs.flat()
 				staffs.forEach((staff, i)=>{
@@ -87,14 +87,21 @@ class SVGRenderer {
 					if (staff.glyph instanceof SMUFL.Ligature) staff.glyph.glyphs.forEach(g => staffElement.appendChild(this.createSMULFSVGElement(g.glyphName, {...g})))
 				})
 			})
-
-			// const firstTrackRows = R.first(trackRows)
-			// if(R.isNil(firstTrackRows)) return
-			// const lastBarStaff = R.last(firstTrackRows.barStaffs)
-			// if(R.isNil(lastBarStaff)) return
-			// firstTrackRows.barStaffs.map(({x}) => createBarline(trackRows.length, "barlineSingle", { x }).forEach((barline)=> trackRowElement.appendChild(barline)))
-			// createBarline(trackRows.length, i === trackStaffRows.length-1	? "barlineFinal": "barlineSingle", { x: lastBarStaff.x + lastBarStaff.width }).forEach((barline)=> trackRowElement.appendChild(barline))
 		})
+		// create barlines
+		const createBarline = (trackRowsLength: number, glyphName: Parameters<typeof this.createSMULFSVGElement>[0], attributes: Parameters<typeof this.createSMULFSVGElement>[1]) => 
+			R.times(
+				trackRowsLength * 3 - 2 ,
+				(i) => this.createSMULFSVGElement(glyphName, {...attributes, type: "barline", y: i * 4})
+			)
+		score.rows.forEach((row, i)=>{
+			const trackRowElement = this.createSVGElement("g", {type: "barline", y: 20 * i + 10})
+			root.appendChild(trackRowElement)
+			row.barlines.forEach((barline)=>{
+				createBarline(score.tracks.length, barline.glyph.glyphName, {x: barline.glyph.x}).forEach(barline=>trackRowElement.appendChild(barline))
+			})
+		})
+
 		return root
 	}
 }

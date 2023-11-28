@@ -12,7 +12,7 @@ export class Note extends SMUFL.Coord{
 	glyph: SMUFL.Glyph | SMUFL.Ligature;
 	spacing = new Spacing()
 	get width(){
-		return this.accidental?.staffWidth ?? 0 + this.glyph.staffWidth + this.spacing.left + this.spacing.right
+		return (this.accidental?.staffWidth ?? 0) + this.glyph.staffWidth + this.spacing.left + this.spacing.right
 	}
 	constructor(note: Core.Note){
 		super()

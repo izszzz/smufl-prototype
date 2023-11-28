@@ -1,5 +1,6 @@
-export * from './bar';
 export * from './coord';
+export * from './bar';
+export * from './barline';
 export * from "./element"
 export * from "./glyph"
 export * from "./ligature"

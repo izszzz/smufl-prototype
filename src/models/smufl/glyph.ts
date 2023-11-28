@@ -1,10 +1,15 @@
 import * as R from 'remeda';
-import * as  SMUFL from "./";
+import * as SMUFL from "./";
 import Glyphnames from "../../consts/metadata/glyphnames.json";
 import BravuraMetadata from '../../consts/metadata/bravura_metadata.json';
 
-export class Glyph<T extends keyof Glyphnames = keyof Glyphnames> extends SMUFL.Element{
+export class Glyph<T extends keyof Glyphnames = keyof Glyphnames> extends SMUFL.Coord{
 	glyphName: T;
+	width: number = 0
+	height: number =0 
+	get staffWidth(): number {
+		return SMUFL.Staff.getStaffGlyph(this.width).width
+	}
 	constructor(glyphName: T, coord?: {x?: number, y?: number}) {
 		super()
 		const {width, height} = this.#getBBoxByGlyphName(glyphName)

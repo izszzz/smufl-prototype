@@ -6,7 +6,7 @@ import *  as SMUFL from "./models/smufl"
 
 function App() {
   const [fontSize, setFontSize] = useState(0)
-  const [layoutType, setLayoutType] = useState<SMUFL.Stave["type"]>("HorizontalScroll")
+  const [layoutType, setLayoutType] = useState<SMUFL.Score["type"]>("HorizontalScroll")
   const ref = useRef(null);
   useEffect(()=>{
     (async()=>{

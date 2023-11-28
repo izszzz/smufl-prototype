@@ -8,15 +8,13 @@ export class Score {
 	clientWidth: number
 	tracks: SMUFL.Track[]
 	rows: SMUFL.Row[];
-	staffs: SMUFL.Staff[][][][]
 	constructor({tracks}: Core.Score, clientWidth: number, type: Score["type"]){
 		this.type = type
 		this.clientWidth = clientWidth
 		this.tracks = tracks.map(track => new SMUFL.Track(track))
 		this.rows = this.layout(this.tracks)
-		this.staffs = this.generate(this.rows)
 	}
-	layout(tracks: typeof this.tracks): SMUFL.Row[]{
+	layout(tracks: SMUFL.Track[]): SMUFL.Row[]{
 		const ajustSpacing = (tracks: SMUFL.Track[]): SMUFL.Track[]=>{
 			const verticalNotesCollection = tracks[0].bars.map((_, barIndex)=>tracks.map(track=>track.bars[barIndex])).map((verticalBars)=>
 				verticalBars[0].notes.map((_, noteIndex)=>
@@ -37,8 +35,9 @@ export class Score {
 			
 			return tracks
 		}
-		const layoutNewLine = (tracks: typeof this.tracks): SMUFL.Row[] =>{
-			const generateRow = (tracks: typeof this.tracks, start: number, end?: number, prev?: SMUFL.Row["prev"]) => new SMUFL.Row(tracks.map((track)=> ({...track, bars: track.bars.slice(start, end)})), prev)
+		// TODO: 改行する際のスタッフ幅にバーのメタデータ分の幅が考慮されていない
+		const layoutNewLine = (tracks: SMUFL.Track[]): SMUFL.Row[] =>{
+			const generateRow = (tracks: SMUFL.Track[], start: number, end?: number, prev?: SMUFL.Row["prev"]) => new SMUFL.Row(tracks.map((track)=> ({...track, bars: track.bars.slice(start, end)})), prev)
 			const firstTrack = R.first(tracks)
 			if(R.isNil(firstTrack)) throw new Error()
 			return firstTrack.bars.reduce<{rows: SMUFL.Row[], width: number, start: number, prev?: SMUFL.Row | undefined}>((acc, cur, i)=>{
@@ -63,29 +62,5 @@ export class Score {
 		if(this.type === "VerticalScroll") return layoutNewLine(spacingTracks)
 		if(this.type === "Pagination")  return []
 		return []
-	}
-	generate(rows: SMUFL.Row[]){
-		const generateSpaceStaffs = (space: number, lineCount: ConstructorParameters<typeof SMUFL.Staff>[1]) => R.times(space, ()=> new SMUFL.Staff(1, lineCount))
-		const generateBarlineEnd = (bar: SMUFL.Bar, staffLineCount: SMUFL.Track["staffLineCount"]) => R.isDefined(bar.barline.end) ? new SMUFL.Staff(bar.barline.start.staffWidth, staffLineCount, bar.barline.end, "end") : new SMUFL.Staff(bar.barline.start.staffWidth, staffLineCount, bar.barline.start, "end")
-		return rows.map(({tracks})=> 
-			tracks.map(({bars, staffLineCount})=> 
-				bars.map((bar, i) =>R.compact([
-					new SMUFL.Staff(bar.barline.start.staffWidth, staffLineCount, bar.barline.start),
-					...bar.glyphs.map(glyph => new SMUFL.Staff(glyph.staffWidth, staffLineCount, glyph)),
-					...R.pipe(
-						bar.notes,
-						R.flatMap(note=>[
-							...generateSpaceStaffs(note.spacing.left, staffLineCount),
-							R.isDefined(note.accidental) ? new SMUFL.Staff(note.accidental.staffWidth, staffLineCount, note.accidental) : null,
-							new SMUFL.Staff(note.glyph.staffWidth, staffLineCount, note.glyph),
-							...generateSpaceStaffs(note.spacing.right, staffLineCount)
-						]),
-						R.compact
-					),
-					i === bars.length -1  ? generateBarlineEnd(bar, staffLineCount) : null
-				]))
-			)
-		)
-		
 	}
 }
