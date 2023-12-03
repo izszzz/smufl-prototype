@@ -1,4 +1,4 @@
-import *  as SMUFL from "./"
+import * as SMUFL from "./";
 
 export class Spacing {
 	_left: number=0;
@@ -11,5 +11,8 @@ export class Spacing {
 	}
 	set right(value: number){
 		this._right += SMUFL.Staff.getStaffGlyph(value)?.width
+	}
+	get length(){
+		return this.left + this.right
 	}
 }

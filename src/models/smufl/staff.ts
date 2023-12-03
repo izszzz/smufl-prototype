@@ -1,19 +1,27 @@
-import Ranges from '../../consts/metadata/ranges.json';
 import * as R from 'remeda';
 import * as SMUFL from "./";
 import BravuraMetadata from '../../consts/metadata/bravura_metadata.json';
 import Metadata from '../../consts/metadata.json';
+import Ranges from '../../consts/metadata/ranges.json';
 
-export class Staff extends SMUFL.Element{
+interface ConstructorOptions{
+	lineCount:  Metadata["staffLines"][number];
+	glyphAlign?: "end" | "start"
+}
+// TODO: lineCountをしていしなくてもいいようにする
+export class Staff {
 	glyph?: SMUFL.Glyph | SMUFL.Ligature
 	staffGlyph: SMUFL.Glyph
-	glyphAlign: "end" | "start"
-	constructor(width: number, lineCount:Metadata["staffLines"][number] , glyph?: SMUFL.Glyph | SMUFL.Ligature, glyphAlign: SMUFL.Staff["glyphAlign"] = "start"){
-		super()
-		this.staffGlyph = new SMUFL.Glyph(SMUFL.Staff.getStaffGlyph(width, lineCount)?.key)
+	glyphAlign: "end" | "start" 
+	width: number
+	constructor(width: number, options?: ConstructorOptions);
+	constructor(glyph: SMUFL.Glyph | SMUFL.Ligature, options?: ConstructorOptions)
+	constructor(firstArg: (SMUFL.Glyph | SMUFL.Ligature) | number, options?: ConstructorOptions){
+		const width =  R.isNumber(firstArg) ? firstArg : firstArg.width
+		if(!R.isNumber(firstArg))this.glyph = firstArg
+		this.staffGlyph = new SMUFL.Glyph(SMUFL.Staff.getStaffGlyph(width, options?.lineCount)?.key)
 		this.width = this.staffGlyph.width
-		this.glyph = glyph
-		this.glyphAlign = glyphAlign
+		this.glyphAlign = options?.glyphAlign || "start"
 		if(R.isDefined(this.glyph)) this.#alignGlyph(this.glyph)
 	}
 	#alignGlyph = (glyph: NonNullable<SMUFL.Staff["glyph"]>) =>{

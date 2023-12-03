@@ -35,7 +35,6 @@ export class Score {
 			
 			return tracks
 		}
-		// TODO: 改行する際のスタッフ幅にバーのメタデータ分の幅が考慮されていない
 		const layoutNewLine = (tracks: SMUFL.Track[]): SMUFL.Row[] =>{
 			const generateRow = (tracks: SMUFL.Track[], start: number, end?: number, prev?: SMUFL.Row["prev"]) => new SMUFL.Row(tracks.map((track)=> ({...track, bars: track.bars.slice(start, end)})), prev)
 			const firstTrack = R.first(tracks)

@@ -1,26 +1,27 @@
 import * as R from 'remeda';
+import * as Core from "../core";
 import *  as SMUFL from "./"
 import Metadata from "../../consts/metadata.json";
 import BravuraMetadata from "../../consts/metadata/bravura_metadata.json";
 import Ranges from "../../consts/metadata/ranges.json";
-import * as Core from "../core";
-import { Spacing } from './spacing';
 
 export class Note extends SMUFL.Coord{
-	private note: Core.Note;
 	accidental?: SMUFL.Glyph
-	glyph: SMUFL.Glyph | SMUFL.Ligature;
-	spacing = new Spacing()
+	glyph: SMUFL.Glyph | SMUFL.Ligature
+	spacing = new SMUFL.Spacing()
 	get width(){
-		return (this.accidental?.staffWidth ?? 0) + this.glyph.staffWidth + this.spacing.left + this.spacing.right
+		return R.pipe(
+				[this.glyph, this.accidental],
+				R.compact,
+				R.reduce((acc, cur)=>acc + cur.staffWidth, 0)
+			) + this.spacing.length
 	}
 	constructor(note: Core.Note){
 		super()
-		this.note = note
 		this.y = this.#calcNoteY(note);
-		this.glyph = new SMUFL.Glyph(this.#searchNoteGlyphName(note), {y: this.y})
-		if(this.#isNoteLegerLine(note)) this.glyph = new SMUFL.Ligature([new SMUFL.Glyph(this.#searchLegerLineGlyphName(note), {y: this.y}), this.glyph])
-		if(this.#isNoteAccidental(note)) this.accidental = new SMUFL.Glyph(this.#calcNoteAccidental(note), {y: this.y})
+		this.glyph = new SMUFL.Glyph(this.#searchNoteGlyphName(note), {coord: {y: this.y}})
+		if(this.#isNoteLegerLine(note)) this.glyph = new SMUFL.Ligature([new SMUFL.Glyph(this.#searchLegerLineGlyphName(note), { coord: {y: this.y } }), this.glyph])
+		if(this.#isNoteAccidental(note)) this.accidental = new SMUFL.Glyph(this.#calcNoteAccidental(note), { coord: {y: this.y}})
 	}
 
 	#searchNoteGlyphName = (note: Core.Note) => 

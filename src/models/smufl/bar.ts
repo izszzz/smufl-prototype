@@ -12,8 +12,8 @@ export class Bar {
 		start: new SMUFL.Glyph("barlineSingle")
 	} 
 	metadata = {
-		clef: new SMUFL.Glyph("gClef", {y: -1}),
-		timeSig: new SMUFL.Ligature([new SMUFL.Glyph("timeSig4", {y: -1}), new SMUFL.Glyph("timeSig4", {y: -3})])
+		clef: new SMUFL.Glyph("gClef", { coord: {y: -1}}),
+		timeSig: new SMUFL.Ligature([new SMUFL.Glyph("timeSig4", { coord: {y: -1}}), new SMUFL.Glyph("timeSig4", { coord: {y: -3}})])
 	}
 	get width(){
 		return this.glyphs.reduce((acc, cur)=>acc + cur.staffWidth, 0) + this.notes.reduce((acc, cur)=> acc + cur.width, 0)
