@@ -4,6 +4,7 @@ import * as SMUFL from './';
 
 export class Bar {
 	glyphs: (SMUFL.Glyph | SMUFL.Ligature)[] = [];
+	track: SMUFL.Track
 	notes: SMUFL.Note[];
 	barline: {
 		start: SMUFL.Glyph<Ranges["barlines"]["glyphs"][number]> 
@@ -18,8 +19,9 @@ export class Bar {
 	get width(){
 		return this.glyphs.reduce((acc, cur)=>acc + cur.staffWidth, 0) + this.notes.reduce((acc, cur)=> acc + cur.width, 0)
 	}
-	constructor(bar: Core.Bar){
-		this.notes = bar.notes.map(note => new SMUFL.Note(note))
+	constructor(bar: Core.Bar, track: SMUFL.Track){
+		this.track = track
+		this.notes = bar.notes.map(note => new SMUFL.Note(note, this))
 		if(!bar.next) this.barline.end = new SMUFL.Glyph("barlineFinal")
 	}
 }

@@ -7,6 +7,7 @@ import Ranges from "../../consts/metadata/ranges.json";
 
 export class Note extends SMUFL.Coord{
 	accidental?: SMUFL.Glyph
+	bar: SMUFL.Bar
 	glyph: SMUFL.Glyph | SMUFL.Ligature
 	spacing = new SMUFL.Spacing()
 	get width(){
@@ -16,8 +17,9 @@ export class Note extends SMUFL.Coord{
 				R.reduce((acc, cur)=>acc + cur.staffWidth, 0)
 			) + this.spacing.length
 	}
-	constructor(note: Core.Note){
+	constructor(note: Core.Note, bar: SMUFL.Bar){
 		super()
+		this.bar = bar
 		this.y = this.#calcNoteY(note);
 		this.glyph = new SMUFL.Glyph(this.#searchNoteGlyphName(note), {coord: {y: this.y}})
 		if(this.#isNoteLegerLine(note)) this.glyph = new SMUFL.Ligature([new SMUFL.Glyph(this.#searchLegerLineGlyphName(note), { coord: {y: this.y } }), this.glyph])

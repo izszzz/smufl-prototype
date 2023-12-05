@@ -15,6 +15,7 @@ export class Score {
 		this.rows = this.layout(this.tracks)
 	}
 	layout(tracks: SMUFL.Track[]): SMUFL.Row[]{
+		// TODO: clientWidthによってスペースを変更する処理
 		const ajustSpacing = (tracks: SMUFL.Track[]): SMUFL.Track[]=>{
 			const verticalNotesCollection = tracks[0].bars.map((_, barIndex)=>tracks.map(track=>track.bars[barIndex])).map((verticalBars)=>
 				verticalBars[0].notes.map((_, noteIndex)=>

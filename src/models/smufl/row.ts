@@ -6,9 +6,9 @@ export class Row {
 	 tracks: SMUFL.Track[]
 	 barlines: SMUFL.Barline[]
 	 staffs: SMUFL.Staff[][][]
-		// TODO: 
-		//  y: number;
-		//  height: number;
+	// TODO: 
+	//  y: number;
+	//  height: number;
 	 constructor(tracks: Row["tracks"], prev?: Row["prev"]){
 		this.prev = prev
 		this.tracks = tracks.map(track=>{
@@ -21,15 +21,15 @@ export class Row {
 		this.barlines = this.generateBarlines(this.tracks)
 	 }
 	 generateStaffs(tracks: SMUFL.Track[]){
-		const generateSpaceStaffs = (space: number, lineCount: ConstructorParameters<typeof SMUFL.Staff>[1]) => R.times(space, ()=> new SMUFL.Staff(1, lineCount))
-		return tracks.flatMap(({bars, staffLineCount: lineCount}) => [
+		const generateSpaceStaffs = (space: number, lineCount: ConstructorParameters<typeof SMUFL.Staff>[1]) => R.times(space, () => new SMUFL.Staff(1, lineCount))
+		return tracks.flatMap(({bars}) => [
 			bars.map((bar) => R.compact([
-				...bar.glyphs.map(glyph => new SMUFL.Staff(glyph, {lineCount })),
+				...bar.glyphs.map(glyph => new SMUFL.Staff(glyph, bar.track)),
 				...bar.notes.flatMap(note=>[
-					...generateSpaceStaffs(note.spacing.left, {lineCount}),
-					R.isDefined(note.accidental) ? new SMUFL.Staff(note.accidental, {lineCount}) : null,
-					new SMUFL.Staff(note.glyph, {lineCount }),
-					...generateSpaceStaffs(note.spacing.right, {lineCount})
+					...generateSpaceStaffs(note.spacing.left, bar.track),
+					R.isDefined(note.accidental) ? new SMUFL.Staff(note.accidental, bar.track) : null,
+					new SMUFL.Staff(note.glyph, bar.track),
+					...generateSpaceStaffs(note.spacing.right, bar.track)
 				]),
 			])),
 			[], // this is space row

@@ -10,6 +10,6 @@ export class Track{
 	}
 	staffLineCount: Metadata["staffLines"][number] = 5;
 	constructor(track: Core.Track){
-		this.bars = track.bars.map(bar => new SMUFL.Bar(bar))
+		this.bars = track.bars.map(bar => new SMUFL.Bar(bar, this))
 	}
 }
