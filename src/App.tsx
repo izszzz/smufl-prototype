@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import SVGRenderer from './models/renderer/svg_renderer';
 //@ts-ignore
-import { MIDIImporter } from './models/importer/midi_importer';
+import { MIDIImporter, midi_importer } from './models/importer/midi_importer';
 import *  as SMUFL from "./models/smufl"
 
 function App() {
@@ -17,10 +17,30 @@ function App() {
       }
     })()
   }, [layoutType, fontSize, ref]);
+ 
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const input = event.target;
+
+    if (input.files && input.files.length > 0) {
+      const midiFile = input.files[0];
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const arrayBuffer = e.target?.result as ArrayBuffer;
+        // TODO: いい感じにリファクタしよう
+        midi_importer(arrayBuffer)
+
+      };
+
+      reader.readAsArrayBuffer(midiFile);
+    }
+  };
+
   return (
     <div>
       <div ref={ref} className="App bravura" style={{padding: "30px", height:"70vh"}}>
       </div>
+      <input type="file" onChange={handleFileChange} accept=".midi, .mid" />
       <label>
         fontSize
         <input type="number" value={fontSize} onChange={(e)=>setFontSize(Number(e.target.value))}/>
