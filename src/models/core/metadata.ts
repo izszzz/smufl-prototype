@@ -3,10 +3,13 @@ interface IMetadata {
 		denominator: number;
 		numerator: number;
 	};
+	bpm: number;
 }
 export class Metadata implements IMetadata {
 	timeSignature;
-	constructor({ timeSignature }: IMetadata) {
+	bpm;
+	constructor({ timeSignature, bpm }: IMetadata) {
 		this.timeSignature = timeSignature;
+		this.bpm = bpm;
 	}
 }

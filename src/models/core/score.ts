@@ -1,21 +1,18 @@
-import { Track } from "./track";
+import * as Core from "./";
 
 interface ScoreConstructorArgs {
-	tracks: Track[];
+	tracks: Core.Track[];
 	name?: string;
-	bpm?: number;
-	timeSignature?: [number, number];
+	metadata: Core.Metadata;
 }
 
 export class Score implements ScoreConstructorArgs {
 	name;
-	bpm;
 	tracks;
-	timeSignature;
-	constructor({ name, tracks, bpm, timeSignature }: ScoreConstructorArgs) {
-		this.bpm = bpm;
+	metadata;
+	constructor({ name, tracks, metadata }: ScoreConstructorArgs) {
 		this.name = name;
 		this.tracks = tracks;
-		this.timeSignature = timeSignature;
+		this.metadata = metadata;
 	}
 }

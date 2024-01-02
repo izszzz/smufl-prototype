@@ -1,17 +1,17 @@
-import { Note } from "./note";
+import * as Core from "./";
 
 interface BarConstructorArgs {
-	notes: Note[];
-	timeSignature?: [number, number];
+	notes: Core.Note[];
+	metadata?: Core.Metadata;
 }
 
 export class Bar implements BarConstructorArgs {
 	notes;
-	timeSignature;
 	prev?: Bar;
 	next?: Bar;
-	constructor({ notes, timeSignature }: BarConstructorArgs) {
+	metadata;
+	constructor({ notes, metadata }: BarConstructorArgs) {
 		this.notes = notes;
-		this.timeSignature = timeSignature;
+		this.metadata = metadata;
 	}
 }

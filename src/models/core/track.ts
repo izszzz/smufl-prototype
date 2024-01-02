@@ -1,7 +1,7 @@
-import { Bar } from "./bar";
+import * as Core from "./";
 
 interface TrackConstructorArgs {
-	bars: Bar[];
+	bars: Core.Bar[];
 	timeSignature?: [number, number];
 }
 
