@@ -12,8 +12,11 @@ export class midi_importer {
 		console.log(this.getMThd(data));
 		console.log(this.getMTrk(data));
 	}
+	private createScore() {}
 	private getMThd(data: string) {
-		return data.match(/MThd(.*?)�/)?.[0];
+		const mthd = data.match(/MThd(.*?)�/)?.[0];
+		const encoder = new TextEncoder();
+		encoder.encode(mthd);
 	}
 	private getMTrk(data: string) {
 		return data.match(/MTrk(.*?)�\//g);
