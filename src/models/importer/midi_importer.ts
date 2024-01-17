@@ -1,4 +1,6 @@
 import { Midi } from "@tonejs/midi";
+import * as R from "remeda";
+import midi from "../../consts/midi.json";
 import * as Core from "../core";
 
 export class midi_importer {
@@ -15,8 +17,34 @@ export class midi_importer {
 	private createScore() {}
 	private getMThd(data: string) {
 		const mthd = data.match(/MThd(.*?)�/)?.[0];
+		if (R.isEmpty(mthd)) throw new Error("missing mthd");
 		const encoder = new TextEncoder();
-		encoder.encode(mthd);
+		const encodedMthd = encoder.encode(mthd);
+		const result = R.pipe(
+			midi.mthd.header,
+			R.reduce(
+				(acc, cur) => {
+					const chunk = Array.from(encodedMthd).slice(
+						acc.start,
+						acc.start + cur.length,
+					);
+					acc.data.push({
+						[cur.name]: parseInt(
+							chunk
+								.slice(acc.start, acc.start + cur.length)
+								.map(String)
+								.join(""),
+						),
+					});
+					acc.start += cur.length;
+					return acc;
+				},
+				{ start: 0, data: [] as Array<Record<string, number>> },
+			),
+			R.prop("data"),
+			R.mergeAll,
+		);
+		return result;
 	}
 	private getMTrk(data: string) {
 		return data.match(/MTrk(.*?)�\//g);
