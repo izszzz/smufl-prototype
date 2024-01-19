@@ -1,11 +1,23 @@
 {
-	"mthd": {
-		"header":[
-			{"type": "text", "name": "type", "length": 4},
-			{"type": "number","name": "size", "length": 4 },
-			{"type": "number", "name": "format", "length": 2},
-			{"type": "number", "name": "trackCount", "length": 2 },
-			{"type": "number" ,"name": "deltaTime", "length": 2 }
-		]
-	}
+  "mthd": {
+    "header": {
+      "type": {"type": "text", "position": [0, 4]},
+      "size": {"type": "number", "position": [4, 8]},
+      "format": {"type": "number", "position": [8, 10]},
+      "trackCount": {"type": "number", "position": [10, 12]},
+      "deltaTime": {"type": "number", "position": [12, 14]}
+    },
+    "position": [[77, 84, 104, 100]]
+  },
+  "mtrk": {
+    "header": {
+      "type": {"type": "text", "position": [0, 4]},
+      "size": {"type": "number", "position": [4, 8]},
+      "data": {"type": "unit8array", "position": [8]}
+    },
+    "position": [
+      [77, 84, 114, 107],
+      [255, 47, 0]
+    ]
+  }
 }

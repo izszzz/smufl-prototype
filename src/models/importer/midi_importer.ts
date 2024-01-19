@@ -1,53 +1,111 @@
 import { Midi } from "@tonejs/midi";
 import * as R from "remeda";
+import { match } from "ts-pattern";
 import midi from "../../consts/midi.json";
 import * as Core from "../core";
 
 export class midi_importer {
+	private data: string;
+	mthd: Record<string, string | number> = {};
+	private textDecoder = new TextDecoder("utf-8");
+	private textEncoder = new TextEncoder();
+
 	constructor(arrayBuffer: ArrayBuffer) {
-		const decoder = new TextDecoder("utf-8");
-		const encoder = new TextEncoder();
-		const uint8Array = new Uint8Array(arrayBuffer);
-		const data = decoder.decode(uint8Array);
-		console.log({ data });
-		console.log(data);
-		console.log(this.getMThd(data));
-		console.log(this.getMTrk(data));
+		const array = new Uint8Array(arrayBuffer);
+		this.data = this.textDecoder.decode(array);
+
+		console.log(array);
+		console.log(this.data);
+		console.log(this.getMThd(array));
+		console.log(this.getMTrks(array));
 	}
-	private createScore() {}
-	private getMThd(data: string) {
-		const mthd = data.match(/MThd(.*?)�/)?.[0];
-		if (R.isEmpty(mthd)) throw new Error("missing mthd");
-		const encoder = new TextEncoder();
-		const encodedMthd = encoder.encode(mthd);
-		const result = R.pipe(
-			midi.mthd.header,
-			R.reduce(
-				(acc, cur) => {
-					const chunk = Array.from(encodedMthd).slice(
-						acc.start,
-						acc.start + cur.length,
-					);
-					acc.data.push({
-						[cur.name]: parseInt(
-							chunk
-								.slice(acc.start, acc.start + cur.length)
-								.map(String)
-								.join(""),
-						),
-					});
-					acc.start += cur.length;
+	private getMThd(data: Uint8Array) {
+		const { header } = midi.mthd;
+		const { position } = header.size;
+		const size = this.convertUnit8ArrayToInt(data.slice(...position));
+		const chunk = data.slice(
+			R.first(header.type.position),
+			R.last(position) + size,
+		);
+		return this.getChunk(header, chunk);
+	}
+	private getMTrks(data: Uint8Array) {
+		const start = R.first(midi.mtrk.position);
+		const end = R.last(midi.mtrk.position);
+		const result = data.reduce<{
+			start: number[];
+			end: number[];
+			mtrk: number[];
+			mtrks: number[][];
+		}>(
+			// TODO: refactor
+			(acc, cur) => {
+				// when started
+				if (R.equals(acc.start, start)) {
+					// search end
+					if (cur === end?.[acc.end.length]) {
+						acc.end.push(cur);
+						//when end
+						if (R.equals(acc.end, end)) {
+							acc.mtrks.push([...acc.start, ...acc.mtrk]);
+							acc.start = [];
+							acc.end = [];
+							acc.mtrk = [];
+							return acc;
+						}
+					} else {
+						acc.end = [];
+					}
+					acc.mtrk.push(cur);
 					return acc;
-				},
-				{ start: 0, data: [] as Array<Record<string, number>> },
-			),
-			R.prop("data"),
+				}
+				// search start
+				if (cur === start[acc.start.length]) {
+					acc.start.push(cur);
+				} else {
+					acc.start = [];
+				}
+				return acc;
+			},
+			{ start: [], end: [], mtrk: [], mtrks: [] },
+		);
+		return result.mtrks.map((mtrk) => this.getMTrk(new Uint8Array(mtrk)));
+	}
+	private getMTrk(data: Uint8Array) {
+		return this.getChunk(midi.mtrk.header, data);
+	}
+	private getChunk(
+		header: (typeof midi)[keyof midi]["header"],
+		data: Uint8Array,
+	) {
+		return R.pipe(
+			header,
+			R.toPairs,
+			R.map(([name, header]) => {
+				const chunk = data.slice(...header.position);
+				const value = match(header)
+					.with({ type: "text" }, () => this.textDecoder.decode(chunk))
+					.with({ type: "number" }, () => this.convertUnit8ArrayToInt(chunk))
+					.with({ type: "unit8array" }, () => {
+						console.log(this.textDecoder.decode(chunk));
+						console.log(chunk);
+						return chunk;
+					})
+					.exhaustive();
+				return { [name]: value };
+			}),
 			R.mergeAll,
 		);
-		return result;
 	}
-	private getMTrk(data: string) {
-		return data.match(/MTrk(.*?)�\//g);
+	private convertUnit8ArrayToInt(data: Uint8Array) {
+		return parseInt(
+			R.pipe(
+				Array.from(data),
+				R.map((x) => x.toString(16)),
+				R.join(""),
+			),
+			16,
+		);
 	}
 }
 
