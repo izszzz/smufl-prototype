@@ -1,111 +1,64 @@
 import { Midi } from "@tonejs/midi";
-import * as R from "remeda";
-import { match } from "ts-pattern";
+import { Parser } from "binary-parser";
 import midi from "../../consts/midi.json";
 import * as Core from "../core";
 
 export class midi_importer {
-	private data: string;
-	mthd: Record<string, string | number> = {};
-	private textDecoder = new TextDecoder("utf-8");
-	private textEncoder = new TextEncoder();
+	mthd: object = {};
+	mtrks: object = {};
 
 	constructor(arrayBuffer: ArrayBuffer) {
 		const array = new Uint8Array(arrayBuffer);
-		this.data = this.textDecoder.decode(array);
 
 		console.log(array);
-		console.log(this.data);
-		console.log(this.getMThd(array));
-		console.log(this.getMTrks(array));
-	}
-	private getMThd(data: Uint8Array) {
-		const { header } = midi.mthd;
-		const { position } = header.size;
-		const size = this.convertUnit8ArrayToInt(data.slice(...position));
-		const chunk = data.slice(
-			R.first(header.type.position),
-			R.last(position) + size,
-		);
-		return this.getChunk(header, chunk);
-	}
-	private getMTrks(data: Uint8Array) {
-		const start = R.first(midi.mtrk.position);
-		const end = R.last(midi.mtrk.position);
-		const result = data.reduce<{
-			start: number[];
-			end: number[];
-			mtrk: number[];
-			mtrks: number[][];
-		}>(
-			// TODO: refactor
-			(acc, cur) => {
-				// when started
-				if (R.equals(acc.start, start)) {
-					// search end
-					if (cur === end?.[acc.end.length]) {
-						acc.end.push(cur);
-						//when end
-						if (R.equals(acc.end, end)) {
-							acc.mtrks.push([...acc.start, ...acc.mtrk]);
-							acc.start = [];
-							acc.end = [];
-							acc.mtrk = [];
-							return acc;
-						}
-					} else {
-						acc.end = [];
-					}
-					acc.mtrk.push(cur);
-					return acc;
-				}
-				// search start
-				if (cur === start[acc.start.length]) {
-					acc.start.push(cur);
-				} else {
-					acc.start = [];
-				}
-				return acc;
-			},
-			{ start: [], end: [], mtrk: [], mtrks: [] },
-		);
-		return result.mtrks.map((mtrk) => this.getMTrk(new Uint8Array(mtrk)));
-	}
-	private getMTrk(data: Uint8Array) {
-		return this.getChunk(midi.mtrk.header, data);
-	}
-	private getChunk(
-		header: (typeof midi)[keyof midi]["header"],
-		data: Uint8Array,
-	) {
-		return R.pipe(
-			header,
-			R.toPairs,
-			R.map(([name, header]) => {
-				const chunk = data.slice(...header.position);
-				const value = match(header)
-					.with({ type: "text" }, () => this.textDecoder.decode(chunk))
-					.with({ type: "number" }, () => this.convertUnit8ArrayToInt(chunk))
-					.with({ type: "unit8array" }, () => {
-						console.log(this.textDecoder.decode(chunk));
-						console.log(chunk);
-						return chunk;
-					})
-					.exhaustive();
-				return { [name]: value };
-			}),
-			R.mergeAll,
-		);
-	}
-	private convertUnit8ArrayToInt(data: Uint8Array) {
-		return parseInt(
-			R.pipe(
-				Array.from(data),
-				R.map((x) => x.toString(16)),
-				R.join(""),
-			),
-			16,
-		);
+		console.log(this.mthd);
+		console.log(this.mtrks);
+		const formatter = (item: number) => {
+			console.log(item);
+			return item;
+		};
+		const midiEventParser = new Parser()
+			// .uint8("channel")
+			.uint8("note")
+			.uint8("velocity");
+		const metaEventParser = new Parser()
+			// .bit4("status")
+			.uint8("type")
+			.uint8("length")
+			.buffer("data", { length: "length" });
+		const midiTrackEventParser = new Parser()
+			.buffer("deltaTime", {
+				readUntil: (item) => item > 128,
+			})
+			.bit4("prefix")
+			.choice("event", {
+				tag: "prefix",
+				choices: {
+					8: midiEventParser,
+					9: midiEventParser,
+					15: metaEventParser,
+				},
+				formatter,
+			});
+
+		const midiHeaderChunk = new Parser()
+			.string("type", { length: midi.mthd.header.type.length })
+			.uint32("length")
+			.uint16("format")
+			.uint16("trackCount")
+			.uint16("deltaTime");
+		const midiTrackChunk = new Parser()
+			.string("type", {
+				length: midi.mtrk.header.type.length,
+			})
+			.array("events", {
+				type: midiTrackEventParser,
+				readUntil: (item) => item?.event.type === 47,
+			});
+		const midiParser = new Parser()
+			.nest("mthd", { type: midiHeaderChunk })
+			.array("mtrks", { type: midiTrackChunk, length: "mthd.trackCount" });
+		console.log(midiParser.parse(array));
 	}
 }
 

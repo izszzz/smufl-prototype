@@ -1,25 +1,40 @@
 interface Midi {
 	mthd: {
 		header: {
-			type: Data;
-			size: Data;
-			format: Data;
-			trackCount: Data;
-			deltaTime: Data;
+			type: HeaderData;
+			length: HeaderData;
+			format: HeaderData;
+			trackCount: HeaderData;
+			deltaTime: HeaderData;
 		};
-		position: [[77, 84, 104, 100]];
+		position: [number[]];
 	};
 	mtrk: {
 		header: {
-			type: Data;
-			size: Data;
-			data: Omit<Data, "position"> & { position: [number] };
+			type: HeaderData;
+			size: HeaderData;
+			data: Omit<HeaderData, "position"> & { position: [number] };
 		};
-		position: [[0, 239, 191, 189], [255, 47, 0]];
+		position: [number[], number[]];
+		deltaTime: { maxLength: number };
+		metaEvent: { prefix: number };
+		metaEvents: {
+			trackName: MetaEvent;
+			endOfTrack: MetaEvent;
+		};
 	};
 }
-type Data = { type: Type; position: [number, number] };
-type Type = "text" | "number" | "unit8array";
+type HeaderData = {
+	type: HeaderDataType;
+	position: [number, number];
+	length: 4;
+};
+type HeaderDataType = "text" | "number" | "array";
+type MetaEvent = {
+	type: number;
+	data: MetaEventDataType | null;
+};
+type MetaEventDataType = "text";
 
 declare const Midi: Midi;
 
