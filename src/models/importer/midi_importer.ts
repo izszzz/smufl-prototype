@@ -4,43 +4,85 @@ import midi from "../../consts/midi.json";
 import * as Core from "../core";
 
 export class midi_importer {
-	mthd: object = {};
-	mtrks: object = {};
-
 	constructor(arrayBuffer: ArrayBuffer) {
-		const array = new Uint8Array(arrayBuffer);
+		const a = this.convertArrayBufferToMidi(arrayBuffer);
+		this.convertMidiToSMUFL(a);
+	}
 
-		console.log(array);
-		console.log(this.mthd);
-		console.log(this.mtrks);
-		const formatter = (item: number) => {
-			console.log(item);
-			return item;
-		};
-		const midiEventParser = new Parser()
-			// .uint8("channel")
-			.uint8("note")
-			.uint8("velocity");
+	convertMidiToSMUFL(midi: ParsedMidi) {}
+	convertArrayBufferToMidi(arrayBuffer: ArrayBuffer): ParsedMidi {
+		const array = new Uint8Array(arrayBuffer);
+		const { metaEvents } = midi.mtrk;
+		const midiEventParser = new Parser().uint8("note").uint8("velocity");
 		const metaEventParser = new Parser()
-			// .bit4("status")
 			.uint8("type")
 			.uint8("length")
-			.buffer("data", { length: "length" });
+			.choice("data", {
+				tag: "type",
+				choices: {
+					[metaEvents.trackName.type]: new Parser().string(
+						metaEvents.trackName.name,
+						{ length: "$parent.length" },
+					),
+					[metaEvents.instrumentName.type]: new Parser().string(
+						metaEvents.instrumentName.name,
+						{ length: "$parent.length" },
+					),
+					[metaEvents.marker.type]: new Parser().string(
+						metaEvents.marker.name,
+						{ length: "$parent.length" },
+					),
+					[metaEvents.deviceName.type]: new Parser().string(
+						metaEvents.deviceName.name,
+						{ length: "$parent.length" },
+					),
+					[metaEvents.endOfTrack.type]: new Parser().string(
+						metaEvents.endOfTrack.name,
+						{ length: "$parent.length" },
+					),
+					[metaEvents.tempo.type]: new Parser().bit24(metaEvents.tempo.name, {
+						length: "$parent.length",
+						formatter: (item) => 60000000 / item,
+					}),
+					[metaEvents.timeSignature.type]: new Parser().nest(
+						metaEvents.timeSignature.name,
+						{
+							type: new Parser()
+								.uint8("numerator")
+								.uint8("denominator", { formatter: (item) => item ** 2 })
+								.uint8("clock")
+								.uint8("bb"),
+						},
+					),
+					[metaEvents.keySignature.type]: new Parser().nest(
+						metaEvents.keySignature.name,
+						{
+							type: new Parser()
+								.bit4("sharp")
+								.bit4("flat")
+								.bit4("major")
+								.bit4("minor"),
+						},
+					),
+				},
+				defaultChoice: new Parser().buffer("buffer", {
+					length: "$parent.length",
+				}),
+			});
 		const midiTrackEventParser = new Parser()
 			.buffer("deltaTime", {
-				readUntil: (item) => item > 128,
+				readUntil: (item) => item > midi.mtrk.deltaTime.endOfFlag,
 			})
-			.bit4("prefix")
+			.bit4("type")
+			.bit4("channel")
 			.choice("event", {
-				tag: "prefix",
+				tag: "type",
 				choices: {
 					8: midiEventParser,
 					9: midiEventParser,
 					15: metaEventParser,
 				},
-				formatter,
 			});
-
 		const midiHeaderChunk = new Parser()
 			.string("type", { length: midi.mthd.header.type.length })
 			.uint32("length")
@@ -53,13 +95,62 @@ export class midi_importer {
 			})
 			.array("events", {
 				type: midiTrackEventParser,
-				readUntil: (item) => item?.event.type === 47,
+				readUntil: (item) =>
+					item?.event.type === midi.mtrk.metaEvents.endOfTrack.type,
 			});
 		const midiParser = new Parser()
+			.useContextVars()
 			.nest("mthd", { type: midiHeaderChunk })
 			.array("mtrks", { type: midiTrackChunk, length: "mthd.trackCount" });
-		console.log(midiParser.parse(array));
+		return midiParser.parse(array);
 	}
+}
+interface ParsedMidi {
+	mthd: {
+		type: string;
+		length: number;
+		format: number;
+		trackCount: number;
+		deltaTime: number;
+	};
+	mtrks: {
+		type: string;
+		events: {
+			channel: number;
+			deltaTime: Uint8Array;
+			event: { data: MidiEvent | Partial<MetaEvent> };
+			type: number;
+		};
+	};
+}
+interface MidiEvent {
+	note: number;
+	velocity: number;
+}
+interface MetaEvent {
+	data: MetaEvents;
+	length: number;
+	type: number;
+}
+interface MetaEvents {
+	trackName: string;
+	instrumentName: string;
+	marker: string;
+	deviceName: string;
+	endOfTrack: string;
+	tempo: number;
+	timeSignature: {
+		numerator: number;
+		denominator: number;
+		clock: number;
+		bb: number;
+	};
+	keySignature: {
+		sharp: number;
+		flat: number;
+		major: number;
+		minor: number;
+	};
 }
 
 export const MIDIImporter = async (): Promise<Core.Score> => {

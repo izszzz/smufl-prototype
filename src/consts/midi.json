@@ -1,42 +1,57 @@
 {
   "mthd": {
     "header": {
-      "type": {"type": "text", "position": [0, 4], "length": 4},
-      "length": {"type": "number", "position": [4, 8], "length": 4},
-      "format": {"type": "number", "position": [8, 10], "length": 2},
-      "trackCount": {"type": "number", "position": [10, 12], "length": 2},
-      "deltaTime": {"type": "number", "position": [12, 14], "length": 2}
-    },
-    "position": [[77, 84, 104, 100]]
+      "type": {"type": "text", "position": [0, 4], "length": 4}
+    }
   },
   "mtrk": {
     "header": {
-      "type": {"type": "text", "position": [0, 4], "length": 4},
-      "length": {"type": "number", "position": [4, 8]},
-      "data": {"type": "array", "position": [8]}
+      "type": {"type": "text", "position": [0, 4], "length": 4}
     },
-    "position": [
-      [77, 84, 114, 107],
-      [255, 47, 0]
-    ],
     "deltaTime": {
-      "maxLength": 4
+      "endOfFlag": 128
     },
-    "metaEvent": {
-      "prefix": 255
+    "midiEvents": {
+      "noteOff": {
+        "type": 8
+      },
+      "noteOn": {
+        "type": 9
+      }
     },
     "metaEvents": {
+      "type": 15,
       "trackName": {
-        "type": 3,
-        "data": "text"
+        "name": "trackName",
+        "type": 3
+      },
+      "instrumentName": {
+        "name": "instrumentName",
+        "type": 4
+      },
+      "marker": {
+        "name": "marker",
+        "type": 6
+      },
+      "deviceName": {
+        "name": "deviceName",
+        "type": 9
       },
       "endOfTrack": {
-        "type": 47,
-        "data": null
+        "name": "endOfTrack",
+        "type": 47
       },
-      "sequencer": {
-        "type": 81,
-        "data": "data"
+      "tempo": {
+        "name": "tempo",
+        "type": 81
+      },
+      "timeSignature": {
+        "name": "timeSignature",
+        "type": 88
+      },
+      "keySignature": {
+        "name": "keySignature",
+        "type": 89
       }
     }
   }

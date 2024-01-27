@@ -2,25 +2,27 @@ interface Midi {
 	mthd: {
 		header: {
 			type: HeaderData;
-			length: HeaderData;
-			format: HeaderData;
-			trackCount: HeaderData;
-			deltaTime: HeaderData;
 		};
-		position: [number[]];
 	};
 	mtrk: {
 		header: {
 			type: HeaderData;
-			size: HeaderData;
-			data: Omit<HeaderData, "position"> & { position: [number] };
 		};
-		position: [number[], number[]];
-		deltaTime: { maxLength: number };
+		deltaTime: { endOfFlag: number };
 		metaEvent: { prefix: number };
 		metaEvents: {
 			trackName: MetaEvent;
+			instrumentName: MetaEvent;
+			marker: MetaEvent;
+			deviceName: MetaEvent;
 			endOfTrack: MetaEvent;
+			tempo: MetaEvent;
+			timeSignature: MetaEvent;
+			keySignature: MetaEvent;
+		};
+		midiEvents: {
+			noteOff: MidiEvent;
+			noteOn: MidiEvent;
 		};
 	};
 }
@@ -29,12 +31,13 @@ type HeaderData = {
 	position: [number, number];
 	length: 4;
 };
-type HeaderDataType = "text" | "number" | "array";
 type MetaEvent = {
+	name: string;
 	type: number;
-	data: MetaEventDataType | null;
 };
-type MetaEventDataType = "text";
+type MidiEvent = {
+	type: number;
+};
 
 declare const Midi: Midi;
 
