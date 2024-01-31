@@ -9,7 +9,10 @@
       "type": {"type": "text", "position": [0, 4], "length": 4}
     },
     "deltaTime": {
-      "endOfFlag": 128
+      "readUntil": 128
+    },
+    "tempo":{
+      "divideSeconds": 60000000
     },
     "midiEvents": {
       "noteOff": {
@@ -21,6 +24,10 @@
     },
     "metaEvents": {
       "type": 15,
+      "sequenceNumber":{
+        "name": "sequenceNumber",
+        "type": 0
+      },
       "trackName": {
         "name": "trackName",
         "type": 3
@@ -41,8 +48,8 @@
         "name": "endOfTrack",
         "type": 47
       },
-      "tempo": {
-        "name": "tempo",
+      "bpm": {
+        "name": "bpm",
         "type": 81
       },
       "timeSignature": {

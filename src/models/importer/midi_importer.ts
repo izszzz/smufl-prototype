@@ -1,25 +1,97 @@
 import { Midi } from "@tonejs/midi";
 import { Parser } from "binary-parser";
+import * as R from "remeda";
 import midi from "../../consts/midi.json";
 import * as Core from "../core";
 
 export class midi_importer {
 	constructor(arrayBuffer: ArrayBuffer) {
-		const a = this.convertArrayBufferToMidi(arrayBuffer);
+		const a = this.parseArrayBuffer(arrayBuffer);
 		this.convertMidiToSMUFL(a);
 	}
 
-	convertMidiToSMUFL(midi: ParsedMidi) {}
-	convertArrayBufferToMidi(arrayBuffer: ArrayBuffer): ParsedMidi {
+	convertMidiToSMUFL(data: ParsedMidi) {
+		console.log(data);
+		if (data.mthd.format === 1) {
+			const firstTrack = R.first(data.mtrks);
+			if (!R.isDefined(firstTrack)) return;
+			const result = R.pipe(
+				firstTrack.events,
+				R.map(({ event, type }) =>
+					type === midi.mtrk.metaEvents.type ? event.data : null,
+				),
+				R.compact,
+				R.mergeAll,
+			) as MetaEvents;
+			new Core.Score({
+				name: "",
+				tracks: data.mtrks.slice(1).map((mtrk) => {
+					const test = mtrk.events.reduce<{
+						isMetadata: boolean;
+						metadata: TrackEvent[];
+						notes: TrackEvent[][];
+					}>(
+						(acc, cur) => {
+							if (acc.isMetadata) {
+								if (cur.type === midi.mtrk.metaEvents.type) {
+									acc.metadata.push(cur);
+									return acc;
+								}
+								acc.isMetadata = false;
+							}
+							if (cur.type === midi.mtrk.midiEvents.noteOn.type) {
+								acc.notes.push([cur]);
+							}
+							if (cur.type === midi.mtrk.midiEvents.noteOff.type) {
+								R.last(acc.notes)?.push(cur);
+							}
+							return acc;
+						},
+						{
+							isMetadata: true,
+							metadata: [],
+							notes: [],
+						},
+					);
+					console.log(test);
+					const result = R.pipe(
+						mtrk.events,
+						R.map(({ event, type }) =>
+							type === midi.mtrk.metaEvents.type ? event.data : null,
+						),
+						R.compact,
+						R.mergeAll,
+					) as MetaEvents;
+					console.log(result);
+					return new Core.Track({
+						name: result.trackName,
+						bars: (() => {
+							const bars: Core.Bar[] = [];
+							const notes: Core.Note[] = [];
+						})(),
+					});
+				}),
+				metadata: new Core.Metadata({
+					timeSignature: result.timeSignature,
+					bpm: result.bpm,
+				}),
+			});
+		}
+	}
+	parseArrayBuffer(arrayBuffer: ArrayBuffer): ParsedMidi {
 		const array = new Uint8Array(arrayBuffer);
 		const { metaEvents } = midi.mtrk;
-		const midiEventParser = new Parser().uint8("note").uint8("velocity");
+		const midiEventParser = new Parser().uint8("pitch").uint8("velocity");
 		const metaEventParser = new Parser()
 			.uint8("type")
 			.uint8("length")
 			.choice("data", {
 				tag: "type",
 				choices: {
+					[metaEvents.sequenceNumber.type]: new Parser().string(
+						metaEvents.sequenceNumber.name,
+						{ length: "$parent.length" },
+					),
 					[metaEvents.trackName.type]: new Parser().string(
 						metaEvents.trackName.name,
 						{ length: "$parent.length" },
@@ -40,9 +112,9 @@ export class midi_importer {
 						metaEvents.endOfTrack.name,
 						{ length: "$parent.length" },
 					),
-					[metaEvents.tempo.type]: new Parser().bit24(metaEvents.tempo.name, {
+					[metaEvents.bpm.type]: new Parser().bit24(metaEvents.bpm.name, {
 						length: "$parent.length",
-						formatter: (item) => 60000000 / item,
+						formatter: (item) => midi.mtrk.tempo.divideSeconds / item,
 					}),
 					[metaEvents.timeSignature.type]: new Parser().nest(
 						metaEvents.timeSignature.name,
@@ -69,18 +141,35 @@ export class midi_importer {
 					length: "$parent.length",
 				}),
 			});
+		let prevReadUntil = false;
 		const midiTrackEventParser = new Parser()
 			.buffer("deltaTime", {
-				readUntil: (item) => item > midi.mtrk.deltaTime.endOfFlag,
+				readUntil: (item, buffer) => {
+					// eslint-disable-next-line @typescript-eslint/no-use-before-define
+					// if (!R.isDefined(prevReadUntil)) return false;
+					console.log(
+						{ item },
+						{ buffer },
+						!(item & midi.mtrk.deltaTime.readUntil),
+					);
+
+					const readUntil = prevReadUntil;
+					prevReadUntil = !(item & midi.mtrk.deltaTime.readUntil);
+					return readUntil;
+				},
 			})
 			.bit4("type")
 			.bit4("channel")
 			.choice("event", {
 				tag: "type",
 				choices: {
-					8: midiEventParser,
-					9: midiEventParser,
-					15: metaEventParser,
+					[midi.mtrk.midiEvents.noteOff.type]: midiEventParser,
+					[midi.mtrk.midiEvents.noteOn.type]: midiEventParser,
+					[midi.mtrk.metaEvents.type]: metaEventParser,
+				},
+				formatter: (item) => {
+					console.log(item);
+					return item;
 				},
 			});
 		const midiHeaderChunk = new Parser()
@@ -88,11 +177,12 @@ export class midi_importer {
 			.uint32("length")
 			.uint16("format")
 			.uint16("trackCount")
-			.uint16("deltaTime");
+			.uint16("deltaTimeUnit");
 		const midiTrackChunk = new Parser()
 			.string("type", {
 				length: midi.mtrk.header.type.length,
 			})
+			.uint32("length")
 			.array("events", {
 				type: midiTrackEventParser,
 				readUntil: (item) =>
@@ -115,20 +205,28 @@ interface ParsedMidi {
 	};
 	mtrks: {
 		type: string;
-		events: {
-			channel: number;
-			deltaTime: Uint8Array;
-			event: { data: MidiEvent | Partial<MetaEvent> };
-			type: number;
-		};
+		events: TrackEvent[];
+	}[];
+}
+interface TrackEvent {
+	channel: number;
+	deltaTime: Uint8Array;
+	event: {
+		data: TrackEvent["type"] extends typeof midi.mtrk.metaEvents.type
+			? MetaEvent
+			: MidiEvent;
 	};
+	type:
+		| typeof midi.mtrk.metaEvents.type
+		| typeof midi.mtrk.midiEvents.noteOn.type
+		| typeof midi.mtrk.midiEvents.noteOff.type;
 }
 interface MidiEvent {
-	note: number;
+	pitch: number;
 	velocity: number;
 }
 interface MetaEvent {
-	data: MetaEvents;
+	data: Partial<MetaEvents>;
 	length: number;
 	type: number;
 }
@@ -138,7 +236,7 @@ interface MetaEvents {
 	marker: string;
 	deviceName: string;
 	endOfTrack: string;
-	tempo: number;
+	bpm: number;
 	timeSignature: {
 		numerator: number;
 		denominator: number;

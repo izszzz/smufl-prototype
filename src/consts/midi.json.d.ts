@@ -8,15 +8,17 @@ interface Midi {
 		header: {
 			type: HeaderData;
 		};
-		deltaTime: { endOfFlag: number };
-		metaEvent: { prefix: number };
+		deltaTime: { readUntil: number };
+		tempo: { divideSeconds: number };
 		metaEvents: {
+			type: number;
+			sequenceNumber: MetaEvent;
 			trackName: MetaEvent;
 			instrumentName: MetaEvent;
 			marker: MetaEvent;
 			deviceName: MetaEvent;
 			endOfTrack: MetaEvent;
-			tempo: MetaEvent;
+			bpm: MetaEvent;
 			timeSignature: MetaEvent;
 			keySignature: MetaEvent;
 		};
