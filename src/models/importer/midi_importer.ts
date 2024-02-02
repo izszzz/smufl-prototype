@@ -61,6 +61,11 @@ export class midi_importer {
 							const bars: Core.Bar[] = [];
 							const notes: Core.Note[] = [];
 							for (const [noteOn, noteOff] of track.notes) {
+								// TODO: deltaTimeのあつかい
+								// smfspecの例　81(129) 40(64)    40 00      (129-1)+ 64 = 192tick
+								// 実際の例 [131, 96] (131-1) + 96 = 226tick
+								// 各バイトの下位7bitを連結して値にするらしい
+
 								const fraction = (data.mthd.deltaTime * 4) / durationTicks;
 								const note = new Core.Note({ fraction, pitch });
 								barSize += durationTicks / (480 * 4);
@@ -153,6 +158,16 @@ export class midi_importer {
 					const readUntil = prevReadUntil;
 					prevReadUntil = !(item & midi.mtrk.deltaTime.readUntil);
 					return readUntil;
+				},
+				formatter: (item: Uint8Array) => {
+					const numbers = Array.from(item);
+					console.log(numbers);
+					const deltaTicks = ((numbers[0] & 0x7f) << 7) | (numbers[1] & 0x7f);
+					console.log(numbers[0].toString(2));
+					console.log(numbers[1]?.toString(2));
+					console.log(deltaTicks.toString(2));
+					console.log(item, deltaTicks);
+					return item;
 				},
 			})
 			.bit4("type")
