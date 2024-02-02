@@ -4,6 +4,8 @@ import * as R from "remeda";
 import midi from "../../consts/midi.json";
 import * as Core from "../core";
 
+// TODO: 休符の扱い
+
 export class midi_importer {
 	constructor(arrayBuffer: ArrayBuffer) {
 		const a = this.parseArrayBuffer(arrayBuffer);
@@ -15,7 +17,7 @@ export class midi_importer {
 		if (data.mthd.format === 1) {
 			const firstTrack = R.first(data.mtrks);
 			if (!R.isDefined(firstTrack)) return;
-			const result = R.pipe(
+			const scoreMetadata = R.pipe(
 				firstTrack.events,
 				R.map(({ event, type }) =>
 					type === midi.mtrk.metaEvents.type ? event.data : null,
@@ -26,7 +28,7 @@ export class midi_importer {
 			new Core.Score({
 				name: "",
 				tracks: data.mtrks.slice(1).map((mtrk) => {
-					const test = mtrk.events.reduce<{
+					const track = mtrk.events.reduce<{
 						isMetadata: boolean;
 						metadata: TrackEvent[];
 						notes: TrackEvent[][];
@@ -39,12 +41,10 @@ export class midi_importer {
 								}
 								acc.isMetadata = false;
 							}
-							if (cur.type === midi.mtrk.midiEvents.noteOn.type) {
+							if (cur.type === midi.mtrk.midiEvents.noteOn.type)
 								acc.notes.push([cur]);
-							}
-							if (cur.type === midi.mtrk.midiEvents.noteOff.type) {
+							if (cur.type === midi.mtrk.midiEvents.noteOff.type)
 								R.last(acc.notes)?.push(cur);
-							}
 							return acc;
 						},
 						{
@@ -53,27 +53,32 @@ export class midi_importer {
 							notes: [],
 						},
 					);
-					console.log(test);
-					const result = R.pipe(
-						mtrk.events,
-						R.map(({ event, type }) =>
-							type === midi.mtrk.metaEvents.type ? event.data : null,
-						),
-						R.compact,
-						R.mergeAll,
-					) as MetaEvents;
-					console.log(result);
+					const trackMetadata = R.mergeAll(track.metadata) as MetaEvents;
+					console.log(track);
 					return new Core.Track({
-						name: result.trackName,
+						name: trackMetadata.trackName,
 						bars: (() => {
 							const bars: Core.Bar[] = [];
 							const notes: Core.Note[] = [];
+							for (const [noteOn, noteOff] of track.notes) {
+								const fraction = (data.mthd.deltaTime * 4) / durationTicks;
+								const note = new Core.Note({ fraction, pitch });
+								barSize += durationTicks / (480 * 4);
+								notes.push(note);
+								barNotes.push(note);
+								if (barSize >= 1) {
+									bars.push(new Core.Bar({ notes: barNotes }));
+									barNotes = [];
+									barSize = 0;
+								}
+								new Core.Note({});
+							}
 						})(),
 					});
 				}),
 				metadata: new Core.Metadata({
-					timeSignature: result.timeSignature,
-					bpm: result.bpm,
+					timeSignature: scoreMetadata.timeSignature,
+					bpm: scoreMetadata.bpm,
 				}),
 			});
 		}
@@ -144,15 +149,7 @@ export class midi_importer {
 		let prevReadUntil = false;
 		const midiTrackEventParser = new Parser()
 			.buffer("deltaTime", {
-				readUntil: (item, buffer) => {
-					// eslint-disable-next-line @typescript-eslint/no-use-before-define
-					// if (!R.isDefined(prevReadUntil)) return false;
-					console.log(
-						{ item },
-						{ buffer },
-						!(item & midi.mtrk.deltaTime.readUntil),
-					);
-
+				readUntil: (item) => {
 					const readUntil = prevReadUntil;
 					prevReadUntil = !(item & midi.mtrk.deltaTime.readUntil);
 					return readUntil;
@@ -166,10 +163,6 @@ export class midi_importer {
 					[midi.mtrk.midiEvents.noteOff.type]: midiEventParser,
 					[midi.mtrk.midiEvents.noteOn.type]: midiEventParser,
 					[midi.mtrk.metaEvents.type]: metaEventParser,
-				},
-				formatter: (item) => {
-					console.log(item);
-					return item;
 				},
 			});
 		const midiHeaderChunk = new Parser()
