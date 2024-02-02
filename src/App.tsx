@@ -9,18 +9,6 @@ function App() {
 	const [layoutType, setLayoutType] =
 		useState<SMUFL.Score["type"]>("HorizontalScroll");
 	const ref = useRef(null);
-	useEffect(() => {
-		(async () => {
-			const score = await MIDIImporter();
-			if (ref.current) {
-				const svgRenderer = new SVGRenderer(ref.current, score, {
-					fontSize,
-					layoutType,
-				});
-				setFontSize(svgRenderer.fontSize);
-			}
-		})();
-	}, [layoutType, fontSize, ref]);
 
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
 		const input = event.target;
@@ -32,7 +20,15 @@ function App() {
 			reader.onload = (e) => {
 				const arrayBuffer = e.target?.result as ArrayBuffer;
 				// TODO: いい感じにリファクタしよう
-				new midi_importer(arrayBuffer);
+				const midiImporter = new midi_importer(arrayBuffer);
+				if (ref.current) {
+					// @ts-ignore
+					const svgRenderer = new SVGRenderer(ref.current, midiImporter.score, {
+						fontSize,
+						layoutType,
+					});
+					setFontSize(svgRenderer.fontSize);
+				}
 			};
 
 			reader.readAsArrayBuffer(midiFile);

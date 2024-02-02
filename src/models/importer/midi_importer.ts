@@ -1,4 +1,3 @@
-import { Midi } from "@tonejs/midi";
 import { Parser } from "binary-parser";
 import * as R from "remeda";
 import midi from "../../consts/midi.json";
@@ -7,13 +6,14 @@ import * as Core from "../core";
 // TODO: 休符の扱い
 
 export class midi_importer {
+	score: Core.Score | undefined;
 	constructor(arrayBuffer: ArrayBuffer) {
 		const a = this.parseArrayBuffer(arrayBuffer);
-		this.convertMidiToSMUFL(a);
+		const result = this.convertMidiToSMUFL(a);
+		this.score = result;
 	}
 
 	convertMidiToSMUFL(data: ParsedMidi) {
-		console.log(data);
 		if (data.mthd.format === 1) {
 			const firstTrack = R.first(data.mtrks);
 			if (!R.isDefined(firstTrack)) return;
@@ -25,7 +25,7 @@ export class midi_importer {
 				R.compact,
 				R.mergeAll,
 			) as MetaEvents;
-			new Core.Score({
+			return new Core.Score({
 				name: "",
 				tracks: data.mtrks.slice(1).map((mtrk) => {
 					const track = mtrk.events.reduce<{
@@ -60,15 +60,17 @@ export class midi_importer {
 						bars: (() => {
 							const bars: Core.Bar[] = [];
 							const notes: Core.Note[] = [];
-							for (const [noteOn, noteOff] of track.notes) {
-								// TODO: deltaTimeのあつかい
-								// smfspecの例　81(129) 40(64)    40 00      (129-1)+ 64 = 192tick
-								// 実際の例 [131, 96] (131-1) + 96 = 226tick
-								// 各バイトの下位7bitを連結して値にするらしい
-
-								const fraction = (data.mthd.deltaTime * 4) / durationTicks;
-								const note = new Core.Note({ fraction, pitch });
-								barSize += durationTicks / (480 * 4);
+							let barNotes: Core.Note[] = [];
+							let barSize = 0;
+							for (const noteData of track.notes) {
+								const [noteOn, noteOff] = noteData;
+								const fraction = (data.mthd.resolution * 4) / noteOff.deltaTime;
+								const note = new Core.Note({
+									fraction,
+									// @ts-ignore
+									pitch: noteOn.event.pitch,
+								});
+								barSize += noteOff.deltaTime / (data.mthd.resolution * 4);
 								notes.push(note);
 								barNotes.push(note);
 								if (barSize >= 1) {
@@ -76,8 +78,23 @@ export class midi_importer {
 									barNotes = [];
 									barSize = 0;
 								}
-								new Core.Note({});
 							}
+							if (barNotes.length) bars.push(new Core.Bar({ notes: barNotes }));
+							// biome-ignore lint/complexity/noForEach: <explanation>
+							notes.forEach((note, i, array) => {
+								const prevNote = array[i - 1];
+								if (!prevNote) return;
+								note.prevNote = prevNote;
+								prevNote.nextNote = note;
+							});
+							// biome-ignore lint/complexity/noForEach: <explanation>
+							bars.forEach((bar, i, array) => {
+								const prevBar = array[i - 1];
+								if (!prevBar) return;
+								bar.prev = prevBar;
+								prevBar.next = bar;
+							});
+							return bars;
 						})(),
 					});
 				}),
@@ -159,16 +176,9 @@ export class midi_importer {
 					prevReadUntil = !(item & midi.mtrk.deltaTime.readUntil);
 					return readUntil;
 				},
-				formatter: (item: Uint8Array) => {
-					const numbers = Array.from(item);
-					console.log(numbers);
-					const deltaTicks = ((numbers[0] & 0x7f) << 7) | (numbers[1] & 0x7f);
-					console.log(numbers[0].toString(2));
-					console.log(numbers[1]?.toString(2));
-					console.log(deltaTicks.toString(2));
-					console.log(item, deltaTicks);
-					return item;
-				},
+				// TODO: 繰り返し文に直す
+				formatter: (item: Uint8Array) =>
+					((item[0] & 0x7f) << 7) | (item[1] & 0x7f),
 			})
 			.bit4("type")
 			.bit4("channel")
@@ -185,7 +195,7 @@ export class midi_importer {
 			.uint32("length")
 			.uint16("format")
 			.uint16("trackCount")
-			.uint16("deltaTimeUnit");
+			.uint16("resolution");
 		const midiTrackChunk = new Parser()
 			.string("type", {
 				length: midi.mtrk.header.type.length,
@@ -209,7 +219,7 @@ interface ParsedMidi {
 		length: number;
 		format: number;
 		trackCount: number;
-		deltaTime: number;
+		resolution: number;
 	};
 	mtrks: {
 		type: string;
@@ -218,7 +228,7 @@ interface ParsedMidi {
 }
 interface TrackEvent {
 	channel: number;
-	deltaTime: Uint8Array;
+	deltaTime: number;
 	event: {
 		data: TrackEvent["type"] extends typeof midi.mtrk.metaEvents.type
 			? MetaEvent
@@ -258,64 +268,3 @@ interface MetaEvents {
 		minor: number;
 	};
 }
-
-export const MIDIImporter = async (): Promise<Core.Score> => {
-	const midi = await Midi.fromUrl(
-		`${process.env.PUBLIC_URL}/tests/2tracktest.mid`,
-	);
-	const {
-		name,
-		tracks,
-		header: { tempos, timeSignatures },
-	} = midi;
-	return new Core.Score({
-		name,
-		metadata: new Core.Metadata({
-			timeSignature: {
-				numerator: timeSignatures[0].timeSignature[0] ?? 4,
-				denominator: timeSignatures[0].timeSignature[1] ?? 4,
-			},
-			bpm: tempos.length ? tempos[0].bpm : 120,
-		}),
-		tracks: tracks.map(
-			({ notes: midiNotes }) =>
-				new Core.Track({
-					bars: (() => {
-						const bars: Core.Bar[] = [];
-						const notes: Core.Note[] = [];
-						let barNotes: Core.Note[] = [];
-						let barSize = 0;
-						// biome-ignore lint/complexity/noForEach: <explanation>
-						midiNotes.forEach(({ durationTicks, midi: pitch }) => {
-							const fraction = (480 * 4) / durationTicks;
-							const note = new Core.Note({ fraction, pitch });
-							barSize += durationTicks / (480 * 4);
-							notes.push(note);
-							barNotes.push(note);
-							if (barSize >= 1) {
-								bars.push(new Core.Bar({ notes: barNotes }));
-								barNotes = [];
-								barSize = 0;
-							}
-						});
-						if (barNotes.length) bars.push(new Core.Bar({ notes: barNotes }));
-						// biome-ignore lint/complexity/noForEach: <explanation>
-						notes.forEach((note, i, array) => {
-							const prevNote = array[i - 1];
-							if (!prevNote) return;
-							note.prevNote = prevNote;
-							prevNote.nextNote = note;
-						});
-						// biome-ignore lint/complexity/noForEach: <explanation>
-						bars.forEach((bar, i, array) => {
-							const prevBar = array[i - 1];
-							if (!prevBar) return;
-							bar.prev = prevBar;
-							prevBar.next = bar;
-						});
-						return bars;
-					})(),
-				}),
-		),
-	});
-};
