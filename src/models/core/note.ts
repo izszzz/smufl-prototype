@@ -1,18 +1,23 @@
 interface NoteConstructorArgs {
 	fraction: number;
 	pitch: number;
-	prevNote?: Note;
-	nextNote?: Note;
+	prev?: Note;
+	next?: Note;
 }
 export class Note implements NoteConstructorArgs {
 	fraction;
 	pitch;
-	prevNote;
-	nextNote;
-	constructor({ fraction, pitch, prevNote, nextNote }: NoteConstructorArgs) {
+	prev;
+	next;
+	constructor({
+		fraction,
+		pitch,
+		prev: prevNote,
+		next: nextNote,
+	}: NoteConstructorArgs) {
 		this.fraction = fraction;
 		this.pitch = pitch;
-		this.nextNote = nextNote;
-		this.prevNote = prevNote;
+		this.next = nextNote;
+		this.prev = prevNote;
 	}
 }

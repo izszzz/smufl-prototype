@@ -1,6 +1,5 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-//@ts-ignore
-import { MIDIImporter, midi_importer } from "./models/importer/midi_importer";
+import React, { ChangeEvent, useRef, useState } from "react";
+import { midi_importer } from "./models/importer/midi_importer";
 import SVGRenderer from "./models/renderer/svg_renderer";
 import * as SMUFL from "./models/smufl";
 
@@ -19,10 +18,8 @@ function App() {
 			const reader = new FileReader();
 			reader.onload = (e) => {
 				const arrayBuffer = e.target?.result as ArrayBuffer;
-				// TODO: いい感じにリファクタしよう
 				const midiImporter = new midi_importer(arrayBuffer);
 				if (ref.current) {
-					// @ts-ignore
 					const svgRenderer = new SVGRenderer(ref.current, midiImporter.score, {
 						fontSize,
 						layoutType,

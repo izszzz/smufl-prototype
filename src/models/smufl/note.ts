@@ -62,7 +62,7 @@ export class Note extends SMUFL.Coord {
 	#calcNoteBasePitch = (note: Core.Note) =>
 		(this.#ajustNotePitch(note) %
 			Metadata.baseOctaveKeys.length) as Metadata["baseOctaveKeys"][number];
-	#calcNoteAccidental = ({ prevNote, pitch }: Core.Note) =>
+	#calcNoteAccidental = ({ prev: prevNote, pitch }: Core.Note) =>
 		!prevNote
 			? "accidentalSharp"
 			: prevNote.pitch < pitch
