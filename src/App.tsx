@@ -1,5 +1,5 @@
 import React, { ChangeEvent, useRef, useState } from "react";
-import { midi_importer } from "./models/importer/midi_importer";
+import { MidiImporter } from "./models/importer/midi_importer";
 import SVGRenderer from "./models/renderer/svg_renderer";
 import * as SMUFL from "./models/smufl";
 
@@ -18,7 +18,7 @@ function App() {
 			const reader = new FileReader();
 			reader.onload = (e) => {
 				const arrayBuffer = e.target?.result as ArrayBuffer;
-				const midiImporter = new midi_importer(arrayBuffer);
+				const midiImporter = new MidiImporter(arrayBuffer);
 				if (ref.current) {
 					const svgRenderer = new SVGRenderer(ref.current, midiImporter.score, {
 						fontSize,

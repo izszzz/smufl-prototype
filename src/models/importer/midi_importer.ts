@@ -5,7 +5,7 @@ import * as Core from "../core";
 
 // TODO: 休符の扱い
 
-export class midi_importer {
+export class MidiImporter {
 	score: Core.Score;
 	constructor(arrayBuffer: ArrayBuffer) {
 		const result = this.convertMidiToSMUFL(this.parseArrayBuffer(arrayBuffer));

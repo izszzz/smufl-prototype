@@ -1,4 +1,3 @@
-import * as R from "remeda";
 export * from "./bar";
 export * from "./note";
 export * from "./score";
@@ -8,10 +7,11 @@ export * from "./metadata";
 export const setPrevAndNext = <T extends { prev?: T; next?: T }>(
 	collection: T[],
 ) => {
-	for (const data of collection) {
-		const prevData = R.last(collection);
-		if (!prevData) return;
-		data.prev = prevData;
-		prevData.next = data;
-	}
+	// biome-ignore lint/complexity/noForEach: <explanation>
+	collection.forEach((data, i, array) => {
+		const prev = array[i - 1];
+		if (!prev) return;
+		data.prev = prev;
+		prev.next = data;
+	});
 };
