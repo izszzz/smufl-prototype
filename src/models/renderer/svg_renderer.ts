@@ -9,6 +9,8 @@ interface SVGRendererOptions {
 	fontSize: number;
 }
 
+// TODO: barsがemptyの場合
+// TODO: 設計考え直したほうがいい
 class SVGRenderer {
 	element: HTMLElement;
 	score: Core.Score;
@@ -72,6 +74,16 @@ class SVGRenderer {
 			R.forEach(([k, v]) => element.setAttribute(k, String(v))),
 		);
 		return element;
+	};
+	changeFontSize = (fontSize: number) => {
+		this.fontSize = fontSize;
+		this.fontSizeRatio = this.fontSize / Metadata.defaultFontSize;
+		this.svg = this.createSVGElement("svg", {
+			width: "100%",
+			height: "100%",
+			"font-size": this.fontSize,
+		});
+		this.upsertSVGElement();
 	};
 	private upsertSVGElement = () => {
 		while (this.element.firstChild) this.element.firstChild.remove();

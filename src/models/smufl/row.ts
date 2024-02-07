@@ -50,6 +50,7 @@ export class Row {
 					? bar.barline.end.glyphName
 					: bar.barline.start.glyphName,
 			);
+		// TODO: Error処理必要か考える
 		const firstTrack = R.first(tracks);
 		if (R.isNil(firstTrack)) throw new Error();
 		const lastBar = R.last(firstTrack.bars);

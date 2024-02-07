@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useRef, useState } from "react";
+import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { MidiImporter } from "./models/importer/midi_importer";
 import SVGRenderer from "./models/renderer/svg_renderer";
 import * as SMUFL from "./models/smufl";
@@ -7,6 +7,7 @@ function App() {
 	const [fontSize, setFontSize] = useState(0);
 	const [layoutType, setLayoutType] =
 		useState<SMUFL.Score["type"]>("HorizontalScroll");
+	const [svgRenderer, setSVGRenderer] = useState<SVGRenderer>();
 	const ref = useRef(null);
 
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -24,6 +25,7 @@ function App() {
 						fontSize,
 						layoutType,
 					});
+					setSVGRenderer(svgRenderer);
 					setFontSize(svgRenderer.fontSize);
 				}
 			};
@@ -31,6 +33,9 @@ function App() {
 			reader.readAsArrayBuffer(midiFile);
 		}
 	};
+	useEffect(() => {
+		svgRenderer?.changeFontSize(fontSize);
+	}, [fontSize, svgRenderer]);
 
 	return (
 		<div>

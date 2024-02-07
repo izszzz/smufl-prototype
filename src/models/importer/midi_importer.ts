@@ -18,27 +18,30 @@ export class MidiImporter {
 		if (data.mthd.format === 1) {
 			const tracks = data.mtrks.reduce<{
 				tracks: Core.Track[];
-				conductorTrack: MetaEvents | null;
+				scoreMetadata: Core.Metadata;
 			}>(
 				(acc, cur) => {
-					const metaEventIndex = cur.events.findIndex(
+					const lastMetaEventIndex = cur.events.findIndex(
 						(e) => !this.isMetaEvent(e),
 					);
-					if (metaEventIndex === -1) {
-						acc.conductorTrack = R.pipe(
-							cur.events,
-							R.map((x) => x.event.data),
-							R.mergeAll,
-						) as MetaEvents;
-						return acc;
-					}
 					const metadata = R.pipe(
-						cur.events.slice(0, metaEventIndex),
+						cur.events.slice(0, lastMetaEventIndex),
 						R.map((x) => x.event.data),
 						R.mergeAll,
-					) as MetaEvents;
-					const track = cur.events
-						.slice(metaEventIndex)
+					) as Partial<MetaEvents>;
+
+					if (R.isDefined(metadata.bpm)) {
+						acc.scoreMetadata.bpm = metadata.bpm;
+					}
+					if (R.isDefined(metadata.timeSignature)) {
+						acc.scoreMetadata.timeSignature = R.omit(metadata.timeSignature, [
+							"clock",
+							"bb",
+						]);
+					}
+
+					const midiNotes = cur.events
+						.slice(lastMetaEventIndex)
 						.reduce<MidiTrackEvent[][]>((acc, cur) => {
 							if (cur.type === midi.mtrk.midiEvents.noteOn.type)
 								acc.push([cur]);
@@ -46,6 +49,7 @@ export class MidiImporter {
 								R.last(acc)?.push(cur);
 							return acc;
 						}, []);
+					if (R.isEmpty(midiNotes)) return acc;
 					acc.tracks.push(
 						new Core.Track({
 							name: metadata.trackName,
@@ -54,23 +58,21 @@ export class MidiImporter {
 								const notes: Core.Note[] = [];
 								let barNotes: Core.Note[] = [];
 								let barSize = 0;
-								for (const noteData of track) {
+								for (const noteData of midiNotes) {
 									const [noteOn, noteOff] = noteData;
-									// TODO: 定数
 									const fraction =
 										(data.mthd.resolution *
-											(acc.conductorTrack?.timeSignature.denominator ?? 4)) /
+											acc.scoreMetadata.timeSignature?.denominator) /
 										noteOff.deltaTime;
 									const note = new Core.Note({
 										fraction,
 										// @ts-ignore
 										pitch: noteOn.event.pitch,
 									});
-									// TODO: 定数
 									barSize +=
 										noteOff.deltaTime /
 										(data.mthd.resolution *
-											(acc.conductorTrack?.timeSignature.numerator ?? 4));
+											acc.scoreMetadata.timeSignature?.numerator);
 									notes.push(note);
 									barNotes.push(note);
 									if (barSize >= 1) {
@@ -91,21 +93,13 @@ export class MidiImporter {
 				},
 				{
 					tracks: [],
-					conductorTrack: null,
+					scoreMetadata: new Core.Metadata(),
 				},
 			);
 			return new Core.Score({
 				name: "",
 				tracks: tracks.tracks,
-				metadata: new Core.Metadata({
-					//TODO: 定数
-					timeSignature: tracks.conductorTrack?.timeSignature ?? {
-						numerator: 4,
-						denominator: 4,
-					},
-					//TODO: 定数
-					bpm: tracks.conductorTrack?.bpm ?? 120,
-				}),
+				metadata: tracks.scoreMetadata,
 			});
 		}
 	}
@@ -113,10 +107,20 @@ export class MidiImporter {
 		return midiParser.parse(new Uint8Array(arrayBuffer));
 	}
 	isMetaEvent(event: MidiTrackEvent) {
-		return event.type === midi.mtrk.metaEvents.type;
+		return event.type === midi.mtrk.metaEvent.type;
 	}
 }
 const { metaEvents } = midi.mtrk;
+const metaEventChoice = (
+	metaEvent: keyof typeof metaEvents,
+	parser: (parser: Parser, name: string, length: { length: string }) => Parser,
+) => ({
+	[metaEvents[metaEvent].type]: parser(
+		new Parser(),
+		metaEvents[metaEvent].name,
+		{ length: "$parent.length" },
+	),
+});
 const midiEventParser = new Parser().uint8("pitch").uint8("velocity");
 const metaEventParser = new Parser()
 	.uint8("type")
@@ -124,52 +128,37 @@ const metaEventParser = new Parser()
 	.choice("data", {
 		tag: "type",
 		choices: {
-			[metaEvents.sequenceNumber.type]: new Parser().string(
-				metaEvents.sequenceNumber.name,
-				{ length: "$parent.length" },
+			...metaEventChoice("sequenceNumber", (p, n, l) => p.string(n, l)),
+			...metaEventChoice("text", (p, n, l) => p.string(n, l)),
+			...metaEventChoice("copyright", (p, n, l) => p.string(n, l)),
+			...metaEventChoice("trackName", (p, n, l) => p.string(n, l)),
+			...metaEventChoice("instrumentName", (p, n, l) => p.string(n, l)),
+			...metaEventChoice("marker", (p, n, l) => p.string(n, l)),
+			...metaEventChoice("deviceName", (p, n, l) => p.string(n, l)),
+			...metaEventChoice("endOfTrack", (p, n, l) => p.string(n, l)),
+			...metaEventChoice("bpm", (p, n, l) =>
+				p.bit24(n, {
+					...l,
+					formatter: (item) => Math.floor(midi.mtrk.tempo.divideSeconds / item),
+				}),
 			),
-			[metaEvents.trackName.type]: new Parser().string(
-				metaEvents.trackName.name,
-				{ length: "$parent.length" },
-			),
-			[metaEvents.instrumentName.type]: new Parser().string(
-				metaEvents.instrumentName.name,
-				{ length: "$parent.length" },
-			),
-			[metaEvents.marker.type]: new Parser().string(metaEvents.marker.name, {
-				length: "$parent.length",
-			}),
-			[metaEvents.deviceName.type]: new Parser().string(
-				metaEvents.deviceName.name,
-				{ length: "$parent.length" },
-			),
-			[metaEvents.endOfTrack.type]: new Parser().string(
-				metaEvents.endOfTrack.name,
-				{ length: "$parent.length" },
-			),
-			[metaEvents.bpm.type]: new Parser().bit24(metaEvents.bpm.name, {
-				length: "$parent.length",
-				formatter: (item) => midi.mtrk.tempo.divideSeconds / item,
-			}),
-			[metaEvents.timeSignature.type]: new Parser().nest(
-				metaEvents.timeSignature.name,
-				{
+			...metaEventChoice("timeSignature", (p, n, l) =>
+				p.nest(n, {
 					type: new Parser()
 						.uint8("numerator")
 						.uint8("denominator", { formatter: (item) => item ** 2 })
 						.uint8("clock")
 						.uint8("bb"),
-				},
+				}),
 			),
-			[metaEvents.keySignature.type]: new Parser().nest(
-				metaEvents.keySignature.name,
-				{
+			...metaEventChoice("keySignature", (p, n, l) =>
+				p.nest(n, {
 					type: new Parser()
 						.bit4("sharp")
 						.bit4("flat")
 						.bit4("major")
 						.bit4("minor"),
-				},
+				}),
 			),
 		},
 		defaultChoice: new Parser().buffer("buffer", {
@@ -194,7 +183,7 @@ const midiTrackEventParser = new Parser()
 		choices: {
 			[midi.mtrk.midiEvents.noteOff.type]: midiEventParser,
 			[midi.mtrk.midiEvents.noteOn.type]: midiEventParser,
-			[midi.mtrk.metaEvents.type]: metaEventParser,
+			[midi.mtrk.metaEvent.type]: metaEventParser,
 		},
 	});
 const midiHeaderChunk = new Parser()
@@ -234,12 +223,12 @@ interface MidiTrackEvent {
 	channel: number;
 	deltaTime: number;
 	event: {
-		data: MidiTrackEvent["type"] extends typeof midi.mtrk.metaEvents.type
+		data: MidiTrackEvent["type"] extends typeof midi.mtrk.metaEvent.type
 			? MetaEvent
 			: MidiEvent;
 	};
 	type:
-		| typeof midi.mtrk.metaEvents.type
+		| typeof midi.mtrk.metaEvent.type
 		| typeof midi.mtrk.midiEvents.noteOn.type
 		| typeof midi.mtrk.midiEvents.noteOff.type;
 }

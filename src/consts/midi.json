@@ -22,11 +22,21 @@
         "type": 9
       }
     },
+    "metaEvent":{
+      "type": 15
+    },
     "metaEvents": {
-      "type": 15,
       "sequenceNumber": {
         "name": "sequenceNumber",
         "type": 0
+      },
+      "text": {
+        "name": "text",
+        "type": 1
+      },
+      "copyright": {
+        "name": "copyright",
+        "type": 2
       },
       "trackName": {
         "name": "trackName",

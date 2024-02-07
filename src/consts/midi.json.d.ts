@@ -10,8 +10,12 @@ interface Midi {
 		};
 		deltaTime: { readUntil: number };
 		tempo: { divideSeconds: number };
-		metaEvents: {
+		metaEvent: {
 			type: number;
+		};
+		metaEvents: {
+			text: MetaEvent;
+			copyright: MetaEvent;
 			sequenceNumber: MetaEvent;
 			trackName: MetaEvent;
 			instrumentName: MetaEvent;

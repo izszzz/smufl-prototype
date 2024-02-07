@@ -11,6 +11,11 @@ interface Metadata {
 		{ type: "8th"; value: 8 },
 		{ type: "16th"; value: 16 },
 	];
+	timeSignature: {
+		denominator: 4;
+		numerator: 4;
+	};
+	bpm: 120;
 }
 
 declare const Metadata: Metadata;
