@@ -22,7 +22,7 @@
         "type": 9
       }
     },
-    "metaEvent":{
+    "metaEvent": {
       "type": 15
     },
     "metaEvents": {
@@ -60,28 +60,15 @@
       },
       "bpm": {
         "name": "bpm",
-        "type": 81,
-        "default": 120
+        "type": 81
       },
       "timeSignature": {
         "name": "timeSignature",
-        "type": 88,
-        "default": {
-          "denominator": 4,
-          "numerator": 4,
-          "clock": 24,
-          "bb": 8
-        }
+        "type": 88
       },
       "keySignature": {
         "name": "keySignature",
-        "type": 89,
-        "default": {
-          "sharp": 0,
-          "flat": 0,
-          "major": 0,
-          "minor": 0
-        }
+        "type": 89
       }
     }
   }
