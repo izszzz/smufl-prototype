@@ -1,9 +1,9 @@
 import * as R from "remeda";
-import Metadata from "../../consts/metadata.json";
-import glyphNames from "../../consts/metadata/glyphnames.json";
-import Glyphnames from "../../consts/metadata/glyphnames.json";
-import * as Core from "../core";
-import * as SMUFL from "../smufl";
+import Metadata from "../consts/metadata.json";
+import glyphNames from "../consts/metadata/glyphnames.json";
+import Glyphnames from "../consts/metadata/glyphnames.json";
+import * as Core from "../models/core";
+import * as SMUFL from "../models/smufl";
 interface SVGRendererOptions {
 	layoutType: SMUFL.Score["type"];
 	fontSize: number;

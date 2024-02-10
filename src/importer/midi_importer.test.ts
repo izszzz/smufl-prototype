@@ -1,13 +1,13 @@
 import fs from "fs";
 import * as R from "remeda";
-import * as Core from "../core";
+import * as Core from "../models/core";
 import { MidiImporter } from "./midi_importer";
 
 const toArrayBuffer = (buffer: Buffer) =>
 	buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
 const importMidiFile = (path: string) =>
 	new MidiImporter(toArrayBuffer(fs.readFileSync(path)));
-const path = "src/models/importer/fixtures/midi/";
+const path = "src/importer/fixtures/midi/";
 
 describe("Note", () => {
 	test("export quarter middle C Core.Note", () => {

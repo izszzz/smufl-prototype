@@ -10,9 +10,9 @@ interface Midi {
 		};
 		deltaTime: { readUntil: number };
 		tempo: { divideSeconds: number };
-		metaEvent: {
-			type: number;
-		};
+		metaEvent: EventPrefix;
+		sysExEvent: EventPrefix;
+		midiEvent: EventPrefix;
 		metaEvents: {
 			text: MetaEvent;
 			copyright: MetaEvent;
@@ -33,16 +33,19 @@ interface Midi {
 	};
 }
 type HeaderData = {
-	type: HeaderDataType;
-	position: [number, number];
-	length: 4;
+	length: number;
 };
 type MetaEvent = {
 	name: string;
 	type: number;
 };
 type MidiEvent = {
+	type: number | number[];
+	channel: number | number[];
+};
+type EventPrefix = {
 	type: number;
+	channel?: number;
 };
 
 declare const Midi: Midi;

@@ -1,7 +1,8 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
-import { MidiImporter } from "./models/importer/midi_importer";
-import SVGRenderer from "./models/renderer/svg_renderer";
+import { MidiImporter } from "./importer/midi_importer";
 import * as SMUFL from "./models/smufl";
+import { AudioPlayer } from "./player/audio_player";
+import SVGRenderer from "./renderer/svg_renderer";
 
 function App() {
 	const [fontSize, setFontSize] = useState(0);
@@ -36,6 +37,9 @@ function App() {
 	useEffect(() => {
 		svgRenderer?.changeFontSize(fontSize);
 	}, [fontSize, svgRenderer]);
+	useEffect(() => {
+		new AudioPlayer();
+	}, []);
 
 	return (
 		<div>

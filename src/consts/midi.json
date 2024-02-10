@@ -1,18 +1,29 @@
 {
   "mthd": {
     "header": {
-      "type": {"type": "text", "position": [0, 4], "length": 4}
+      "type": {"length": 4}
     }
   },
   "mtrk": {
     "header": {
-      "type": {"type": "text", "position": [0, 4], "length": 4}
+      "type": {"length": 4}
     },
     "deltaTime": {
       "readUntil": 128
     },
     "tempo": {
       "divideSeconds": 60000000
+    },
+    "midiEvent": {
+      "type": [8, 9]
+    },
+    "metaEvent": {
+      "type": 15,
+      "channel": 15
+    },
+    "sysExEvet": {
+      "type": 15,
+      "channel": [0, 7]
     },
     "midiEvents": {
       "noteOff": {
@@ -21,9 +32,6 @@
       "noteOn": {
         "type": 9
       }
-    },
-    "metaEvent": {
-      "type": 15
     },
     "metaEvents": {
       "sequenceNumber": {
