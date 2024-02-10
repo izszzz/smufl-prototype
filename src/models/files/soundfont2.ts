@@ -11,36 +11,88 @@ export class Soundfont2 {
 			(data) => [data.id, data],
 		) as unknown as Soundfont2Data;
 	}
-	getPreset() {}
+	getPreset(preset: number) {
+		const { data, index } = this.getPresetHeader(preset);
+		const presetBags = this.getPresetBags(data, index);
+		return {
+			presetHeader: data,
+			presetBags: presetBags.map(({ data, index }) => ({
+				presetBag: data,
+				presetGenerators: this.getPresetGenerators(data, index).map(
+					(presetGenerator) => {
+						if (presetGenerator.genOper !== 41) return { presetGenerator };
+						const { data, index } = this.getInstrumentHeader(presetGenerator);
+						const instrumentBags = this.getInstrumentBags(
+							data as Header,
+							index,
+						);
+						return {
+							presetGenerator,
+							instrumentHeader: data,
+							instrumentBags: instrumentBags.map(({ data, index }) => ({
+								instrumentBag: data,
+								instrumentGenerators: this.getInstrumentGenerators(
+									data,
+									index,
+								).map((instrumentGenerator) => {
+									if (instrumentGenerator.genOper !== 53)
+										return { instrumentGenerator };
+									return {
+										instrumentGenerator,
+										sampleHeader: this.getSampleHeader(instrumentGenerator),
+									};
+								}),
+							})),
+						};
+					},
+				),
+			})),
+		};
+	}
+	getSample() {}
+
+	getPresetBags = (...params: [Header, number]) =>
+		this.getBags("preset", ...params);
+	getInstrumentBags = (...params: [Header, number]) =>
+		this.getBags("instrument", ...params);
+	getBags(type: "instrument" | "preset", header: Header, headerIndex: number) {
+		const nextHeader =
+			this.data[type === "preset" ? "phdr" : "inst"].data[headerIndex + 1];
+		return this.data[type === "preset" ? "pbag" : "ibag"].data
+			.slice(header.bagIndex, nextHeader.bagIndex)
+			.map((bag, i) => ({ data: bag, index: header.bagIndex + i }));
+	}
+
+	getPresetGenerators = (...params: [Bag, number]) =>
+		this.getGenerators("preset", ...params);
+	getInstrumentGenerators = (...params: [Bag, number]) =>
+		this.getGenerators("instrument", ...params);
+	getGenerators(type: "instrument" | "preset", bag: Bag, bagIndex: number) {
+		const nextBag =
+			this.data[type === "preset" ? "pbag" : "ibag"].data[bagIndex + 1];
+		return this.data[type === "preset" ? "pgen" : "igen"].data.slice(
+			bag.genIndex,
+			nextBag.genIndex,
+		);
+	}
+
 	getPresetHeader(preset: number) {
-		const presetHeaderIndex = this.data.phdr.data.findIndex((data) =>
+		const index = this.data.phdr.data.findIndex((data) =>
 			R.equals(data.preset, preset),
 		);
-		const presetHeader = this.data.phdr.data.slice(
-			presetHeaderIndex,
-			presetHeaderIndex + 2,
-		);
-		return presetHeader;
+		return { data: this.data.phdr.data[index], index };
 	}
-	getPresetBags(header: ReturnType<typeof this.getPresetHeader>) {
-		return this.data.pbag.data.slice(
-			header[0].bagIndex,
-			header.slice(-1)[0].bagIndex + 2,
-		);
-	}
-	getPresetGenerator(bags: Bag[]) {
-		console.log(bags);
-		return bags.map((bag) => {
-			this.data.pgen.data.findIndex([bag.genIndex]);
-		});
-	}
-	getPresetModulator() {}
-	getInstrumentHeader(name: string) {
-		const instrumentHeader = this.data.inst.data.find((data) =>
-			R.equals(data.name, name),
-		);
-		if (!R.isDefined(instrumentHeader)) throw new Error("preset not found");
-		return instrumentHeader;
+	getInstrumentHeader = (generator: Generator) =>
+		this.getHeader("instrument", generator);
+	getSampleHeader = (generator: Generator) =>
+		this.getHeader("sample", generator);
+	getHeader(type: "instrument" | "sample", generator: Generator) {
+		return {
+			data: this.data[type === "sample" ? "shdr" : "inst"].data[
+				generator.genAmount
+			],
+			index: generator.genAmount,
+		};
 	}
 }
 // TODO: mergeAllした後のオブジェクト形式に変換する。チャンクごとに必須チャンクと任意チャンクがあるのでオプショナルにする
@@ -55,11 +107,11 @@ interface Soundfont2Data {
 	ICMT: RiffChunk<"ICMT", string>;
 	ISFT: RiffChunk<"ISFT", string>;
 	smpl: RiffChunk<"smpl", Uint8Array>;
-	phdr: RiffChunk<"phdr", Header[]>;
+	phdr: RiffChunk<"phdr", PresetHeader[]>;
 	pbag: RiffChunk<"pbag", Bag[]>;
 	pmod: RiffChunk<"pmod", Modulator[]>;
 	pgen: RiffChunk<"pgen", Generator[]>;
-	inst: RiffChunk<"inst", Instrument[]>;
+	inst: RiffChunk<"inst", InstrumentHeader[]>;
 	ibag: RiffChunk<"ibag", Bag[]>;
 	imod: RiffChunk<"imod", Modulator[]>;
 	igen: RiffChunk<"igen", Generator[]>;
@@ -98,9 +150,11 @@ type SoundFont2Id =
 
 interface Header {
 	name: string;
+	bagIndex: number;
+}
+interface PresetHeader extends Header {
 	preset: number;
 	bank: number;
-	bagIndex: number;
 	library: number;
 	genre: number;
 	morphology: number;
@@ -121,10 +175,7 @@ interface Generator {
 	genOper: number;
 	genAmount: number;
 }
-interface Instrument {
-	name: string;
-	bagIndex: number;
-}
+type InstrumentHeader = Header;
 interface SampleHeader {
 	name: string;
 	start: number;

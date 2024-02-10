@@ -9,19 +9,13 @@ describe("soundfont2", () => {
 		const buffer = toArrayBuffer(fs.readFileSync("public/A320U.sf2"));
 		soundfont2 = new Soundfont2(buffer);
 	});
-	test("getPresetHeader", () => {
-		expect(soundfont2.getPresetHeader(54)).toBeDefined();
-	});
-	test("getPresetBag", () => {
-		expect(
-			soundfont2.getPresetBags(soundfont2.getPresetHeader(54)),
-		).toBeDefined();
-	});
-	test("getPresetGenerator", () => {
-		expect(
-			soundfont2.getPresetGenerator(
-				soundfont2.getPresetBags(soundfont2.getPresetHeader(54)),
-			),
-		).toBeDefined();
+	test("getPreset", () => {
+		console.log(
+			soundfont2
+				.getPreset(54)
+				.presetBags[0].presetGenerators[0].instrumentBags?.[0].instrumentGenerators.slice(
+					-1,
+				)[0].sampleHeader,
+		);
 	});
 });
