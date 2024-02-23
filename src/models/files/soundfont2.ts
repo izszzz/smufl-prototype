@@ -37,9 +37,12 @@ export class Soundfont2 {
 								).map((instrumentGenerator) => {
 									if (instrumentGenerator.genOper !== 53)
 										return { instrumentGenerator };
+									const sampleHeader =
+										this.getSampleHeader(instrumentGenerator);
 									return {
 										instrumentGenerator,
-										sampleHeader: this.getSampleHeader(instrumentGenerator),
+										sampleHeader,
+										sample: this.getSample(sampleHeader),
 									};
 								}),
 							})),
@@ -49,7 +52,28 @@ export class Soundfont2 {
 			})),
 		};
 	}
-	getSample() {}
+
+	// createAudioBuffer(audioCtx: AudioContext, sampleHeader) {
+	// 	const sampleData = this.getSample(sampleHeader);
+	// 	const audioBuffer = audioCtx.createBuffer(
+	// 		1,
+	// 		sampleData.length,
+	// 		audioCtx.sampleRate,
+	// 	);
+	// 	audioBuffer.getChannelData(0).set(sampleData);
+	// 	return audioBuffer;
+	// }
+
+	getSample(sampleHeader: ReturnType<typeof this.getSampleHeader>) {
+		return new Int16Array(
+			new Uint8Array(
+				this.data.smpl.data.subarray(
+					2 * sampleHeader.data.start,
+					2 * sampleHeader.data.end,
+				),
+			).buffer,
+		);
+	}
 
 	getPresetBags = (...params: [Header, number]) =>
 		this.getBags("preset", ...params);
@@ -86,7 +110,13 @@ export class Soundfont2 {
 		this.getHeader("instrument", generator);
 	getSampleHeader = (generator: Generator) =>
 		this.getHeader("sample", generator);
-	getHeader(type: "instrument" | "sample", generator: Generator) {
+	getHeader<Type extends "instrument" | "sample">(
+		type: Type,
+		generator: Generator,
+	): {
+		data: Soundfont2Data[Type extends "sample" ? "shdr" : "inst"]["data"][0];
+		index: number;
+	} {
 		return {
 			data: this.data[type === "sample" ? "shdr" : "inst"].data[
 				generator.genAmount
@@ -106,7 +136,7 @@ interface Soundfont2Data {
 	ICOP: RiffChunk<"ICOP", string>;
 	ICMT: RiffChunk<"ICMT", string>;
 	ISFT: RiffChunk<"ISFT", string>;
-	smpl: RiffChunk<"smpl", Uint8Array>;
+	smpl: RiffChunk<"smpl", Buffer>;
 	phdr: RiffChunk<"phdr", PresetHeader[]>;
 	pbag: RiffChunk<"pbag", Bag[]>;
 	pmod: RiffChunk<"pmod", Modulator[]>;
@@ -176,7 +206,7 @@ interface Generator {
 	genAmount: number;
 }
 type InstrumentHeader = Header;
-interface SampleHeader {
+export interface SampleHeader {
 	name: string;
 	start: number;
 	end: number;
@@ -184,7 +214,7 @@ interface SampleHeader {
 	loopEnd: number;
 	sampleRate: number;
 	originalKey: number;
-	correction: string;
+	correction: number;
 	sampleLink: number;
 	type: number;
 }

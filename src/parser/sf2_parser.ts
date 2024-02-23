@@ -15,30 +15,32 @@ const string = [
 ];
 const headerParser = new Parser().array("data", {
 	type: new Parser()
+		.endianness("little")
 		.string("name", {
 			length: 20,
 			encoding: "ascii",
 		})
-		.uint16le("preset")
-		.uint16le("bank")
-		.uint16le("bagIndex")
-		.uint32le("library")
-		.uint32le("genre")
-		.uint32le("morphology"),
+		.uint16("preset")
+		.uint16("bank")
+		.uint16("bagIndex")
+		.uint32("library")
+		.uint32("genre")
+		.uint32("morphology"),
 	lengthInBytes: "length",
 });
 const sampleHeaderParser = new Parser().array("data", {
 	type: new Parser()
+		.endianness("little")
 		.string("name", { length: 20 })
-		.uint32le("start")
-		.uint32le("end")
-		.uint32le("loopStart")
-		.uint32le("loopEnd")
-		.uint32le("sampleRate")
+		.uint32("start")
+		.uint32("end")
+		.uint32("loopStart")
+		.uint32("loopEnd")
+		.uint32("sampleRate")
 		.uint8("originalKey")
-		.string("correction", { length: 1 })
-		.uint16le("sampleLink")
-		.uint16le("type"),
+		.uint8("correction")
+		.uint16("sampleLink")
+		.uint16("type"),
 	lengthInBytes: "length",
 });
 const bagParser = new Parser().array("data", {
@@ -47,11 +49,12 @@ const bagParser = new Parser().array("data", {
 });
 const modulatorParser = new Parser().array("data", {
 	type: new Parser()
-		.uint16le("srcOper")
-		.uint16le("destOper")
-		.uint16le("modAmount")
-		.uint16le("amtSrcOper")
-		.uint16le("modTransOper"),
+		.endianess("little")
+		.uint16("srcOper")
+		.uint16("destOper")
+		.uint16("modAmount")
+		.uint16("amtSrcOper")
+		.uint16("modTransOper"),
 	lengthInBytes: "length",
 });
 const generatorParser = new Parser().array("data", {

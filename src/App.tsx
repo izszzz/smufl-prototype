@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { MidiImporter } from "./importer/midi_importer";
 import * as SMUFL from "./models/smufl";
 import { AudioPlayer } from "./player/audio_player";
@@ -9,6 +9,7 @@ function App() {
 	const [layoutType, setLayoutType] =
 		useState<SMUFL.Score["type"]>("HorizontalScroll");
 	const [svgRenderer, setSVGRenderer] = useState<SVGRenderer>();
+	const [audioPlayer, setAudioPlayer] = useState<AudioPlayer>();
 	const ref = useRef(null);
 
 	const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -38,7 +39,9 @@ function App() {
 		svgRenderer?.changeFontSize(fontSize);
 	}, [fontSize, svgRenderer]);
 	useEffect(() => {
-		new AudioPlayer();
+		const ap = new AudioPlayer();
+		ap.init();
+		setAudioPlayer(ap);
 	}, []);
 
 	return (
@@ -48,6 +51,7 @@ function App() {
 				className="App bravura"
 				style={{ padding: "30px", height: "70vh" }}
 			></div>
+			<button onClick={() => audioPlayer?.play()}>play</button>
 			<input type="file" onChange={handleFileChange} accept=".midi, .mid" />
 			<label>
 				fontSize
