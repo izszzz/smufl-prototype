@@ -11,11 +11,8 @@
     "deltaTime": {
       "readUntil": 128
     },
-    "tempo": {
-      "divideSeconds": 60000000
-    },
     "midiEvent": {
-      "type": [8, 9]
+      "type": [8, 9, 12]
     },
     "metaEvent": {
       "type": 15,
@@ -58,6 +55,10 @@
         "name": "marker",
         "type": 6
       },
+      "programName": {
+        "name": "programName",
+        "type": 8 
+      },
       "deviceName": {
         "name": "deviceName",
         "type": 9
@@ -66,8 +67,8 @@
         "name": "endOfTrack",
         "type": 47
       },
-      "bpm": {
-        "name": "bpm",
+      "tempo": {
+        "name": "tempo",
         "type": 81
       },
       "timeSignature": {

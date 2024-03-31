@@ -15,3 +15,6 @@ export const setPrevAndNext = <T extends { prev?: T; next?: T }>(
 		prev.next = data;
 	});
 };
+
+export const convertTempoToBpm = (tempo: number) =>
+	Math.floor(60000000 / tempo);

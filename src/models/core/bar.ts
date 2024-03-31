@@ -1,17 +1,28 @@
 import * as Core from "./";
 
 interface BarConstructorArgs {
-	notes: Core.Note[];
+	track: Core.Track;
 	metadata?: Core.Metadata;
-}
-
-export class Bar implements BarConstructorArgs {
-	notes;
 	prev?: Bar;
 	next?: Bar;
-	metadata;
-	constructor({ notes, metadata }: BarConstructorArgs) {
-		this.notes = notes;
-		this.metadata = metadata;
+	notes:
+		| Core.Note[]
+		| Omit<ConstructorParameters<typeof Core.Note>[0], "bar">[];
+}
+
+export class Bar {
+	notes: Core.Note[] = [];
+	prev;
+	next;
+	track: Core.Track;
+	metadata: Core.Metadata;
+	constructor({ track, metadata, prev, next, notes }: BarConstructorArgs) {
+		this.next = next;
+		this.prev = prev;
+		this.track = track;
+		this.metadata = metadata ?? track.score.metadata;
+		this.notes = notes.map((note) =>
+			note instanceof Core.Note ? note : new Core.Note({ ...note, bar: this }),
+		);
 	}
 }

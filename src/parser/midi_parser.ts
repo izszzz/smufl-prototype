@@ -1,5 +1,4 @@
 import { Parser } from "binary-parser";
-import * as R from "remeda";
 import midi from "../consts/midi.json";
 
 const { metaEvents } = midi.mtrk;
@@ -27,12 +26,7 @@ const metaEventParser = new Parser()
 			...metaEventChoice("marker", (p, n, l) => p.string(n, l)),
 			...metaEventChoice("deviceName", (p, n, l) => p.string(n, l)),
 			...metaEventChoice("endOfTrack", (p, n, l) => p.string(n, l)),
-			...metaEventChoice("bpm", (p, n, l) =>
-				p.bit24(n, {
-					...l,
-					formatter: (item) => Math.floor(midi.mtrk.tempo.divideSeconds / item),
-				}),
-			),
+			...metaEventChoice("tempo", (p, n, l) => p.bit24(n, l)),
 			...metaEventChoice("timeSignature", (p, n, l) =>
 				p.nest(n, {
 					type: new Parser()
@@ -70,37 +64,11 @@ const midiTrackEventParser = new Parser()
 	.bit4("type")
 	.bit4("channel")
 	.choice("event", {
-		// TODO: type 8 or 9 => midiEvent
-		// TODO: type 15 => metaEvent or SysExEvent
-		// TODO: channel 0 or 7 => SysExEvent
-		// TODO: channel 15 => metaEvent
-		tag: function () {
-			if (
-				midi.mtrk.midiEvent.type
-					//@ts-ignore
-					.includes(this.type)
-			)
-				return 0;
-			if (
-				//@ts-ignore
-				R.equals(this.type, midi.mtrk.metaEvent.type) &&
-				//@ts-ignore
-				R.equals(this.channel, midi.mtrk.metaEvent.channel)
-			)
-				return 1;
-			// if (
-			// 	//@ts-ignore
-			// 	R.equals(this.type, midi.mtrk.sysExEvent.type) &&
-			// 	//@ts-ignore
-			// 	R.equals(this.channel, midi.mtrk.sysExEvent.channel)
-			// )
-			// 	return 2;
-			return -1;
-		},
+		tag: "type",
 		choices: {
-			0: midiEventParser,
-			1: metaEventParser,
-			// 2: metaEventParser,
+			8: midiEventParser,
+			9: midiEventParser,
+			15: metaEventParser,
 		},
 	});
 const midiHeaderChunk = new Parser()

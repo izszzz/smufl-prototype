@@ -9,7 +9,6 @@ interface Midi {
 			type: HeaderData;
 		};
 		deltaTime: { readUntil: number };
-		tempo: { divideSeconds: number };
 		metaEvent: EventPrefix;
 		sysExEvent: EventPrefix;
 		midiEvent: EventPrefix;
@@ -22,7 +21,7 @@ interface Midi {
 			marker: MetaEvent;
 			deviceName: MetaEvent;
 			endOfTrack: MetaEvent;
-			bpm: MetaEvent;
+			tempo: MetaEvent;
 			timeSignature: MetaEvent;
 			keySignature: MetaEvent;
 		};

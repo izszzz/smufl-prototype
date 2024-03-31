@@ -53,17 +53,6 @@ export class Soundfont2 {
 		};
 	}
 
-	// createAudioBuffer(audioCtx: AudioContext, sampleHeader) {
-	// 	const sampleData = this.getSample(sampleHeader);
-	// 	const audioBuffer = audioCtx.createBuffer(
-	// 		1,
-	// 		sampleData.length,
-	// 		audioCtx.sampleRate,
-	// 	);
-	// 	audioBuffer.getChannelData(0).set(sampleData);
-	// 	return audioBuffer;
-	// }
-
 	getSample(sampleHeader: ReturnType<typeof this.getSampleHeader>) {
 		return new Int16Array(
 			new Uint8Array(
@@ -123,6 +112,10 @@ export class Soundfont2 {
 			],
 			index: generator.genAmount,
 		};
+	}
+
+	getPresetHeaders() {
+		return this.data.shdr;
 	}
 }
 // TODO: mergeAllした後のオブジェクト形式に変換する。チャンクごとに必須チャンクと任意チャンクがあるのでオプショナルにする
@@ -200,7 +193,6 @@ interface Modulator {
 	amtSrcOper: number;
 	modTransOper: number;
 }
-
 interface Generator {
 	genOper: number;
 	genAmount: number;
