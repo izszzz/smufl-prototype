@@ -7,33 +7,23 @@ const toArrayBuffer = (buffer: Buffer) =>
 	buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
 const importMidiFile = (path: string) =>
 	new MidiImporter(toArrayBuffer(fs.readFileSync(path))).import();
-const path = "src/importer/fixtures/midi/";
+const path = "src/importers/fixtures/midi/";
 
 describe("Note", () => {
 	test("export quarter middle C Core.Note", () => {
 		const score = importMidiFile(`${path}quarter_middle_c.mid`);
-		expect(score).toContainEqual(
+		expect(score).toEqual(
 			new Core.Score({
-				tracks: [
-					{
-						name: "track",
-						bars: [{ notes: [{ pitch: 60, fraction: 4 }] }],
-					},
-				],
+				tracks: [{ bars: [{ notes: [{ pitch: 60, fraction: 4 }] }] }],
 			}),
 		);
 	});
 
 	test("export one-eight middle C Core.Note", () => {
 		const score = importMidiFile(`${path}one-eight_middle_c.mid`);
-		expect(score.tracks).toContainEqual(
+		expect(score).toEqual(
 			new Core.Score({
-				tracks: [
-					{
-						name: "track",
-						bars: [{ notes: [{ pitch: 60, fraction: 8 }] }],
-					},
-				],
+				tracks: [{ bars: [{ notes: [{ pitch: 60, fraction: 8 }] }] }],
 			}),
 		);
 	});
@@ -42,19 +32,12 @@ describe("Note", () => {
 describe("Track", () => {
 	test("export two-track", () => {
 		const score = importMidiFile(`${path}two-track.mid`);
-		expect(score.tracks).toEqual(
-			R.times(
-				2,
-				() =>
-					new Core.Score({
-						tracks: [
-							{
-								name: "track",
-								bars: [{ notes: [{ pitch: 60, fraction: 4 }] }],
-							},
-						],
-					}),
-			),
+		expect(score).toEqual(
+			new Core.Score({
+				tracks: R.times(2, () => ({
+					bars: [{ notes: [{ pitch: 60, fraction: 4 }] }],
+				})),
+			}),
 		);
 	});
 });
@@ -88,3 +71,5 @@ describe("Score Metadata", () => {
 		});
 	});
 });
+
+describe("Scale", () => {});

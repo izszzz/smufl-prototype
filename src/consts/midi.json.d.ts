@@ -39,8 +39,11 @@ type MetaEvent = {
 	type: number;
 };
 type MidiEvent = {
-	type: number | number[];
-	channel: number | number[];
+	// TODO: なんではいれつきょようしてるんだっけ？ｗ
+	// type: number | number[];
+	// channel: number | number[];
+	type: number;
+	channel: number;
 };
 type EventPrefix = {
 	type: number;

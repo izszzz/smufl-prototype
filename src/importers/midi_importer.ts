@@ -56,7 +56,7 @@ export class MidiImporter implements Importer {
 							acc.noteOff = cur;
 						if (R.isDefined(acc.noteOn) && R.isDefined(acc.noteOff)) {
 							acc.notes.push({
-								pitch: acc.noteOn.event.pitch,
+								pitch: (acc.noteOn.event as MidiEvent).pitch,
 								fraction:
 									(data.mthd.resolution *
 										trackAcc.metadata.timeSignature.denominator) /
@@ -77,6 +77,7 @@ export class MidiImporter implements Importer {
 					bars: Omit<ConstructorParameters<typeof Core.Bar>[0], "track">[];
 				}>(
 					(acc, cur, i) => {
+						acc.notes.push(cur);
 						if (
 							notes.length - 1 === i ||
 							acc.notes.reduce((acc, cur) => acc + 1 / cur.fraction, 0) === 1
@@ -84,7 +85,6 @@ export class MidiImporter implements Importer {
 							acc.bars.push({ notes: acc.notes });
 							acc.notes = [];
 						}
-						acc.notes.push(cur);
 						return acc;
 					},
 					{ bars: [], notes: [] },
@@ -97,7 +97,7 @@ export class MidiImporter implements Importer {
 				metadata: new Core.Metadata(),
 			},
 		);
-		return new Core.Score({ name: "", tracks, metadata });
+		return new Core.Score({ tracks, metadata });
 	}
 }
 interface Midi {
@@ -116,9 +116,7 @@ interface Midi {
 interface MidiTrackEvent {
 	channel: number;
 	deltaTime: number;
-	event: MidiTrackEvent["type"] extends typeof midi.mtrk.metaEvent.type
-		? MetaEvent
-		: MidiEvent;
+	event: MetaEvent | MidiEvent;
 
 	type:
 		| typeof midi.mtrk.metaEvent.type

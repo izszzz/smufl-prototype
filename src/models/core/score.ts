@@ -11,7 +11,7 @@ interface ScoreConstructorArgs {
 
 export class Score {
 	name;
-	tracks: Core.Track[] = [];
+	tracks;
 	metadata;
 	constructor({ name, tracks, metadata }: ScoreConstructorArgs) {
 		this.name = name;
