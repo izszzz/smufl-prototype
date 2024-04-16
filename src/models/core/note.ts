@@ -1,32 +1,35 @@
 import * as Core from "./";
-interface NoteConstructorArgs {
+interface INote extends Core.ITime, Core.ILink<Note> {
 	fraction: number;
 	pitch: number;
-	prev?: Note;
-	next?: Note;
-	bar: Core.Bar;
+	track: Core.Track;
 }
-export class Note implements NoteConstructorArgs {
+export class Note implements INote {
 	fraction;
 	pitch;
-	prev;
-	next;
-	bar;
-	constructor({ fraction, pitch, prev, next, bar }: NoteConstructorArgs) {
+	track;
+	prev?: Note;
+	next?: Note;
+	start;
+	duration;
+	end;
+	constructor({
+		fraction,
+		pitch,
+		track,
+		start,
+		duration,
+		end,
+	}: INote & Core.ITime) {
 		this.fraction = fraction;
 		this.pitch = pitch;
-		this.next = next;
-		this.prev = prev;
-		this.bar = bar;
+		this.track = track;
+		this.start = start;
+		this.duration = duration;
+		this.end = end;
 	}
-	get time(): number {
-		// TODO: 4をtimesigからとるようにする
-		return 60 / (this.fraction / 4) / this.bar.metadata.bpm;
-	}
-	get startTime(): number {
-		return this.prev ? this.prev.endTime : 0;
-	}
-	get endTime(): number {
-		return this.startTime + this.time;
+
+	static build(params: Omit<INote, "track">) {
+		return params;
 	}
 }

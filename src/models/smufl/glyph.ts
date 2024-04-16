@@ -1,30 +1,31 @@
-import BravuraMetadata from "../../consts/metadata/bravura_metadata.json";
-import Glyphnames from "../../consts/metadata/glyphnames.json";
 import * as SMUFL from "./";
 
-interface ConstructorOptions {
-	coord: ConstructorParameters<typeof SMUFL.Coord>[number];
-}
-export class Glyph<
-	T extends keyof Glyphnames = keyof Glyphnames,
-> extends SMUFL.Coord {
+interface IGlyph<T> {
 	glyphName: T;
-	width = 0;
-	height = 0;
+}
+export class Glyph<T extends keyof SMUFL.Glyphnames = keyof SMUFL.Glyphnames>
+	implements IGlyph<T>, SMUFL.IPosition, SMUFL.IBox
+{
+	glyphName;
+	x;
+	y;
+	width;
+	height;
 	get staffWidth(): number {
 		return SMUFL.Staff.getStaffGlyph(this.width).width;
 	}
-	constructor(glyphName: T, options?: Partial<ConstructorOptions>) {
-		super(options?.coord);
+	constructor({ glyphName, x, y }: IGlyph<T> & Partial<SMUFL.IPosition>) {
 		const { width, height } = this.#getBBoxByGlyphName(glyphName);
 		this.glyphName = glyphName;
 		this.width = width;
 		this.height = height;
+		this.x = x ?? 0;
+		this.y = y ?? 0;
 	}
-	#getBBoxByGlyphName = (glyphName: keyof Glyphnames) => {
+	#getBBoxByGlyphName = (glyphName: keyof SMUFL.Glyphnames) => {
 		const { bBoxNE, bBoxSW } =
-			BravuraMetadata.glyphBBoxes[
-				glyphName as keyof BravuraMetadata["glyphBBoxes"]
+			SMUFL.BravuraMetadata.glyphBBoxes[
+				glyphName as keyof SMUFL.BravuraMetadata["glyphBBoxes"]
 			];
 		const width = bBoxNE[0] - bBoxSW[0];
 		const height = bBoxNE[1] - bBoxSW[1];

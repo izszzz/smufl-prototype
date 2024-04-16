@@ -1,9 +1,10 @@
-import Ranges from "../../consts/metadata/ranges.json";
 import * as SMUFL from "./";
 
-export class Barline {
-	glyph: SMUFL.Glyph<Ranges["barlines"]["glyphs"][number]>;
-	constructor(glyphName: Ranges["barlines"]["glyphs"][number]) {
-		this.glyph = new SMUFL.Glyph(glyphName);
+export class Barline implements SMUFL.IPosition {
+	x = 0;
+	y = 0;
+	glyph: SMUFL.Glyph<SMUFL.Ranges["barlines"]["glyphs"][number]>;
+	constructor(glyphName: SMUFL.Ranges["barlines"]["glyphs"][number]) {
+		this.glyph = new SMUFL.Glyph({ glyphName });
 	}
 }

@@ -14,7 +14,11 @@ describe("Note", () => {
 		const score = importMidiFile(`${path}quarter_middle_c.mid`);
 		expect(score).toEqual(
 			new Core.Score({
-				tracks: [{ bars: [{ notes: [{ pitch: 60, fraction: 4 }] }] }],
+				tracks: [
+					{
+						notes: [{ pitch: 60, fraction: 4, start: 0, duration: 1, end: 1 }],
+					},
+				],
 			}),
 		);
 	});
@@ -23,7 +27,13 @@ describe("Note", () => {
 		const score = importMidiFile(`${path}one-eight_middle_c.mid`);
 		expect(score).toEqual(
 			new Core.Score({
-				tracks: [{ bars: [{ notes: [{ pitch: 60, fraction: 8 }] }] }],
+				tracks: [
+					{
+						notes: [
+							{ pitch: 60, fraction: 8, start: 0, duration: 0.5, end: 0.5 },
+						],
+					},
+				],
 			}),
 		);
 	});
@@ -35,7 +45,7 @@ describe("Track", () => {
 		expect(score).toEqual(
 			new Core.Score({
 				tracks: R.times(2, () => ({
-					bars: [{ notes: [{ pitch: 60, fraction: 4 }] }],
+					notes: [{ pitch: 60, fraction: 4, start: 0, duration: 1, end: 1 }],
 				})),
 			}),
 		);
@@ -72,4 +82,8 @@ describe("Score Metadata", () => {
 	});
 });
 
-describe("Scale", () => {});
+//　棒 * 3　300
+//　エアロバイク 600
+//　ステッパー 600
+//　電子レンジ 300
+// すのこ 600

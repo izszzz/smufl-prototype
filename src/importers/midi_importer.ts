@@ -12,7 +12,7 @@ export class MidiImporter implements Importer {
 		this.arrayBuffer = arrayBuffer;
 	}
 	import() {
-		return this.convertSMUFLData(this.parseArrayBuffer(this.arrayBuffer));
+		return this.convertScore(this.parseArrayBuffer(this.arrayBuffer));
 	}
 	parseArrayBuffer(arrayBuffer: ArrayBuffer): Midi {
 		return midiParser.parse(new Uint8Array(arrayBuffer));
@@ -20,9 +20,21 @@ export class MidiImporter implements Importer {
 	isMetaEvent(event: MidiTrackEvent) {
 		return event.type === midi.mtrk.metaEvent.type;
 	}
-	convertSMUFLData(data: Midi) {
+	isNoteOnEvent(event: MidiTrackEvent) {
+		return event.type === midi.mtrk.midiEvents.noteOn.type;
+	}
+	isNoteOffEvent(event: MidiTrackEvent) {
+		return event.type === midi.mtrk.midiEvents.noteOff.type;
+	}
+	isChord(event: MidiTrackEvent, prevNote: unknown) {
+		return event.deltaTime === 0 && R.isDefined(prevNote);
+	}
+	convertScore(data: Midi) {
 		const { tracks, metadata } = data.mtrks.reduce<{
-			tracks: Omit<ConstructorParameters<typeof Core.Track>[0], "score">[];
+			tracks: Omit<
+				ConstructorParameters<typeof Core.Track>[0],
+				"score" | "id"
+			>[];
 			metadata: Core.Metadata;
 		}>(
 			(trackAcc, trackCur) => {
@@ -38,58 +50,71 @@ export class MidiImporter implements Importer {
 				if (R.isDefined(metadata.tempo))
 					trackAcc.metadata.bpm = Core.convertTempoToBpm(metadata.tempo);
 				if (R.isDefined(metadata.timeSignature)) {
+					// @ts-ignore
+					// TODO: timeSigの型漬け
 					trackAcc.metadata.timeSignature = R.omit(metadata.timeSignature, [
 						"clock",
 						"bb",
 					]);
 				}
 
-				// notes
-				const { notes } = trackCur.events.slice(lastMetaEventIndex).reduce<{
-					noteOn: MidiTrackEvent | null;
-					noteOff: MidiTrackEvent | null;
-					notes: Omit<ConstructorParameters<typeof Core.Note>[0], "bar">[];
+				const midiNotes = trackCur.events.slice(lastMetaEventIndex).reduce<
+					{
+						pitch: number;
+						noteOn: MidiTrackEvent;
+						noteOff: MidiTrackEvent | null;
+					}[]
+				>((acc, cur) => {
+					if (this.isNoteOnEvent(cur)) {
+						acc.push({
+							pitch: (cur.event as MidiEvent).pitch,
+							noteOn: cur,
+							noteOff: null,
+						});
+					}
+					if (this.isNoteOffEvent(cur)) {
+						const note = acc
+							.flat()
+							.find(
+								(note) =>
+									note.pitch === (cur.event as MidiEvent).pitch &&
+									R.isNil(note.noteOff),
+							);
+						if (note) note.noteOff = cur;
+					}
+					return acc;
+				}, []);
+				const { notes } = midiNotes.reduce<{
+					time: number;
+					notes: ReturnType<typeof Core.Note.build>[];
 				}>(
 					(acc, cur) => {
-						if (cur.type === midi.mtrk.midiEvents.noteOn.type) acc.noteOn = cur;
-						if (cur.type === midi.mtrk.midiEvents.noteOff.type)
-							acc.noteOff = cur;
-						if (R.isDefined(acc.noteOn) && R.isDefined(acc.noteOff)) {
-							acc.notes.push({
-								pitch: (acc.noteOn.event as MidiEvent).pitch,
-								fraction:
-									(data.mthd.resolution *
-										trackAcc.metadata.timeSignature.denominator) /
-									acc.noteOff.deltaTime,
-							});
-							acc.noteOn = null;
-							acc.noteOff = null;
-						}
+						const fraction = this.calcFraction(
+							data.mthd.resolution,
+							trackAcc.metadata.timeSignature.denominator,
+							cur.noteOff?.deltaTime ?? 0,
+						);
+						const duration = Core.calcNoteDuration(
+							fraction,
+							trackAcc.metadata.timeSignature.denominator,
+						);
+						acc.notes.push(
+							Core.Note.build({
+								pitch: (cur.noteOn.event as MidiEvent).pitch,
+								fraction,
+								start: acc.time,
+								duration,
+								end: acc.time + duration,
+							}),
+						);
+						acc.time += duration;
 						return acc;
 					},
-					{ noteOn: null, noteOff: null, notes: [] },
+					{ time: 0, notes: [] },
 				);
 				if (R.isEmpty(notes)) return trackAcc;
+				trackAcc.tracks.push({ notes });
 
-				// bars
-				const { bars } = notes.reduce<{
-					notes: Omit<ConstructorParameters<typeof Core.Note>[0], "bar">[];
-					bars: Omit<ConstructorParameters<typeof Core.Bar>[0], "track">[];
-				}>(
-					(acc, cur, i) => {
-						acc.notes.push(cur);
-						if (
-							notes.length - 1 === i ||
-							acc.notes.reduce((acc, cur) => acc + 1 / cur.fraction, 0) === 1
-						) {
-							acc.bars.push({ notes: acc.notes });
-							acc.notes = [];
-						}
-						return acc;
-					},
-					{ bars: [], notes: [] },
-				);
-				trackAcc.tracks.push({ bars });
 				return trackAcc;
 			},
 			{
@@ -98,6 +123,9 @@ export class MidiImporter implements Importer {
 			},
 		);
 		return new Core.Score({ tracks, metadata });
+	}
+	calcFraction(resolution: number, denominator: number, deltaTime: number) {
+		return (resolution * denominator) / deltaTime;
 	}
 }
 interface Midi {

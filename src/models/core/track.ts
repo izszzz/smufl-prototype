@@ -1,33 +1,67 @@
 import * as R from "remeda";
 import * as Core from "./";
 
-interface TrackConstructorArgs {
-	bars: Core.Bar[] | Omit<ConstructorParameters<typeof Core.Bar>[0], "track">[];
+interface ITrack extends IConstructor {
+	bars: Core.Bar[];
+	getMetadata: () => Core.Metadata;
+}
+interface IConstructor {
+	id: number;
+	notes: (Core.Note | ReturnType<typeof Core.Note.build>)[];
 	score: Core.Score;
-	timeSignature?: [number, number];
 	name?: string;
 	preset?: number;
+	metadata?: Core.Metadata;
 }
 
-export class Track implements TrackConstructorArgs {
-	bars: Core.Bar[];
-	notes: Core.Note[];
-	timeSignature;
+export class Track implements ITrack, Core.ITime {
+	id;
+	notes;
+	bars;
+	metadata;
 	name;
 	score;
-	preset = 54;
-	constructor({ name, bars, score, timeSignature }: TrackConstructorArgs) {
+	preset;
+	start;
+	duration;
+	end;
+	constructor({ id, name, notes, score, metadata, preset }: IConstructor) {
+		this.id = id;
 		this.score = score;
-		this.timeSignature = timeSignature;
 		this.name = name;
-		this.bars = bars.map((bar) =>
-			bar instanceof Core.Bar ? bar : new Core.Bar({ ...bar, track: this }),
+		this.preset = preset ?? 54;
+		this.start = R.first(notes)?.start ?? 0;
+		this.end = R.last(notes)?.end ?? 0;
+		this.duration = R.last(notes)?.duration ?? 0;
+		this.metadata = metadata;
+		this.notes = notes.map((note) =>
+			note instanceof Core.Note
+				? note
+				: new Core.Note({ ...note, track: this }),
 		);
-		this.notes = this.bars.flatMap((bar) => bar.notes);
-		Core.setPrevAndNext(this.bars);
-		Core.setPrevAndNext(this.notes);
+		this.bars = this.notes.reduce<{ bars: Core.Bar[]; notes: Core.Note[] }>(
+			(acc, cur, i) => {
+				acc.notes.push(cur);
+				if (
+					notes.length - 1 === i ||
+					acc.notes.reduce((acc, cur) => acc + cur.duration, 0) ===
+						this.getMetadata().timeSignature.numerator
+				) {
+					acc.bars.push(
+						new Core.Bar({
+							id: acc.bars.length,
+							notes: acc.notes,
+							track: this,
+						}),
+					);
+					acc.notes = [];
+				}
+				return acc;
+			},
+			{ bars: [], notes: [] },
+		).bars;
 	}
-	get endTime() {
-		return R.last(this.notes)?.endTime ?? 0;
+	getMetadata() {
+		return this.metadata ?? this.score.metadata;
 	}
 }

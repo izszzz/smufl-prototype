@@ -1,8 +1,9 @@
 import * as R from "remeda";
 import * as SMUFL from "./";
 
-export class Ligature extends SMUFL.Coord {
+export class Ligature implements SMUFL.IBox {
 	glyphs: SMUFL.Glyph[];
+	height = 0;
 	get width(): number {
 		const maxWidth = R.pipe(
 			this.glyphs,
@@ -15,7 +16,6 @@ export class Ligature extends SMUFL.Coord {
 		return SMUFL.Staff.getStaffGlyph(this.width).width;
 	}
 	constructor(glyphs: SMUFL.Glyph[]) {
-		super();
 		this.glyphs = glyphs;
 	}
 }

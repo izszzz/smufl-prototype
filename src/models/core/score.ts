@@ -1,35 +1,24 @@
-import * as R from "remeda";
 import * as Core from "./";
 
-interface ScoreConstructorArgs {
+interface IScore {
 	name?: string;
 	tracks:
 		| Core.Track[]
-		| Omit<ConstructorParameters<typeof Core.Track>[0], "score">[];
+		| Omit<ConstructorParameters<typeof Core.Track>[0], "score" | "id">[];
 	metadata?: Core.Metadata;
 }
 
-export class Score {
+export class Score implements IScore {
 	name;
 	tracks;
 	metadata;
-	constructor({ name, tracks, metadata }: ScoreConstructorArgs) {
+	constructor({ name, tracks, metadata }: IScore) {
 		this.name = name;
 		this.metadata = metadata ?? new Core.Metadata();
-		this.tracks = tracks.map((track) =>
+		this.tracks = tracks.map((track, id) =>
 			track instanceof Core.Track
 				? track
-				: new Core.Track({ ...track, score: this }),
-		);
-	}
-	get endTime() {
-		return (
-			R.pipe(
-				this.tracks,
-				R.map((track) => R.last(track.notes)),
-				R.compact,
-				R.maxBy((note) => note?.endTime),
-			)?.endTime ?? 0
+				: new Core.Track({ id, ...track, score: this }),
 		);
 	}
 }

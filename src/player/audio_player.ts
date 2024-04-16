@@ -8,7 +8,7 @@ export class AudioPlayer {
 	score: Core.Score;
 	soundfont2: Soundfont2;
 	volumeNode: GainNode;
-	sourcesCollection: AudioBufferSourceNode[][] = [];
+	sourcesCollection: ReturnType<SourceExporter["export"]> = [];
 	constructor(score: Core.Score, soundfont2: Soundfont2) {
 		this.ctx = new AudioContext();
 		this.volumeNode = this.ctx.createGain();
@@ -23,10 +23,15 @@ export class AudioPlayer {
 			this.soundfont2,
 			this.ctx,
 		).export();
-		for (const source of this.sourcesCollection.flat()) {
-			source.connect(this.volumeNode);
-			source.start();
-			source.stop(this.ctx.currentTime + this.score.endTime);
+		for (const { sounds, track } of this.sourcesCollection) {
+			for (const source of sounds) {
+				source.connect(this.volumeNode);
+				source.start();
+				source.stop(
+					this.ctx.currentTime +
+						Core.convertTimeToSeconds(track.end, track.getMetadata().bpm),
+				);
+			}
 		}
 	}
 	pause() {

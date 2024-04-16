@@ -3,7 +3,9 @@ import * as Core from "../models/core";
 import { Soundfont2 } from "../models/files/soundfont2";
 import { Exporter } from "./exporter";
 
-export class SourceExporter implements Exporter {
+export class SourceExporter
+	implements Exporter<{ sounds: AudioBufferSourceNode[]; track: Core.Track }[]>
+{
 	score;
 	sf2;
 	ctx;
@@ -39,35 +41,33 @@ export class SourceExporter implements Exporter {
 				R.flattenDeep(),
 				R.compact,
 			);
-			return sounds.map((sound) => {
-				const source = this.ctx.createBufferSource();
-				source.buffer = sound.buffer;
-				if (sound.sampleHeader.loopEnd > sound.sampleHeader.loopStart) {
-					const loopStart =
-						sound.sampleHeader.loopStart - sound.sampleHeader.start;
-					source.loopStart = loopStart / sound.sampleHeader.sampleRate;
-					source.loopEnd =
-						(sound.sampleHeader.loopEnd - sound.sampleHeader.start) /
-						sound.sampleHeader.sampleRate;
-					source.loop = true;
-				}
-				const baseDetune =
-					sound.sampleHeader.originalKey -
-					sound.sampleHeader.correction / 100.0;
-				// TODO: 再生するごとにsetValueAtTimeを設定するのがよいかも
-				const notes = R.pipe(
-					track.bars,
-					R.map((bar) => bar.notes),
-					R.flatten(),
-				);
-				for (const note of notes) {
-					source.playbackRate.setValueAtTime(
-						1.0 * 2 ** ((100.0 * (note.pitch - baseDetune)) / 1200.0),
-						this.ctx.currentTime + note.startTime,
-					);
-				}
-				return source;
-			});
+			return {
+				sounds: sounds.map((sound) => {
+					const source = this.ctx.createBufferSource();
+					source.buffer = sound.buffer;
+					if (sound.sampleHeader.loopEnd > sound.sampleHeader.loopStart) {
+						const loopStart =
+							sound.sampleHeader.loopStart - sound.sampleHeader.start;
+						source.loopStart = loopStart / sound.sampleHeader.sampleRate;
+						source.loopEnd =
+							(sound.sampleHeader.loopEnd - sound.sampleHeader.start) /
+							sound.sampleHeader.sampleRate;
+						source.loop = true;
+					}
+					const baseDetune =
+						sound.sampleHeader.originalKey -
+						sound.sampleHeader.correction / 100.0;
+					for (const note of track.notes) {
+						source.playbackRate.setValueAtTime(
+							1.0 * 2 ** ((100.0 * (note.pitch - baseDetune)) / 1200.0),
+							this.ctx.currentTime +
+								Core.convertTimeToSeconds(note.start, track.getMetadata().bpm),
+						);
+					}
+					return source;
+				}),
+				track,
+			};
 		});
 	}
 	private convertInt16ArrayToFloat32Array(int16array: Int16Array) {

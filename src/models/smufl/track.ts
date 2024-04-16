@@ -1,18 +1,20 @@
-import Metadata from "../../consts/metadata.json";
 import * as Core from "../core";
 import * as SMUFL from "./";
 
-export class Track {
-	bars: SMUFL.Bar[];
-	metadata = {
-		clef: new SMUFL.Glyph("gClef", { coord: { y: -1 } }),
-		timeSig: new SMUFL.Ligature([
-			new SMUFL.Glyph("timeSig4", { coord: { y: -1 } }),
-			new SMUFL.Glyph("timeSig4", { coord: { y: -3 } }),
-		]),
-	};
-	staffLineCount: Metadata["staffLines"][number] = 5;
+export class Track implements SMUFL.IPosition {
+	bars: SMUFL.Bar[] | [SMUFL.Bar];
+	metadata;
+	staffLineCount: SMUFL.Metadatas["staffLines"][number] = 5;
+	x = 0;
+	y;
+	core;
 	constructor(track: Core.Track) {
-		this.bars = track.bars.map((bar) => new SMUFL.Bar(bar, this));
+		this.core = track;
+		this.bars = track.bars.length
+			? track.bars.map((bar) => new SMUFL.Bar(bar, this))
+			: [new SMUFL.Bar(new Core.Bar({ track, id: 1, notes: [] }), this)];
+		this.y = 4 * track.id;
+		if (track.metadata) this.metadata = new SMUFL.Metadata(track.metadata);
+		if (track.id > 0) this.y += 8;
 	}
 }
