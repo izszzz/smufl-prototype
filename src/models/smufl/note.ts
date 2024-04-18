@@ -13,8 +13,8 @@ export class Note implements SMUFL.IPosition {
 	get width() {
 		return this.glyphs.reduce(
 			(prev, cur) =>
-				((R.isArray(cur) ? R.maxBy(cur, (g) => g.width) : cur)?.width ?? 0) +
-				prev,
+				((R.isArray(cur) ? R.firstBy(cur, [(g) => g.width, "desc"]) : cur)
+					?.width ?? 0) + prev,
 			0,
 		);
 	}
@@ -23,23 +23,29 @@ export class Note implements SMUFL.IPosition {
 		const noteGlyphName = this.#searchNoteGlyphName(note);
 		this.bar = bar;
 		this.y = this.#calcNoteY(note);
-		this.glyphs = R.compact([
-			this.#isNoteAccidental(note)
-				? new SMUFL.Glyph({
-						glyphName: this.#calcNoteAccidental(note),
-				  })
-				: null,
-			R.compact([
-				new SMUFL.Glyph({
-					glyphName: noteGlyphName,
-				}),
-				this.#isNoteLegerLine(note)
+		this.glyphs = R.filter(
+			[
+				this.#isNoteAccidental(note)
 					? new SMUFL.Glyph({
-							glyphName: this.#searchLegerLineGlyphName(note),
+							glyphName: this.#calcNoteAccidental(note),
 					  })
 					: null,
-			]),
-		]);
+				R.filter(
+					[
+						new SMUFL.Glyph({
+							glyphName: noteGlyphName,
+						}),
+						this.#isNoteLegerLine(note)
+							? new SMUFL.Glyph({
+									glyphName: this.#searchLegerLineGlyphName(note),
+							  })
+							: null,
+					],
+					R.isTruthy,
+				),
+			],
+			R.isTruthy,
+		);
 	}
 
 	#searchNoteGlyphName = (note: Core.Note) =>

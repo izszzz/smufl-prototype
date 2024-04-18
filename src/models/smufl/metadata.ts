@@ -12,7 +12,7 @@ export class Metadata implements SMUFL.IBox {
 	get width() {
 		return this.glyphs.reduce(
 			(prev, cur) =>
-				((R.isArray(cur) ? R.maxBy(cur, (g) => g.staffWidth) : cur)
+				((R.isArray(cur) ? R.firstBy(cur, [(g) => g.staffWidth, "desc"]) : cur)
 					?.staffWidth ?? 0) + prev,
 			0,
 		);

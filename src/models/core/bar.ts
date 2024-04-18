@@ -18,8 +18,8 @@ export class Bar implements IBar {
 	notes;
 	track;
 	metadata?;
-	prev?: Bar;
-	next?: Bar;
+	prev?;
+	next?;
 	constructor({ id, track, metadata, prev, next, notes }: IConstructor) {
 		this.id = id;
 		this.next = next;

@@ -31,7 +31,7 @@ export class Staff {
 		});
 		this.width = this.staffGlyph.width;
 		this.glyphAlign = options?.glyphAlign ?? "start";
-		if (R.isDefined(this.glyph)) this.#alignGlyph(this.glyph);
+		if (this.glyph) this.#alignGlyph(this.glyph);
 	}
 	#alignGlyph = (glyph: NonNullable<SMUFL.Staff["glyph"]>) => {
 		if (this.glyphAlign === "start") return;
@@ -50,10 +50,10 @@ export class Staff {
 				width: SMUFL.BravuraMetadata.glyphAdvanceWidths[key],
 			})),
 			R.filter(({ width: staveWidth }) => width <= staveWidth),
-			R.uniq(),
-			R.minBy((x) => x.width),
+			R.unique(),
+			R.firstBy([(x) => x.width, "asc"]),
 		);
-		if (R.isNil(glyph)) throw new Error();
+		if (!glyph) throw new Error();
 		return new SMUFL.Glyph({ glyphName: glyph.key });
 	};
 }

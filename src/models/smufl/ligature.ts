@@ -5,11 +5,8 @@ export class Ligature implements SMUFL.IBox {
 	glyphs: SMUFL.Glyph[];
 	height = 0;
 	get width(): number {
-		const maxWidth = R.pipe(
-			this.glyphs,
-			R.maxBy((g) => g.width),
-		);
-		if (R.isNil(maxWidth)) throw new Error();
+		const maxWidth = R.pipe(this.glyphs, R.firstBy([(g) => g.width, "desc"]));
+		if (R.isNullish(maxWidth)) throw new Error();
 		return maxWidth.width;
 	}
 	get staffWidth(): number {
