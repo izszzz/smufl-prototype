@@ -4,15 +4,15 @@ interface INote extends Core.ITime, Core.ILink<Note> {
 	pitch: number;
 	track: Core.Track;
 }
-export class Note implements INote {
+export class Note implements INote, Core.ILink<Note> {
 	fraction;
 	pitch;
 	track;
-	prev?: Note;
-	next?: Note;
 	start;
 	duration;
 	end;
+	next?: Note;
+	prev?: Note;
 	constructor({
 		fraction,
 		pitch,

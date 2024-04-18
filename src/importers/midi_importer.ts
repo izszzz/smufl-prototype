@@ -26,9 +26,6 @@ export class MidiImporter implements Importer {
 	isNoteOffEvent(event: MidiTrackEvent) {
 		return event.type === midi.mtrk.midiEvents.noteOff.type;
 	}
-	isChord(event: MidiTrackEvent, prevNote: unknown) {
-		return event.deltaTime === 0 && R.isDefined(prevNote);
-	}
 	convertScore(data: Midi) {
 		const { tracks, metadata } = data.mtrks.reduce<{
 			tracks: Omit<
@@ -47,9 +44,9 @@ export class MidiImporter implements Importer {
 					R.map((x) => x.event),
 					R.mergeAll,
 				) as Partial<MetaEvents>;
-				if (R.isDefined(metadata.tempo))
+				if (metadata.tempo)
 					trackAcc.metadata.bpm = Core.convertTempoToBpm(metadata.tempo);
-				if (R.isDefined(metadata.timeSignature)) {
+				if (metadata.timeSignature) {
 					// @ts-ignore
 					// TODO: timeSigの型漬け
 					trackAcc.metadata.timeSignature = R.omit(metadata.timeSignature, [
@@ -78,7 +75,7 @@ export class MidiImporter implements Importer {
 							.find(
 								(note) =>
 									note.pitch === (cur.event as MidiEvent).pitch &&
-									R.isNil(note.noteOff),
+									R.isNullish(note.noteOff),
 							);
 						if (note) note.noteOff = cur;
 					}

@@ -9,13 +9,13 @@ export * from "./link";
 export const setPrevAndNext = <T extends { prev?: T; next?: T }>(
 	collection: T[],
 ) => {
-	// biome-ignore lint/complexity/noForEach: <explanation>
-	collection.forEach((data, i, array) => {
-		const prev = array[i - 1];
-		if (!prev) return;
-		data.prev = prev;
-		prev.next = data;
-	});
+	collection.reduce<T | null>((acc, cur) => {
+		if (acc) {
+			cur.prev = acc;
+			acc.next = cur;
+		}
+		return cur;
+	}, null);
 };
 
 export const convertTempoToBpm = (tempo: number) =>

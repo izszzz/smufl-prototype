@@ -25,5 +25,6 @@ export class MasterBar implements IMasterBar, SMUFL.IPosition, SMUFL.IBox {
 			bars.flatMap((bar) => bar.notes),
 			(n) => n.core.start,
 		);
+		console.log(this.groupedNotes);
 	}
 }

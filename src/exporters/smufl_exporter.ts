@@ -21,10 +21,10 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 						bar.metadata.glyphs.reduce<SMUFL.Glyph | SMUFL.Glyph[] | null>(
 							(prev, cur) => {
 								const prevGlyph = R.isArray(prev)
-									? R.maxBy(prev, (g) => g.width)
+									? R.firstBy(prev, [(g) => g.width, "desc"])
 									: prev;
 								for (const glyph of R.isArray(cur) ? cur : [cur]) {
-									glyph.x = (prevGlyph?.x ?? 0) + (prevGlyph?.width ?? 0);
+									glyph.x = SMUFL.safeSum(prevGlyph?.x, prevGlyph?.width);
 								}
 								return cur;
 							},
@@ -36,10 +36,10 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 						note.glyphs.reduce<SMUFL.Glyph | SMUFL.Glyph[] | null>(
 							(prev, cur) => {
 								const prevGlyph = R.isArray(prev)
-									? R.maxBy(prev, (g) => g.width)
+									? R.firstBy(prev, [(g) => g.width, "desc"])
 									: prev;
 								for (const glyph of R.isArray(cur) ? cur : [cur]) {
-									glyph.x = (prevGlyph?.x ?? 0) + (prevGlyph?.width ?? 0);
+									glyph.x = SMUFL.safeSum(prevGlyph?.x, prevGlyph?.width);
 								}
 								return cur;
 							},
@@ -50,11 +50,11 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 			}
 		}
 		for (const masterBar of score.masterBars) {
-			masterBar.x = (masterBar.prev?.x ?? 0) + (masterBar.prev?.width ?? 0);
+			masterBar.x = SMUFL.safeSum(masterBar.prev?.x, masterBar.prev?.width);
 			for (const bar of masterBar.bars) {
 				bar.x = masterBar.x;
 			}
-			const notes = masterBar.bars.flatMap((bar) => bar.notes);
+			console.log(masterBar.groupedNotes);
 		}
 		return score;
 	}
