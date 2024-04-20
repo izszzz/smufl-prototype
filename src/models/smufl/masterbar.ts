@@ -12,10 +12,25 @@ export class MasterBar implements IMasterBar, SMUFL.IPosition, SMUFL.IBox {
 	x = 0;
 	y = 0;
 	height = 0;
-	width = 10;
 	groupedNotes;
 	prev?;
 	next?;
+	get width() {
+		return (
+			R.pipe(
+				this.groupedNotes,
+				R.entries(),
+				R.map(([, notes]) => R.firstBy(notes, [R.prop("width"), "desc"]).width),
+				R.reduce(R.add, 0),
+			) +
+			(R.pipe(
+				this.bars,
+				R.map(R.prop("metadata")),
+				R.filter(R.isTruthy),
+				R.firstBy([(m) => m.width, "desc"]),
+			)?.width ?? 0)
+		);
+	}
 	constructor({ id, bars, prev, next }: IMasterBar) {
 		this.id = id;
 		this.bars = bars;
@@ -25,6 +40,5 @@ export class MasterBar implements IMasterBar, SMUFL.IPosition, SMUFL.IBox {
 			bars.flatMap((bar) => bar.notes),
 			(n) => n.core.start,
 		);
-		console.log(this.groupedNotes);
 	}
 }

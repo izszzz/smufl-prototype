@@ -60,6 +60,7 @@ export class Track implements ITrack, Core.ITime {
 			},
 			{ bars: [], notes: [] },
 		).bars;
+		Core.setPrevAndNext(this.bars);
 	}
 	getMetadata() {
 		return this.metadata ?? this.score.metadata;

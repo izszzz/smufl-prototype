@@ -14,6 +14,10 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 			clientWidth ?? 0,
 			"HorizontalScroll",
 		);
+		for (const [i, track] of score.tracks.entries()) {
+			track.y = i * 12;
+			for (const bar of track.bars) bar.y = track.y;
+		}
 		for (const row of score.rows) {
 			for (const track of row.tracks) {
 				for (const bar of track.bars) {
@@ -21,7 +25,7 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 						bar.metadata.glyphs.reduce<SMUFL.Glyph | SMUFL.Glyph[] | null>(
 							(prev, cur) => {
 								const prevGlyph = R.isArray(prev)
-									? R.firstBy(prev, [(g) => g.width, "desc"])
+									? R.firstBy(prev, [R.prop("width"), "desc"])
 									: prev;
 								for (const glyph of R.isArray(cur) ? cur : [cur]) {
 									glyph.x = SMUFL.safeSum(prevGlyph?.x, prevGlyph?.width);
@@ -32,18 +36,15 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 						);
 					}
 					for (const note of bar.notes) {
-						if (bar.metadata) note.x = bar.metadata.width;
-						note.glyphs.reduce<SMUFL.Glyph | SMUFL.Glyph[] | null>(
+						note.glyphs.glyphs.reduce(
 							(prev, cur) => {
-								const prevGlyph = R.isArray(prev)
-									? R.firstBy(prev, [(g) => g.width, "desc"])
-									: prev;
-								for (const glyph of R.isArray(cur) ? cur : [cur]) {
+								if (!prev) return cur;
+								const prevGlyph = R.firstBy(prev, [R.prop("width"), "desc"]);
+								for (const glyph of cur)
 									glyph.x = SMUFL.safeSum(prevGlyph?.x, prevGlyph?.width);
-								}
 								return cur;
 							},
-							null,
+							null as SMUFL.Glyph[] | null,
 						);
 					}
 				}
@@ -54,7 +55,31 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 			for (const bar of masterBar.bars) {
 				bar.x = masterBar.x;
 			}
-			console.log(masterBar.groupedNotes);
+			R.pipe(
+				masterBar.groupedNotes,
+				R.entries(),
+				R.sortBy([([i]) => i, "asc"]),
+				R.reduce(
+					(acc, [, cur]) => {
+						if (cur.some((note) => note.accessory.left.glyphs.length > 0)) {
+							const maxWidth = R.firstBy(cur, [
+								(n) => n.accessory.left.width,
+								"desc",
+							]).accessory.left.width;
+							for (const note of cur.filter(
+								(n) => n.accessory.left.width < maxWidth,
+							)) {
+								note.spacing.left = maxWidth - note.accessory.left.width;
+								for (const glyph of note.glyphs.glyphs)
+									for (const g of glyph) g.x = note.spacing.left;
+							}
+						}
+						if (acc) for (const note of cur) note.x += acc.x + acc.width;
+						return R.firstBy(cur, [R.prop("width"), "desc"]);
+					},
+					null as SMUFL.Note | null,
+				),
+			);
 		}
 		return score;
 	}
