@@ -22,13 +22,12 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 			for (const track of row.tracks) {
 				for (const bar of track.bars) {
 					if (bar.metadata) {
-						bar.metadata.glyphs.reduce<SMUFL.Glyph | SMUFL.Glyph[] | null>(
-							(prev, cur) => {
-								const prevGlyph = R.isArray(prev)
-									? R.firstBy(prev, [R.prop("width"), "desc"])
-									: prev;
-								for (const glyph of R.isArray(cur) ? cur : [cur]) {
-									glyph.x = SMUFL.safeSum(prevGlyph?.x, prevGlyph?.width);
+						bar.metadata.glyphs.glyphs.reduce<SMUFL.Glyph[] | null>(
+							(acc, cur) => {
+								if (acc) {
+									const prevGlyph = R.firstBy(acc, [R.prop("width"), "desc"]);
+									for (const glyph of cur)
+										glyph.x = SMUFL.safeSum(prevGlyph?.x, prevGlyph?.width);
 								}
 								return cur;
 							},
@@ -36,16 +35,13 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 						);
 					}
 					for (const note of bar.notes) {
-						note.glyphs.glyphs.reduce(
-							(prev, cur) => {
-								if (!prev) return cur;
-								const prevGlyph = R.firstBy(prev, [R.prop("width"), "desc"]);
-								for (const glyph of cur)
-									glyph.x = SMUFL.safeSum(prevGlyph?.x, prevGlyph?.width);
-								return cur;
-							},
-							null as SMUFL.Glyph[] | null,
-						);
+						note.glyphs.glyphs.reduce<SMUFL.Glyph[] | null>((prev, cur) => {
+							if (!prev) return cur;
+							const prevGlyph = R.firstBy(prev, [R.prop("width"), "desc"]);
+							for (const glyph of cur)
+								glyph.x = SMUFL.safeSum(prevGlyph?.x, prevGlyph?.width);
+							return cur;
+						}, null);
 					}
 				}
 			}

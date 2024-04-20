@@ -10,7 +10,6 @@ interface SVGRendererOptions {
 	fontSize: number;
 }
 
-// TODO: barsがemptyの場合
 // TODO: 設計考え直したほうがいい
 class SVGRenderer {
 	element: HTMLElement;
@@ -196,7 +195,11 @@ class SVGRenderer {
 						},
 					);
 					if (bar.metadata) {
-						for (const { glyphName, x, y } of bar.metadata.glyphs.flat()) {
+						for (const {
+							glyphName,
+							x,
+							y,
+						} of bar.metadata.glyphs.glyphs.flat()) {
 							metadataElement.appendChild(
 								this.createSMULFSVGElement(glyphName, { x, y }),
 							);
@@ -219,70 +222,7 @@ class SVGRenderer {
 					}
 				}
 			}
-
-			// row.staffs.forEach((trackStaffs, i) => {
-			// 	const trackElement = this.createSVGElement("g", {
-			// 		type: "track",
-			// 		y: 4 * i,
-			// 	});
-			// 	trackRowElement.appendChild(trackElement);
-			// 	const staffs = trackStaffs.flat();
-			// 	// biome-ignore lint/complexity/noForEach: <explanation>
-			// 	staffs.forEach((staff, i) => {
-			// 		const staffElement = this.createSVGElement("g", {
-			// 			type: "note",
-			// 			x: staffs.slice(0, i).reduce((acc, cur) => acc + cur.width, 0),
-			// 		});
-			// 		trackElement.appendChild(staffElement);
-			// 		staffElement.appendChild(
-			// 			this.createSMULFSVGElement(staff.staffGlyph.glyphName, {
-			// 				...staff.staffGlyph,
-			// 			}),
-			// 		);
-			// 		if (staff.glyph instanceof SMUFL.Glyph)
-			// 			staffElement.appendChild(
-			// 				this.createSMULFSVGElement(staff.glyph.glyphName, {
-			// 					...staff.glyph,
-			// 				}),
-			// 			);
-			// 		if (staff.glyph instanceof SMUFL.Ligature)
-			// 			// biome-ignore lint/complexity/noForEach: <explanation>
-			// 			staff.glyph.glyphs.forEach((g) =>
-			// 				staffElement.appendChild(
-			// 					this.createSMULFSVGElement(g.glyphName, { ...g }),
-			// 				),
-			// 			);
-			// 	});
-			// });
 		});
-		// create barlines
-		const createBarline = (
-			trackRowsLength: number,
-			glyphName: Parameters<typeof this.createSMULFSVGElement>[0],
-			attributes: Parameters<typeof this.createSMULFSVGElement>[1],
-		) =>
-			R.times(trackRowsLength * 3 - 2, (i) =>
-				this.createSMULFSVGElement(glyphName, {
-					...attributes,
-					type: "barline",
-					y: i * 4,
-				}),
-			);
-		// biome-ignore lint/complexity/noForEach: <explanation>
-		// score.rows.forEach((row, i) => {
-		// 	const trackRowElement = this.createSVGElement("g", {
-		// 		type: "barline",
-		// 		y: 20 * i + 10,
-		// 	});
-		// 	root.appendChild(trackRowElement);
-		// 	// biome-ignore lint/complexity/noForEach: <explanation>
-		// 	row.barlines.forEach((barline) => {
-		// 		// biome-ignore lint/complexity/noForEach: <explanation>
-		// 		createBarline(score.tracks.length, barline.glyph.glyphName, {
-		// 			x: barline.x,
-		// 		}).forEach((barline) => trackRowElement.appendChild(barline));
-		// 	});
-		// });
 
 		return root;
 	};
