@@ -127,16 +127,29 @@ class SVGRenderer {
 			});
 			root.appendChild(trackRowElement);
 			trackRowElement.appendChild(barlinesElement);
+			// barline
 			for (const masterBar of row.masterBars) {
-				R.times(score.tracks.length * 3 - 2, (i) =>
+				for (const {
+					barline: { start, end },
+					x,
+					y,
+				} of masterBar.bars) {
 					barlinesElement.appendChild(
-						this.createSMULFSVGElement("barlineSingle", {
+						this.createSMULFSVGElement(start.glyphName, {
 							type: "barline",
-							y: i * 4,
-							x: masterBar.x,
+							y,
+							x,
 						}),
-					),
-				);
+					);
+					if (end)
+						barlinesElement.appendChild(
+							this.createSMULFSVGElement(end.glyphName, {
+								type: "barline",
+								y,
+								x: x + masterBar.width,
+							}),
+						);
+				}
 			}
 			for (const track of row.tracks) {
 				const trackElement = this.createSVGElement("g", {
@@ -154,6 +167,7 @@ class SVGRenderer {
 					});
 					const notesElement = this.createSVGElement("g", {
 						type: "notes",
+						x: bar.metadata?.width ?? 0,
 					});
 					const metadataElement = this.createSVGElement("g", {
 						type: "metadata",
@@ -195,16 +209,10 @@ class SVGRenderer {
 							y: note.y,
 						});
 						notesElement.appendChild(noteElement);
-						for (const glyph of note.glyphs) {
-							if (R.isArray(glyph)) {
-								for (const g of glyph) {
-									noteElement.appendChild(
-										this.createSMULFSVGElement(g.glyphName, { x: g.x }),
-									);
-								}
-							} else {
+						for (const glyph of note.glyphs.glyphs) {
+							for (const g of glyph) {
 								noteElement.appendChild(
-									this.createSMULFSVGElement(glyph.glyphName, { x: glyph.x }),
+									this.createSMULFSVGElement(g.glyphName, { x: g.x }),
 								);
 							}
 						}

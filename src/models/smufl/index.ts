@@ -1,3 +1,4 @@
+import * as R from "remeda";
 import Metadatas from "../../consts/metadata.json";
 import BravuraMetadata from "../../consts/metadata/bravura_metadata.json";
 import Glyphnames from "../../consts/metadata/glyphnames.json";
@@ -9,6 +10,7 @@ export * from "./bar";
 export * from "./masterbar";
 export * from "./barline";
 export * from "./glyph";
+export * from "./glyphs";
 export * from "./ligature";
 export * from "./note";
 export * from "./row";
@@ -21,4 +23,4 @@ export * from "./metadata";
 export { Metadatas, Ranges, Glyphnames, BravuraMetadata, Glyph };
 
 export const safeSum = (...num: (number | null | undefined)[]) =>
-	num.reduce<number>((acc, cur) => acc + (cur ?? 0), 0);
+	R.pipe(num, R.filter(R.isTruthy), R.reduce(R.add, 0));

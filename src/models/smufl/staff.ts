@@ -51,7 +51,7 @@ export class Staff {
 			})),
 			R.filter(({ width: staveWidth }) => width <= staveWidth),
 			R.unique(),
-			R.firstBy([(x) => x.width, "asc"]),
+			R.firstBy([R.prop("width"), "asc"]),
 		);
 		if (!glyph) throw new Error();
 		return new SMUFL.Glyph({ glyphName: glyph.key });

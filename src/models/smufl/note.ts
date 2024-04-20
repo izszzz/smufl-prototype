@@ -5,47 +5,68 @@ import * as SMUFL from "./";
 export class Note implements SMUFL.IPosition {
 	x = 0;
 	y = 0;
-	accidental?: SMUFL.Glyph;
-	bar: SMUFL.Bar;
-	glyphs: (SMUFL.Glyph | SMUFL.Glyph[])[];
-	spacing = new SMUFL.Spacing();
-	core: Core.Note;
 	get width() {
-		return this.glyphs.reduce(
-			(prev, cur) =>
-				((R.isArray(cur) ? R.firstBy(cur, [(g) => g.width, "desc"]) : cur)
-					?.width ?? 0) + prev,
-			0,
-		);
+		return this.glyphs.width;
 	}
+	bar;
+	core;
+	glyph;
+	glyphs;
+	accessory: {
+		left: SMUFL.Glyphs;
+		middle: SMUFL.Glyph[];
+		right: SMUFL.Glyphs;
+	};
+	spacing = new SMUFL.Spacing();
 	constructor(note: Core.Note, bar: SMUFL.Bar) {
 		this.core = note;
-		const noteGlyphName = this.#searchNoteGlyphName(note);
 		this.bar = bar;
 		this.y = this.#calcNoteY(note);
-		this.glyphs = R.filter(
-			[
-				this.#isNoteAccidental(note)
-					? new SMUFL.Glyph({
-							glyphName: this.#calcNoteAccidental(note),
-					  })
-					: null,
-				R.filter(
-					[
-						new SMUFL.Glyph({
-							glyphName: noteGlyphName,
-						}),
-						this.#isNoteLegerLine(note)
-							? new SMUFL.Glyph({
-									glyphName: this.#searchLegerLineGlyphName(note),
-							  })
-							: null,
-					],
-					R.isTruthy,
+		this.glyph = new SMUFL.Glyph({
+			glyphName: this.#searchNoteGlyphName(note),
+		});
+		this.accessory = {
+			left: new SMUFL.Glyphs({
+				glyphs: R.pipe(
+					[],
+					R.conditional(
+						[
+							() => this.#isNoteAccidental(note),
+							R.concat([
+								[
+									new SMUFL.Glyph({
+										glyphName: this.#calcNoteAccidental(note),
+									}),
+								],
+							]),
+						],
+						R.conditional.defaultCase(() => []),
+					),
 				),
+			}),
+			middle: R.pipe(
+				[],
+				R.conditional(
+					[
+						() => this.#isNoteLegerLine(note),
+						R.concat([
+							new SMUFL.Glyph({
+								glyphName: this.#searchLegerLineGlyphName(note),
+							}),
+						]),
+					],
+					R.conditional.defaultCase(() => []),
+				),
+			),
+			right: new SMUFL.Glyphs({ glyphs: [] }),
+		};
+		this.glyphs = new SMUFL.Glyphs({
+			glyphs: [
+				...this.accessory.left.glyphs,
+				[...this.accessory.middle, this.glyph],
+				...this.accessory.right.glyphs,
 			],
-			R.isTruthy,
-		);
+		});
 	}
 
 	#searchNoteGlyphName = (note: Core.Note) =>
