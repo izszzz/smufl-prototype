@@ -70,7 +70,7 @@ class SVGRenderer {
 					? v * this.fontSizeRatio
 					: v,
 			),
-			R.toPairs,
+			R.entries,
 			// biome-ignore lint/complexity/noForEach: <explanation>
 			R.forEach(([k, v]) => element.setAttribute(k, String(v))),
 		);
@@ -113,13 +113,13 @@ class SVGRenderer {
 
 	private createSVGScore = (score: SMUFL.Score) => {
 		console.log(score);
-		const root = this.createSVGElement("g");
+		const root = this.createSVGElement("g", { y: 10 });
 		// create staffs
 		// biome-ignore lint/complexity/noForEach: <explanation>
-		score.rows.forEach((row, i) => {
+		score.rows.forEach((row) => {
 			const trackRowElement = this.createSVGElement("g", {
 				type: "row",
-				y: 20 * i + 10,
+				y: row.y,
 			});
 			const barlinesElement = this.createSVGElement("g", {
 				type: "barlines",

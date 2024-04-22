@@ -25,7 +25,5 @@ export class Bar implements Core.ILink<Bar>, SMUFL.IBox {
 		this.track = track;
 		this.notes = bar.notes.map((note) => new SMUFL.Note(note, this));
 		if (bar.metadata) this.metadata = new SMUFL.Metadata(bar.metadata);
-		if (!this.core.next)
-			this.barline.end = new SMUFL.Glyph({ glyphName: "barlineFinal" });
 	}
 }
