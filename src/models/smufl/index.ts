@@ -8,7 +8,6 @@ import { Glyph } from "./glyph";
 export * from "./position";
 export * from "./bar";
 export * from "./masterbar";
-export * from "./barline";
 export * from "./glyph";
 export * from "./glyphs";
 export * from "./ligature";
