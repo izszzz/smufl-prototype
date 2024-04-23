@@ -36,7 +36,5 @@ export class Score implements IScore {
 					}),
 			),
 		);
-		//TODO: smufl exporter
-		// Core.setPrevAndNext(this.masterBars);
 	}
 }

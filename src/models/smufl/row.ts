@@ -1,8 +1,7 @@
 import * as R from "remeda";
-import * as Core from "../core";
 import * as SMUFL from "./";
 
-interface IRow extends Partial<Core.ILink<Row>> {
+interface IRow {
 	tracks: SMUFL.Track[];
 	masterBars: SMUFL.MasterBar[];
 }
@@ -17,13 +16,9 @@ export class Row implements IRow, SMUFL.IPosition, SMUFL.IBox {
 			R.reduce(R.add, 0),
 		);
 	}
-	prev;
-	next;
 	tracks;
 	masterBars;
-	constructor({ masterBars, tracks, next, prev }: IRow) {
-		this.prev = prev;
-		this.next = next;
+	constructor({ masterBars, tracks }: IRow) {
 		this.masterBars = masterBars;
 		this.tracks = tracks;
 		for (const bar of R.first(this.masterBars)?.bars ?? [])

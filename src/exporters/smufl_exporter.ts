@@ -17,10 +17,6 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 		score.rows = this.layout(score);
 		for (const [i, row] of score.rows.entries()) {
 			row.y = 20 * i;
-			row.masterBars.reduce<SMUFL.MasterBar | null>((acc, cur) => {
-				if (acc) cur.x = SMUFL.safeSum(acc?.x, acc?.width);
-				return cur;
-			}, null);
 			for (const [i, track] of row.tracks.entries()) {
 				track.y = i * 12;
 				for (const bar of track.bars) {
@@ -50,8 +46,11 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 					}
 				}
 			}
+			row.masterBars.reduce<SMUFL.MasterBar | null>((acc, cur) => {
+				if (acc) cur.x = SMUFL.safeSum(acc?.x, acc?.width);
+				return cur;
+			}, null);
 			for (const masterBar of row.masterBars) {
-				// masterBar.x = SMUFL.safeSum(masterBar.prev?.x, masterBar.prev?.width);
 				for (const bar of masterBar.bars) bar.x = masterBar.x;
 				R.pipe(
 					masterBar.groupedNotes,
@@ -111,7 +110,6 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
 								}),
 							);
 							acc.start = i;
-							console.log(i);
 						}
 						if (i === score.masterBars.length - 1)
 							acc.rows.push(
