@@ -1,18 +1,18 @@
 import * as Core from "./";
-interface INote extends Core.ITime, Core.ILink<Note> {
+interface INote extends Core.ITime, Core.ILink<Note[]> {
 	fraction: number;
 	pitch: number;
 	track: Core.Track;
 }
-export class Note implements INote, Core.ILink<Note> {
+export class Note implements INote {
 	fraction;
 	pitch;
 	track;
 	start;
 	duration;
 	end;
-	next?: Note;
-	prev?: Note;
+	next?: Note[];
+	prev?: Note[];
 	constructor({
 		fraction,
 		pitch,

@@ -39,6 +39,13 @@ export class Track implements ITrack, Core.ITime {
 				? note
 				: new Core.Note({ ...note, track: this }),
 		);
+		R.reduce(
+			this.notes,
+			(acc, cur) => {
+				return cur;
+			},
+			null as Core.Note | null,
+		);
 		this.bars = this.notes.reduce<{ bars: Core.Bar[]; notes: Core.Note[] }>(
 			(acc, cur, i) => {
 				acc.notes.push(cur);

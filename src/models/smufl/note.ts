@@ -95,11 +95,12 @@ export class Note implements SMUFL.IPosition {
 			SMUFL.Metadatas.baseOctaveKeys
 				.length) as SMUFL.Metadatas["baseOctaveKeys"][number];
 	#calcNoteAccidental = ({ prev: prevNote, pitch }: Core.Note) =>
-		!prevNote
-			? "accidentalSharp"
-			: prevNote.pitch < pitch
-			  ? "accidentalSharp"
-			  : "accidentalFlat";
+		"accidentalSharp" as const;
+	// !prevNote
+	// 	? "accidentalSharp"
+	// 	: prevNote.pitch < pitch
+	// 	  ? "accidentalSharp"
+	// 	  : "accidentalFlat";
 	#calcNoteStem = (note: Core.Note) =>
 		this.#ajustNotePitch(note) >= SMUFL.Metadatas.baseOctaveKeys.length
 			? "Down"
@@ -116,7 +117,7 @@ export class Note implements SMUFL.IPosition {
 			? this.#calcNoteAccidental(note)
 			: null;
 		if (accidental === "accidentalSharp") pitch -= 1;
-		if (accidental === "accidentalFlat") pitch += 1;
+		// if (accidental === "accidentalFlat") pitch += 1;
 		return pitch;
 	};
 	#calcNoteWhiteKeyPosition = (note: Core.Note) =>
