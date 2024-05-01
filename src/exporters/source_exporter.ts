@@ -61,7 +61,10 @@ export class SourceExporter
 						source.playbackRate.setValueAtTime(
 							1.0 * 2 ** ((100.0 * (note.pitch - baseDetune)) / 1200.0),
 							this.ctx.currentTime +
-								Core.convertTimeToSeconds(note.start, track.getMetadata().bpm),
+								Core.convertTimeToSeconds(
+									note.time.start,
+									track.getMetadata().bpm,
+								),
 						);
 					}
 					return source;

@@ -6,7 +6,9 @@ describe("Note", () => {
 			new Core.Score({
 				tracks: [
 					{
-						notes: [{ pitch: 60, fraction: 4, start: 0, duration: 1, end: 1 }],
+						notes: [
+							{ pitch: 60, fraction: 4, time: { start: 0, duration: 1 } },
+						],
 					},
 				],
 			}),

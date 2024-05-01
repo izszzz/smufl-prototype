@@ -33,7 +33,7 @@ export class MasterBar implements IMasterBar, SMUFL.IPosition, SMUFL.IBox {
 		this.bars = bars;
 		this.groupedNotes = R.groupBy(
 			bars.flatMap((bar) => bar.notes),
-			(n) => n.core.start,
+			(n) => n.core.time.start,
 		);
 	}
 }

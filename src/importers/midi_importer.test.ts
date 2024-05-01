@@ -16,7 +16,9 @@ describe("Note", () => {
 			new Core.Score({
 				tracks: [
 					{
-						notes: [{ pitch: 60, fraction: 4, start: 0, duration: 1, end: 1 }],
+						notes: [
+							{ pitch: 60, fraction: 4, time: { start: 0, duration: 1 } },
+						],
 					},
 				],
 			}),
@@ -30,7 +32,7 @@ describe("Note", () => {
 				tracks: [
 					{
 						notes: [
-							{ pitch: 60, fraction: 8, start: 0, duration: 0.5, end: 0.5 },
+							{ pitch: 60, fraction: 8, time: { start: 0, duration: 0.5 } },
 						],
 					},
 				],
@@ -45,7 +47,7 @@ describe("Track", () => {
 		expect(score).toEqual(
 			new Core.Score({
 				tracks: R.times(2, () => ({
-					notes: [{ pitch: 60, fraction: 4, start: 0, duration: 1, end: 1 }],
+					notes: [{ pitch: 60, fraction: 4, time: { start: 0, duration: 1 } }],
 				})),
 			}),
 		);

@@ -1,35 +1,36 @@
 import * as Core from "./";
-interface INote extends Core.ITime, Core.ILink<Note[]> {
+interface INote extends Core.ILink<Note[]> {
 	fraction: number;
 	pitch: number;
 	track: Core.Track;
+	time: Core.Time;
 }
 export class Note implements INote {
 	fraction;
 	pitch;
 	track;
-	start;
-	duration;
-	end;
+	time: Core.Time;
 	next?: Note[];
 	prev?: Note[];
 	constructor({
 		fraction,
 		pitch,
 		track,
-		start,
-		duration,
-		end,
-	}: INote & Core.ITime) {
+		time,
+	}: Omit<INote, "time"> & {
+		time: Core.Time | ConstructorParameters<typeof Core.Time>[0];
+	}) {
 		this.fraction = fraction;
 		this.pitch = pitch;
 		this.track = track;
-		this.start = start;
-		this.duration = duration;
-		this.end = end;
+		this.time = time instanceof Core.Time ? time : new Core.Time(time);
 	}
 
-	static build(params: Omit<INote, "track">) {
+	static build(
+		params: Omit<INote, "track" | "time"> & {
+			time: Core.Time | ConstructorParameters<typeof Core.Time>[0];
+		},
+	) {
 		return params;
 	}
 }

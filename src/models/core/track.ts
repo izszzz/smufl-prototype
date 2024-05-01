@@ -14,7 +14,7 @@ interface IConstructor {
 	metadata?: Core.Metadata;
 }
 
-export class Track implements ITrack, Core.ITime {
+export class Track implements ITrack {
 	id;
 	notes;
 	bars;
@@ -30,9 +30,9 @@ export class Track implements ITrack, Core.ITime {
 		this.score = score;
 		this.name = name;
 		this.preset = preset ?? 54;
-		this.start = R.first(notes)?.start ?? 0;
-		this.end = R.last(notes)?.end ?? 0;
-		this.duration = R.last(notes)?.duration ?? 0;
+		this.start = R.first(notes)?.time.start ?? 0;
+		this.end = R.last(notes)?.time.end ?? 0;
+		this.duration = this.end - this.start;
 		this.metadata = metadata;
 		this.notes = notes.map((note) =>
 			note instanceof Core.Note
@@ -51,7 +51,7 @@ export class Track implements ITrack, Core.ITime {
 				acc.notes.push(cur);
 				if (
 					notes.length - 1 === i ||
-					acc.notes.reduce((acc, cur) => acc + cur.duration, 0) ===
+					acc.notes.reduce((acc, cur) => acc + cur.time.duration, 0) ===
 						this.getMetadata().timeSignature.numerator
 				) {
 					acc.bars.push(

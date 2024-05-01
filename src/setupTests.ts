@@ -13,5 +13,5 @@ Object.assign(global, { TextDecoder, TextEncoder });
 const dom = new JSDOM("<!DOCTYPE html><html><body></body></html>", {
 	pretendToBeVisual: true,
 });
-global.document = dom.window.document;
+// global.document = dom.window.document;
 global.SVGGElement = dom.window.SVGSVGElement;

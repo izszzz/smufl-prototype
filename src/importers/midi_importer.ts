@@ -99,9 +99,10 @@ export class MidiImporter implements Importer {
 							Core.Note.build({
 								pitch: (cur.noteOn.event as MidiEvent).pitch,
 								fraction,
-								start: acc.time,
-								duration,
-								end: acc.time + duration,
+								time: new Core.Time({
+									start: acc.time,
+									duration,
+								}),
 							}),
 						);
 						acc.time += duration;
