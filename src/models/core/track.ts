@@ -39,6 +39,7 @@ export class Track implements ITrack {
 				? note
 				: new Core.Note({ ...note, track: this }),
 		);
+<<<<<<< Updated upstream
 		R.reduce(
 			this.notes,
 			(acc, cur) => {
@@ -46,6 +47,18 @@ export class Track implements ITrack {
 			},
 			null as Core.Note | null,
 		);
+=======
+		// this.notes.reduce(
+		// 	(acc, cur) => {
+		// 		if (acc) {
+		// 			cur.prev = acc;
+		// 			for (const note of acc) note.next = [cur];
+		// 		}
+		// 		return acc;
+		// 	},
+		// 	[] as Core.Note[],
+		// );
+>>>>>>> Stashed changes
 		this.bars = this.notes.reduce<{ bars: Core.Bar[]; notes: Core.Note[] }>(
 			(acc, cur, i) => {
 				acc.notes.push(cur);

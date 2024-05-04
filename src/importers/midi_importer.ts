@@ -4,8 +4,6 @@ import * as Core from "../models/core";
 import { midiParser } from "../parser/midi_parser";
 import { Importer } from "./importer";
 
-// TODO: 休符の扱い
-
 export class MidiImporter implements Importer {
 	arrayBuffer;
 	constructor(arrayBuffer: ArrayBuffer) {
