@@ -1,3 +1,4 @@
+import { describe,expect, test } from 'vitest'
 import * as Core from "../models/core";
 describe("Prev & Next", () => {
 	test("Single Notes", () => {

@@ -1,6 +1,6 @@
 import { Parser } from "binary-parser";
 
-// TODO: 定数　json　移行
+// TODO: 定数json移行
 const fourString = ["RIFF", "LIST"];
 const string = [
 	"ifil",
@@ -49,7 +49,7 @@ const bagParser = new Parser().array("data", {
 });
 const modulatorParser = new Parser().array("data", {
 	type: new Parser()
-		.endianess("little")
+		.endianness("little")
 		.uint16("srcOper")
 		.uint16("destOper")
 		.uint16("modAmount")
