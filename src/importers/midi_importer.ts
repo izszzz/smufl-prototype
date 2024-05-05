@@ -4,8 +4,6 @@ import * as Core from "../models/core";
 import { midiParser } from "../parser/midi_parser";
 import { Importer } from "./importer";
 
-// TODO: 休符の扱い
-
 export class MidiImporter implements Importer {
 	arrayBuffer;
 	constructor(arrayBuffer: ArrayBuffer) {
@@ -47,7 +45,6 @@ export class MidiImporter implements Importer {
 				if (metadata.tempo)
 					trackAcc.metadata.bpm = Core.convertTempoToBpm(metadata.tempo);
 				if (metadata.timeSignature) {
-					// @ts-ignore
 					// TODO: timeSigの型漬け
 					trackAcc.metadata.timeSignature = R.omit(metadata.timeSignature, [
 						"clock",
@@ -99,10 +96,10 @@ export class MidiImporter implements Importer {
 							Core.Note.build({
 								pitch: (cur.noteOn.event as MidiEvent).pitch,
 								fraction,
-								time: new Core.Time({
+								time: {
 									start: acc.time,
 									duration,
-								}),
+								},
 							}),
 						);
 						acc.time += duration;

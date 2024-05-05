@@ -9,7 +9,7 @@ export class Note implements INote {
 	fraction;
 	pitch;
 	track;
-	time: Core.Time;
+	time;
 	next?: Note[];
 	prev?: Note[];
 	constructor({

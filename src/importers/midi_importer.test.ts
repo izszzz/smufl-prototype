@@ -2,6 +2,7 @@ import fs from "fs";
 import * as R from "remeda";
 import * as Core from "../models/core";
 import { MidiImporter } from "./midi_importer";
+import { describe,expect, test } from 'vitest'
 
 const toArrayBuffer = (buffer: Buffer) =>
 	buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
