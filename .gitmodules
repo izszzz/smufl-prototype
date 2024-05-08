@@ -1,3 +1,6 @@
-[submodule "bravura"]
-	path = bravura
+[submodule "src/bravura"]
+	path = src/bravura
 	url = https://github.com/steinbergmedia/bravura.git
+[submodule "src/smufl"]
+	path = src/smufl
+	url = https://github.com/w3c/smufl.git
