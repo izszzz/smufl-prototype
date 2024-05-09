@@ -1,16 +1,15 @@
 import * as R from "remeda";
 import Metadatas from "../../consts/metadata.json";
-import BravuraMetadata from "../../consts/metadata/bravura_metadata.json";
-import Glyphnames from "../../consts/metadata/glyphnames.json";
-import Ranges from "../../consts/metadata/ranges.json";
-import { Glyph } from "./glyph";
+import BravuraMetadata from "../../consts/bravura_metadata.json";
+import Glyphnames from "../../consts/glyphnames.json";
+import Ranges from "../../consts/ranges.json";
 
 export * from "./position";
+export * from "./element";
 export * from "./bar";
 export * from "./masterbar";
 export * from "./glyph";
 export * from "./glyphs";
-export * from "./ligature";
 export * from "./note";
 export * from "./row";
 export * from "./score";
@@ -19,7 +18,26 @@ export * from "./staff";
 export * from "./track";
 export * from "./box";
 export * from "./metadata";
-export { Metadatas, Ranges, Glyphnames, BravuraMetadata, Glyph };
+export * from "./rest";
+export { Metadatas, Ranges, Glyphnames, BravuraMetadata };
 
-export const safeSum = (...num: (number | null | undefined)[]) =>
-	R.pipe(num, R.filter(R.isTruthy), R.reduce(R.add, 0));
+export const findGlyphname = (
+  type: keyof Ranges,
+  filter: (glyph: Ranges[typeof type]["glyphs"][number]) => boolean
+): Ranges[typeof type]["glyphs"][number] => {
+  const glyphName = Ranges[type].glyphs.find(filter);
+  if (R.isNullish(glyphName)) throw new Error();
+  return glyphName;
+};
+
+export const findFractionLiteral = (
+  fraction: number
+  //TODO:
+  //   Metadatas["fractions"][number]["value"]
+) => {
+  const literal = Metadatas.fractions.find(
+    ({ value }) => fraction === value
+  )?.type;
+  if (R.isNullish(literal)) throw new Error();
+  return literal;
+};
