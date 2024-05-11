@@ -1,6 +1,6 @@
 import fs from "fs";
+import { CoreImporter } from "./core_importer";
 import * as R from "remeda";
-import * as Core from "../models/core";
 import { MidiImporter } from "./midi_importer";
 import { describe, expect, test } from "vitest";
 import quarter_middle_c from "../fixtures/core/quarter_middle_c.json";
@@ -16,19 +16,19 @@ const path = "src/fixtures/midi/";
 describe("Note", () => {
   test("quarter middle C", () => {
     const score = importMidiFile(`${path}quarter_middle_c.mid`);
-    expect(score).toEqual(new Core.Score(quarter_middle_c));
+    expect(score).toEqual(new CoreImporter(quarter_middle_c).import());
   });
 
   test("8th middle C", () => {
     const score = importMidiFile(`${path}8th_middle_c.mid`);
-    expect(score).toEqual(new Core.Score(eighth_middle_c));
+    expect(score).toEqual(new CoreImporter(eighth_middle_c).import());
   });
 });
 
 describe("Rest", () => {
   test("quarter_rest", () => {
     const score = importMidiFile(`${path}quarter_rest.mid`);
-    expect(score).toEqual(new Core.Score(quarter_rest));
+    expect(score).toEqual(new CoreImporter(quarter_rest).import());
   });
 });
 
@@ -36,11 +36,11 @@ describe("Track", () => {
   test("export two-track", () => {
     const score = importMidiFile(`${path}two-track.mid`);
     expect(score).toEqual(
-      new Core.Score({
+      new CoreImporter({
         tracks: R.times(2, () => ({
           notes: [{ pitch: 60, fraction: 4, time: { start: 0, duration: 1 } }],
         })),
-      })
+      }).import()
     );
   });
 });

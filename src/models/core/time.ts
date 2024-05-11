@@ -1,4 +1,4 @@
-import { Optional } from "../../helpers/utility_types";
+import { Optional } from "../../helpers/utility_types/optional";
 
 // TODO: 命名考える
 interface ITime {
@@ -22,5 +22,10 @@ export class Time implements ITime {
       this.end = start + time.duration;
       this.duration = time.duration;
     }
+  }
+  static build(params: Optional<ITime, "duration">): typeof params;
+  static build(params: Optional<ITime, "end">): typeof params;
+  static build(params: Optional<ITime, "duration" | "end">) {
+    return params;
   }
 }

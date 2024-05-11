@@ -1,13 +1,18 @@
+import { Identifier } from "../../helpers";
 import * as Core from "./";
 
-interface IBar extends IConstructor {
-  getMetadata: () => Core.Metadata;
-}
-interface IConstructor extends Core.ILink<Bar> {
-  id: number;
+interface IBar extends Identifier, Core.ILink<Bar> {
   track: Core.Track;
   metadata?: Core.Metadata;
-  notes: (Core.Note | ReturnType<typeof Core.Note.build>)[];
+  notes: Core.Note[];
+  time?: Core.Time;
+}
+interface IBarObject
+  extends Omit<IBar, "track" | "metadata" | "notes" | "time"> {
+  track?: ReturnType<typeof Core.Track.build>[];
+  metadata?: ReturnType<typeof Core.Metadata.build>[];
+  notes: ReturnType<typeof Core.Note.build>[];
+  time?: ReturnType<typeof Core.Time.build>;
 }
 
 export class Bar implements IBar {
@@ -17,19 +22,18 @@ export class Bar implements IBar {
   metadata?;
   prev?;
   next?;
-  constructor({ id, track, metadata, prev, next, notes }: IConstructor) {
+  constructor({ id, track, metadata, prev, next, notes }: IBar) {
     this.id = id;
     this.next = next;
     this.prev = prev;
     this.track = track;
     this.metadata = metadata;
-    this.notes = notes.map((note) =>
-      note instanceof Core.Note
-        ? note
-        : new Core.Note({ ...note, bar: this, track })
-    );
+    this.notes = notes;
   }
   getMetadata() {
     return this.metadata ?? this.track.getMetadata();
+  }
+  static build(params: IBarObject) {
+    return params;
   }
 }

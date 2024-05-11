@@ -2,42 +2,42 @@ import * as Core from "./";
 import { calcFraction } from ".";
 interface INote extends Core.ILink<Note[]> {
   pitch: number;
-  track: Core.Track;
-  bar: Core.Bar;
+  track?: Core.Track;
+  bar?: Core.Bar;
   time: Core.Time;
   fraction: number;
+}
+interface INoteObject
+  extends Omit<INote, "track" | "bar" | "time" | "fraction"> {
+  track?: ReturnType<typeof Core.Track.build>;
+  bar?: ReturnType<typeof Core.Bar.build>;
+  time: ReturnType<typeof Core.Time.build>;
 }
 export class Note implements INote {
   pitch;
   track;
   bar;
   time;
-  fraction;
+  get fraction() {
+    return calcFraction(
+      this.time.duration,
+      this.getMetadata().timeSignature.denominator
+    );
+  }
   next?: Note[];
   prev?: Note[];
-  constructor({
-    pitch,
-    track,
-    time,
-    bar,
-  }: Omit<INote, "time" | "fraction"> & {
-    time: Core.Time | ConstructorParameters<typeof Core.Time>[0];
-  }) {
+  constructor({ pitch, track, time, bar }: Omit<INote, "fraction">) {
     this.pitch = pitch;
     this.track = track;
     this.bar = bar;
-    this.time = time instanceof Core.Time ? time : new Core.Time(time);
-    this.fraction = calcFraction(
-      this.time.duration,
-      bar.getMetadata().timeSignature.denominator
-    );
+    this.time = time;
+  }
+  getMetadata() {
+    if (!this.track) throw new Error();
+    return this.bar?.getMetadata() ?? this.track.getMetadata();
   }
 
-  static build(
-    params: Omit<INote, "fraction" | "bar" | "track" | "time"> & {
-      time: Core.Time | ConstructorParameters<typeof Core.Time>[0];
-    }
-  ) {
+  static build(params: INoteObject) {
     return params;
   }
 }
