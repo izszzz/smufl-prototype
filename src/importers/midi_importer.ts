@@ -76,9 +76,9 @@ export class MidiImporter implements Importer {
           }
           return acc;
         }, []);
-        const { notes } = midiNotes.reduce<{
+        const { elements } = midiNotes.reduce<{
           time: number;
-          notes: ReturnType<typeof Core.Note.build>[];
+          elements: ReturnType<typeof Core.Note.build>[];
         }>(
           (acc, cur) => {
             const start = this.calcDuration(
@@ -89,9 +89,8 @@ export class MidiImporter implements Importer {
               cur.noteOff?.deltaTime ?? 0,
               data.mthd.resolution
             );
-            console.log(start, duration);
 
-            acc.notes.push(
+            acc.elements.push(
               Core.Note.build({
                 pitch: (cur.noteOn.event as MidiEvent).pitch,
                 time: {
@@ -103,10 +102,10 @@ export class MidiImporter implements Importer {
             acc.time += start + duration;
             return acc;
           },
-          { time: 0, notes: [] }
+          { time: 0, elements: [] }
         );
-        if (R.isEmpty(notes)) return trackAcc;
-        trackAcc.tracks.push({ notes });
+        if (R.isEmpty(elements)) return trackAcc;
+        trackAcc.tracks.push({ elements });
 
         return trackAcc;
       },

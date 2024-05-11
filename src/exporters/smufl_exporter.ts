@@ -88,12 +88,12 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
     const tracks = core.tracks.map(
       (track) =>
         new SMUFL.Track({
-          bars: track.bars.length
+          bars: track.bars?.length
             ? track.bars.map(
                 (bar) =>
                   new SMUFL.Bar({
                     core: bar,
-                    elements: bar.notes.reduce((acc, cur) => {
+                    elements: bar.elements.reduce((acc, cur) => {
                       const note = new SMUFL.Note({ core: cur });
 
                       if (0 < note.core.time.start)
@@ -115,7 +115,7 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
               )
             : [
                 new SMUFL.Bar({
-                  core: new Core.Bar({ track, id: 1, notes: [] }),
+                  core: new Core.Bar({ track, id: 1, elements: [] }),
                   elements: [],
                 }),
               ],

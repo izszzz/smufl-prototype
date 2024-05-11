@@ -2,25 +2,26 @@ import * as R from "remeda";
 import * as Core from "../models/core";
 import { Importer } from "./importer";
 
+interface Options {
+  generate: {
+    rest: boolean;
+    bar: boolean;
+  };
+}
 export class CoreImporter implements Importer {
   params;
-  options: {
-    generate: {
-      bar?: boolean;
-      rest?: boolean;
-    };
-  } = {
-    generate: {
-      bar: true,
-    },
-  };
-  constructor(params: Parameters<typeof Core.Score.build>[0]) {
+  options;
+  constructor(
+    params: Parameters<typeof Core.Score.build>[0],
+    options: Options = { generate: { rest: false, bar: false } }
+  ) {
     this.params = params;
+    this.options = options;
   }
   import() {
     return this.associate(this.init());
   }
-  init() {
+  private init() {
     const score = new Core.Score(
       (() => {
         const { tracks, metadata, ...score } = this.params;
@@ -31,17 +32,29 @@ export class CoreImporter implements Importer {
             (track, id) =>
               new Core.Track(
                 (() => {
-                  const notes = track.notes.map(
-                    ({ time, ...note }) =>
+                  const elements = track.elements.reduce((acc, cur) => {
+                    if (this.options.generate.rest)
+                      if (0 < cur.time.start)
+                        acc.push(
+                          new Core.Rest({
+                            time: new Core.Time({
+                              start: 0,
+                              end: cur.time.start,
+                            }),
+                          })
+                        );
+                    acc.push(
                       new Core.Note({
-                        ...R.omit(note, ["track", "bar"]),
-                        time: new Core.Time(time),
+                        ...R.omit(cur, ["track", "bar", "time"]),
+                        time: new Core.Time(cur.time),
                       })
-                  );
+                    );
+                    return acc;
+                  }, [] as Core.Element[]);
 
                   return {
                     id,
-                    notes,
+                    elements,
                   };
                 })()
               )
@@ -51,42 +64,42 @@ export class CoreImporter implements Importer {
     );
     if (this.options.generate.bar) {
       for (const track of score.tracks) {
-        track.bars = track.notes.reduce<{
+        track.bars = track.elements.reduce<{
           bars: Core.Bar[];
-          notes: Core.Note[];
+          elements: Core.Element[];
         }>(
           (acc, cur, i) => {
-            acc.notes.push(cur);
+            acc.elements.push(cur);
             if (
-              track.notes.length - 1 === i ||
-              acc.notes.reduce((acc, cur) => acc + cur.time.duration, 0) ===
+              track.elements.length - 1 === i ||
+              acc.elements.reduce((acc, cur) => acc + cur.time.duration, 0) ===
                 track.getMetadata().timeSignature.numerator
             ) {
               acc.bars.push(
                 new Core.Bar({
                   id: acc.bars.length,
-                  notes: acc.notes,
+                  elements: acc.elements,
                   track,
                 })
               );
-              acc.notes = [];
+              acc.elements = [];
             }
             return acc;
           },
-          { bars: [], notes: [] }
+          { bars: [], elements: [] }
         ).bars;
       }
     }
     return score;
   }
-  associate(score: Core.Score) {
+  private associate(score: Core.Score) {
     for (const track of score.tracks) {
       track.score = score;
-      for (const note of track.notes) note.track = track;
+      for (const note of track.elements) note.track = track;
       if (track.bars) {
         for (const bar of track.bars) {
           bar.track = track;
-          for (const note of bar.notes) note.bar = bar;
+          for (const note of bar.elements) note.bar = bar;
         }
         Core.setPrevAndNext(track.bars);
       }

@@ -12,14 +12,14 @@ describe("Note", () => {
       "noteQuarterUp"
     );
   });
-  describe("Rest", () => {
-    test("export quarter Rest", () => {
-      const smufl = new SMUFLExporter(
-        new CoreImporter(quarter_rest).import()
-      ).export();
-      expect(smufl.tracks[0].bars[0].elements[0].glyph.glyphName).toEqual(
-        "restQuarter"
-      );
-    });
+});
+describe("Rest", () => {
+  test("export quarter Rest", () => {
+    const smufl = new SMUFLExporter(
+      new CoreImporter(quarter_rest).import()
+    ).export();
+    expect(smufl.tracks[0].bars[0].elements[0].glyph.glyphName).toEqual(
+      "restQuarter"
+    );
   });
 });

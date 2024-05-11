@@ -5,7 +5,7 @@ import { Identifier } from "../../helpers";
 interface ITrack extends Identifier {
   name?: string;
   preset?: number;
-  notes: Core.Note[];
+  elements: Core.Element[];
   score?: Core.Score;
   metadata?: Core.Metadata;
   bars?: Core.Bar[];
@@ -14,9 +14,9 @@ interface ITrack extends Identifier {
 interface ITrackObject
   extends Omit<
     ITrack,
-    "id" | "notes" | "score" | "bars" | "metadata" | "time"
+    "id" | "elements" | "score" | "bars" | "metadata" | "time"
   > {
-  notes: ReturnType<typeof Core.Note.build>[];
+  elements: ReturnType<typeof Core.Note.build>[];
   bars?: ReturnType<typeof Core.Bar.build>[];
   metadata?: ReturnType<typeof Core.Metadata.build>;
   score?: ReturnType<typeof Core.Score.build>;
@@ -25,7 +25,7 @@ interface ITrackObject
 
 export class Track implements ITrack {
   id;
-  notes;
+  elements;
   bars;
   metadata;
   name;
@@ -35,7 +35,7 @@ export class Track implements ITrack {
   constructor({
     id,
     name,
-    notes,
+    elements: notes,
     score,
     metadata,
     preset,
@@ -50,7 +50,7 @@ export class Track implements ITrack {
       start: R.first(notes)?.time.start ?? 0,
       end: R.last(notes)?.time.end ?? 0,
     });
-    this.notes = notes;
+    this.elements = notes;
     this.bars = bars;
   }
   getMetadata() {

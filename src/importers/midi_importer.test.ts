@@ -1,11 +1,11 @@
 import fs from "fs";
-import { CoreImporter } from "./core_importer";
 import * as R from "remeda";
 import { MidiImporter } from "./midi_importer";
 import { describe, expect, test } from "vitest";
 import quarter_middle_c from "../fixtures/core/quarter_middle_c.json";
 import eighth_middle_c from "../fixtures/core/8th_middle_c.json";
 import quarter_rest from "../fixtures/core/quarter_rest.json";
+import { CoreImporter } from "./core_importer";
 
 const toArrayBuffer = (buffer: Buffer) =>
   buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
@@ -38,7 +38,9 @@ describe("Track", () => {
     expect(score).toEqual(
       new CoreImporter({
         tracks: R.times(2, () => ({
-          notes: [{ pitch: 60, fraction: 4, time: { start: 0, duration: 1 } }],
+          elements: [
+            { pitch: 60, fraction: 4, time: { start: 0, duration: 1 } },
+          ],
         })),
       }).import()
     );
