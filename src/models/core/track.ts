@@ -1,73 +1,63 @@
 import * as R from "remeda";
 import * as Core from "./";
+import { Identifier } from "../../helpers";
 
-interface ITrack extends IConstructor {
-  bars: Core.Bar[];
-  getMetadata: () => Core.Metadata;
-}
-interface IConstructor {
-  id: number;
-  notes: (Core.Note | ReturnType<typeof Core.Note.build>)[];
-  score: Core.Score;
+interface ITrack extends Identifier {
   name?: string;
   preset?: number;
+  notes: Core.Note[];
+  score?: Core.Score;
   metadata?: Core.Metadata;
+  bars?: Core.Bar[];
+  time?: Core.Time;
+}
+interface ITrackObject
+  extends Omit<
+    ITrack,
+    "id" | "notes" | "score" | "bars" | "metadata" | "time"
+  > {
+  notes: ReturnType<typeof Core.Note.build>[];
+  bars?: ReturnType<typeof Core.Bar.build>[];
+  metadata?: ReturnType<typeof Core.Metadata.build>;
+  score?: ReturnType<typeof Core.Score.build>;
+  time?: ReturnType<typeof Core.Time.build>;
 }
 
 export class Track implements ITrack {
   id;
-  notes: Core.Note[];
+  notes;
   bars;
   metadata;
   name;
   score;
   preset;
-  start;
-  duration;
-  end;
-  constructor({ id, name, notes, score, metadata, preset }: IConstructor) {
+  time;
+  constructor({
+    id,
+    name,
+    notes,
+    score,
+    metadata,
+    preset,
+    bars,
+  }: Omit<ITrack, "time">) {
     this.id = id;
     this.score = score;
     this.name = name;
     this.preset = preset ?? 54;
-    this.start = R.first(notes)?.time.start ?? 0;
-    this.end = R.last(notes)?.time.end ?? 0;
-    this.duration = this.end - this.start;
     this.metadata = metadata;
-    // this.notes = notes.map((note) =>
-    // 	note instanceof Core.Note
-    // 		? note
-    // 		: new Core.Note({ ...note, track: this }),
-    // );
-
-    this.bars = notes.reduce<{
-      bars: Core.Bar[];
-      notes: (Core.Note | ReturnType<typeof Core.Note.build>)[];
-    }>(
-      (acc, cur, i) => {
-        acc.notes.push(cur);
-        if (
-          notes.length - 1 === i ||
-          acc.notes.reduce((acc, cur) => acc + cur.time.duration, 0) ===
-            this.getMetadata().timeSignature.numerator
-        ) {
-          acc.bars.push(
-            new Core.Bar({
-              id: acc.bars.length,
-              notes: acc.notes,
-              track: this,
-            })
-          );
-          acc.notes = [];
-        }
-        return acc;
-      },
-      { bars: [], notes: [] }
-    ).bars;
-    this.notes = this.bars.flatMap((bar) => bar.notes);
-    Core.setPrevAndNext(this.bars);
+    this.time = new Core.Time({
+      start: R.first(notes)?.time.start ?? 0,
+      end: R.last(notes)?.time.end ?? 0,
+    });
+    this.notes = notes;
+    this.bars = bars;
   }
   getMetadata() {
+    if (!this.score) throw new Error();
     return this.metadata ?? this.score.metadata;
+  }
+  static build(params: ITrackObject) {
+    return params;
   }
 }

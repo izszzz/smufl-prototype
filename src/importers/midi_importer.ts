@@ -3,6 +3,7 @@ import midi from "../consts/midi.json";
 import * as Core from "../models/core";
 import { midiParser } from "../parser/midi_parser";
 import { Importer } from "./importer";
+import { CoreImporter } from "./core_importer";
 
 export class MidiImporter implements Importer {
   arrayBuffer;
@@ -26,11 +27,8 @@ export class MidiImporter implements Importer {
   }
   convertScore(data: Midi) {
     const { tracks, metadata } = data.mtrks.reduce<{
-      tracks: Omit<
-        ConstructorParameters<typeof Core.Track>[0],
-        "score" | "id"
-      >[];
-      metadata: Core.Metadata;
+      tracks: ReturnType<typeof Core.Track.build>[];
+      metadata: ReturnType<typeof Core.Metadata.build>;
     }>(
       (trackAcc, trackCur) => {
         const lastMetaEventIndex = trackCur.events.findIndex(
@@ -114,10 +112,10 @@ export class MidiImporter implements Importer {
       },
       {
         tracks: [],
-        metadata: new Core.Metadata(),
+        metadata: { timeSignature: undefined, bpm: undefined },
       }
     );
-    return new Core.Score({ tracks, metadata });
+    return new CoreImporter({ tracks, metadata }).import();
   }
   calcDuration(deltaTime: number, resolution: number) {
     return deltaTime / resolution;
