@@ -2,10 +2,7 @@ import * as Core from "../core";
 import * as SMUFL from "./";
 
 interface IRest {
-  core: {
-    fraction: number;
-    time: Core.Time;
-  };
+  core: Core.Rest;
 }
 export class Rest extends SMUFL.Element implements IRest {
   core;
@@ -24,9 +21,5 @@ export class Rest extends SMUFL.Element implements IRest {
       accessory,
     });
     this.core = core;
-    this.core.fraction = calcFraction(
-      core.time.duration,
-      bar.getMetadata().timeSignature.denominator
-    );
   }
 }

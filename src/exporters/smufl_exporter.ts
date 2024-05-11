@@ -94,21 +94,10 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
                   new SMUFL.Bar({
                     core: bar,
                     elements: bar.elements.reduce((acc, cur) => {
-                      const note = new SMUFL.Note({ core: cur });
-
-                      if (0 < note.core.time.start)
-                        acc.push(
-                          new SMUFL.Rest({
-                            core: {
-                              time: new Core.Time({
-                                start: 0,
-                                end: note.core.time.start,
-                              }),
-                            },
-                          })
-                        );
-                      acc.push(note);
-
+                      if (cur instanceof Core.Note)
+                        acc.push(new SMUFL.Note({ core: cur }));
+                      if (cur instanceof Core.Rest)
+                        acc.push(new SMUFL.Rest({ core: cur }));
                       return acc;
                     }, [] as SMUFL.Element[]),
                   })

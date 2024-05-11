@@ -19,7 +19,7 @@ export class CoreImporter implements Importer {
     this.options = options;
   }
   import() {
-    return this.associate(this.init());
+    return this.init();
   }
   private init() {
     const score = new Core.Score(
@@ -62,6 +62,7 @@ export class CoreImporter implements Importer {
         };
       })()
     );
+    this.associate(score);
     if (this.options.generate.bar) {
       for (const track of score.tracks) {
         track.bars = track.elements.reduce<{
@@ -95,11 +96,11 @@ export class CoreImporter implements Importer {
   private associate(score: Core.Score) {
     for (const track of score.tracks) {
       track.score = score;
-      for (const note of track.elements) note.track = track;
+      for (const element of track.elements) element.track = track;
       if (track.bars) {
         for (const bar of track.bars) {
           bar.track = track;
-          for (const note of bar.elements) note.bar = bar;
+          for (const element of bar.elements) element.bar = bar;
         }
         Core.setPrevAndNext(track.bars);
       }

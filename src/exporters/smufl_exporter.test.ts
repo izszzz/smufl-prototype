@@ -6,7 +6,9 @@ import { CoreImporter } from "../importers/core_importer";
 describe("Note", () => {
   test("export quarter middle C Core.Note", () => {
     const smufl = new SMUFLExporter(
-      new CoreImporter(quarter_middle_c).import()
+      new CoreImporter(quarter_middle_c, {
+        generate: { bar: true, rest: true },
+      }).import()
     ).export();
     expect(smufl.tracks[0].bars[0].elements[0].glyph.glyphName).toEqual(
       "noteQuarterUp"
@@ -16,8 +18,11 @@ describe("Note", () => {
 describe("Rest", () => {
   test("export quarter Rest", () => {
     const smufl = new SMUFLExporter(
-      new CoreImporter(quarter_rest).import()
+      new CoreImporter(quarter_rest, {
+        generate: { bar: true, rest: true },
+      }).import()
     ).export();
+    console.log(smufl.tracks[0].bars[0].elements);
     expect(smufl.tracks[0].bars[0].elements[0].glyph.glyphName).toEqual(
       "restQuarter"
     );
