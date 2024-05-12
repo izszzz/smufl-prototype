@@ -38,6 +38,6 @@ export const findFractionLiteral = (
   const literal = Metadatas.fractions.find(
     ({ value }) => fraction === value
   )?.type;
-  if (R.isNullish(literal)) throw new Error();
+  if (!literal) throw new Error();
   return literal;
 };

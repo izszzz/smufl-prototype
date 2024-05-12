@@ -7,11 +7,8 @@ interface IBar extends Identifier, Core.ILink<Bar> {
   elements: Core.Element[];
   time?: Core.Time;
 }
-interface IBarObject
-  extends Omit<IBar, "track" | "metadata" | "elements" | "time"> {
-  track?: ReturnType<typeof Core.Track.build>[];
-  metadata?: ReturnType<typeof Core.Metadata.build>[];
-  elements: ReturnType<typeof Core.Note.build>[];
+interface Constructor extends Omit<IBar, "metadata" | "time"> {
+  metadata?: ReturnType<typeof Core.Metadata.build>;
   time?: ReturnType<typeof Core.Time.build>;
 }
 
@@ -22,18 +19,15 @@ export class Bar implements IBar {
   metadata?;
   prev?;
   next?;
-  constructor({ id, track, metadata, prev, next, elements: notes }: IBar) {
+  constructor({ id, track, metadata, prev, next, elements }: Constructor) {
     this.id = id;
     this.next = next;
     this.prev = prev;
     this.track = track;
-    this.metadata = metadata;
-    this.elements = notes;
+    if (metadata) this.metadata = new Core.Metadata(metadata);
+    this.elements = elements;
   }
   getMetadata() {
     return this.metadata ?? this.track.getMetadata();
-  }
-  static build(params: IBarObject) {
-    return params;
   }
 }

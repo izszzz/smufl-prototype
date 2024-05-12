@@ -1,0 +1,21 @@
+{
+  "tracks": [
+    {
+      "elements": [
+        { "pitch": 60, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 61, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 62, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 63, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 64, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 65, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 66, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 67, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 68, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 69, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 70, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 71, "time": { "start": 0, "duration": 1 } },
+        { "pitch": 72, "time": { "start": 0, "duration": 1 } }
+      ]
+    }
+  ]
+}

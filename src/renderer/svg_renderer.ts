@@ -204,14 +204,14 @@ class SVGRenderer {
               );
             }
           }
-          for (const note of bar.elements) {
+          for (const element of bar.elements) {
             const noteElement = this.createSVGElement("g", {
               type: "note",
-              x: note.x,
-              y: note.y,
+              x: element.x,
+              y: element.y,
             });
             notesElement.appendChild(noteElement);
-            for (const glyph of note.glyphs.glyphs) {
+            for (const glyph of element.glyphs.glyphs) {
               for (const g of glyph) {
                 noteElement.appendChild(
                   this.createSMULFSVGElement(g.glyphName, { x: g.x })

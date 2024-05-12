@@ -23,12 +23,5 @@ export const setPrevAndNext = <T extends { prev?: T; next?: T }>(
 export const convertTempoToBpm = (tempo: number) =>
   Math.floor(60000000 / tempo);
 
-// TODO: 付点考慮できてる？
-export const calcDuration = (fraction: number, denominator: number) =>
-  denominator / fraction;
-
 export const convertTimeToSeconds = (time: number, bpm: number) =>
   (60 * time) / bpm;
-
-export const calcFraction = (duration: number, denominator: number) =>
-  denominator * (1 / duration);

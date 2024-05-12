@@ -5,10 +5,21 @@ import { midiParser } from "../parser/midi_parser";
 import { Importer } from "./importer";
 import { CoreImporter } from "./core_importer";
 
+interface Options {
+  generate: {
+    rest: boolean;
+    bar: boolean;
+  };
+}
 export class MidiImporter implements Importer {
   arrayBuffer;
-  constructor(arrayBuffer: ArrayBuffer) {
+  options;
+  constructor(
+    arrayBuffer: ArrayBuffer,
+    options: Options = { generate: { rest: false, bar: false } }
+  ) {
     this.arrayBuffer = arrayBuffer;
+    this.options = options;
   }
   import() {
     return this.convertScore(this.parseArrayBuffer(this.arrayBuffer));
@@ -43,7 +54,6 @@ export class MidiImporter implements Importer {
         if (metadata.tempo)
           trackAcc.metadata.bpm = Core.convertTempoToBpm(metadata.tempo);
         if (metadata.timeSignature) {
-          // TODO: timeSigの型漬け
           trackAcc.metadata.timeSignature = R.omit(metadata.timeSignature, [
             "clock",
             "bb",
@@ -76,6 +86,7 @@ export class MidiImporter implements Importer {
           }
           return acc;
         }, []);
+
         const { elements } = midiNotes.reduce<{
           time: number;
           elements: ReturnType<typeof Core.Note.build>[];
@@ -114,7 +125,7 @@ export class MidiImporter implements Importer {
         metadata: { timeSignature: undefined, bpm: undefined },
       }
     );
-    return new CoreImporter({ tracks, metadata }).import();
+    return new CoreImporter({ tracks, metadata }, this.options).import();
   }
   calcDuration(deltaTime: number, resolution: number) {
     return deltaTime / resolution;

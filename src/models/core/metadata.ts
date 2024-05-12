@@ -1,10 +1,10 @@
 import metadata from "../../consts/metadata.json";
 
-type TimeSignatureNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
+// type TimeSignatureNumber = 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9;
 interface IMetadata {
   timeSignature: {
-    denominator: TimeSignatureNumber;
-    numerator: TimeSignatureNumber;
+    denominator: number;
+    numerator: number;
   };
   bpm: number;
 }

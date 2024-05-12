@@ -1,4 +1,3 @@
-import * as R from "remeda";
 import * as Core from "../models/core";
 import { Importer } from "./importer";
 
@@ -22,49 +21,28 @@ export class CoreImporter implements Importer {
     return this.init();
   }
   private init() {
-    const score = new Core.Score(
-      (() => {
-        const { tracks, metadata, ...score } = this.params;
-        return {
-          ...score,
-          metadata: new Core.Metadata(metadata),
-          tracks: tracks.map(
-            (track, id) =>
-              new Core.Track(
-                (() => {
-                  const elements = track.elements.reduce((acc, cur) => {
-                    if (this.options.generate.rest)
-                      if (0 < cur.time.start)
-                        acc.push(
-                          new Core.Rest({
-                            time: new Core.Time({
-                              start: 0,
-                              end: cur.time.start,
-                            }),
-                          })
-                        );
-                    acc.push(
-                      new Core.Note({
-                        ...R.omit(cur, ["track", "bar", "time"]),
-                        time: new Core.Time(cur.time),
-                      })
-                    );
-                    return acc;
-                  }, [] as Core.Element[]);
-
-                  return {
-                    id,
-                    elements,
-                  };
-                })()
-              )
-          ),
-        };
-      })()
-    );
-    this.associate(score);
+    const score = new Core.Score(this.params);
+    if (this.options.generate.rest) {
+      for (const track of score.tracks) {
+        track.elements = track.elements.reduce((acc, cur) => {
+          if (0 < cur.time.start)
+            acc.push(
+              new Core.Rest({
+                track,
+                time: {
+                  start: 0,
+                  duration: cur.time.start,
+                },
+              })
+            );
+          acc.push(cur);
+          return acc;
+        }, [] as Core.Element[]);
+      }
+    }
     if (this.options.generate.bar) {
       for (const track of score.tracks) {
+        // TODO: bar 作り方変える
         track.bars = track.elements.reduce<{
           bars: Core.Bar[];
           elements: Core.Element[];
@@ -89,20 +67,6 @@ export class CoreImporter implements Importer {
           },
           { bars: [], elements: [] }
         ).bars;
-      }
-    }
-    return score;
-  }
-  private associate(score: Core.Score) {
-    for (const track of score.tracks) {
-      track.score = score;
-      for (const element of track.elements) element.track = track;
-      if (track.bars) {
-        for (const bar of track.bars) {
-          bar.track = track;
-          for (const element of bar.elements) element.bar = bar;
-        }
-        Core.setPrevAndNext(track.bars);
       }
     }
     return score;

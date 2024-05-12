@@ -6,58 +6,45 @@ interface ITrack extends Identifier {
   name?: string;
   preset?: number;
   elements: Core.Element[];
-  score?: Core.Score;
+  score: Core.Score;
   metadata?: Core.Metadata;
   bars?: Core.Bar[];
   time?: Core.Time;
 }
-interface ITrackObject
-  extends Omit<
-    ITrack,
-    "id" | "elements" | "score" | "bars" | "metadata" | "time"
-  > {
+interface Constructor
+  extends Omit<ITrack, "elements" | "bars" | "metadata" | "time"> {
   elements: ReturnType<typeof Core.Note.build>[];
-  bars?: ReturnType<typeof Core.Bar.build>[];
   metadata?: ReturnType<typeof Core.Metadata.build>;
-  score?: ReturnType<typeof Core.Score.build>;
-  time?: ReturnType<typeof Core.Time.build>;
 }
+interface Build extends Omit<Constructor, "id" | "score"> {}
 
 export class Track implements ITrack {
   id;
-  elements;
-  bars;
-  metadata;
+  elements: Core.Element[];
+  metadata?;
   name;
   score;
   preset;
   time;
-  constructor({
-    id,
-    name,
-    elements: notes,
-    score,
-    metadata,
-    preset,
-    bars,
-  }: Omit<ITrack, "time">) {
+  bars?: Core.Bar[];
+  constructor({ id, name, elements, score, metadata, preset }: Constructor) {
     this.id = id;
     this.score = score;
     this.name = name;
     this.preset = preset ?? 54;
-    this.metadata = metadata;
+    if (metadata) this.metadata = new Core.Metadata(metadata);
+    this.elements = elements.map(
+      (note) => new Core.Note({ track: this, ...note })
+    );
     this.time = new Core.Time({
-      start: R.first(notes)?.time.start ?? 0,
-      end: R.last(notes)?.time.end ?? 0,
+      start: R.first(elements)?.time.start ?? 0,
+      end: R.last(elements)?.time.end ?? 0,
     });
-    this.elements = notes;
-    this.bars = bars;
   }
   getMetadata() {
-    if (!this.score) throw new Error();
     return this.metadata ?? this.score.metadata;
   }
-  static build(params: ITrackObject) {
+  static build(params: Build) {
     return params;
   }
 }

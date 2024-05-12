@@ -3,7 +3,7 @@ import * as Core from "./";
 interface IScore {
   name?: string;
   tracks: Core.Track[];
-  metadata?: Core.Metadata;
+  metadata: Core.Metadata;
 }
 interface IScoreObject extends Omit<IScore, "tracks" | "metadata"> {
   tracks: ReturnType<typeof Core.Track.build>[];
@@ -14,10 +14,12 @@ export class Score implements IScore {
   name;
   tracks;
   metadata;
-  constructor({ name, tracks, metadata }: IScore) {
+  constructor({ name, tracks, metadata }: IScoreObject) {
     this.name = name;
-    this.metadata = metadata ?? new Core.Metadata();
-    this.tracks = tracks;
+    this.metadata = new Core.Metadata(metadata);
+    this.tracks = tracks.map(
+      (track, id) => new Core.Track({ id, score: this, ...track })
+    );
   }
   static build(params: IScoreObject) {
     return params;
