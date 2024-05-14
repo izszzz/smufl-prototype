@@ -3,8 +3,8 @@ import { Importer } from "./importer";
 
 interface Options {
   generate: {
-    rest: boolean;
-    bar: boolean;
+    rest?: boolean;
+    bar?: boolean;
   };
 }
 export class CoreImporter implements Importer {
@@ -22,26 +22,39 @@ export class CoreImporter implements Importer {
   }
   private init() {
     const score = new Core.Score(this.params);
-    if (this.options.generate.rest) {
-      for (const track of score.tracks) {
+    for (const track of score.tracks) {
+      track.elements.reduce((acc, cur) => {
+        if (cur instanceof Core.Note) {
+          cur.prev = acc;
+          for (const note of acc) {
+            note.next.push(cur);
+          }
+          acc = [];
+          acc.push(cur);
+        }
+        return acc;
+      }, [] as Core.Note[]);
+      if (this.options.generate.rest) {
         track.elements = track.elements.reduce((acc, cur) => {
-          if (0 < cur.time.start)
-            acc.push(
-              new Core.Rest({
+          if (cur instanceof Core.Note)
+            if (0 < cur.time.start) {
+              const start = cur.prev[0] ? cur.prev[0].time.end : 0;
+              const rest = new Core.Rest({
                 track,
                 time: {
-                  start: 0,
-                  duration: cur.time.start,
+                  start,
+                  duration: cur.time.start - start,
                 },
-              })
-            );
+              });
+              console.log(rest);
+
+              acc.push(rest);
+            }
           acc.push(cur);
           return acc;
         }, [] as Core.Element[]);
       }
-    }
-    if (this.options.generate.bar) {
-      for (const track of score.tracks) {
+      if (this.options.generate.bar) {
         // TODO: bar 作り方変える
         track.bars = track.elements.reduce<{
           bars: Core.Bar[];

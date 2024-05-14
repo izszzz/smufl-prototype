@@ -101,16 +101,17 @@ export class MidiImporter implements Importer {
               data.mthd.resolution
             );
 
+            acc.time += start;
             acc.elements.push(
               Core.Note.build({
                 pitch: (cur.noteOn.event as MidiEvent).pitch,
                 time: {
-                  start,
+                  start: acc.time,
                   duration,
                 },
               })
             );
-            acc.time += start + duration;
+            acc.time += duration;
             return acc;
           },
           { time: 0, elements: [] }

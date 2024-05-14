@@ -4,8 +4,8 @@ import { defineConfig } from "vite";
 export default defineConfig({
   test: {
     // ... Specify options here.
-    chaiConfig: {
-      truncateThreshold: 10000,
-    },
+    // chaiConfig: {
+    //   truncateThreshold: 10000,
+    // },
   },
 });

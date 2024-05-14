@@ -8,8 +8,9 @@ export interface IElement {
   fraction: number;
   dot: boolean;
 }
-interface Constructor extends Omit<IElement, "time" | "fraction" | "dot"> {
-  time: ReturnType<typeof Core.Time.build>;
+interface IElementConstructor
+  extends Omit<IElement, "time" | "fraction" | "dot"> {
+  time: Parameters<typeof Core.Time.build>[0];
 }
 export class Element implements IElement {
   track;
@@ -17,7 +18,7 @@ export class Element implements IElement {
   time;
   dot;
   fraction;
-  constructor({ track, time, bar }: Constructor) {
+  constructor({ track, time, bar }: IElementConstructor) {
     this.track = track;
     this.bar = bar;
     this.time = new Core.Time(time);
@@ -25,7 +26,6 @@ export class Element implements IElement {
       this.time.duration,
       this.getMetadata().timeSignature.denominator
     );
-    console.log(fraction, this.time.duration);
     this.dot = this.isDot(fraction);
     this.fraction = this.dot
       ? this.calcFraction(
