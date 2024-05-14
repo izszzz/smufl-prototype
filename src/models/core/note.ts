@@ -1,36 +1,22 @@
 import * as Core from "./";
-interface INote extends Core.ILink<Note[]> {
-	fraction: number;
-	pitch: number;
-	track: Core.Track;
-	time: Core.Time;
+interface INote extends Core.IElement, Core.ILink<INote[]> {
+  pitch: number;
 }
-export class Note implements INote {
-	fraction;
-	pitch;
-	track;
-	time;
-	next?: Note[];
-	prev?: Note[];
-	constructor({
-		fraction,
-		pitch,
-		track,
-		time,
-	}: Omit<INote, "time"> & {
-		time: Core.Time | ConstructorParameters<typeof Core.Time>[0];
-	}) {
-		this.fraction = fraction;
-		this.pitch = pitch;
-		this.track = track;
-		this.time = time instanceof Core.Time ? time : new Core.Time(time);
-	}
+interface Constructor extends Omit<INote, "time" | "fraction" | "dot"> {
+  time: ReturnType<typeof Core.Time.build>;
+}
+interface Build extends Omit<Constructor, "track"> {}
 
-	static build(
-		params: Omit<INote, "track" | "time"> & {
-			time: Core.Time | ConstructorParameters<typeof Core.Time>[0];
-		},
-	) {
-		return params;
-	}
+export class Note extends Core.Element implements INote {
+  pitch;
+  next: INote[] = [];
+  prev: INote[] = [];
+  constructor({ pitch, ...element }: Constructor) {
+    super(element);
+    this.pitch = pitch;
+  }
+
+  static build(params: Build) {
+    return params;
+  }
 }

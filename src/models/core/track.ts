@@ -1,78 +1,50 @@
 import * as R from "remeda";
 import * as Core from "./";
+import { Identifier } from "../../helpers";
 
-interface ITrack extends IConstructor {
-	bars: Core.Bar[];
-	getMetadata: () => Core.Metadata;
+interface ITrack extends Identifier {
+  name?: string;
+  preset?: number;
+  elements: Core.Element[];
+  score: Core.Score;
+  metadata?: Core.Metadata;
+  bars?: Core.Bar[];
+  time?: Core.Time;
 }
-interface IConstructor {
-	id: number;
-	notes: (Core.Note | ReturnType<typeof Core.Note.build>)[];
-	score: Core.Score;
-	name?: string;
-	preset?: number;
-	metadata?: Core.Metadata;
+interface Constructor
+  extends Omit<ITrack, "elements" | "bars" | "metadata" | "time"> {
+  elements: ReturnType<typeof Core.Note.build>[];
+  metadata?: ReturnType<typeof Core.Metadata.build>;
 }
+interface Build extends Omit<Constructor, "id" | "score"> {}
 
 export class Track implements ITrack {
-	id;
-	notes;
-	bars;
-	metadata;
-	name;
-	score;
-	preset;
-	start;
-	duration;
-	end;
-	constructor({ id, name, notes, score, metadata, preset }: IConstructor) {
-		this.id = id;
-		this.score = score;
-		this.name = name;
-		this.preset = preset ?? 54;
-		this.start = R.first(notes)?.time.start ?? 0;
-		this.end = R.last(notes)?.time.end ?? 0;
-		this.duration = this.end - this.start;
-		this.metadata = metadata;
-		this.notes = notes.map((note) =>
-			note instanceof Core.Note
-				? note
-				: new Core.Note({ ...note, track: this }),
-		);
-		// this.notes.reduce(
-		// 	(acc, cur) => {
-		// 		if (acc) {
-		// 			cur.prev = acc;
-		// 			for (const note of acc) note.next = [cur];
-		// 		}
-		// 		return acc;
-		// 	},
-		// 	[] as Core.Note[],
-		// );
-		this.bars = this.notes.reduce<{ bars: Core.Bar[]; notes: Core.Note[] }>(
-			(acc, cur, i) => {
-				acc.notes.push(cur);
-				if (
-					notes.length - 1 === i ||
-					acc.notes.reduce((acc, cur) => acc + cur.time.duration, 0) ===
-						this.getMetadata().timeSignature.numerator
-				) {
-					acc.bars.push(
-						new Core.Bar({
-							id: acc.bars.length,
-							notes: acc.notes,
-							track: this,
-						}),
-					);
-					acc.notes = [];
-				}
-				return acc;
-			},
-			{ bars: [], notes: [] },
-		).bars;
-		Core.setPrevAndNext(this.bars);
-	}
-	getMetadata() {
-		return this.metadata ?? this.score.metadata;
-	}
+  id;
+  elements: Core.Element[];
+  metadata?;
+  name;
+  score;
+  preset;
+  time;
+  bars?: Core.Bar[];
+  constructor({ id, name, elements, score, metadata, preset }: Constructor) {
+    this.id = id;
+    this.score = score;
+    this.name = name;
+    this.preset = preset ?? 54;
+    if (metadata) this.metadata = new Core.Metadata(metadata);
+    this.elements = elements.map(
+      (note) => new Core.Note({ track: this, ...note })
+    );
+    this.time = new Core.Time({
+      start: R.first(elements)?.time.start ?? 0,
+      end: R.last(elements)?.time.end ?? 0,
+    });
+  }
+  getMetadata() {
+    return this.metadata ?? this.score.metadata;
+  }
+  static build(params: Build) {
+    return params;
+  }
 }
