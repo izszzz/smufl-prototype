@@ -5,21 +5,10 @@ import { midiParser } from "../parser/midi_parser";
 import { Importer } from "./importer";
 import { CoreImporter } from "./core_importer";
 
-interface Options {
-  generate: {
-    rest: boolean;
-    bar: boolean;
-  };
-}
 export class MidiImporter implements Importer {
   arrayBuffer;
-  options;
-  constructor(
-    arrayBuffer: ArrayBuffer,
-    options: Options = { generate: { rest: false, bar: false } }
-  ) {
+  constructor(arrayBuffer: ArrayBuffer) {
     this.arrayBuffer = arrayBuffer;
-    this.options = options;
   }
   import() {
     return this.convertScore(this.parseArrayBuffer(this.arrayBuffer));
@@ -87,9 +76,9 @@ export class MidiImporter implements Importer {
           return acc;
         }, []);
 
-        const { elements } = midiNotes.reduce<{
+        const { notes } = midiNotes.reduce<{
           time: number;
-          elements: ReturnType<typeof Core.Note.build>[];
+          notes: ReturnType<typeof Core.Note.build>[];
         }>(
           (acc, cur) => {
             const start = this.calcDuration(
@@ -102,7 +91,7 @@ export class MidiImporter implements Importer {
             );
 
             acc.time += start;
-            acc.elements.push(
+            acc.notes.push(
               Core.Note.build({
                 pitch: (cur.noteOn.event as MidiEvent).pitch,
                 time: {
@@ -114,10 +103,10 @@ export class MidiImporter implements Importer {
             acc.time += duration;
             return acc;
           },
-          { time: 0, elements: [] }
+          { time: 0, notes: [] }
         );
-        if (R.isEmpty(elements)) return trackAcc;
-        trackAcc.tracks.push({ elements });
+        if (R.isEmpty(notes)) return trackAcc;
+        trackAcc.tracks.push({ notes });
 
         return trackAcc;
       },
@@ -126,7 +115,7 @@ export class MidiImporter implements Importer {
         metadata: { timeSignature: undefined, bpm: undefined },
       }
     );
-    return new CoreImporter({ tracks, metadata }, this.options).import();
+    return new CoreImporter({ tracks, metadata }).import();
   }
   calcDuration(deltaTime: number, resolution: number) {
     return deltaTime / resolution;

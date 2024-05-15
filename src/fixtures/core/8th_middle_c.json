@@ -1,7 +1,7 @@
 {
   "tracks": [
     {
-      "elements": [{ "pitch": 60, "time": { "start": 0, "duration": 0.5 } }]
+      "notes": [{ "pitch": 60, "time": { "start": 0, "duration": 0.5 } }]
     }
   ]
 }

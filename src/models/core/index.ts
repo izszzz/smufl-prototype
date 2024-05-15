@@ -1,7 +1,5 @@
 export * from "./element";
-export * from "./bar";
 export * from "./note";
-export * from "./rest";
 export * from "./score";
 export * from "./track";
 export * from "./metadata";

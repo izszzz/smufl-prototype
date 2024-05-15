@@ -1,4 +1,4 @@
-import * as Core from "./";
+import * as Core from "../../core";
 
 interface IRest extends Core.IElement {}
 interface Constructor extends Omit<IRest, "time" | "fraction" | "dot"> {

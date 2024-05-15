@@ -47,9 +47,7 @@ describe("Track", () => {
     expect(score).toEqual(
       new CoreImporter({
         tracks: R.times(2, () => ({
-          elements: [
-            { pitch: 60, fraction: 4, time: { start: 0, duration: 1 } },
-          ],
+          notes: [{ pitch: 60, fraction: 4, time: { start: 0, duration: 1 } }],
         })),
       }).import()
     );

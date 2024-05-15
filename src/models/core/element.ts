@@ -3,7 +3,6 @@ import Metadata from "../../consts/metadata.json";
 
 export interface IElement {
   track: Core.Track;
-  bar?: Core.Bar;
   time: Core.Time;
   fraction: number;
   dot: boolean;
@@ -14,13 +13,11 @@ interface IElementConstructor
 }
 export class Element implements IElement {
   track;
-  bar;
   time;
   dot;
   fraction;
-  constructor({ track, time, bar }: IElementConstructor) {
+  constructor({ track, time }: IElementConstructor) {
     this.track = track;
-    this.bar = bar;
     this.time = new Core.Time(time);
     const fraction = this.calcFraction(
       this.time.duration,
@@ -35,7 +32,7 @@ export class Element implements IElement {
       : fraction;
   }
   getMetadata() {
-    return this.bar?.getMetadata() ?? this.track.getMetadata();
+    return this.track.getMetadata();
   }
   calcFraction(duration: number, denominator: number) {
     return denominator * (1 / duration);

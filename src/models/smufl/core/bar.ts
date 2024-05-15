@@ -1,5 +1,5 @@
-import { Identifier } from "../../helpers";
-import * as Core from "./";
+import { Identifier } from "../../../helpers";
+import * as Core from "../../core";
 
 interface IBar extends Identifier, Core.ILink<Bar> {
   track: Core.Track;
