@@ -3,9 +3,6 @@ import { CoreImporter } from "./core_importer";
 import quarter_middle_c from "../fixtures/core/quarter_middle_c.json";
 import quarter_dot_middle_c from "../fixtures/core/quarter_dot_middle_c.json";
 import eighth_middle_c from "../fixtures/core/8th_middle_c.json";
-// TODO: SMUFLに移動
-// import quarter_rest from "../fixtures/core/quarter_rest.json";
-// import eighth_rest from "../fixtures/core/8th_rest.json";
 import time_signature_4_4 from "../fixtures/core/time-signature_4-4.json";
 import time_signature_3_4 from "../fixtures/core/time-signature_3-4.json";
 import bpm_120 from "../fixtures/core/bpm_120.json";
