@@ -11,10 +11,16 @@ import time_signature_4_4 from "../fixtures/core/time-signature_4-4.json";
 import time_signature_3_4 from "../fixtures/core/time-signature_3-4.json";
 import bpm_120 from "../fixtures/core/bpm_120.json";
 import bpm_140 from "../fixtures/core/bpm_140.json";
+import "../extensions/buffer/to_array_buffer.extensions";
 
 const basePath = "src/fixtures/midi/";
-const importMidiFile = (path: string) =>
-  new MidiImporter(fs.readFileSync(basePath + path).toArrayBuffer()).import();
+const importMidiFile = (path: string) => {
+  console.log(Buffer.from("").toArrayBuffer);
+  console.log(new Int16Array().toFloat32Array);
+  return new MidiImporter(
+    fs.readFileSync(basePath + path).toArrayBuffer()
+  ).import();
+};
 
 describe("Note", () => {
   test("quarter middle C", () => {
