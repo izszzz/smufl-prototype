@@ -1,5 +1,4 @@
 import { describe, expect, test } from "vitest";
-import * as Core from "../models/core";
 import { CoreImporter } from "./core_importer";
 import quarter_middle_c from "../fixtures/core/quarter_middle_c.json";
 import quarter_dot_middle_c from "../fixtures/core/quarter_dot_middle_c.json";
@@ -33,89 +32,23 @@ describe("Note", () => {
     describe("prev", () => {
       test("beat 4", () => {
         const core = new CoreImporter(beat_4).import();
-        // TODO: 修正したいかも
-        expect(
-          (
-            core.tracks[0].notes.filter(
-              (e) => e instanceof Core.Note
-            )[0] as Core.Note
-          ).prev
-        ).toEqual([]);
-        expect(
-          (
-            core.tracks[0].notes.filter(
-              (e) => e instanceof Core.Note
-            )[1] as Core.Note
-          ).prev
-        ).toEqual([core.tracks[0].notes[0]]);
-        expect(
-          (
-            core.tracks[0].notes.filter(
-              (e) => e instanceof Core.Note
-            )[2] as Core.Note
-          ).prev
-        ).toEqual([core.tracks[0].notes[1]]);
-        expect(
-          (
-            core.tracks[0].notes.filter(
-              (e) => e instanceof Core.Note
-            )[3] as Core.Note
-          ).prev
-        ).toEqual([core.tracks[0].notes[2]]);
+        expect(core.tracks[0].notes[0].prev).toEqual([]);
+        expect(core.tracks[0].notes[1].prev).toEqual([core.tracks[0].notes[0]]);
+        expect(core.tracks[0].notes[2].prev).toEqual([core.tracks[0].notes[1]]);
+        expect(core.tracks[0].notes[3].prev).toEqual([core.tracks[0].notes[2]]);
       });
     });
     describe("next", () => {
       test("beat 4", () => {
         const core = new CoreImporter(beat_4).import();
-        // TODO: 修正したいかも
-        expect(
-          (
-            core.tracks[0].notes.filter(
-              (e) => e instanceof Core.Note
-            )[0] as Core.Note
-          ).next
-        ).toEqual([core.tracks[0].notes[1]]);
-        expect(
-          (
-            core.tracks[0].notes.filter(
-              (e) => e instanceof Core.Note
-            )[1] as Core.Note
-          ).next
-        ).toEqual([core.tracks[0].notes[2]]);
-        expect(
-          (
-            core.tracks[0].notes.filter(
-              (e) => e instanceof Core.Note
-            )[2] as Core.Note
-          ).next
-        ).toEqual([core.tracks[0].notes[3]]);
-        expect(
-          (
-            core.tracks[0].notes.filter(
-              (e) => e instanceof Core.Note
-            )[3] as Core.Note
-          ).next
-        ).toEqual([]);
+        expect(core.tracks[0].notes[0].next).toEqual([core.tracks[0].notes[1]]);
+        expect(core.tracks[0].notes[1].next).toEqual([core.tracks[0].notes[2]]);
+        expect(core.tracks[0].notes[2].next).toEqual([core.tracks[0].notes[3]]);
+        expect(core.tracks[0].notes[3].next).toEqual([]);
       });
     });
   });
 });
-
-// TODO: SMUFLに移動する
-
-// describe("Rest", () => {
-//   describe("Fraction", () => {
-//     test("quarter", () => {
-//       const core = new CoreImporter(quarter_rest).import();
-//       expect(core.tracks[0].notes[0].fraction).toEqual(4);
-//     });
-
-//     test("8th", () => {
-//       const core = new CoreImporter(eighth_rest).import();
-//       expect(core.tracks[0].notes[0].fraction).toEqual(8);
-//     });
-//   });
-// });
 
 describe("Time", () => {
   describe("Note", () => {
@@ -167,25 +100,6 @@ describe("Time", () => {
       });
     });
   });
-
-  // TODO: SMUFLに移動
-  // describe("Rest", () => {
-  //   test("quarter", () => {
-  //     const core = new CoreImporter(quarter_rest, {
-  //       generate: { rest: true },
-  //     }).import();
-  //     expect(core.tracks[0].notes[0].time).toEqual({
-  //       duration: 1,
-  //       end: 1,
-  //       start: 0,
-  //     });
-  //     expect(core.tracks[0].notes[1].time).toEqual({
-  //       duration: 1,
-  //       end: 2,
-  //       start: 1,
-  //     });
-  //   });
-  // });
 });
 
 describe("Metadata", () => {
