@@ -1,5 +1,7 @@
 import * as R from "remeda";
 import * as Core from "../models/core";
+import { Bar } from "../models/smufl/core/bar";
+import { Rest } from "../models/smufl/core/rest";
 import * as SMUFL from "../models/smufl";
 import { Exporter } from "./exporter";
 import { safeSum } from "../helpers";
@@ -13,6 +15,51 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
     clientWidth?: number,
     type?: "Pagination" | "VerticalScroll" | "HorizontalScroll"
   ) {
+    for (const track of this.score.tracks) {
+      track.elements = track.notes.reduce((acc, cur) => {
+        const prevEnd = R.first(cur.prev)?.time.end ?? 0;
+        if (0 < cur.time.start - prevEnd) {
+          const start = prevEnd;
+          const rest = new Rest({
+            track,
+            time: {
+              start,
+              duration: cur.time.start - start,
+            },
+          });
+
+          acc.push(rest);
+        }
+        acc.push(cur);
+        return acc;
+      }, [] as Core.Element[]);
+      // TODO: bar 作り方変える
+      track.bars = track.elements.reduce<{
+        bars: Bar[];
+        elements: Core.Element[];
+      }>(
+        (acc, cur, i) => {
+          acc.elements.push(cur);
+          if (
+            track.notes.length - 1 === i ||
+            acc.elements.reduce((acc, cur) => acc + cur.time.duration, 0) ===
+              track.getMetadata().timeSignature.numerator
+          ) {
+            acc.bars.push(
+              new Bar({
+                id: acc.bars.length,
+                elements: acc.elements,
+                track,
+              })
+            );
+            acc.elements = [];
+          }
+          return acc;
+        },
+        { bars: [], elements: [] }
+      ).bars;
+    }
+
     const score = this.generate(this.score);
     score.clientWidth = clientWidth ?? 0;
     score.type = type ?? "VerticalScroll";
@@ -96,7 +143,7 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
                     elements: bar.elements.reduce((acc, cur) => {
                       if (cur instanceof Core.Note)
                         acc.push(new SMUFL.Note({ core: cur }));
-                      if (cur instanceof Core.Rest)
+                      if (cur instanceof Rest)
                         acc.push(new SMUFL.Rest({ core: cur }));
                       return acc;
                     }, [] as SMUFL.Element[]),
@@ -104,7 +151,7 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
               )
             : [
                 new SMUFL.Bar({
-                  core: new Core.Bar({ track, id: 1, elements: [] }),
+                  core: new Bar({ track, id: 1, elements: [] }),
                   elements: [],
                 }),
               ],

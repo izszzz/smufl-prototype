@@ -1,5 +1,4 @@
 import { Optional } from "../../helpers/utility_types/optional";
-
 import * as R from "remeda";
 
 // TODO: 命名考える

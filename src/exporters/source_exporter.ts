@@ -55,7 +55,7 @@ export class SourceExporter
           const baseDetune =
             sound.sampleHeader.originalKey -
             sound.sampleHeader.correction / 100.0;
-          track.elements.reduce((acc, cur) => {
+          track.notes.reduce((acc, cur) => {
             source.playbackRate.setValueAtTime(
               1.0 * 2 ** ((100.0 * (cur.pitch - baseDetune)) / 1200.0),
               this.ctx.currentTime +
