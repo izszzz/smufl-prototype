@@ -13,10 +13,8 @@ import bpm_120 from "../fixtures/core/bpm_120.json";
 import bpm_140 from "../fixtures/core/bpm_140.json";
 
 const basePath = "src/fixtures/midi/";
-const toArrayBuffer = (buffer: Buffer) =>
-  buffer.buffer.slice(buffer.byteOffset, buffer.byteOffset + buffer.byteLength);
 const importMidiFile = (path: string) =>
-  new MidiImporter(toArrayBuffer(fs.readFileSync(basePath + path))).import();
+  new MidiImporter(fs.readFileSync(basePath + path).toArrayBuffer()).import();
 
 describe("Note", () => {
   test("quarter middle C", () => {
