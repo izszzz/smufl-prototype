@@ -1,12 +1,5 @@
 export {};
 declare global {
-  interface SVGElementOptions {
-    type?: string;
-    x?: number;
-    y?: number;
-    width?: number;
-    height?: number;
-  }
   interface SVGSVGElement {
     createSVGElement: <K extends keyof SVGElementTagNameMap>(
       qualifiedName: K,
