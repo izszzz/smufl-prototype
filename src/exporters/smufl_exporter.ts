@@ -6,15 +6,21 @@ import * as SMUFL from "../models/smufl";
 import { Exporter } from "./exporter";
 import { safeSum } from "../helpers";
 
+interface Options {
+  clientWidth: number;
+  type: "Pagination" | "VerticalScroll" | "HorizontalScroll";
+}
 export class SMUFLExporter implements Exporter<SMUFL.Score> {
   score;
-  constructor(score: Core.Score) {
-    this.score = score;
-  }
-  export(
-    clientWidth?: number,
-    type?: "Pagination" | "VerticalScroll" | "HorizontalScroll"
+  options;
+  constructor(
+    score: Core.Score,
+    options: Options = { clientWidth: 0, type: "HorizontalScroll" }
   ) {
+    this.score = score;
+    this.options = options;
+  }
+  export() {
     for (const track of this.score.tracks) {
       track.elements = track.notes.reduce((acc, cur) => {
         const prevEnd = R.first(cur.prev)?.time.end ?? 0;
@@ -61,8 +67,8 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
     }
 
     const score = this.generate(this.score);
-    score.clientWidth = clientWidth ?? 0;
-    score.type = type ?? "VerticalScroll";
+    score.clientWidth = this.options.clientWidth ?? 0;
+    score.type = this.options.type ?? "VerticalScroll";
 
     score.rows = this.layout(score);
     for (const [i, row] of score.rows.entries()) {
