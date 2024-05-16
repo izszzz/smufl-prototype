@@ -8,7 +8,7 @@ import { safeSum } from "../helpers";
 
 interface Options {
   clientWidth: number;
-  type: "Pagination" | "VerticalScroll" | "HorizontalScroll";
+  type: SMUFL.Score["type"];
 }
 export class SMUFLExporter implements Exporter<SMUFL.Score> {
   score;
