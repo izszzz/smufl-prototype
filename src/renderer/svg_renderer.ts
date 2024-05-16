@@ -70,7 +70,6 @@ class SVGRenderer {
           : v
       ),
       R.entries,
-      // biome-ignore lint/complexity/noForEach: <explanation>
       R.forEach(([k, v]) => element.setAttribute(k, String(v)))
     );
     return element;
@@ -114,7 +113,6 @@ class SVGRenderer {
     console.log(score);
     const root = this.createSVGElement("g", { y: 10 });
     // create staffs
-    // biome-ignore lint/complexity/noForEach: <explanation>
     score.rows.forEach((row) => {
       const trackRowElement = this.createSVGElement("g", {
         type: "row",
