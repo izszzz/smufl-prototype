@@ -3,15 +3,20 @@ import * as R from "remeda";
 import * as SMUFL from "../models/smufl";
 import { Exporter } from "./exporter";
 import { SMUFLExporter } from "./smufl_exporter";
-export class SVGExporter implements Exporter<SVGGElement> {
+export class SVGExporter implements Exporter<SVGSVGElement> {
   score;
   svg;
-  constructor(score: Core.Score) {
+  options;
+  constructor(
+    score: Core.Score,
+    options: ConstructorParameters<typeof SMUFLExporter>[1]
+  ) {
     this.score = score;
     this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    this.options = options;
   }
   export() {
-    const smufl = new SMUFLExporter(this.score).export();
+    const smufl = new SMUFLExporter(this.score, this.options).export();
     const root = this.svg.createSVGElement("g", { y: 10 });
     // create staffs
     smufl.rows.forEach((row) => {
@@ -122,7 +127,8 @@ export class SVGExporter implements Exporter<SVGGElement> {
       }
     });
 
-    return root;
+    this.svg.appendChild(root);
+    return this.svg;
   }
 
   private createSMULFSVGElement = (
