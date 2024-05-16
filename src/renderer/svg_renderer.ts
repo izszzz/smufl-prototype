@@ -7,61 +7,46 @@ interface SVGRendererOptions {
   fontSize: number;
 }
 
-// TODO: 設計考え直したほうがいい
 class SVGRenderer {
-  element: HTMLElement;
-  score: Core.Score;
+  element;
+  score;
   svg: SVGSVGElement;
-  fontSize: SVGRendererOptions["fontSize"];
-  fontSizeRatio: number;
-  layoutType: SMUFL.Score["type"] = "HorizontalScroll";
+  options;
+  get fontSizeRatio() {
+    return this.options.fontSize / Metadata.defaultFontSize;
+  }
   constructor(
     element: HTMLElement,
     score: Core.Score,
-    options?: SVGRendererOptions
+    options: SVGRendererOptions
   ) {
+    this.options = options;
     this.element = element;
     this.score = score;
-    this.fontSize = 30;
-    if (options) {
-      if (options.fontSize) this.fontSize = options.fontSize;
-      if (options.layoutType) this.layoutType = options.layoutType;
-    }
-    this.fontSizeRatio = this.fontSize / Metadata.defaultFontSize;
     this.svg = this.createSVGScore(this.score);
-    // TODO: width, height fontsizeの設定
-    // this.createSVGElement("svg", {
-    //   width: "100%",
-    //   height: "100%",
-    //   "font-size": this.fontSize,
-    // });
-    this.upsertSVGElement();
+    this.append();
   }
   changeFontSize = (fontSize: number) => {
-    this.fontSize = fontSize;
-    this.fontSizeRatio = this.fontSize / Metadata.defaultFontSize;
+    this.options.fontSize = fontSize;
     this.svg = this.createSVGScore(this.score);
-    // TODO: width, height fontsizeの設定
-    // this.createSVGElement("svg", {
-    //   width: "100%",
-    //   height: "100%",
-    //   "font-size": this.fontSize,
-    // });
-    this.upsertSVGElement();
+    this.append();
   };
-  private upsertSVGElement = () => {
+
+  private append = () => {
     while (this.element.firstChild) this.element.firstChild.remove();
-    this.element
-      .appendChild(this.svg)
-      .appendChild(this.createSVGScore(this.score));
+    this.element.appendChild(this.svg);
   };
 
   private createSVGScore = (score: Core.Score) => {
     console.log(score);
-    return new SVGExporter(score, {
+    const svg = new SVGExporter(score, {
       clientWidth: this.svg.clientWidth / this.fontSizeRatio,
-      type: this.layoutType,
+      type: this.options.layoutType,
     }).export();
+    svg.setAttribute("width", "100%");
+    svg.setAttribute("height", "100%");
+    svg.setAttribute("font-size", String(this.options.fontSize));
+    return svg;
   };
 }
 export default SVGRenderer;
