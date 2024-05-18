@@ -1,13 +1,10 @@
 import * as Core from "../core";
 import * as SMUFL from "./";
 
-export class Metadata implements SMUFL.IBox {
-  height = 0;
+export class Metadata extends SVGRect {
   glyphs;
-  get width() {
-    return this.glyphs.width;
-  }
   constructor({ timeSignature }: Core.Metadata) {
+    super();
     this.glyphs = new SMUFL.Glyphs({
       columns: [
         [
@@ -26,5 +23,6 @@ export class Metadata implements SMUFL.IBox {
         ],
       ],
     });
+    this.width = this.glyphs.width;
   }
 }

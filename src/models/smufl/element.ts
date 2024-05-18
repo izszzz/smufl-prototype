@@ -5,15 +5,12 @@ interface IElement<T> {
 }
 interface Constructor<T> extends Omit<IElement<T>, "glyphs"> {}
 
-export class Element<T> implements IElement<T>, SMUFL.IPosition, SMUFL.IBox {
-  width = 0;
-  height = 0;
-  x = 0;
-  y = 0;
+export class Element<T> extends SVGRect implements IElement<T> {
   accessory;
   spacing = new SMUFL.Spacing();
   core: T;
   constructor({ core, accessory }: Constructor<T>) {
+    super();
     this.core = core;
     this.accessory = accessory;
     this.width = this.accessory.glyphs.width;

@@ -13,13 +13,7 @@ interface IBar {
   metadata?: SMUFL.Metadata;
 }
 
-export class Bar implements IBar, SMUFL.IBox, SMUFL.IPosition {
-  x = 0;
-  y = 0;
-  height = 0;
-  get width() {
-    return 0;
-  }
+export class Bar extends SVGRect implements IBar {
   elements;
   core;
   barline: {
@@ -30,6 +24,7 @@ export class Bar implements IBar, SMUFL.IBox, SMUFL.IPosition {
   };
   metadata;
   constructor({ core, elements: notes, metadata }: Omit<IBar, "barline">) {
+    super();
     this.core = core;
     this.elements = notes;
     this.metadata = metadata;

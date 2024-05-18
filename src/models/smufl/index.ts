@@ -4,7 +4,6 @@ import BravuraMetadata from "../../consts/bravura_metadata.json";
 import Glyphnames from "../../consts/glyphnames.json";
 import Ranges from "../../consts/ranges.json";
 
-export * from "./position";
 export * from "./element";
 export * from "./bar";
 export * from "./masterbar";
@@ -16,7 +15,6 @@ export * from "./score";
 export * from "./spacing";
 export * from "./staff";
 export * from "./track";
-export * from "./box";
 export * from "./accessory";
 export * from "./metadata";
 export * from "./rest";
@@ -45,3 +43,13 @@ export const getFractionLiteral = (
 
 export const getCodepoint = (glyphName: keyof Glyphnames) =>
   parseInt(Glyphnames[glyphName].codepoint.replace("U+", ""), 16);
+
+export const getBBox = (glyphName: keyof Glyphnames) => {
+  const { bBoxNE, bBoxSW } =
+    BravuraMetadata.glyphBBoxes[
+      glyphName as keyof BravuraMetadata["glyphBBoxes"]
+    ];
+  const width = bBoxNE[0] - bBoxSW[0];
+  const height = bBoxNE[1] - bBoxSW[1];
+  return { /*x: bBoxNE[0], y: bBoxSW[1], */ width, height };
+};
