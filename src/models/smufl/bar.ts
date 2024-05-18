@@ -1,8 +1,10 @@
 import * as SMUFL from "./";
+import * as Core from "../core";
 import { Bar as CoreBar } from "./core/bar";
+import { Rest as CoreRest } from "./core/rest";
 
 interface IBar {
-  elements: SMUFL.Element[];
+  elements: SMUFL.Element<Core.Note | CoreRest>[];
   core: CoreBar;
   barline: {
     start: SMUFL.Glyph<SMUFL.Ranges["barlines"]["glyphs"][number]>;

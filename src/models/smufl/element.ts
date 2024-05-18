@@ -1,32 +1,21 @@
 import * as SMUFL from "./";
-interface IElement {
-  accessory: {
-    left: SMUFL.Glyphs;
-    middle: SMUFL.Glyph[];
-    right: SMUFL.Glyphs;
-  };
-  glyph: SMUFL.Glyph;
-  glyphs: SMUFL.Glyphs;
+interface IElement<T> {
+  accessory: SMUFL.Accessory;
+  core: T;
 }
+interface Constructor<T> extends Omit<IElement<T>, "glyphs"> {}
 
-export class Element implements IElement, SMUFL.IPosition, SMUFL.IBox {
+export class Element<T> implements IElement<T>, SMUFL.IPosition, SMUFL.IBox {
   width = 0;
   height = 0;
   x = 0;
   y = 0;
   accessory;
   spacing = new SMUFL.Spacing();
-  glyph;
-  glyphs;
-  constructor({ glyph, accessory }: Omit<IElement, "glyphs">) {
-    this.glyph = glyph;
+  core: T;
+  constructor({ core, accessory }: Constructor<T>) {
+    this.core = core;
     this.accessory = accessory;
-    this.glyphs = new SMUFL.Glyphs({
-      columns: [
-        ...accessory.left.columns,
-        [...accessory.middle, glyph],
-        ...accessory.right.columns,
-      ],
-    });
+    this.width = this.accessory.glyphs.width;
   }
 }

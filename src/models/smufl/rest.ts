@@ -4,22 +4,20 @@ import { Rest as CoreRest } from "./core/rest";
 interface IRest {
   core: CoreRest;
 }
-export class Rest extends SMUFL.Element implements IRest {
-  core;
+export class Rest extends SMUFL.Element<CoreRest> implements IRest {
   constructor({ core }: IRest) {
-    const accessory: SMUFL.Element["accessory"] = {
-      left: new SMUFL.Glyphs({ columns: [] }),
-      middle: [],
-      right: new SMUFL.Glyphs({ columns: [] }),
-    };
     super({
-      glyph: new SMUFL.Glyph({
-        glyphName: SMUFL.getGlyphname("rests", (glyphName) =>
-          glyphName.includes(SMUFL.getFractionLiteral(core.fraction))
-        ),
+      core,
+      accessory: new SMUFL.Accessory({
+        left: [],
+        middle: [],
+        right: [],
+        target: new SMUFL.Glyph({
+          glyphName: SMUFL.getGlyphname("rests", (glyphName) =>
+            glyphName.includes(SMUFL.getFractionLiteral(core.fraction))
+          ),
+        }),
       }),
-      accessory,
     });
-    this.core = core;
   }
 }

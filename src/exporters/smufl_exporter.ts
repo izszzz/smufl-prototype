@@ -90,14 +90,17 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
             );
           }
           for (const note of bar.elements) {
-            note.glyphs.columns.reduce<SMUFL.Glyph[] | null>((acc, cur) => {
-              if (acc) {
-                const prevGlyph = R.firstBy(acc, [R.prop("width"), "desc"]);
-                for (const glyph of cur)
-                  glyph.x = safeSum(prevGlyph?.x, prevGlyph?.width);
-              }
-              return cur;
-            }, null);
+            note.accessory.glyphs.columns.reduce<SMUFL.Glyph[] | null>(
+              (acc, cur) => {
+                if (acc) {
+                  const prevGlyph = R.firstBy(acc, [R.prop("width"), "desc"]);
+                  for (const glyph of cur)
+                    glyph.x = safeSum(prevGlyph?.x, prevGlyph?.width);
+                }
+                return cur;
+              },
+              null
+            );
           }
         }
       }
@@ -108,12 +111,12 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
       for (const masterBar of row.masterBars) {
         for (const bar of masterBar.bars) bar.x = masterBar.x;
         R.pipe(
-          masterBar.groupedNotes,
+          masterBar.groupedElements,
           R.entries(),
           R.sortBy([([i]) => i, "asc"]),
           R.reduce(
             (acc, [, cur]) => {
-              if (cur.some((note) => note.accessory.left.columns.length > 0)) {
+              if (cur.some((note) => !R.isEmpty(note.accessory.left.columns))) {
                 const maxWidth = R.firstBy(cur, [
                   (n) => n.accessory.left.width,
                   "desc",
@@ -122,14 +125,14 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
                   (n) => n.accessory.left.width < maxWidth
                 )) {
                   note.spacing.left = maxWidth - note.accessory.left.width;
-                  for (const glyph of note.glyphs.columns)
+                  for (const glyph of note.accessory.glyphs.columns)
                     for (const g of glyph) g.x = note.spacing.left;
                 }
               }
               if (acc) for (const note of cur) note.x += acc.x + acc.width;
               return R.firstBy(cur, [R.prop("width"), "desc"]);
             },
-            null as SMUFL.Note | null
+            null as SMUFL.Element<Core.Note | Rest> | null
           )
         );
       }
@@ -140,26 +143,29 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
     const tracks = core.tracks.map(
       (track) =>
         new SMUFL.Track({
-          bars: track.bars?.length
-            ? track.bars.map(
-                (bar) =>
-                  new SMUFL.Bar({
-                    core: bar,
-                    elements: bar.elements.reduce((acc, cur) => {
-                      if (cur instanceof Core.Note)
-                        acc.push(new SMUFL.Note({ core: cur }));
-                      if (cur instanceof Rest)
-                        acc.push(new SMUFL.Rest({ core: cur }));
-                      return acc;
-                    }, [] as SMUFL.Element[]),
-                  })
-              )
-            : [
+          bars: R.isEmpty(track.bars)
+            ? [
                 new SMUFL.Bar({
                   core: new Bar({ track, id: 1, elements: [] }),
                   elements: [],
                 }),
-              ],
+              ]
+            : track.bars.map(
+                (bar) =>
+                  new SMUFL.Bar({
+                    core: bar,
+                    elements: bar.elements.reduce(
+                      (acc, cur) => {
+                        if (cur instanceof Core.Note)
+                          acc.push(new SMUFL.Note({ core: cur }));
+                        if (cur instanceof Rest)
+                          acc.push(new SMUFL.Rest({ core: cur }));
+                        return acc;
+                      },
+                      [] as SMUFL.Element<Core.Note | Rest>[]
+                    ),
+                  })
+              ),
           metadata: track.metadata && new SMUFL.Metadata(track.metadata),
           core: track,
         })
