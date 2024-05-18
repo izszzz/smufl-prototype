@@ -5,28 +5,35 @@ import * as SMUFL from "./";
 interface INote {
   core: Core.Note;
 }
-export class Note extends SMUFL.Element implements INote {
-  core;
+export class Note extends SMUFL.Element<Core.Note> implements INote {
   constructor({ core }: INote) {
-    const accessory: SMUFL.Element["accessory"] = {
-      left: new SMUFL.Glyphs({
-        columns: R.pipe(
-          [],
-          R.conditional(
-            [
-              () => isNoteAccidental(core),
-              R.concat([
-                [
-                  new SMUFL.Glyph({
-                    glyphName: calcNoteAccidental(core),
-                  }),
-                ],
-              ]),
-            ],
-            R.conditional.defaultCase(() => [])
-          )
+    const accessory = new SMUFL.Accessory({
+      target: new SMUFL.Glyph({
+        glyphName: SMUFL.getGlyphname(
+          "individualNotes",
+          (glyphName) =>
+            glyphName !== "augmentationDot" &&
+            glyphName.includes("note") &&
+            glyphName.includes(SMUFL.getFractionLiteral(core.fraction)) &&
+            glyphName.includes(Note.getStemLiteral(core))
         ),
       }),
+      left: R.pipe(
+        [],
+        R.conditional(
+          [
+            () => isNoteAccidental(core),
+            R.concat([
+              [
+                new SMUFL.Glyph({
+                  glyphName: calcNoteAccidental(core),
+                }),
+              ],
+            ]),
+          ],
+          R.conditional.defaultCase(() => [])
+        )
+      ),
       middle: R.pipe(
         [],
         R.conditional(
@@ -41,25 +48,13 @@ export class Note extends SMUFL.Element implements INote {
           R.conditional.defaultCase(() => [])
         )
       ),
-      right: new SMUFL.Glyphs({ columns: [] }),
-    };
-    const glyph = new SMUFL.Glyph({
-      glyphName: SMUFL.getGlyphname(
-        "individualNotes",
-        (glyphName) =>
-          glyphName !== "augmentationDot" &&
-          glyphName.includes("note") &&
-          glyphName.includes(SMUFL.getFractionLiteral(core.fraction)) &&
-          glyphName.includes(Note.getStemLiteral(core))
-      ),
+      right: [],
     });
     super({
-      glyph,
       accessory,
+      core,
     });
-    this.core = core;
     this.y = calcNoteY(core);
-    this.width = this.glyphs.width;
   }
   static getStemLiteral = (note: Core.Note) =>
     pitchOffset(note) >= SMUFL.Metadatas.baseOctaveKeys.length ? "Down" : "Up";

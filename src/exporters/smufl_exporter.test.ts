@@ -35,22 +35,22 @@ describe("Core", () => {
 describe("Note", () => {
   test("quarter_middle_c", async () => {
     const smufl = await exportSMUFL("quarter_middle_c");
-    expect(smufl.tracks[0].bars[0].elements[0].glyph.glyphName).toEqual(
-      "noteQuarterUp"
-    );
+    expect(
+      smufl.tracks[0].bars[0].elements[0].accessory.target.glyphName
+    ).toEqual("noteQuarterUp");
   });
   test("8th_middle_c", async () => {
     const smufl = await exportSMUFL("8th_middle_c");
-    expect(smufl.tracks[0].bars[0].elements[0].glyph.glyphName).toEqual(
-      "note8thUp"
-    );
+    expect(
+      smufl.tracks[0].bars[0].elements[0].accessory.target.glyphName
+    ).toEqual("note8thUp");
   });
 });
 describe("Rest", () => {
   test("quarter_rest", async () => {
     const smufl = await exportSMUFL("quarter_rest");
-    expect(smufl.tracks[0].bars[0].elements[0].glyph.glyphName).toEqual(
-      "restQuarter"
-    );
+    expect(
+      smufl.tracks[0].bars[0].elements[0].accessory.target.glyphName
+    ).toEqual("restQuarter");
   });
 });

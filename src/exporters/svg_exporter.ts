@@ -123,7 +123,7 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
               y: element.y * this.options.fontSizeRatio,
             });
             notesElement.appendChild(noteElement);
-            for (const glyph of element.glyphs.columns) {
+            for (const glyph of element.accessory.glyphs.columns) {
               for (const g of glyph) {
                 noteElement.appendChild(
                   this.createSMULFSVGElement(g.glyphName, {

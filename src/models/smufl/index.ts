@@ -17,6 +17,7 @@ export * from "./spacing";
 export * from "./staff";
 export * from "./track";
 export * from "./box";
+export * from "./accessory";
 export * from "./metadata";
 export * from "./rest";
 export { Metadatas, Ranges, Glyphnames, BravuraMetadata };
