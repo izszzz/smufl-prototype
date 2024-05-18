@@ -13,6 +13,6 @@ describe("Note", () => {
     }).export();
     expect(
       svg.querySelector("g[type=note]")?.textContent?.codePointAt(1)
-    ).toEqual(SMUFL.getCodePoint("noteQuarterUp"));
+    ).toEqual(SMUFL.getCodepoint("noteQuarterUp"));
   });
 });

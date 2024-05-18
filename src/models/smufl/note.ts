@@ -10,7 +10,7 @@ export class Note extends SMUFL.Element implements INote {
   constructor({ core }: INote) {
     const accessory: SMUFL.Element["accessory"] = {
       left: new SMUFL.Glyphs({
-        glyphs: R.pipe(
+        columns: R.pipe(
           [],
           R.conditional(
             [
@@ -41,7 +41,7 @@ export class Note extends SMUFL.Element implements INote {
           R.conditional.defaultCase(() => [])
         )
       ),
-      right: new SMUFL.Glyphs({ glyphs: [] }),
+      right: new SMUFL.Glyphs({ columns: [] }),
     };
     const glyph = new SMUFL.Glyph({
       glyphName: SMUFL.getGlyphname(
@@ -64,6 +64,7 @@ export class Note extends SMUFL.Element implements INote {
   static getStemLiteral = (note: Core.Note) =>
     pitchOffset(note) >= SMUFL.Metadatas.baseOctaveKeys.length ? "Down" : "Up";
 }
+
 const isNoteAccidental = (note: Core.Note) =>
     !SMUFL.Metadatas.baseWhiteKeys.some(
       (key) => key === calcNoteBasePitch(note)
