@@ -3,32 +3,25 @@ import * as SMUFL from "./";
 interface IGlyph<T> {
   glyphName: T;
 }
+interface Constructor<T> extends IGlyph<T>, Partial<SVGPoint> {}
 export class Glyph<T extends keyof SMUFL.Glyphnames = keyof SMUFL.Glyphnames>
-  implements IGlyph<T>, SMUFL.IPosition, SMUFL.IBox
+  extends SVGRect
+  implements IGlyph<T>
 {
   glyphName;
-  x;
-  y;
   width;
   height;
   get staffWidth(): number {
     return SMUFL.Staff.getStaffGlyph(this.width).width;
   }
-  constructor({ glyphName, x, y }: IGlyph<T> & Partial<SMUFL.IPosition>) {
-    const { width, height } = this.#getBBoxByGlyphName(glyphName);
+  // TODO: bboxクラスを作ったほうがいいので、xとyの仕様は修正する
+  constructor({ glyphName, x, y }: Constructor<T>) {
+    super();
+    const { width, height } = SMUFL.getBBox(glyphName);
     this.glyphName = glyphName;
     this.width = width;
     this.height = height;
-    this.x = x ?? 0;
-    this.y = y ?? 0;
+    if (x) this.x = x;
+    if (y) this.y = y;
   }
-  #getBBoxByGlyphName = (glyphName: keyof SMUFL.Glyphnames) => {
-    const { bBoxNE, bBoxSW } =
-      SMUFL.BravuraMetadata.glyphBBoxes[
-        glyphName as keyof SMUFL.BravuraMetadata["glyphBBoxes"]
-      ];
-    const width = bBoxNE[0] - bBoxSW[0];
-    const height = bBoxNE[1] - bBoxSW[1];
-    return { /*x: bBoxNE[0], y: bBoxSW[1], */ width, height };
-  };
 }

@@ -5,15 +5,20 @@ interface IMasterBar {
   bars: SMUFL.Bar[];
 }
 
-export class MasterBar implements IMasterBar, SMUFL.IPosition, SMUFL.IBox {
+export class MasterBar extends SVGRect implements IMasterBar {
   id;
   bars;
-  x = 0;
-  y = 0;
-  height = 0;
   groupedElements;
-  get width() {
-    return (
+  constructor({ id, bars }: IMasterBar) {
+    super();
+    this.id = id;
+    this.bars = bars;
+    this.groupedElements = R.pipe(
+      bars,
+      R.flatMap((b) => b.elements),
+      R.groupBy((e) => e.core.time.start)
+    );
+    this.width =
       R.pipe(
         this.groupedElements,
         R.entries(),
@@ -25,16 +30,6 @@ export class MasterBar implements IMasterBar, SMUFL.IPosition, SMUFL.IBox {
         R.map(R.prop("metadata")),
         R.filter(R.isTruthy),
         R.firstBy([(m) => m.width, "desc"])
-      )?.width ?? 0)
-    );
-  }
-  constructor({ id, bars }: IMasterBar) {
-    this.id = id;
-    this.bars = bars;
-    this.groupedElements = R.pipe(
-      bars,
-      R.flatMap((b) => b.elements),
-      R.groupBy((e) => e.core.time.start)
-    );
+      )?.width ?? 0);
   }
 }
