@@ -21,16 +21,16 @@ export * from "./metadata";
 export * from "./rest";
 export { Metadatas, Ranges, Glyphnames, BravuraMetadata };
 
-export const findGlyphname = (
+export const getGlyphname = (
   type: keyof Ranges,
-  filter: (glyph: Ranges[typeof type]["glyphs"][number]) => boolean
+  predicate: (glyph: Ranges[typeof type]["glyphs"][number]) => boolean
 ): Ranges[typeof type]["glyphs"][number] => {
-  const glyphName = Ranges[type].glyphs.find(filter);
+  const glyphName = Ranges[type].glyphs.find(predicate);
   if (R.isNullish(glyphName)) throw new Error();
   return glyphName;
 };
 
-export const findFractionLiteral = (
+export const getFractionLiteral = (
   fraction: number
   //TODO:
   //   Metadatas["fractions"][number]["value"]
@@ -41,3 +41,6 @@ export const findFractionLiteral = (
   if (!literal) throw new Error();
   return literal;
 };
+
+export const getCodePoint = (glyphName: keyof Glyphnames) =>
+  parseInt(Glyphnames[glyphName].codepoint.replace("U+", ""), 16);

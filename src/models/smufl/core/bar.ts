@@ -1,7 +1,7 @@
 import { Identifier } from "../../../helpers";
 import * as Core from "../../core";
 
-interface IBar extends Identifier, Core.ILink<Bar> {
+interface IBar extends Identifier {
   track: Core.Track;
   metadata?: Core.Metadata;
   elements: Core.Element[];
@@ -17,12 +17,8 @@ export class Bar implements IBar {
   elements;
   track;
   metadata?;
-  prev?;
-  next?;
-  constructor({ id, track, metadata, prev, next, elements }: Constructor) {
+  constructor({ id, track, metadata, elements }: Constructor) {
     this.id = id;
-    this.next = next;
-    this.prev = prev;
     this.track = track;
     if (metadata) this.metadata = new Core.Metadata(metadata);
     this.elements = elements;

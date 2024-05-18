@@ -3,7 +3,7 @@ declare global {
   interface SVGSVGElement {
     createSVGElement: <K extends keyof SVGElementTagNameMap>(
       qualifiedName: K,
-      options?: Record<string, unknown>
+      options?: Record<string, unknown> & { x?: number; y?: number }
     ) => SVGElementTagNameMap[K];
   }
 }
@@ -14,17 +14,14 @@ SVGSVGElement.prototype.createSVGElement = function (qualifiedName, options) {
   );
 
   if (!options) return element;
-
-  if (options.x || options.y)
-    if (element instanceof SVGGElement) {
-      const transform = this.createSVGTransform();
-      transform.setTranslate(Number(options.x) ?? 0, Number(options.y) ?? 0);
-      element.transform.baseVal.appendItem(transform);
-    }
-
-  for (const [k, v] of Object.entries(options)) {
-    element.setAttribute(k, String(v));
+  if (element instanceof SVGGElement) {
+    const transform = this.createSVGTransform();
+    transform.setTranslate(options?.x ?? 0, options?.y ?? 0);
+    element.transform.baseVal.appendItem(transform);
   }
+
+  for (const [k, v] of Object.entries(options))
+    element.setAttribute(k, String(v));
 
   return element;
 };

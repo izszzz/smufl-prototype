@@ -6,7 +6,7 @@ import { AudioPlayer } from "./player/audio_player";
 import SVGRenderer from "./renderer/svg_renderer";
 
 function App() {
-  const [fontSize, setFontSize] = useState(0);
+  const [fontSize, setFontSize] = useState(30);
   const [layoutType, setLayoutType] =
     useState<SMUFL.Score["type"]>("HorizontalScroll");
   const [volume, setVolume] = useState<number>(50);
@@ -35,9 +35,7 @@ function App() {
       const reader = new FileReader();
       reader.onload = (e) => {
         const arrayBuffer = e.target?.result as ArrayBuffer;
-        const score = new MidiImporter(arrayBuffer, {
-          generate: { rest: true, bar: true },
-        }).import();
+        const score = new MidiImporter(arrayBuffer).import();
         if (ref.current) {
           const svgRenderer = new SVGRenderer(ref.current, score, {
             fontSize,
@@ -45,7 +43,7 @@ function App() {
           });
           setSVGRenderer(svgRenderer);
           setAudioPlayer(new AudioPlayer(score, soundfont2));
-          setFontSize(svgRenderer.fontSize);
+          setFontSize(svgRenderer.options.fontSize);
         }
       };
 

@@ -3,26 +3,30 @@ import * as R from "remeda";
 import * as SMUFL from "../models/smufl";
 import { Exporter } from "./exporter";
 import { SMUFLExporter } from "./smufl_exporter";
+import "../extensions/svgsvgelement/create_svg_element.extensions";
+
+type Options = ConstructorParameters<typeof SMUFLExporter>[1] & {
+  fontSizeRatio: number;
+};
 export class SVGExporter implements Exporter<SVGSVGElement> {
   score;
   svg;
   options;
-  constructor(
-    score: Core.Score,
-    options: ConstructorParameters<typeof SMUFLExporter>[1]
-  ) {
+  constructor(score: Core.Score, options: Options) {
     this.score = score;
     this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     this.options = options;
   }
   export() {
     const smufl = new SMUFLExporter(this.score, this.options).export();
-    const root = this.svg.createSVGElement("g", { y: 10 });
+    const root = this.svg.createSVGElement("g", {
+      y: 10 * this.options.fontSizeRatio,
+    });
     // create staffs
     smufl.rows.forEach((row) => {
       const trackRowElement = this.svg.createSVGElement("g", {
         type: "row",
-        y: row.y,
+        y: row.y * this.options.fontSizeRatio,
       });
       const barlinesElement = this.svg.createSVGElement("g", {
         type: "barlines",
@@ -39,16 +43,16 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
           barlinesElement.appendChild(
             this.createSMULFSVGElement(start.glyphName, {
               type: "barline",
-              y,
-              x,
+              y: y * this.options.fontSizeRatio,
+              x: x * this.options.fontSizeRatio,
             })
           );
           if (end)
             barlinesElement.appendChild(
               this.createSMULFSVGElement(end.glyphName, {
                 type: "barline",
-                y,
-                x: x + masterBar.width,
+                y: y * this.options.fontSizeRatio,
+                x: (x + masterBar.width) * this.options.fontSizeRatio,
               })
             );
         }
@@ -56,24 +60,24 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
       for (const track of row.tracks) {
         const trackElement = this.svg.createSVGElement("g", {
           type: "track",
-          y: track.y,
+          y: track.y * this.options.fontSizeRatio,
         });
         trackRowElement.appendChild(trackElement);
         for (const bar of track.bars) {
           const barElement = this.svg.createSVGElement("g", {
             type: "bar",
-            x: bar.x,
+            x: bar.x * this.options.fontSizeRatio,
           });
           const staffsElement = this.svg.createSVGElement("g", {
             type: "staffs",
           });
           const notesElement = this.svg.createSVGElement("g", {
             type: "notes",
-            x: bar.metadata?.width,
+            x: (bar.metadata?.width ?? 0) * this.options.fontSizeRatio,
           });
           const metadataElement = this.svg.createSVGElement("g", {
             type: "metadata",
-            y: -1,
+            y: -1 * this.options.fontSizeRatio,
           });
 
           trackElement.appendChild(barElement);
@@ -92,7 +96,7 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
               staffsElement.appendChild(
                 this.createSMULFSVGElement(staffGlyph.glyphName, {
                   type: "staff",
-                  x: i,
+                  x: i * this.options.fontSizeRatio,
                 })
               );
             }
@@ -104,21 +108,26 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
               y,
             } of bar.metadata.glyphs.glyphs.flat()) {
               metadataElement.appendChild(
-                this.createSMULFSVGElement(glyphName, { x, y })
+                this.createSMULFSVGElement(glyphName, {
+                  x: x * this.options.fontSizeRatio,
+                  y: y * this.options.fontSizeRatio,
+                })
               );
             }
           }
           for (const element of bar.elements) {
             const noteElement = this.svg.createSVGElement("g", {
               type: "note",
-              x: element.x,
-              y: element.y,
+              x: element.x * this.options.fontSizeRatio,
+              y: element.y * this.options.fontSizeRatio,
             });
             notesElement.appendChild(noteElement);
             for (const glyph of element.glyphs.glyphs) {
               for (const g of glyph) {
                 noteElement.appendChild(
-                  this.createSMULFSVGElement(g.glyphName, { x: g.x })
+                  this.createSMULFSVGElement(g.glyphName, {
+                    x: g.x * this.options.fontSizeRatio,
+                  })
                 );
               }
             }
@@ -132,14 +141,11 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
   }
 
   private createSMULFSVGElement = (
-    glyphName: keyof SMUFL.Glyphnames,
+    glyphName: Parameters<typeof SMUFL.getCodePoint>[0],
     options?: Parameters<typeof this.svg.createSVGElement>[1]
   ) => {
     const element = this.svg.createSVGElement("text", options);
-    element.innerHTML = SMUFL.Glyphnames[glyphName].codepoint.replace(
-      "U+",
-      "&#x"
-    );
+    element.innerHTML = String.fromCodePoint(SMUFL.getCodePoint(glyphName));
     return element;
   };
 }

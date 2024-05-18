@@ -11,6 +11,7 @@ export class CoreImporter implements Importer {
   }
   private init() {
     const score = new Core.Score(this.params);
+
     for (const track of score.tracks) {
       track.notes.reduce((acc, cur) => {
         if (cur instanceof Core.Note) {

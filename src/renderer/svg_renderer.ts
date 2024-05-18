@@ -40,7 +40,8 @@ class SVGRenderer {
   private createSVGScore = (score: Core.Score) => {
     console.log(score);
     const svg = new SVGExporter(score, {
-      clientWidth: this.svg.clientWidth / this.fontSizeRatio,
+      fontSizeRatio: this.fontSizeRatio,
+      clientWidth: this.element.clientWidth / this.fontSizeRatio,
       type: this.options.layoutType,
     }).export();
     svg.setAttribute("width", "100%");

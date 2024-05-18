@@ -44,12 +44,12 @@ export class Note extends SMUFL.Element implements INote {
       right: new SMUFL.Glyphs({ glyphs: [] }),
     };
     const glyph = new SMUFL.Glyph({
-      glyphName: SMUFL.findGlyphname(
+      glyphName: SMUFL.getGlyphname(
         "individualNotes",
         (glyphName) =>
           glyphName !== "augmentationDot" &&
           glyphName.includes("note") &&
-          glyphName.includes(SMUFL.findFractionLiteral(core.fraction)) &&
+          glyphName.includes(SMUFL.getFractionLiteral(core.fraction)) &&
           glyphName.includes(Note.getStemLiteral(core))
       ),
     });

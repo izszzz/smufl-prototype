@@ -1,8 +1,8 @@
-import * as Core from "../core";
 import * as SMUFL from "./";
+import { Rest as CoreRest } from "./core/rest";
 
 interface IRest {
-  core: Core.Rest;
+  core: CoreRest;
 }
 export class Rest extends SMUFL.Element implements IRest {
   core;
@@ -14,8 +14,8 @@ export class Rest extends SMUFL.Element implements IRest {
     };
     super({
       glyph: new SMUFL.Glyph({
-        glyphName: SMUFL.findGlyphname("rests", (glyphName) =>
-          glyphName.includes(SMUFL.findFractionLiteral(core.fraction))
+        glyphName: SMUFL.getGlyphname("rests", (glyphName) =>
+          glyphName.includes(SMUFL.getFractionLiteral(core.fraction))
         ),
       }),
       accessory,
