@@ -22,10 +22,10 @@ export class Element implements IElement, SMUFL.IPosition, SMUFL.IBox {
     this.glyph = glyph;
     this.accessory = accessory;
     this.glyphs = new SMUFL.Glyphs({
-      glyphs: [
-        ...accessory.left.glyphs,
+      columns: [
+        ...accessory.left.columns,
         [...accessory.middle, glyph],
-        ...accessory.right.glyphs,
+        ...accessory.right.columns,
       ],
     });
   }

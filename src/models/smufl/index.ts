@@ -42,5 +42,5 @@ export const getFractionLiteral = (
   return literal;
 };
 
-export const getCodePoint = (glyphName: keyof Glyphnames) =>
+export const getCodepoint = (glyphName: keyof Glyphnames) =>
   parseInt(Glyphnames[glyphName].codepoint.replace("U+", ""), 16);

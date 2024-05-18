@@ -1,9 +1,9 @@
-import * as Core from "../core";
 import * as SMUFL from "./";
+import { Bar as CoreBar } from "./core/bar";
 
 interface IBar {
   elements: SMUFL.Element[];
-  core: Core.Bar;
+  core: CoreBar;
   barline: {
     start: SMUFL.Glyph<SMUFL.Ranges["barlines"]["glyphs"][number]>;
     end?: SMUFL.Glyph<SMUFL.Ranges["barlines"]["glyphs"][number]>;

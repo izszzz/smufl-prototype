@@ -19,6 +19,7 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
   }
   export() {
     const smufl = new SMUFLExporter(this.score, this.options).export();
+    console.log(smufl);
     const root = this.svg.createSVGElement("g", {
       y: 10 * this.options.fontSizeRatio,
     });
@@ -106,7 +107,7 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
               glyphName,
               x,
               y,
-            } of bar.metadata.glyphs.glyphs.flat()) {
+            } of bar.metadata.glyphs.columns.flat()) {
               metadataElement.appendChild(
                 this.createSMULFSVGElement(glyphName, {
                   x: x * this.options.fontSizeRatio,
@@ -122,7 +123,7 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
               y: element.y * this.options.fontSizeRatio,
             });
             notesElement.appendChild(noteElement);
-            for (const glyph of element.glyphs.glyphs) {
+            for (const glyph of element.glyphs.columns) {
               for (const g of glyph) {
                 noteElement.appendChild(
                   this.createSMULFSVGElement(g.glyphName, {
@@ -141,11 +142,11 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
   }
 
   private createSMULFSVGElement = (
-    glyphName: Parameters<typeof SMUFL.getCodePoint>[0],
+    glyphName: Parameters<typeof SMUFL.getCodepoint>[0],
     options?: Parameters<typeof this.svg.createSVGElement>[1]
   ) => {
     const element = this.svg.createSVGElement("text", options);
-    element.innerHTML = String.fromCodePoint(SMUFL.getCodePoint(glyphName));
+    element.innerHTML = String.fromCodePoint(SMUFL.getCodepoint(glyphName));
     return element;
   };
 }

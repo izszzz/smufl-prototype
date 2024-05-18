@@ -8,9 +8,9 @@ export class Rest extends SMUFL.Element implements IRest {
   core;
   constructor({ core }: IRest) {
     const accessory: SMUFL.Element["accessory"] = {
-      left: new SMUFL.Glyphs({ glyphs: [] }),
+      left: new SMUFL.Glyphs({ columns: [] }),
       middle: [],
-      right: new SMUFL.Glyphs({ glyphs: [] }),
+      right: new SMUFL.Glyphs({ columns: [] }),
     };
     super({
       glyph: new SMUFL.Glyph({

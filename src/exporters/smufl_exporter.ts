@@ -33,7 +33,6 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
               duration: cur.time.start - start,
             },
           });
-
           acc.push(rest);
         }
         acc.push(cur);
@@ -47,7 +46,7 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
         (acc, cur, i) => {
           acc.elements.push(cur);
           if (
-            track.notes.length - 1 === i ||
+            track.elements.length - 1 === i ||
             acc.elements.reduce((acc, cur) => acc + cur.time.duration, 0) ===
               track.getMetadata().timeSignature.numerator
           ) {
@@ -78,7 +77,7 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
         for (const bar of track.bars) {
           bar.y = track.y;
           if (bar.metadata) {
-            bar.metadata.glyphs.glyphs.reduce<SMUFL.Glyph[] | null>(
+            bar.metadata.glyphs.columns.reduce<SMUFL.Glyph[] | null>(
               (acc, cur) => {
                 if (acc) {
                   const prevGlyph = R.firstBy(acc, [R.prop("width"), "desc"]);
@@ -91,7 +90,7 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
             );
           }
           for (const note of bar.elements) {
-            note.glyphs.glyphs.reduce<SMUFL.Glyph[] | null>((acc, cur) => {
+            note.glyphs.columns.reduce<SMUFL.Glyph[] | null>((acc, cur) => {
               if (acc) {
                 const prevGlyph = R.firstBy(acc, [R.prop("width"), "desc"]);
                 for (const glyph of cur)
@@ -114,7 +113,7 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
           R.sortBy([([i]) => i, "asc"]),
           R.reduce(
             (acc, [, cur]) => {
-              if (cur.some((note) => note.accessory.left.glyphs.length > 0)) {
+              if (cur.some((note) => note.accessory.left.columns.length > 0)) {
                 const maxWidth = R.firstBy(cur, [
                   (n) => n.accessory.left.width,
                   "desc",
@@ -123,7 +122,7 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
                   (n) => n.accessory.left.width < maxWidth
                 )) {
                   note.spacing.left = maxWidth - note.accessory.left.width;
-                  for (const glyph of note.glyphs.glyphs)
+                  for (const glyph of note.glyphs.columns)
                     for (const g of glyph) g.x = note.spacing.left;
                 }
               }
