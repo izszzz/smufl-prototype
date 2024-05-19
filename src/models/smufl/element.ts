@@ -5,7 +5,7 @@ interface IElement<T> {
 }
 interface Constructor<T> extends Omit<IElement<T>, "glyphs"> {}
 
-export class Element<T> extends SVGRect implements IElement<T> {
+export class Element<T> extends SMUFL.Rect implements IElement<T> {
   accessory;
   spacing = new SMUFL.Spacing();
   core: T;

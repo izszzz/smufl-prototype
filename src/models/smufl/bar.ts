@@ -13,7 +13,7 @@ interface IBar {
   metadata?: SMUFL.Metadata;
 }
 
-export class Bar extends SVGRect implements IBar {
+export class Bar extends SMUFL.Rect implements IBar {
   elements;
   core;
   barline: {

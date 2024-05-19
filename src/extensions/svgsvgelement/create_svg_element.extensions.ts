@@ -3,7 +3,12 @@ declare global {
   interface SVGSVGElement {
     createSVGElement: <K extends keyof SVGElementTagNameMap>(
       qualifiedName: K,
-      options?: Record<string, unknown> & { x?: number; y?: number }
+      options?: Record<string, unknown> & {
+        x?: number;
+        y?: number;
+        width?: number;
+        height?: number;
+      }
     ) => SVGElementTagNameMap[K];
   }
 }

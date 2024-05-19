@@ -8,7 +8,7 @@ interface ITrack {
   core: Core.Track;
 }
 
-export class Track extends SVGPoint implements ITrack {
+export class Track extends SMUFL.Point implements ITrack {
   bars: SMUFL.Bar[] | [SMUFL.Bar];
   metadata;
   staffLineCount: SMUFL.Metadatas["staffLines"][number] = 5;

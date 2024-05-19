@@ -17,17 +17,15 @@ export class Accessory implements IAccessory {
   right;
   target;
   glyphs;
-  constructor({ target, left, middle, right }: IConstructor) {
-    this.left = new SMUFL.Glyphs({ columns: left ?? [] });
-    this.right = new SMUFL.Glyphs({ columns: right ?? [] });
+  constructor({ target, left = [], middle, right = [] }: IConstructor) {
+    this.left = new SMUFL.Glyphs(left);
+    this.right = new SMUFL.Glyphs(right);
     this.middle = middle ?? [];
     this.target = target;
-    this.glyphs = new SMUFL.Glyphs({
-      columns: [
-        ...this.left.columns,
-        [...this.middle, target],
-        ...this.right.columns,
-      ],
-    });
+    this.glyphs = new SMUFL.Glyphs([
+      ...this.left.columns,
+      [...this.middle, target],
+      ...this.right.columns,
+    ]);
   }
 }
