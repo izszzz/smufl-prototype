@@ -5,7 +5,7 @@ interface IRow {
   tracks: SMUFL.Track[];
   masterBars: SMUFL.MasterBar[];
 }
-export class Row extends SVGRect implements IRow {
+export class Row extends SMUFL.Rect implements IRow {
   tracks;
   masterBars;
   constructor({ masterBars, tracks }: IRow) {

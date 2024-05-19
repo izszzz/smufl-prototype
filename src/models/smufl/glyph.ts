@@ -3,24 +3,20 @@ import * as SMUFL from "./";
 interface IGlyph<T> {
   glyphName: T;
 }
-interface Constructor<T> extends IGlyph<T>, Partial<SVGPoint> {}
+interface Constructor<T> extends IGlyph<T>, Partial<SMUFL.Point> {}
 export class Glyph<T extends keyof SMUFL.Glyphnames = keyof SMUFL.Glyphnames>
-  extends SVGRect
+  extends SMUFL.Point
   implements IGlyph<T>
 {
+  bBox;
   glyphName;
-  width;
-  height;
   get staffWidth(): number {
-    return SMUFL.Staff.getStaffGlyph(this.width).width;
+    return SMUFL.Staff.getStaffGlyph(this.bBox.width).bBox.width;
   }
-  // TODO: bboxクラスを作ったほうがいいので、xとyの仕様は修正する
   constructor({ glyphName, x, y }: Constructor<T>) {
     super();
-    const { width, height } = SMUFL.getBBox(glyphName);
+    this.bBox = new SMUFL.BBox(SMUFL.getBBox(glyphName));
     this.glyphName = glyphName;
-    this.width = width;
-    this.height = height;
     if (x) this.x = x;
     if (y) this.y = y;
   }
