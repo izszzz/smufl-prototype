@@ -1,43 +1,26 @@
-import * as Core from "./";
-import Metadata from "../../consts/metadata.json";
+import * as R from "remeda";
+import Core from ".";
+import { Event } from "./event";
+import { Identifier } from "../../helpers";
 
-export interface IElement {
-  track: Core.Track;
-  time: Core.Time;
-  fraction: number;
-  dot: boolean;
-}
-interface IElementConstructor
-  extends Omit<IElement, "time" | "fraction" | "dot"> {
-  time: Parameters<typeof Core.Time.build>[0];
-}
-export class Element implements IElement {
+export abstract class Element extends Event implements Identifier {
+  id: number;
   track;
-  time;
-  dot;
-  fraction;
-  constructor({ track, time }: IElementConstructor) {
+  constructor({
+    track,
+    ...event
+  }: { track: InstanceType<typeof Core.Track> } & ConstructorParameters<
+    typeof Core.Event
+  >[0]) {
+    super(event);
     this.track = track;
-    this.time = new Core.Time(time);
-    const fraction = this.calcFraction(
-      this.time.duration,
-      this.getMetadata().timeSignature.denominator
-    );
-    this.dot = this.isDot(fraction);
-    this.fraction = this.dot
-      ? this.calcFraction(
-          this.time.duration / 1.5,
-          this.getMetadata().timeSignature.denominator
-        )
-      : fraction;
+    this.id =
+      (R.firstBy(this.track.score.elements, [R.prop("id"), "desc"])?.id ?? 0) +
+      1;
+    this.track.score.elements = [...this.track.score.elements, this];
+    this.track.elements = [...this.track.elements, this];
   }
   getMetadata() {
     return this.track.getMetadata();
-  }
-  calcFraction(duration: number, denominator: number) {
-    return denominator * (1 / duration);
-  }
-  isDot(fraction: number) {
-    return !Metadata.fractions.find((f) => f.value === fraction);
   }
 }

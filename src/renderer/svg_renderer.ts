@@ -1,5 +1,5 @@
 import Metadata from "../consts/metadata.json";
-import * as Core from "../models/core";
+import Core from "../models/core";
 import * as SMUFL from "../models/smufl";
 import { SVGExporter } from "../exporters/svg_exporter";
 interface SVGRendererOptions {
@@ -17,7 +17,7 @@ class SVGRenderer {
   }
   constructor(
     element: HTMLElement,
-    score: Core.Score,
+    score: InstanceType<typeof Core.Score>,
     options: SVGRendererOptions
   ) {
     this.options = options;
@@ -37,8 +37,8 @@ class SVGRenderer {
     this.element.appendChild(this.svg);
   };
 
-  private createSVGScore = (score: Core.Score) => {
-    console.log(score);
+  private createSVGScore = (score: InstanceType<typeof Core.Score>) => {
+    console.log({ core: score });
     const svg = new SVGExporter(score, {
       fontSizeRatio: this.fontSizeRatio,
       clientWidth: this.element.clientWidth / this.fontSizeRatio,

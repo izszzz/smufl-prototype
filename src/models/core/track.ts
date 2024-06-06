@@ -1,46 +1,42 @@
 import * as R from "remeda";
-import * as Core from "./";
+import Core from ".";
 import { Identifier } from "../../helpers";
+import { Event } from "./event";
 
-interface ITrack extends Identifier {
-  name?: string;
-  preset?: number;
-  notes: Core.Note[];
-  score: Core.Score;
-  metadata?: Core.Metadata;
-  time?: Core.Time;
-}
-interface Constructor
-  extends Omit<ITrack, "notes" | "bars" | "metadata" | "time"> {
-  notes: ReturnType<typeof Core.Note.build>[];
-  metadata?: ReturnType<typeof Core.Metadata.build>;
-}
-interface Build extends Omit<Constructor, "id" | "score"> {}
-
-export class Track implements ITrack {
-  id;
-  notes;
+export class Track extends Event implements Identifier {
+  id: number;
+  elements: InstanceType<typeof Core.Element>[] = [];
   metadata?;
   name;
   score;
   preset;
-  time;
-  constructor({ id, name, notes, score, metadata, preset }: Constructor) {
-    this.id = id;
+  constructor({
+    name,
+    notes,
+    score,
+    metadata,
+    preset,
+  }: {
+    name?: string;
+    preset?: number;
+    score: InstanceType<typeof Core.Score>;
+    notes: Omit<ConstructorParameters<typeof Core.Note>[0], "track" | "id">[];
+    metadata?: ConstructorParameters<typeof Core.Metadata>[0];
+  }) {
+    super();
+    this.id = R.firstBy(score.tracks, [R.prop("id"), "desc"])?.id ?? 0 + 1;
     this.score = score;
     this.name = name;
     this.preset = preset ?? 54;
+    for (const note of notes) new Core.Note({ track: this, ...note });
     if (metadata) this.metadata = new Core.Metadata(metadata);
-    this.notes = notes.map((note) => new Core.Note({ track: this, ...note }));
-    this.time = new Core.Time({
-      start: R.first(notes)?.time.start ?? 0,
-      end: R.last(notes)?.time.end ?? 0,
-    });
+    this.setStart(
+      R.firstBy(this.elements, [R.prop("start"), "asc"])?.start ?? 0
+    );
+    this.setEnd(R.firstBy(this.elements, [R.prop("end"), "desc"])?.end ?? 0);
+    this.score.tracks = [...this.score.tracks, this];
   }
   getMetadata() {
     return this.metadata ?? this.score.metadata;
-  }
-  static build(params: Build) {
-    return params;
   }
 }

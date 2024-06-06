@@ -1,15 +1,7 @@
-import * as Core from "../../core";
+import Core from "../../core";
 
-interface IRest extends Core.IElement {}
-interface Constructor extends Omit<IRest, "time" | "fraction" | "dot"> {
-  time: ReturnType<typeof Core.Time.build>;
-}
-interface Build extends Omit<Constructor, "track"> {}
-export class Rest extends Core.Element implements IRest {
-  constructor(element: Constructor) {
+export class Rest extends Core.Element {
+  constructor(element: ConstructorParameters<typeof Core.Element>[0]) {
     super(element);
-  }
-  static build(params: Build) {
-    return params;
   }
 }

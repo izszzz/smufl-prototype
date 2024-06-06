@@ -1,7 +1,7 @@
 import path from "path";
 import fs from "fs";
 import * as R from "remeda";
-import { CoreImporter } from "./core_importer";
+import Core from "../models/core/";
 import { MidiImporter } from "./midi_importer";
 import { describe, expect, test } from "vitest";
 import { importCore } from "./core_importer.test";
@@ -9,16 +9,7 @@ import { importCore } from "./core_importer.test";
 const importMidi = (fileName: string) => {
   return new MidiImporter(
     fs
-      .readFileSync(
-        path.join(
-          "src",
-          "fixtures",
-          "midi",
-          // TODO:
-          // `${expect.getState().currentTestName ?? ""}.json`
-          `${fileName}.mid`
-        )
-      )
+      .readFileSync(path.join("src", "fixtures", "midi", `${fileName}.mid`))
       .toArrayBuffer()
   ).import();
 };
@@ -32,6 +23,10 @@ describe("Note", () => {
   test("8th_middle_c", async () => {
     const score = importMidi(`8th_middle_c`);
     expect(score).toEqual(await importCore("8th_middle_c"));
+  });
+  test("chord", async () => {
+    const score = importMidi("chord");
+    expect(score).toEqual(await importCore("chord"));
   });
 });
 
@@ -50,9 +45,9 @@ describe("Track", () => {
   test("export two-track", () => {
     const score = importMidi(`two-track`);
     expect(score).toEqual(
-      new CoreImporter({
+      new Core.Importer({
         tracks: R.times(2, () => ({
-          notes: [{ pitch: 60, fraction: 4, time: { start: 0, duration: 1 } }],
+          notes: [{ pitch: 60, fraction: 4, start: 0, duration: 1 }],
         })),
       }).import()
     );

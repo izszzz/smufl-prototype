@@ -1,20 +1,7 @@
-import * as SMUFL from "./";
-import * as Core from "../core";
-import { Bar as CoreBar } from "./core/bar";
-import { Rest as CoreRest } from "./core/rest";
+import * as SMUFL from ".";
+import Core from "../core";
 
-interface IBar {
-  elements: SMUFL.Element<Core.Note | CoreRest>[];
-  core: CoreBar;
-  barline: {
-    start: SMUFL.Glyph<SMUFL.Ranges["barlines"]["glyphs"][number]>;
-    end?: SMUFL.Glyph<SMUFL.Ranges["barlines"]["glyphs"][number]>;
-  };
-  metadata?: SMUFL.Metadata;
-}
-
-export class Bar extends SMUFL.Rect implements IBar {
-  elements;
+export class Bar extends SMUFL.Rect {
   core;
   barline: {
     start: SMUFL.Glyph<SMUFL.Ranges["barlines"]["glyphs"][number]>;
@@ -23,10 +10,24 @@ export class Bar extends SMUFL.Rect implements IBar {
     start: new SMUFL.Glyph({ glyphName: "barlineSingle" }),
   };
   metadata;
-  constructor({ core, elements: notes, metadata }: Omit<IBar, "barline">) {
+  sequence;
+  elements;
+  constructor({
+    core,
+    metadata,
+    elements,
+  }: {
+    core: InstanceType<typeof Core.Bar>;
+    metadata?: SMUFL.Metadata;
+    elements: SMUFL.Element[];
+  }) {
     super();
     this.core = core;
-    this.elements = notes;
     this.metadata = metadata;
+    this.elements = elements;
+    this.sequence = new SMUFL.Sequence({
+      core: core.sequence,
+      elements: elements,
+    });
   }
 }

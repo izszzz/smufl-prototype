@@ -11,7 +11,7 @@ export * from "./element";
 export * from "./bar";
 export * from "./masterbar";
 export * from "./glyph";
-export * from "./glyphs";
+export * from "./glyph_grid";
 export * from "./note";
 export * from "./row";
 export * from "./score";
@@ -21,7 +21,11 @@ export * from "./track";
 export * from "./accessory";
 export * from "./metadata";
 export * from "./rest";
+export * from "./sequence";
+export * from "./beat";
+export * from "./chord";
 export { Metadatas, Ranges, Glyphnames, BravuraMetadata };
+Glyphnames;
 
 export const getGlyphname = (
   type: keyof Ranges,
