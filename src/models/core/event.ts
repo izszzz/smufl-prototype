@@ -4,24 +4,31 @@ export class Event {
   start = 0;
   duration = 0;
   end = 0;
+  constructor(event?: { start: number; duration: number });
+  constructor(event?: { duration: number; end: number });
+  constructor(event?: { start: number; end: number });
   constructor(
     event?: Partial<{ start: number; duration: number; end: number }>
   ) {
     if (!event) return;
-    if (R.isNonNullish(event.start) && R.isNonNullish(event.duration)) {
-      this.start = event.start;
-      this.duration = event.duration;
-      this.end = event.start + event.duration;
+    const { start, duration, end } = event;
+    if (R.isNonNullish(start) && R.isNonNullish(duration)) {
+      this.start = start;
+      this.duration = duration;
+      this.end = start + duration;
+      return;
     }
-    if (R.isNonNullish(event.end) && R.isNonNullish(event.duration)) {
-      this.end = event.end;
-      this.duration = event.duration;
-      this.start = event.end - event.duration;
+    if (R.isNonNullish(end) && R.isNonNullish(duration)) {
+      this.end = end;
+      this.duration = duration;
+      this.start = end - duration;
+      return;
     }
-    if (R.isNonNullish(event.end) && R.isNonNullish(event.start)) {
-      this.start = event.start;
-      this.end = event.end;
-      this.setDuration(event.start, event.end);
+    if (R.isNonNullish(end) && R.isNonNullish(start)) {
+      this.start = start;
+      this.end = end;
+      this.setDuration(start, end);
+      return;
     }
   }
   setStart(start: number) {

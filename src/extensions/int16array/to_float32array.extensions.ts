@@ -6,6 +6,6 @@ declare global {
 }
 Int16Array.prototype.toFloat32Array = function () {
   const float32 = new Float32Array(this.length);
-  for (let i = 0; i < this.length; i++) float32[i] = this[i] / 32768;
+  for (let i = 0; i < this.length; i++) float32[i] = (this[i] ?? 0) / 32768;
   return float32;
 };

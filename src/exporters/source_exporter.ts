@@ -2,6 +2,7 @@ import * as R from "remeda";
 import Core from "../models/core";
 import { Soundfont2 } from "../models/files/soundfont2";
 import { Exporter } from "./exporter";
+import "../extensions/int16array/to_float32array.extensions";
 
 export class SourceExporter
   implements
@@ -69,12 +70,9 @@ export class SourceExporter
             source.playbackRate.setValueAtTime(
               1.0 * 2 ** ((100.0 * (cur.pitch - baseDetune)) / 1200.0),
               this.ctx.currentTime +
-                Core.convertTimeToSeconds(
-                  cur.time.start,
-                  track.getMetadata().bpm
-                )
+                Core.convertTimeToSeconds(cur.start, track.getMetadata().bpm)
             );
-            acc += cur.time.start + cur.time.duration;
+            acc += cur.start + cur.duration;
             return acc;
           }, 0);
           return source;

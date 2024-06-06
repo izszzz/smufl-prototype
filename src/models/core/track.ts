@@ -6,6 +6,7 @@ import { Event } from "./event";
 export class Track extends Event implements Identifier {
   id: number;
   elements: InstanceType<typeof Core.Element>[] = [];
+  notes;
   metadata?;
   name;
   score;
@@ -28,7 +29,7 @@ export class Track extends Event implements Identifier {
     this.score = score;
     this.name = name;
     this.preset = preset ?? 54;
-    for (const note of notes) new Core.Note({ track: this, ...note });
+    this.notes = notes.map((note) => new Core.Note({ track: this, ...note }));
     if (metadata) this.metadata = new Core.Metadata(metadata);
     this.setStart(
       R.firstBy(this.elements, [R.prop("start"), "asc"])?.start ?? 0
