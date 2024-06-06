@@ -1,4 +1,4 @@
-import * as Core from "../models/core";
+import Core from "../models/core";
 import * as R from "remeda";
 import * as SMUFL from "../models/smufl";
 import { Exporter } from "./exporter";
@@ -12,15 +12,15 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
   score;
   svg;
   options;
-  constructor(score: Core.Score, options: Options) {
+  constructor(score: InstanceType<typeof Core.Score>, options: Options) {
     this.score = score;
     this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     this.options = options;
   }
   export() {
     const smufl = new SMUFLExporter(this.score, this.options).export();
+    console.log({ smufl });
     const root = this.createSVGElement("g", { y: 10 });
-    // create staffs
     smufl.rows.forEach((row) => {
       const trackRowElement = this.createSVGElement("g", {
         type: "row",
@@ -80,9 +80,11 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
             .appendChild(barGroup)
             .append(metadatasGroup, elementsGroup, staffsGroup);
 
+          // create staffs
           R.times(
-            smufl.masterBars.find((masterBar) => masterBar.id === bar.core.id)
-              ?.width ?? 0,
+            smufl.masterbars.find(
+              (masterBar) => masterBar.core.id === bar.core.id
+            )?.width ?? 0,
             (i) => {
               const staffGlyph = SMUFL.Staff.getStaffGlyph(
                 1,
@@ -97,20 +99,19 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
             }
           );
           if (bar.metadata) {
-            for (const {
-              glyphName,
-              x,
-              y,
-            } of bar.metadata.glyphs.columns.flat()) {
-              metadatasGroup.appendChild(
-                this.createSMULFSVGElement(glyphName, {
-                  type: "metadata",
-                  x,
-                  y,
-                })
-              );
+            for (const column of bar.metadata.glyphGrid.columns) {
+              for (const { y, glyphName } of column.glyphs) {
+                metadatasGroup.appendChild(
+                  this.createSMULFSVGElement(glyphName, {
+                    type: "metadata",
+                    x: column.x,
+                    y,
+                  })
+                );
+              }
             }
           }
+
           for (const { x, y, accessory } of bar.elements) {
             const elementGroup = this.createSVGElement("g", {
               type: "element",
@@ -118,13 +119,11 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
               y,
             });
             elementsGroup.appendChild(elementGroup);
-            for (const glyph of accessory.glyphs.columns) {
-              for (const { glyphName, x, y } of glyph) {
+            for (const column of accessory.glyphGrid.columns)
+              for (const { glyphName, y } of column.glyphs)
                 elementGroup.appendChild(
-                  this.createSMULFSVGElement(glyphName, { x, y })
+                  this.createSMULFSVGElement(glyphName, { x: column.x, y })
                 );
-              }
-            }
           }
         }
       }
@@ -142,10 +141,6 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
       options.x = options.x * this.options.fontSizeRatio;
     if (R.isNonNullish(options?.y))
       options.y = options.y * this.options.fontSizeRatio;
-    if (R.isNonNullish(options?.width))
-      options.width = options.width * this.options.fontSizeRatio;
-    if (R.isNonNullish(options?.height))
-      options.height = options.height * this.options.fontSizeRatio;
     return this.svg.createSVGElement(qualifiedName, options);
   };
   private createSMULFSVGElement = (

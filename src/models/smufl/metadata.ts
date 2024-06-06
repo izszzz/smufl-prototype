@@ -1,11 +1,12 @@
-import * as Core from "../core";
+import Core from "../core";
 import * as SMUFL from "./";
 
 export class Metadata extends SMUFL.Rect {
-  glyphs;
-  constructor({ timeSignature }: Core.Metadata) {
+  glyphGrid;
+
+  constructor({ timeSignature }: InstanceType<typeof Core.Metadata>) {
     super();
-    this.glyphs = new SMUFL.Glyphs([
+    this.glyphGrid = new SMUFL.GlyphGrid([
       [
         new SMUFL.Glyph({
           glyphName: "gClef",
@@ -23,6 +24,6 @@ export class Metadata extends SMUFL.Rect {
         }),
       ],
     ]);
-    this.width = this.glyphs.width;
+    this.width = this.glyphGrid.width;
   }
 }

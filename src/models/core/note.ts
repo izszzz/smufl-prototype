@@ -1,22 +1,13 @@
-import * as Core from "./";
-interface INote extends Core.IElement, Core.ILink<INote[]> {
-  pitch: number;
-}
-interface Constructor extends Omit<INote, "time" | "fraction" | "dot"> {
-  time: ReturnType<typeof Core.Time.build>;
-}
-interface Build extends Omit<Constructor, "track"> {}
+import Core from "./";
+import { Element } from "./element";
 
-export class Note extends Core.Element implements INote {
+export class Note extends Element {
   pitch;
-  next: INote[] = [];
-  prev: INote[] = [];
-  constructor({ pitch, ...element }: Constructor) {
+  constructor({
+    pitch,
+    ...element
+  }: { pitch: number } & ConstructorParameters<typeof Core.Element>[0]) {
     super(element);
     this.pitch = pitch;
-  }
-
-  static build(params: Build) {
-    return params;
   }
 }

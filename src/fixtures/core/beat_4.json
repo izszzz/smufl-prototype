@@ -2,10 +2,10 @@
   "tracks": [
     {
       "notes": [
-        { "pitch": 60, "time": { "start": 0, "duration": 1 } },
-        { "pitch": 60, "time": { "start": 1, "duration": 1 } },
-        { "pitch": 60, "time": { "start": 2, "duration": 1 } },
-        { "pitch": 60, "time": { "start": 3, "duration": 1 } }
+        { "pitch": 60, "start": 0, "duration": 1 },
+        { "pitch": 60, "start": 1, "duration": 1 },
+        { "pitch": 60, "start": 2, "duration": 1 },
+        { "pitch": 60, "start": 3, "duration": 1 }
       ]
     }
   ]

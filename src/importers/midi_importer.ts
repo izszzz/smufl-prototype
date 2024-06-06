@@ -1,9 +1,8 @@
 import * as R from "remeda";
 import midi from "../consts/midi.json";
-import * as Core from "../models/core";
+import Core from "../models/core";
 import { midiParser } from "../parser/midi_parser";
 import { Importer } from "./importer";
-import { CoreImporter } from "./core_importer";
 
 export class MidiImporter implements Importer {
   arrayBuffer;
@@ -27,8 +26,11 @@ export class MidiImporter implements Importer {
   }
   convertScore(data: Midi) {
     const { tracks, metadata } = data.mtrks.reduce<{
-      tracks: ReturnType<typeof Core.Track.build>[];
-      metadata: ReturnType<typeof Core.Metadata.build>;
+      tracks: Omit<
+        ConstructorParameters<typeof Core.Track>[0],
+        "score" | "id"
+      >[];
+      metadata: NonNullable<ConstructorParameters<typeof Core.Metadata>[0]>;
     }>(
       (trackAcc, trackCur) => {
         const lastMetaEventIndex = trackCur.events.findIndex(
@@ -49,61 +51,28 @@ export class MidiImporter implements Importer {
           ]);
         }
 
-        const midiNotes = trackCur.events.slice(lastMetaEventIndex).reduce<
-          {
-            pitch: number;
-            noteOn: MidiTrackEvent;
-            noteOff: MidiTrackEvent | null;
-          }[]
-        >((acc, cur) => {
-          if (this.isNoteOnEvent(cur)) {
-            acc.push({
-              pitch: (cur.event as MidiEvent).pitch,
-              noteOn: cur,
-              noteOff: null,
-            });
-          }
-          if (this.isNoteOffEvent(cur)) {
-            const note = acc
-              .flat()
-              .find(
-                (note) =>
-                  note.pitch === (cur.event as MidiEvent).pitch &&
-                  R.isNullish(note.noteOff)
-              );
-            if (note) note.noteOff = cur;
-          }
-          return acc;
-        }, []);
-
-        const { notes } = midiNotes.reduce<{
-          time: number;
-          notes: ReturnType<typeof Core.Note.build>[];
-        }>(
+        const { notes } = trackCur.events.slice(lastMetaEventIndex).reduce(
           (acc, cur) => {
-            const start = this.calcDuration(
-              cur.noteOn.deltaTime ?? 0,
-              data.mthd.resolution
-            );
-            const duration = this.calcDuration(
-              cur.noteOff?.deltaTime ?? 0,
-              data.mthd.resolution
-            );
-
-            acc.time += start;
-            acc.notes.push(
-              Core.Note.build({
-                pitch: (cur.noteOn.event as MidiEvent).pitch,
-                time: {
-                  start: acc.time,
-                  duration,
-                },
-              })
-            );
-            acc.time += duration;
+            acc.time += this.calcDuration(cur.deltaTime, data.mthd.resolution);
+            if (this.isNoteOnEvent(cur)) {
+              acc.notes.push({
+                pitch: (cur.event as MidiEvent).pitch,
+                start: acc.time,
+                duration: 0,
+              });
+            }
+            if (this.isNoteOffEvent(cur)) {
+              const note = acc.notes.findLast(
+                (note) => note.pitch === (cur.event as MidiEvent).pitch
+              );
+              if (note) note.end = acc.time;
+            }
             return acc;
           },
-          { time: 0, notes: [] }
+          { notes: [], time: 0 } as {
+            notes: Omit<ConstructorParameters<typeof Core.Note>[0], "track">[];
+            time: number;
+          }
         );
         if (R.isEmpty(notes)) return trackAcc;
         trackAcc.tracks.push({ notes });
@@ -115,7 +84,7 @@ export class MidiImporter implements Importer {
         metadata: { timeSignature: undefined, bpm: undefined },
       }
     );
-    return new CoreImporter({ tracks, metadata }).import();
+    return new Core.Importer({ tracks, metadata }).import();
   }
   calcDuration(deltaTime: number, resolution: number) {
     return deltaTime / resolution;

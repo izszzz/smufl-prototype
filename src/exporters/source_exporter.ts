@@ -1,15 +1,25 @@
 import * as R from "remeda";
-import * as Core from "../models/core";
+import Core from "../models/core";
 import { Soundfont2 } from "../models/files/soundfont2";
 import { Exporter } from "./exporter";
 
 export class SourceExporter
-  implements Exporter<{ sounds: AudioBufferSourceNode[]; track: Core.Track }[]>
+  implements
+    Exporter<
+      {
+        sounds: AudioBufferSourceNode[];
+        track: InstanceType<typeof Core.Track>;
+      }[]
+    >
 {
   score;
   sf2;
   ctx;
-  constructor(score: Core.Score, sf2: Soundfont2, ctx: AudioContext) {
+  constructor(
+    score: InstanceType<typeof Core.Score>,
+    sf2: Soundfont2,
+    ctx: AudioContext
+  ) {
     this.score = score;
     this.sf2 = sf2;
     this.ctx = ctx;

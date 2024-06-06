@@ -4,6 +4,7 @@ import { Soundfont2 } from "./models/files/soundfont2";
 import * as SMUFL from "./models/smufl";
 import { AudioPlayer } from "./player/audio_player";
 import SVGRenderer from "./renderer/svg_renderer";
+import Core from "./models/core";
 
 function App() {
   const [fontSize, setFontSize] = useState(30);
@@ -30,12 +31,19 @@ function App() {
 
     if (!soundfont2) return;
     if (input.files && input.files.length > 0) {
-      const midiFile = input.files[0];
+      const file = input.files[0];
 
       const reader = new FileReader();
+      let score;
+      if (file.type === "application/json") reader.readAsText(file);
+      if (file.type === "audio/mid") reader.readAsArrayBuffer(file);
       reader.onload = (e) => {
         const arrayBuffer = e.target?.result as ArrayBuffer;
-        const score = new MidiImporter(arrayBuffer).import();
+
+        if (file.type === "audio/mid")
+          score = new MidiImporter(arrayBuffer).import();
+        if (file.type === "application/json")
+          score = new Core.Importer(JSON.parse(reader.result)).import();
         if (ref.current) {
           const svgRenderer = new SVGRenderer(ref.current, score, {
             fontSize,
@@ -47,7 +55,7 @@ function App() {
         }
       };
 
-      reader.readAsArrayBuffer(midiFile);
+      reader.readAsArrayBuffer(file);
     }
   };
 
@@ -74,7 +82,11 @@ function App() {
       >
         pause
       </button>
-      <input type="file" onChange={handleFileChange} accept=".midi, .mid" />
+      <input
+        type="file"
+        onChange={handleFileChange}
+        accept=".midi, .mid, .json"
+      />
       <input
         type="range"
         value={volume}

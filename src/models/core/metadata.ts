@@ -15,11 +15,13 @@ interface IMetadata {
 export class Metadata implements IMetadata {
   timeSignature;
   bpm;
-  constructor(args?: Partial<IMetadata>) {
+  constructor(
+    args: Partial<IMetadata> = {
+      timeSignature: metadata.timeSignature,
+      bpm: metadata.bpm,
+    }
+  ) {
     this.timeSignature = args?.timeSignature ?? metadata.timeSignature;
     this.bpm = args?.bpm ?? metadata.bpm;
-  }
-  static build(params: Partial<IMetadata>) {
-    return params;
   }
 }

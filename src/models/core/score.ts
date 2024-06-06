@@ -1,27 +1,26 @@
-import * as Core from "./";
+import * as R from "remeda";
+import Core from "./";
+import { Event } from "./event";
 
-interface IScore {
-  name?: string;
-  tracks: Core.Track[];
-  metadata: Core.Metadata;
-}
-interface IScoreObject extends Omit<IScore, "tracks" | "metadata"> {
-  tracks: ReturnType<typeof Core.Track.build>[];
-  metadata?: ReturnType<typeof Core.Metadata.build>;
-}
-
-export class Score implements IScore {
+export class Score extends Event {
   name;
-  tracks;
   metadata;
-  constructor({ name, tracks, metadata }: IScoreObject) {
+  tracks: InstanceType<typeof Core.Track>[] = [];
+  elements: InstanceType<typeof Core.Element>[] = [];
+  constructor({
+    name,
+    tracks,
+    metadata,
+  }: {
+    tracks: Omit<ConstructorParameters<typeof Core.Track>[0], "score" | "id">[];
+    metadata?: ConstructorParameters<typeof Core.Metadata>[0];
+    name?: string;
+  } & ConstructorParameters<typeof Core.Event>[0]) {
+    super();
     this.name = name;
     this.metadata = new Core.Metadata(metadata);
-    this.tracks = tracks.map(
-      (track, id) => new Core.Track({ id, score: this, ...track })
-    );
-  }
-  static build(params: IScoreObject) {
-    return params;
+    for (const track of tracks) new Core.Track({ score: this, ...track });
+    this.setStart(0);
+    this.setEnd(R.firstBy(this.elements, [R.prop("end"), "desc"])?.end ?? 0);
   }
 }

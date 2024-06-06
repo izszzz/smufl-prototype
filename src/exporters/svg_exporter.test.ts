@@ -18,4 +18,3 @@ describe("Note", () => {
     ).toEqual(SMUFL.getCodepoint("noteQuarterUp"));
   });
 });
-describe("Staff", () => {});

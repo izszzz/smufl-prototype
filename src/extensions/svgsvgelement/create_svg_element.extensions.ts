@@ -6,8 +6,6 @@ declare global {
       options?: Record<string, unknown> & {
         x?: number;
         y?: number;
-        width?: number;
-        height?: number;
       }
     ) => SVGElementTagNameMap[K];
   }

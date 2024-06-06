@@ -1,72 +1,25 @@
 import path from "path";
 import { describe, expect, test } from "vitest";
-import { CoreImporter } from "./core_importer";
+import Core from "../models/core";
 
 export const importCore = async (fileName: string) =>
-  new CoreImporter(
-    await import(
-      path.join(
-        "..",
-        "fixtures",
-        "core",
-        // TODO:
-        // `${expect.getState().currentTestName ?? ""}.json`
-        `${fileName}.json`
-      )
-    )
+  new Core.Importer(
+    await import(path.join("..", "fixtures", "core", `${fileName}.json`))
   ).import();
-
-describe("Note", () => {
-  describe("Fraction", () => {
-    test("quarter", async () => {
-      const core = await importCore("quarter_middle_c");
-      expect(core.tracks[0].notes[0].fraction).toEqual(4);
-    });
-    test("quarter dot", async () => {
-      const core = await importCore("quarter_dot_middle_c");
-      expect(core.tracks[0].notes[0].fraction).toEqual(4);
-      expect(core.tracks[0].notes[0].dot).toEqual(true);
-    });
-    test("8th", async () => {
-      const core = await importCore("8th_middle_c");
-      expect(core.tracks[0].notes[0].fraction).toEqual(8);
-    });
-  });
-  describe("Link", () => {
-    describe("prev", () => {
-      test("beat 4", async () => {
-        const core = await importCore("beat_4");
-        expect(core.tracks[0].notes[0].prev).toEqual([]);
-        expect(core.tracks[0].notes[1].prev).toEqual([core.tracks[0].notes[0]]);
-        expect(core.tracks[0].notes[2].prev).toEqual([core.tracks[0].notes[1]]);
-        expect(core.tracks[0].notes[3].prev).toEqual([core.tracks[0].notes[2]]);
-      });
-    });
-    describe("next", () => {
-      test("beat 4", async () => {
-        const core = await importCore("beat_4");
-        expect(core.tracks[0].notes[0].next).toEqual([core.tracks[0].notes[1]]);
-        expect(core.tracks[0].notes[1].next).toEqual([core.tracks[0].notes[2]]);
-        expect(core.tracks[0].notes[2].next).toEqual([core.tracks[0].notes[3]]);
-        expect(core.tracks[0].notes[3].next).toEqual([]);
-      });
-    });
-  });
-});
 
 describe("Time", () => {
   describe("Note", () => {
-    test("quarter", async () => {
+    test("quarter_middle_c", async () => {
       const core = await importCore("quarter_middle_c");
-      expect(core.tracks[0].notes[0].time).toEqual({
+      expect(core.tracks[0]?.elements[0]).toMatchObject({
         start: 0,
         duration: 1,
         end: 1,
       });
     });
-    test("quarter dot", async () => {
+    test("quarter_dot_middle_c", async () => {
       const core = await importCore("quarter_dot_middle_c");
-      expect(core.tracks[0].notes[0].time).toEqual({
+      expect(core.tracks[0]?.elements[0]).toMatchObject({
         start: 0,
         duration: 1.5,
         end: 1.5,
@@ -74,7 +27,7 @@ describe("Time", () => {
     });
     test("8th", async () => {
       const core = await importCore("8th_middle_c");
-      expect(core.tracks[0].notes[0].time).toEqual({
+      expect(core.tracks[0]?.elements[0]).toMatchObject({
         start: 0,
         duration: 0.5,
         end: 0.5,
@@ -82,22 +35,22 @@ describe("Time", () => {
     });
     test("beat 4", async () => {
       const core = await importCore("beat_4");
-      expect(core.tracks[0].notes[0].time).toEqual({
+      expect(core.tracks[0]?.elements[0]).toMatchObject({
         start: 0,
         duration: 1,
         end: 1,
       });
-      expect(core.tracks[0].notes[1].time).toEqual({
+      expect(core.tracks[0]?.elements[1]).toMatchObject({
         start: 1,
         duration: 1,
         end: 2,
       });
-      expect(core.tracks[0].notes[2].time).toEqual({
+      expect(core.tracks[0]?.elements[2]).toMatchObject({
         start: 2,
         duration: 1,
         end: 3,
       });
-      expect(core.tracks[0].notes[3].time).toEqual({
+      expect(core.tracks[0]?.elements[3]).toMatchObject({
         start: 3,
         duration: 1,
         end: 4,
