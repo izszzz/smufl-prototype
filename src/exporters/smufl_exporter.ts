@@ -77,7 +77,14 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
               }
           }
         })(masterBar.sequence);
-        console.log(masterBar.sequence);
+      }
+
+      for (const [i, x] of [
+        ...row.masterBars.map(({ x }) => x),
+        row.width,
+      ].entries()) {
+        const barline = row.barlines.columns[i];
+        if (barline) barline.x = x;
       }
     }
   }

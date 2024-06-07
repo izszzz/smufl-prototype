@@ -31,29 +31,23 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
       });
       root.appendChild(trackRowElement).appendChild(barlinesGroup);
       // barline
-      for (const masterBar of row.masterBars) {
-        for (const {
-          barline: { start, end },
-          x,
-          y,
-        } of masterBar.bars) {
-          barlinesGroup.appendChild(
-            this.createSMULFSVGElement(start.glyphName, {
-              type: "barline",
+      for (const barline of row.barlines.columns) {
+        const barlineGroup = this.createSVGElement("g", {
+          type: "barline",
+          x: barline.x,
+        });
+        barlinesGroup.appendChild(barlineGroup);
+        for (const { glyphName, x, y } of barline.glyphs) {
+          barlineGroup.appendChild(
+            this.createSMULFSVGElement(glyphName, {
+              type: "glyph",
               y,
               x,
             })
           );
-          if (end)
-            barlinesGroup.appendChild(
-              this.createSMULFSVGElement(end.glyphName, {
-                type: "barline",
-                y,
-                x: x + masterBar.width,
-              })
-            );
         }
       }
+
       for (const track of row.tracks) {
         const trackGroup = this.createSVGElement("g", {
           type: "track",
@@ -119,11 +113,12 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
               y,
             });
             elementsGroup.appendChild(elementGroup);
-            for (const column of accessory.glyphGrid.columns)
-              for (const { glyphName, y } of column.glyphs)
-                elementGroup.appendChild(
-                  this.createSMULFSVGElement(glyphName, { x: column.x, y })
-                );
+            if (accessory)
+              for (const column of accessory.glyphGrid.columns)
+                for (const { glyphName, y } of column.glyphs)
+                  elementGroup.appendChild(
+                    this.createSMULFSVGElement(glyphName, { x: column.x, y })
+                  );
           }
         }
       }

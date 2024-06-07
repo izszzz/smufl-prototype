@@ -4,7 +4,7 @@ import { Event } from "./event";
 import { Identifier } from "../../helpers";
 
 export abstract class Element extends Event implements Identifier {
-  id: number;
+  id: Identifier["id"];
   track;
   constructor({
     track,
@@ -17,8 +17,8 @@ export abstract class Element extends Event implements Identifier {
     this.id =
       (R.firstBy(this.track.score.elements, [R.prop("id"), "desc"])?.id ?? 0) +
       1;
-    this.track.score.elements = [...this.track.score.elements, this];
-    this.track.elements = [...this.track.elements, this];
+    this.track.score.elements.push(this);
+    this.track.elements.push(this);
   }
   getMetadata() {
     return this.track.getMetadata();

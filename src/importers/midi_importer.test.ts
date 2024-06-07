@@ -1,18 +1,15 @@
 import path from "path";
 import fs from "fs";
-import * as R from "remeda";
-import Core from "../models/core/";
 import { MidiImporter } from "./midi_importer";
 import { describe, expect, test } from "vitest";
-import { importCore } from "./core_importer.test";
+import { importCore } from "../models/core/fixtures";
 
-const importMidi = (fileName: string) => {
-  return new MidiImporter(
+const importMidi = (fileName: string) =>
+  new MidiImporter(
     fs
       .readFileSync(path.join("src", "fixtures", "midi", `${fileName}.mid`))
       .toArrayBuffer()
   ).import();
-};
 
 describe("Note", () => {
   test("quarter_middle_c", async () => {
@@ -42,15 +39,9 @@ describe("Rest", () => {
 });
 
 describe("Track", () => {
-  test("export two-track", () => {
-    const score = importMidi(`two-track`);
-    expect(score).toEqual(
-      new Core.Importer({
-        tracks: R.times(2, () => ({
-          notes: [{ pitch: 60, fraction: 4, start: 0, duration: 1 }],
-        })),
-      }).import()
-    );
+  test("export two-tracks", async () => {
+    const score = importMidi(`two_tracks`);
+    expect(score).toEqual(await importCore("two_tracks"));
   });
 });
 
