@@ -4,9 +4,6 @@ export class Event {
   start = 0;
   duration = 0;
   end = 0;
-  constructor(event?: { start: number; duration: number });
-  constructor(event?: { duration: number; end: number });
-  constructor(event?: { start: number; end: number });
   constructor(
     event?: Partial<{ start: number; duration: number; end: number }>
   ) {

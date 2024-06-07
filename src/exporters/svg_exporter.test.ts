@@ -1,7 +1,7 @@
 import * as SMUFL from "../models/smufl";
 import { describe, expect, test } from "vitest";
 import { SVGExporter } from "./svg_exporter";
-import { importCore } from "../importers/core_importer.test";
+import { importCore } from "../models/core/fixtures";
 
 export const exportSVG = async (fileName: string) =>
   new SVGExporter(await importCore(fileName), {

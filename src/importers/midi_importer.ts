@@ -58,7 +58,6 @@ export class MidiImporter implements Importer {
               acc.notes.push({
                 pitch: (cur.event as MidiEvent).pitch,
                 start: acc.time,
-                duration: 0,
               });
             }
             if (this.isNoteOffEvent(cur)) {

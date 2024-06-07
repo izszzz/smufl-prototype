@@ -25,7 +25,7 @@ export class Track extends Event implements Identifier {
     metadata?: ConstructorParameters<typeof Core.Metadata>[0];
   }) {
     super();
-    this.id = R.firstBy(score.tracks, [R.prop("id"), "desc"])?.id ?? 0 + 1;
+    this.id = (R.firstBy(score.tracks, [R.prop("id"), "desc"])?.id ?? 0) + 1;
     this.score = score;
     this.name = name;
     this.preset = preset ?? 54;
