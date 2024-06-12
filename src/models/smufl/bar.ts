@@ -3,31 +3,34 @@ import Core from "../core";
 
 export class Bar extends SMUFL.Rect {
   core;
-  barline: {
-    start: SMUFL.Glyph<SMUFL.Ranges["barlines"]["glyphs"][number]>;
-    end?: SMUFL.Glyph<SMUFL.Ranges["barlines"]["glyphs"][number]>;
-  } = {
-    start: new SMUFL.Glyph({ glyphName: "barlineSingle" }),
-  };
-  metadata;
   sequence;
   elements;
+  clef?: SMUFL.Glyph;
+  timesignature?: InstanceType<typeof SMUFL.Metaevents.Map.Timesignature>;
+  // TODO: アクセスするたびにGlyphGridをnewするのを直す
+  get header() {
+    const glyphs = [];
+    if (this.clef) glyphs.push([this.clef]);
+    if (this.timesignature) glyphs.push(this.timesignature.glyphs);
+    return new SMUFL.GlyphGrid(glyphs);
+  }
   constructor({
     core,
-    metadata,
     elements,
   }: {
     core: InstanceType<typeof Core.Bar>;
-    metadata?: SMUFL.Metadata;
     elements: SMUFL.Element[];
   }) {
     super();
     this.core = core;
-    this.metadata = metadata;
     this.elements = elements;
     this.sequence = new SMUFL.Sequence({
       core: core.sequence,
       elements: elements,
     });
+    if (core.timesignature)
+      this.timesignature = new SMUFL.Metaevents.Map.Timesignature(
+        core.timesignature
+      );
   }
 }

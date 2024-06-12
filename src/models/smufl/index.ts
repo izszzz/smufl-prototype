@@ -19,7 +19,7 @@ export * from "./spacing";
 export * from "./staff";
 export * from "./track";
 export * from "./accessory";
-export * from "./metadata";
+export * from "./metaevents";
 export * from "./rest";
 export * from "./sequence";
 export * from "./beat";

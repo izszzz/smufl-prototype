@@ -12,7 +12,7 @@ export class MasterBar extends SMUFL.Point {
       this.sequence.width +
       (R.pipe(
         this.bars,
-        R.map(R.prop("metadata")),
+        R.map(R.prop("header")),
         R.filter(R.isTruthy),
         R.firstBy([R.prop("width"), "desc"])
       )?.width ?? 0)

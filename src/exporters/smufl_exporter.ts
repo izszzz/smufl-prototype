@@ -41,14 +41,10 @@ export class SMUFLExporter implements Exporter<SMUFL.Score> {
         track.y = i * 12;
         for (const bar of track.bars) {
           bar.y = track.y;
-          if (bar.metadata)
-            for (const [
-              i,
-              column,
-            ] of bar.metadata.glyphGrid.columns.entries()) {
-              const prev = bar.metadata.glyphGrid.columns[i - 1];
-              if (prev) column.x = prev.x + prev.width;
-            }
+          for (const [i, column] of bar.header.columns.entries()) {
+            const prev = bar.header.columns[i - 1];
+            if (prev) column.x = prev.x + prev.width;
+          }
           for (const element of bar.elements)
             if (element.accessory)
               for (const [

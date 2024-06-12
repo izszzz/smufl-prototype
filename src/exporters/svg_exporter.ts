@@ -64,7 +64,7 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
           });
           const elementsGroup = this.createSVGElement("g", {
             type: "elements",
-            x: bar.metadata?.width ?? 0,
+            x: bar.header.width ?? 0,
           });
           const metadatasGroup = this.createSVGElement("g", {
             type: "metadata",
@@ -92,17 +92,15 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
               );
             }
           );
-          if (bar.metadata) {
-            for (const column of bar.metadata.glyphGrid.columns) {
-              for (const { y, glyphName } of column.glyphs) {
-                metadatasGroup.appendChild(
-                  this.createSMULFSVGElement(glyphName, {
-                    type: "metadata",
-                    x: column.x,
-                    y,
-                  })
-                );
-              }
+          for (const column of bar.header.columns) {
+            for (const { y, glyphName } of column.glyphs) {
+              metadatasGroup.appendChild(
+                this.createSMULFSVGElement(glyphName, {
+                  type: "metadata",
+                  x: column.x,
+                  y,
+                })
+              );
             }
           }
 

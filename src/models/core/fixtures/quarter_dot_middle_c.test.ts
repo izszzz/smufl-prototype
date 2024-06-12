@@ -1,3 +1,4 @@
+import Core from "..";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 
@@ -10,13 +11,20 @@ describe("quarter_dot_middle_c", async () => {
         duration: 1.5,
         end: 1.5,
       }));
-    describe(".metadata", () => {
-      test(".bpm", () => expect(core.metadata.bpm).toEqual(120));
-      test(".timeSignature", () =>
-        expect(core.metadata.timeSignature).toEqual({
-          denominator: 4,
-          numerator: 4,
-        }));
+    describe(".metaevents", () => {
+      describe(".events", () => {
+        test(".timesignature", () =>
+          expect(core.metaevents.events).toContainEqual(
+            new Core.Metaevents.Map.Timesignature({
+              denominator: 4,
+              numerator: 4,
+            })
+          ));
+        test(".bpm", () =>
+          expect(core.metaevents.events).toContainEqual(
+            new Core.Metaevents.Map.Bpm({ value: 120 })
+          ));
+      });
     });
     describe(".elements", () => {
       test(".length", () => expect(core.elements).toHaveLength(1));

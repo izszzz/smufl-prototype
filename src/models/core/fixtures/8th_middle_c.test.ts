@@ -1,3 +1,4 @@
+import Core from "..";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 
@@ -10,13 +11,19 @@ describe("8th_middle_c", async () => {
         duration: 0.5,
         end: 0.5,
       }));
-    describe(".metadata", () => {
-      test(".bpm", () => expect(core.metadata.bpm).toEqual(120));
-      test(".timeSignature", () => {
-        expect(core.metadata.timeSignature).toEqual({
-          denominator: 4,
-          numerator: 4,
-        });
+    describe(".metaevents", () => {
+      describe(".events", () => {
+        test(".timesignature", () =>
+          expect(core.metaevents.events).toContainEqual(
+            new Core.Metaevents.Map.Timesignature({
+              denominator: 4,
+              numerator: 4,
+            })
+          ));
+        test(".bpm", () =>
+          expect(core.metaevents.events).toContainEqual(
+            new Core.Metaevents.Map.Bpm({ value: 120 })
+          ));
       });
     });
     describe(".elements", () => {

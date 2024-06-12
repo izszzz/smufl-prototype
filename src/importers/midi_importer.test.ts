@@ -47,14 +47,18 @@ describe("Track", () => {
 
 describe("Score Metadata", () => {
   describe("timeSig", () => {
-    test("export 4/4 score", async () => {
+    test("timesignature_4_4", async () => {
       const score = importMidi(`timesignature_4_4`);
       expect(score).toEqual(await importCore("timesignature_4_4"));
     });
-    test("export 3/4 score", async () => {
+    test("timesignature_3_4", async () => {
       const score = importMidi(`timesignature_3_4`);
       expect(score).toEqual(await importCore("timesignature_3_4"));
     });
+    // test("timesignature_4_4_to_3_4", async () => {
+    //   const score = importMidi(`timesignature_4_4_to_3_4`);
+    //   expect(score).toEqual(await importCore("timesignature_4_4_to_3_4"));
+    // });
 
     describe("BPM", () => {
       test("export 120 score", async () => {

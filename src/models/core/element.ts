@@ -20,7 +20,4 @@ export abstract class Element extends Event implements Identifier {
     this.track.score.elements.push(this);
     this.track.elements.push(this);
   }
-  getMetadata() {
-    return this.track.getMetadata();
-  }
 }

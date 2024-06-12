@@ -3,8 +3,9 @@ import { Element } from "./element";
 import { Note } from "./note";
 import { Score } from "./score";
 import { Track } from "./track";
-import { Metadata } from "./metadata";
 import { Importer } from "./importer";
+import { Metaevent } from "./metaevent";
+import { Metaevents } from "./metaevents";
 
 export interface CoreConstructor {
   new (): void;
@@ -12,7 +13,8 @@ export interface CoreConstructor {
   Note: typeof Note;
   Score: typeof Score;
   Track: typeof Track;
-  Metadata: typeof Metadata;
+  Metaevent: typeof Metaevent;
+  Metaevents: typeof Metaevents;
   Event: typeof Event;
   Importer: typeof Importer;
   convertTimeToSeconds(time: number, bpm: number): number;
@@ -23,12 +25,12 @@ export interface CoreConstructor {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 const CoreClass: CoreConstructor = class Core {
+  static Event = Event;
   static Element = Element;
   static Note = Note;
   static Score = Score;
   static Track = Track;
-  static Metadata = Metadata;
-  static Event = Event;
+  static Metaevents = Metaevents;
   static Importer = Importer;
   static convertTempoToBpm = (tempo: number) => Math.floor(60000000 / tempo);
   static convertTimeToSeconds = (time: number, bpm: number) =>

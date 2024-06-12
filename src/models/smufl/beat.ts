@@ -17,11 +17,7 @@ export class Beat extends SMUFL.Rect {
     this.element = match(core.element)
       .with(
         P.instanceOf(Core.Chord),
-        (core) =>
-          new SMUFL.Chord({
-            core,
-            elements,
-          })
+        (core) => new SMUFL.Chord({ core, elements })
       )
       .with(
         P.instanceOf(Core.Element),

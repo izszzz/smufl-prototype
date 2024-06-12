@@ -1,3 +1,4 @@
+import Core from ".";
 import * as R from "remeda";
 
 export class Event {
@@ -38,5 +39,8 @@ export class Event {
   }
   setDuration(start: number, end: number) {
     this.duration = end - start;
+  }
+  isWithin(event: InstanceType<typeof Core.Event>) {
+    return this.start >= event.start && this.end <= event.end;
   }
 }

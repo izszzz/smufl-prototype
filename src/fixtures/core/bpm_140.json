@@ -1,6 +1,4 @@
 {
   "tracks": [],
-  "metadata": {
-    "bpm": 140
-  }
+  "metaevents": [{ "name": "Bpm", "params": [{ "value": 140 }] }]
 }
