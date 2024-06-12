@@ -67,7 +67,6 @@ export class Score implements IScore {
             R.flatMap(R.prop("bars")),
             R.filter(({ core }) => core.track.id === track.id)
           ),
-          metadata: track.metadata && new SMUFL.Metadata(track.metadata),
         })
     );
     this.rows = rows;

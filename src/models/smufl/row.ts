@@ -16,7 +16,7 @@ export class Row extends SMUFL.Rect {
     this.masterBars = masterBars;
     this.tracks = tracks;
     for (const bar of R.first(this.masterBars)?.bars ?? [])
-      bar.metadata = new SMUFL.Metadata(bar.core.getMetadata());
+      bar.clef = new SMUFL.Glyph({ glyphName: "gClef", y: -1 });
 
     this.barlines = new SMUFL.GlyphGrid([
       R.times(

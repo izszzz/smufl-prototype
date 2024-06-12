@@ -1,0 +1,39 @@
+{
+  "tracks": [
+    {
+      "notes": [
+        { "pitch": 60, "start": 0, "duration": 1 },
+        { "pitch": 60, "start": 1, "duration": 1 },
+        { "pitch": 60, "start": 2, "duration": 1 },
+        { "pitch": 60, "start": 3, "duration": 1 },
+        { "pitch": 60, "start": 4, "duration": 1 },
+        { "pitch": 60, "start": 5, "duration": 1 },
+        { "pitch": 60, "start": 6, "duration": 1 }
+      ]
+    }
+  ],
+  "metaevents": [
+    {
+      "name": "Timesignature",
+      "params": [
+        {
+          "numerator": 4,
+          "denominator": 4
+        }
+      ],
+      "start": 0,
+      "end": 4
+    },
+    {
+      "name": "Timesignature",
+      "params": [
+        {
+          "numerator": 3,
+          "denominator": 4
+        }
+      ],
+      "start": 5,
+      "end": 7
+    }
+  ]
+}

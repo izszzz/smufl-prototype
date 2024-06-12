@@ -1,4 +1,4 @@
-import Core from "./";
+import Core from ".";
 import { Element } from "./element";
 
 export class Note extends Element {

@@ -32,9 +32,7 @@ declare module "../../core/track" {
     bars: Bar[];
   }
 }
-Core.Element.prototype.getMetadata = function () {
-  return this.bar?.getMetadata() ?? this.track.getMetadata();
-};
+
 Core.Bar = Bar;
 Core.Rest = Rest;
 Core.MasterBar = MasterBar;

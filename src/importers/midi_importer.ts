@@ -3,6 +3,7 @@ import midi from "../consts/midi.json";
 import Core from "../models/core";
 import { midiParser } from "../parser/midi_parser";
 import { Importer } from "./importer";
+import { Midi as MidiFile } from "../models/files/midi";
 
 export class MidiImporter implements Importer {
   arrayBuffer;
@@ -15,54 +16,48 @@ export class MidiImporter implements Importer {
   parseArrayBuffer(arrayBuffer: ArrayBuffer): Midi {
     return midiParser.parse(new Uint8Array(arrayBuffer));
   }
-  isMetaEvent(event: MidiTrackEvent) {
-    return event.type === midi.mtrk.metaEvent.type;
-  }
-  isNoteOnEvent(event: MidiTrackEvent) {
-    return event.type === midi.mtrk.midiEvents.noteOn.type;
-  }
-  isNoteOffEvent(event: MidiTrackEvent) {
-    return event.type === midi.mtrk.midiEvents.noteOff.type;
-  }
   convertScore(data: Midi) {
-    const { tracks, metadata } = data.mtrks.reduce<{
-      tracks: Omit<
-        ConstructorParameters<typeof Core.Track>[0],
-        "score" | "id"
-      >[];
-      metadata: NonNullable<ConstructorParameters<typeof Core.Metadata>[0]>;
-    }>(
+    console.log({ midi: data });
+    const { tracks, metaevents } = data.mtrks.reduce(
       (trackAcc, trackCur) => {
-        const lastMetaEventIndex = trackCur.events.findIndex(
-          (e) => !this.isMetaEvent(e)
-        );
-        // score metadata
-        const metadata = R.pipe(
-          trackCur.events.slice(0, lastMetaEventIndex),
-          R.map((x) => x.event),
-          R.mergeAll
-        ) as Partial<MetaEvents>;
-        if (metadata.tempo)
-          trackAcc.metadata.bpm = Core.convertTempoToBpm(metadata.tempo);
-        if (metadata.timeSignature) {
-          trackAcc.metadata.timeSignature = R.omit(metadata.timeSignature, [
-            "clock",
-            "bb",
-          ]);
-        }
-
-        const { notes } = trackCur.events.slice(lastMetaEventIndex).reduce(
+        const { notes } = trackCur.events.reduce(
           (acc, cur) => {
-            acc.time += this.calcDuration(cur.deltaTime, data.mthd.resolution);
-            if (this.isNoteOnEvent(cur)) {
+            acc.time += MidiFile.calcDuration(
+              cur.deltaTime,
+              data.mthd.resolution
+            );
+            if (this.isMetaEvent(cur)) {
+              if (R.isNonNullish(cur.event.timeSignature))
+                trackAcc.metaevents.push({
+                  name: "Timesignature",
+                  params: [
+                    {
+                      ...R.omit(cur.event.timeSignature, ["clock", "bb"]),
+                      start: acc.time,
+                      duration: 0,
+                    },
+                  ],
+                });
+              if (R.isNonNullish(cur.event.tempo))
+                trackAcc.metaevents.push({
+                  name: "Bpm",
+                  params: [
+                    {
+                      value: Core.convertTempoToBpm(cur.event.tempo),
+                      start: acc.time,
+                      duration: 0,
+                    },
+                  ],
+                });
+            }
+            if (this.isNoteOnEvent(cur))
               acc.notes.push({
-                pitch: (cur.event as MidiEvent).pitch,
+                pitch: cur.event.pitch,
                 start: acc.time,
               });
-            }
             if (this.isNoteOffEvent(cur)) {
               const note = acc.notes.findLast(
-                (note) => note.pitch === (cur.event as MidiEvent).pitch
+                (note) => note.pitch === cur.event.pitch
               );
               if (note) note.end = acc.time;
             }
@@ -80,13 +75,28 @@ export class MidiImporter implements Importer {
       },
       {
         tracks: [],
-        metadata: { timeSignature: undefined, bpm: undefined },
-      }
+        metadata: { timesignatures: [], bpms: [] },
+        metaevents: [],
+      } as ConstructorParameters<typeof Core.Score>[0]
     );
-    return new Core.Importer({ tracks, metadata }).import();
+
+    return new Core.Importer({ tracks, metaevents }).import();
   }
-  calcDuration(deltaTime: number, resolution: number) {
-    return deltaTime / resolution;
+
+  isMetaEvent(
+    event: MidiTrackEvent<MidiEvent | MetaEvent>
+  ): event is MidiTrackEvent<MetaEvent> {
+    return event.type === midi.mtrk.metaEvent.type;
+  }
+  isNoteOnEvent(
+    event: MidiTrackEvent<MidiEvent | MetaEvent>
+  ): event is MidiTrackEvent<MidiEvent> {
+    return event.type === midi.mtrk.midiEvents.noteOn.type;
+  }
+  isNoteOffEvent(
+    event: MidiTrackEvent<MidiEvent | MetaEvent>
+  ): event is MidiTrackEvent<MidiEvent> {
+    return event.type === midi.mtrk.midiEvents.noteOff.type;
   }
 }
 interface Midi {
@@ -99,13 +109,13 @@ interface Midi {
   };
   mtrks: {
     type: string;
-    events: MidiTrackEvent[];
+    events: MidiTrackEvent<MetaEvent | MidiEvent>[];
   }[];
 }
-interface MidiTrackEvent {
+interface MidiTrackEvent<Event extends MetaEvent | MidiEvent> {
   channel: number;
   deltaTime: number;
-  event: MetaEvent | MidiEvent;
+  event: Event;
 
   type:
     | typeof midi.mtrk.metaEvent.type
@@ -116,8 +126,7 @@ interface MidiEvent {
   pitch: number;
   velocity: number;
 }
-interface MetaEvent {
-  data: Partial<MetaEvents>;
+interface MetaEvent extends Partial<MetaEvents> {
   length: number;
   type: number;
 }
