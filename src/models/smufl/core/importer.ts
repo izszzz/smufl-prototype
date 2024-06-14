@@ -10,10 +10,10 @@ export class Importer extends Core.Importer {
     const timesignatures = core.metaevents.events.filter(
       (metaevent) => metaevent instanceof Core.Metaevents.Map.Timesignature
     ) as InstanceType<typeof Core.Metaevents.Map.Timesignature>[];
-    for (const [i, timesignature] of timesignatures.entries()) {
-      const prev = timesignatures[i - 1];
-      if (prev) prev.setEnd(timesignature.end);
-    }
+    // for (const [i, timesignature] of timesignatures.entries()) {
+    //   const prev = timesignatures[i - 1];
+    //   if (prev) prev.setEnd(timesignature.end);
+    // }
     const lastTimesignature = R.last(timesignatures);
     if (lastTimesignature) lastTimesignature.setEnd(core.end);
 

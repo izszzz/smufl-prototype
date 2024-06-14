@@ -18,9 +18,9 @@ export class MidiImporter implements Importer {
   }
   convertScore(data: Midi) {
     console.log({ midi: data });
-    const { tracks, metaevents } = data.mtrks.reduce(
+    const { tracks, metaevents, end } = data.mtrks.reduce(
       (trackAcc, trackCur) => {
-        const { notes } = trackCur.events.reduce(
+        const { notes, time } = trackCur.events.reduce(
           (acc, cur) => {
             acc.time += MidiFile.calcDuration(
               cur.deltaTime,
@@ -34,7 +34,6 @@ export class MidiImporter implements Importer {
                     {
                       ...R.omit(cur.event.timeSignature, ["clock", "bb"]),
                       start: acc.time,
-                      duration: 0,
                     },
                   ],
                 });
@@ -45,7 +44,6 @@ export class MidiImporter implements Importer {
                     {
                       value: Core.convertTempoToBpm(cur.event.tempo),
                       start: acc.time,
-                      duration: 0,
                     },
                   ],
                 });
@@ -69,16 +67,39 @@ export class MidiImporter implements Importer {
           }
         );
         if (R.isEmpty(notes)) return trackAcc;
+        if ((trackAcc.end ?? 0) < time) trackAcc.end = time;
         trackAcc.tracks.push({ notes });
 
         return trackAcc;
       },
       {
         tracks: [],
-        metadata: { timesignatures: [], bpms: [] },
         metaevents: [],
+        end: 0,
       } as ConstructorParameters<typeof Core.Score>[0]
     );
+
+    // TODO: refactor
+    // timesignature
+    const timesignatures = metaevents.filter(
+      (metaevent) => metaevent.name === "Timesignature"
+    );
+    for (const [i, timesignature] of timesignatures.entries()) {
+      const prev = timesignatures[i - 1]?.params[0];
+      if (prev) prev.end = timesignature.params[0].start;
+    }
+    const lastTimesignature = R.last(timesignatures)?.params[0];
+    if (lastTimesignature) lastTimesignature.end = end;
+
+    // bpm
+
+    const bpms = metaevents.filter((metaevent) => metaevent.name === "Bpm");
+    for (const [i, bpm] of bpms.entries()) {
+      const prev = bpms[i - 1]?.params[0];
+      if (prev) prev.end = bpm.params[0].start;
+    }
+    const lastBpm = R.last(bpms)?.params[0];
+    if (lastBpm) lastBpm.end = end;
 
     return new Core.Importer({ tracks, metaevents }).import();
   }

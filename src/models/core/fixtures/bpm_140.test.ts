@@ -18,11 +18,19 @@ describe("bpm_140", async () => {
             new Core.Metaevents.Map.Timesignature({
               denominator: 4,
               numerator: 4,
+              start: 0,
+              duration: 0,
+              end: 0,
             })
           ));
         test(".bpm", () =>
           expect(core.metaevents.events).toContainEqual(
-            new Core.Metaevents.Map.Bpm({ value: 140 })
+            new Core.Metaevents.Map.Bpm({
+              value: 140,
+              start: 0,
+              duration: 0,
+              end: 0,
+            })
           ));
       });
     });
