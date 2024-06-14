@@ -18,22 +18,22 @@
       "params": [
         {
           "numerator": 4,
-          "denominator": 4
+          "denominator": 4,
+          "start": 0,
+          "duration": 4
         }
-      ],
-      "start": 0,
-      "end": 4
+      ]
     },
     {
       "name": "Timesignature",
       "params": [
         {
           "numerator": 3,
-          "denominator": 4
+          "denominator": 4,
+          "start": 4,
+          "duration": 3
         }
-      ],
-      "start": 5,
-      "end": 7
+      ]
     }
   ]
 }
