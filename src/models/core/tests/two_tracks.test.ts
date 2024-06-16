@@ -2,8 +2,8 @@ import Core from "..";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 
-describe("quarter_middle_c", async () => {
-  const core = await importCore("quarter_middle_c");
+describe("two_tracks", async () => {
+  const core = await importCore("two_tracks");
   describe("Score", () => {
     test("Event", () =>
       expect(core).toMatchObject({
@@ -14,33 +14,23 @@ describe("quarter_middle_c", async () => {
     describe(".metaevents", () => {
       describe(".events", () => {
         test(".timesignature", () =>
-          expect(core.metaevents.events).toContainEqual(
+          expect(core.metaevents.timesignature).toEqual([
             new Core.Metaevents.Map.Timesignature({
               denominator: 4,
               numerator: 4,
-            })
-          ));
+            }),
+          ]));
         test(".bpm", () =>
-          expect(core.metaevents.events).toContainEqual(
-            new Core.Metaevents.Map.Bpm({ value: 120 })
-          ));
+          expect(core.metaevents.bpm).toEqual([
+            new Core.Metaevents.Map.Bpm({ value: 120 }),
+          ]));
       });
     });
-    describe(".elements", () => {
-      test(".length", () => expect(core.elements).toHaveLength(1));
-      describe("Element[0]", () => {
-        test(".id", () => expect(core.elements[0]?.id).toBeTypeOf("number"));
-        test("extends Event", () =>
-          expect(core.elements[0]).toMatchObject({
-            start: 0,
-            duration: 1,
-            end: 1,
-          }));
-      });
-    });
+    describe(".elements", () =>
+      test(".length", () => expect(core.elements).toHaveLength(2)));
     describe(".tracks", () => {
-      test("length", () => expect(core.tracks).toHaveLength(1));
-      describe("Track[0]", () => {
+      test(".length", () => expect(core.tracks).toHaveLength(2));
+      describe("[0]", () => {
         const track0 = core.tracks[0];
         test(".id", () => expect(track0?.id).toBeTypeOf("number"));
         describe(".elements", () => {
@@ -48,7 +38,7 @@ describe("quarter_middle_c", async () => {
         });
         describe(".notes", () => {
           test("length", () => expect(track0?.notes).toHaveLength(1));
-          describe("Note[0]", () => {
+          describe("[0]", () => {
             const note0 = track0?.notes[0];
             test(".id", () => expect(note0?.id).toBeTypeOf("number"));
             test(".pitch", () => expect(note0?.pitch).toEqual(60));
@@ -56,6 +46,24 @@ describe("quarter_middle_c", async () => {
         });
         test("extends Event", () =>
           expect(track0).toMatchObject({
+            start: 0,
+            duration: 1,
+            end: 1,
+          }));
+      });
+      describe("[1]", () => {
+        const track1 = core.tracks[1];
+        test(".id", () => expect(track1?.id).toBeTypeOf("number"));
+        describe(".notes", () => {
+          test("length", () => expect(track1?.notes).toHaveLength(1));
+          describe("[0]", () => {
+            const note0 = track1?.notes[0];
+            test(".id", () => expect(note0?.id).toBeTypeOf("number"));
+            test(".pitch", () => expect(note0?.pitch).toEqual(60));
+          });
+        });
+        test("extends Event", () =>
+          expect(track1).toMatchObject({
             start: 0,
             duration: 1,
             end: 1,

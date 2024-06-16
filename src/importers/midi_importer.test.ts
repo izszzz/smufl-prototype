@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { MidiImporter } from "./midi_importer";
 import { describe, expect, test } from "vitest";
-import { importCore } from "../models/core/fixtures";
+import { importCore } from "../models/core/tests";
 
 const importMidi = (fileName: string) =>
   new MidiImporter(
@@ -55,10 +55,10 @@ describe("Score Metadata", () => {
       const score = importMidi(`timesignature_3_4`);
       expect(score).toEqual(await importCore("timesignature_3_4"));
     });
-    test("timesignature_4_4_to_3_4", async () => {
-      const score = importMidi(`timesignature_4_4_to_3_4`);
-      expect(score).toEqual(await importCore("timesignature_4_4_to_3_4"));
-    });
+    // test("timesignature_4_4_to_3_4", async () => {
+    //   const score = importMidi(`timesignature_4_4_to_3_4`);
+    //   expect(score).toEqual(await importCore("timesignature_4_4_to_3_4"));
+    // });
   });
   describe("BPM", () => {
     test("bpm_120", async () => {

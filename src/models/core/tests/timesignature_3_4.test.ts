@@ -14,16 +14,16 @@ describe("timesignature_3_4", async () => {
     describe(".metaevents", () => {
       describe(".events", () => {
         test(".timesignature", () =>
-          expect(core.metaevents.events).toContainEqual(
+          expect(core.metaevents.timesignature).toEqual([
             new Core.Metaevents.Map.Timesignature({
               denominator: 4,
               numerator: 3,
-            })
-          ));
+            }),
+          ]));
         test(".bpm", () =>
-          expect(core.metaevents.events).toContainEqual(
-            new Core.Metaevents.Map.Bpm({ value: 120 })
-          ));
+          expect(core.metaevents.bpm).toEqual([
+            new Core.Metaevents.Map.Bpm({ value: 120 }),
+          ]));
       });
     });
     describe(".elements", () =>
