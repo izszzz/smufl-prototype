@@ -13,32 +13,37 @@ describe("quarter_middle_c", async () => {
       }));
     describe(".metaevents", () => {
       describe(".events", () => {
-        test(".timesignature", () => {
-          // TODO:
-          // expect(core.metaevents.events).toContainEqual(
-          //   new Core.Metaevents.Map.Timesignature({
-          //     denominator: 4,
-          //     numerator: 4,
-          //     start: 0,
-          //   })
-          // );
-          // expect(core.metaevents.events).toContainEqual(
-          //   new Core.Metaevents.Map.Timesignature({
-          //     denominator: 4,
-          //     numerator: 3,
-          //     start: 4,
-          //   })
-          // );
-        });
+        test(".timesignature", () =>
+          expect(core.metaevents.timesignature).toEqual([
+            new Core.Metaevents.Map.Timesignature({
+              denominator: 4,
+              numerator: 4,
+              duration: 4,
+              start: 0,
+              end: 4,
+            }),
+            new Core.Metaevents.Map.Timesignature({
+              denominator: 4,
+              numerator: 3,
+              duration: 3,
+              start: 4,
+              end: 7,
+            }),
+          ]));
         test(".bpm", () =>
-          expect(core.metaevents.events).toContainEqual(
-            new Core.Metaevents.Map.Bpm({ value: 120 })
-          ));
+          expect(core.metaevents.bpm).toEqual([
+            new Core.Metaevents.Map.Bpm({
+              value: 120,
+              duration: 7,
+              start: 0,
+              end: 7,
+            }),
+          ]));
       });
     });
     describe(".elements", () => {
       test(".length", () => expect(core.elements).toHaveLength(7));
-      describe("Element[0]", () => {
+      describe("[0]", () => {
         test(".id", () => expect(core.elements[0]?.id).toBeTypeOf("number"));
         test("extends Event", () =>
           expect(core.elements[0]).toMatchObject({

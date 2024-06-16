@@ -1,7 +1,7 @@
 import * as SMUFL from "../models/smufl";
 import { describe, expect, test } from "vitest";
 import { SMUFLExporter } from "./smufl_exporter";
-import { importCore } from "..//models/core/fixtures";
+import { importCore } from "../models/core/tests";
 import Core from "../models/smufl/core";
 
 const exportSMUFL = async (fileName: string) =>

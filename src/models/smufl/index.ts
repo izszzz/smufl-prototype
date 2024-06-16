@@ -36,11 +36,7 @@ export const getGlyphname = (
   return glyphName;
 };
 
-export const getFractionLiteral = (
-  fraction: number
-  //TODO:
-  //   Metadatas["fractions"][number]["value"]
-) => {
+export const getFractionLiteral = (fraction: number) => {
   const literal = Metadatas.fractions.find(
     ({ value }) => fraction === value
   )?.type;

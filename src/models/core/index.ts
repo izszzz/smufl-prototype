@@ -7,6 +7,17 @@ import { Importer } from "./importer";
 import { Metaevent } from "./metaevent";
 import { Metaevents } from "./metaevents";
 
+declare module "../core/metaevents" {
+  type ExtractArrayType<T> = T extends new (...args: unknown[]) => infer R
+    ? R[]
+    : T[];
+  type GeneratedInterface = {
+    [K in Lowercase<keyof typeof Metaevents.Map>]: ExtractArrayType<
+      InstanceType<(typeof Metaevents.Map)[Capitalize<K>]>
+    >;
+  };
+  interface Metaevents extends GeneratedInterface {}
+}
 export interface CoreConstructor {
   new (): void;
   Element: typeof Element;

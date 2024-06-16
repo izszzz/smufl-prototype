@@ -92,7 +92,6 @@ export class MidiImporter implements Importer {
     if (lastTimesignature) lastTimesignature.end = end;
 
     // bpm
-
     const bpms = metaevents.filter((metaevent) => metaevent.name === "Bpm");
     for (const [i, bpm] of bpms.entries()) {
       const prev = bpms[i - 1]?.params[0];
