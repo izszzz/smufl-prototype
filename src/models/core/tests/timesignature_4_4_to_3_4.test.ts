@@ -32,7 +32,12 @@ describe("quarter_middle_c", async () => {
           ]));
         test(".bpm", () =>
           expect(core.metaevents.bpm).toEqual([
-            new Core.Metaevents.Map.Bpm({ value: 120 }),
+            new Core.Metaevents.Map.Bpm({
+              value: 120,
+              duration: 7,
+              start: 0,
+              end: 7,
+            }),
           ]));
       });
     });

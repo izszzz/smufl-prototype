@@ -18,11 +18,13 @@ describe("c_major_scale_up", async () => {
             new Core.Metaevents.Map.Timesignature({
               denominator: 4,
               numerator: 4,
+              duration: 8,
+              end: 8,
             }),
           ]));
         test(".bpm", () =>
           expect(core.metaevents.bpm).toEqual([
-            new Core.Metaevents.Map.Bpm({ value: 120 }),
+            new Core.Metaevents.Map.Bpm({ value: 120, duration: 8, end: 8 }),
           ]));
       });
     });

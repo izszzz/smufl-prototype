@@ -17,11 +17,13 @@ describe("beat_4", async () => {
             new Core.Metaevents.Map.Timesignature({
               denominator: 4,
               numerator: 4,
+              duration: 4,
+              end: 4,
             }),
           ]));
         test(".bpm", () =>
           expect(core.metaevents.bpm).toEqual([
-            new Core.Metaevents.Map.Bpm({ value: 120 }),
+            new Core.Metaevents.Map.Bpm({ value: 120, duration: 4, end: 4 }),
           ]));
       });
     });

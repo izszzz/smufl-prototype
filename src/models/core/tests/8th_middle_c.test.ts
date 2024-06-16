@@ -17,12 +17,19 @@ describe("8th_middle_c", async () => {
           expect(core.metaevents.timesignature).toEqual([
             new Core.Metaevents.Map.Timesignature({
               denominator: 4,
+
               numerator: 4,
+              duration: 0.5,
+              end: 0.5,
             }),
           ]));
         test(".bpm", () =>
           expect(core.metaevents.bpm).toEqual([
-            new Core.Metaevents.Map.Bpm({ value: 120 }),
+            new Core.Metaevents.Map.Bpm({
+              value: 120,
+              duration: 0.5,
+              end: 0.5,
+            }),
           ]));
       });
     });

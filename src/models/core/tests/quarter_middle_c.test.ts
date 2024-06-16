@@ -18,11 +18,13 @@ describe("quarter_middle_c", async () => {
             new Core.Metaevents.Map.Timesignature({
               denominator: 4,
               numerator: 4,
+              duration: 1,
+              end: 1,
             }),
           ]));
         test(".bpm", () =>
           expect(core.metaevents.bpm).toEqual([
-            new Core.Metaevents.Map.Bpm({ value: 120 }),
+            new Core.Metaevents.Map.Bpm({ value: 120, duration: 1, end: 1 }),
           ]));
       });
     });

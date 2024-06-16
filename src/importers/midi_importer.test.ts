@@ -55,10 +55,10 @@ describe("Score Metadata", () => {
       const score = importMidi(`timesignature_3_4`);
       expect(score).toEqual(await importCore("timesignature_3_4"));
     });
-    // test("timesignature_4_4_to_3_4", async () => {
-    //   const score = importMidi(`timesignature_4_4_to_3_4`);
-    //   expect(score).toEqual(await importCore("timesignature_4_4_to_3_4"));
-    // });
+    test("timesignature_4_4_to_3_4", async () => {
+      const score = importMidi(`timesignature_4_4_to_3_4`);
+      expect(score).toEqual(await importCore("timesignature_4_4_to_3_4"));
+    });
   });
   describe("BPM", () => {
     test("bpm_120", async () => {

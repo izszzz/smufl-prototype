@@ -9,13 +9,9 @@ export class Importer extends Core.Importer {
     core.masterbars = [];
     for (const track of core.tracks) track.bars = [];
 
-    const timesignatures = core.metaevents.timesignature;
-    const lastTimesignature = R.last(timesignatures);
-    if (lastTimesignature) lastTimesignature.setEnd(core.end);
-
     let start = 0;
     let end = 0;
-    for (const timesignature of timesignatures) {
+    for (const timesignature of core.metaevents.timesignature) {
       R.times(timesignature.duration / timesignature.numerator, () => {
         end += timesignature.numerator;
         const elements = core.elements.filter(

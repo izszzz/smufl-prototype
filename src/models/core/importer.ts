@@ -1,3 +1,4 @@
+import * as R from "remeda";
 import Core from ".";
 
 export class Importer {
@@ -29,6 +30,15 @@ export class Importer {
     this.params = params;
   }
   import() {
-    return new Core.Score(this.params);
+    const core = new Core.Score(this.params);
+    // TODO: refactor
+    const timesignatures = core.metaevents.timesignature;
+    const lastTimesignature = R.last(timesignatures);
+    if (lastTimesignature) lastTimesignature.setEnd(core.end);
+
+    const bpms = core.metaevents.bpm;
+    const lastBpm = R.last(bpms);
+    if (lastBpm) lastBpm.setEnd(core.end);
+    return core;
   }
 }
