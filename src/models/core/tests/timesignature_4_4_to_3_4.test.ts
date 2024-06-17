@@ -12,34 +12,39 @@ describe("quarter_middle_c", async () => {
         end: 7,
       }));
     describe(".metaevents", () => {
-      describe(".events", () => {
-        test(".timesignature", () =>
-          expect(core.metaevents.timesignature).toEqual([
-            new Core.Metaevents.Map.Timesignature({
-              denominator: 4,
-              numerator: 4,
-              duration: 4,
-              start: 0,
-              end: 4,
-            }),
-            new Core.Metaevents.Map.Timesignature({
-              denominator: 4,
-              numerator: 3,
-              duration: 3,
-              start: 4,
-              end: 7,
-            }),
-          ]));
-        test(".bpm", () =>
-          expect(core.metaevents.bpm).toEqual([
-            new Core.Metaevents.Map.Bpm({
-              value: 120,
-              duration: 7,
-              start: 0,
-              end: 7,
-            }),
-          ]));
-      });
+      test(".timesignature", () =>
+        expect(core.metaevents.timesignature).toEqual([
+          new Core.Metaevents.Map.Timesignature({
+            denominator: 4,
+            numerator: 4,
+            duration: 4,
+            start: 0,
+            end: 4,
+          }),
+          new Core.Metaevents.Map.Timesignature({
+            denominator: 4,
+            numerator: 3,
+            duration: 3,
+            start: 4,
+            end: 7,
+          }),
+        ]));
+      test(".bpm", () =>
+        expect(core.metaevents.bpm).toEqual([
+          new Core.Metaevents.Map.Bpm({
+            value: 120,
+            duration: 7,
+            start: 0,
+            end: 7,
+          }),
+        ]));
+      test(".keysignature", () =>
+        expect(core.metaevents.keysignature).toEqual([
+          new Core.Metaevents.Map.Keysignature({
+            tonality: "major",
+            accidental: 0,
+          }),
+        ]));
     });
     describe(".elements", () => {
       test(".length", () => expect(core.elements).toHaveLength(7));

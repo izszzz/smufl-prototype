@@ -3,7 +3,7 @@ import * as SMUFL from ".";
 export class Timesignature extends SMUFL.Rect {
   core;
   glyphs;
-  constructor(core: InstanceType<typeof Core.Metadata.Timesignature>) {
+  constructor(core: InstanceType<typeof Core.Metaevents.Map.Timesignature>) {
     super();
     this.core = core;
     this.glyphs = [

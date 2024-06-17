@@ -14,6 +14,10 @@ export class Importer {
           name: "Timesignature",
           params: [{ denominator: 4, numerator: 4, start: 0 }],
         },
+        {
+          name: "Keysignature",
+          params: [{ tonality: "major", accidental: 0, start: 0 }],
+        },
       ];
     } else {
       if (!params.metaevents.some(({ name }) => name === "Bpm"))
@@ -25,6 +29,11 @@ export class Importer {
         params.metaevents.push({
           name: "Timesignature",
           params: [{ denominator: 4, numerator: 4, start: 0 }],
+        });
+      if (!params.metaevents.some(({ name }) => name === "Keysignature"))
+        params.metaevents.push({
+          name: "Keysignature",
+          params: [{ tonality: "major", accidental: 0, start: 0 }],
         });
     }
     this.params = params;

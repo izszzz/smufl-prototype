@@ -7,10 +7,13 @@ export class Bar extends SMUFL.Rect {
   elements;
   clef?: SMUFL.Glyph;
   timesignature?: InstanceType<typeof SMUFL.Metaevents.Map.Timesignature>;
+  keysignature?: InstanceType<typeof SMUFL.Metaevents.Map.Keysignature>;
   // TODO: アクセスするたびにGlyphGridをnewするのを直す
   get header() {
     const glyphs = [];
     if (this.clef) glyphs.push([this.clef]);
+    if (this.keysignature)
+      glyphs.push(...this.keysignature.glyphs.map((glyph) => [glyph]));
     if (this.timesignature) glyphs.push(this.timesignature.glyphs);
     return new SMUFL.GlyphGrid(glyphs);
   }
@@ -28,9 +31,21 @@ export class Bar extends SMUFL.Rect {
       core: core.sequence,
       elements: elements,
     });
-    if (core.timesignature)
+    if (
+      core.metaevents.find(
+        (metaevent) => metaevent instanceof Core.Metaevents.Map.Timesignature
+      )
+    )
       this.timesignature = new SMUFL.Metaevents.Map.Timesignature(
         core.timesignature
+      );
+    if (
+      core.metaevents.find(
+        (metaevent) => metaevent instanceof Core.Metaevents.Map.Keysignature
+      )
+    )
+      this.keysignature = new SMUFL.Metaevents.Map.Keysignature(
+        core.keysignature
       );
   }
 }

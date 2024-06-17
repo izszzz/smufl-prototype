@@ -4,6 +4,7 @@ import Core from "../models/core";
 import { midiParser } from "../parser/midi_parser";
 import { Importer } from "./importer";
 import { Midi as MidiFile } from "../models/files/midi";
+import { match } from "ts-pattern";
 
 export class MidiImporter implements Importer {
   arrayBuffer;
@@ -43,6 +44,20 @@ export class MidiImporter implements Importer {
                   params: [
                     {
                       value: Core.convertTempoToBpm(cur.event.tempo),
+                      start: acc.time,
+                    },
+                  ],
+                });
+              if (R.isNonNullish(cur.event.keySignature))
+                trackAcc.metaevents.push({
+                  name: "Keysignature",
+                  params: [
+                    {
+                      tonality: match(cur.event.keySignature.mi)
+                        .with(0, () => "major" as const)
+                        .with(1, () => "minor" as const)
+                        .exhaustive(),
+                      accidental: cur.event.keySignature.sf,
                       start: acc.time,
                     },
                   ],
@@ -164,9 +179,7 @@ interface MetaEvents {
     bb: number;
   };
   keySignature: {
-    sharp: number;
-    flat: number;
-    major: number;
-    minor: number;
+    sf: number;
+    mi: 0 | 1;
   };
 }

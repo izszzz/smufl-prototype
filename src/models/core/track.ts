@@ -31,6 +31,6 @@ export class Track extends Event implements Identifier {
       R.firstBy(this.elements, [R.prop("start"), "asc"])?.start ?? 0
     );
     this.setEnd(R.firstBy(this.elements, [R.prop("end"), "desc"])?.end ?? 0);
-    this.score.tracks = [...this.score.tracks, this];
+    this.score.tracks.push(this);
   }
 }

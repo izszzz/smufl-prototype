@@ -12,27 +12,32 @@ describe("two_tracks", async () => {
         end: 1,
       }));
     describe(".metaevents", () => {
-      describe(".events", () => {
-        test(".timesignature", () =>
-          expect(core.metaevents.timesignature).toEqual([
-            new Core.Metaevents.Map.Timesignature({
-              denominator: 4,
-              numerator: 4,
-              start: 0,
-              duration: 1,
-              end: 1,
-            }),
-          ]));
-        test(".bpm", () =>
-          expect(core.metaevents.bpm).toEqual([
-            new Core.Metaevents.Map.Bpm({
-              value: 120,
-              start: 0,
-              duration: 1,
-              end: 1,
-            }),
-          ]));
-      });
+      test(".timesignature", () =>
+        expect(core.metaevents.timesignature).toEqual([
+          new Core.Metaevents.Map.Timesignature({
+            denominator: 4,
+            numerator: 4,
+            start: 0,
+            duration: 1,
+            end: 1,
+          }),
+        ]));
+      test(".bpm", () =>
+        expect(core.metaevents.bpm).toEqual([
+          new Core.Metaevents.Map.Bpm({
+            value: 120,
+            start: 0,
+            duration: 1,
+            end: 1,
+          }),
+        ]));
+      test(".keysignature", () =>
+        expect(core.metaevents.keysignature).toEqual([
+          new Core.Metaevents.Map.Keysignature({
+            tonality: "major",
+            accidental: 0,
+          }),
+        ]));
     });
     describe(".elements", () =>
       test(".length", () => expect(core.elements).toHaveLength(2)));

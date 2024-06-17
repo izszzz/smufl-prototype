@@ -2,8 +2,8 @@ import Core from "..";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 
-describe("timesignature_3_4", async () => {
-  const core = await importCore("timesignature_3_4");
+describe("c_major", async () => {
+  const core = await importCore("c_major");
   describe("Score", () => {
     test("Event", () =>
       expect(core).toMatchObject({
@@ -16,7 +16,7 @@ describe("timesignature_3_4", async () => {
         expect(core.metaevents.timesignature).toEqual([
           new Core.Metaevents.Map.Timesignature({
             denominator: 4,
-            numerator: 3,
+            numerator: 4,
           }),
         ]));
       test(".bpm", () =>
