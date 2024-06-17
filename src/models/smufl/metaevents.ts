@@ -1,6 +1,7 @@
 import Core from "../core";
 import * as SMUFL from ".";
 import { Timesignature } from "./timesignature";
+import { Keysignature } from "./keysignature";
 
 export class Metaevents extends SMUFL.Rect {
   glyphGrid;
@@ -21,5 +22,6 @@ export class Metaevents extends SMUFL.Rect {
   }
   static Map = {
     Timesignature,
+    Keysignature,
   };
 }

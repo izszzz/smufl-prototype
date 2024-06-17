@@ -22,6 +22,19 @@ export class Bar extends Core.Event implements Identifier {
       return this.prev.timesignature;
     }
   }
+  get keysignature(): InstanceType<typeof Core.Metaevents.Map.Keysignature> {
+    const findedKeysignature = this.metaevents.find(
+      (metaevent) => metaevent instanceof Core.Metaevents.Map.Keysignature
+    );
+    if (findedKeysignature) {
+      return findedKeysignature as InstanceType<
+        typeof Core.Metaevents.Map.Keysignature
+      >;
+    } else {
+      if (!this.prev) throw new Error();
+      return this.prev.keysignature;
+    }
+  }
   private get findedIndex() {
     return this.track.bars.findIndex((bar) => bar.id === this.id);
   }

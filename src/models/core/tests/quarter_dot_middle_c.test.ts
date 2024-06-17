@@ -12,25 +12,30 @@ describe("quarter_dot_middle_c", async () => {
         end: 1.5,
       }));
     describe(".metaevents", () => {
-      describe(".events", () => {
-        test(".timesignature", () =>
-          expect(core.metaevents.timesignature).toEqual([
-            new Core.Metaevents.Map.Timesignature({
-              denominator: 4,
-              numerator: 4,
-              duration: 1.5,
-              end: 1.5,
-            }),
-          ]));
-        test(".bpm", () =>
-          expect(core.metaevents.bpm).toEqual([
-            new Core.Metaevents.Map.Bpm({
-              value: 120,
-              duration: 1.5,
-              end: 1.5,
-            }),
-          ]));
-      });
+      test(".timesignature", () =>
+        expect(core.metaevents.timesignature).toEqual([
+          new Core.Metaevents.Map.Timesignature({
+            denominator: 4,
+            numerator: 4,
+            duration: 1.5,
+            end: 1.5,
+          }),
+        ]));
+      test(".bpm", () =>
+        expect(core.metaevents.bpm).toEqual([
+          new Core.Metaevents.Map.Bpm({
+            value: 120,
+            duration: 1.5,
+            end: 1.5,
+          }),
+        ]));
+      test(".keysignature", () =>
+        expect(core.metaevents.keysignature).toEqual([
+          new Core.Metaevents.Map.Keysignature({
+            tonality: "major",
+            accidental: 0,
+          }),
+        ]));
     });
     describe(".elements", () => {
       test(".length", () => expect(core.elements).toHaveLength(1));

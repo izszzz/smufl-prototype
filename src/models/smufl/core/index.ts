@@ -32,7 +32,6 @@ declare module "../../core/track" {
     bars: Bar[];
   }
 }
-
 Core.Bar = Bar;
 Core.Rest = Rest;
 Core.MasterBar = MasterBar;

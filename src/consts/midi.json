@@ -1,12 +1,12 @@
 {
   "mthd": {
     "header": {
-      "type": {"length": 4}
+      "type": { "length": 4 }
     }
   },
   "mtrk": {
     "header": {
-      "type": {"length": 4}
+      "type": { "length": 4 }
     },
     "deltaTime": {
       "readUntil": 128
@@ -57,7 +57,7 @@
       },
       "programName": {
         "name": "programName",
-        "type": 8 
+        "type": 8
       },
       "deviceName": {
         "name": "deviceName",

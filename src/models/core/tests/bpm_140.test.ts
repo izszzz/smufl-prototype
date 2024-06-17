@@ -12,27 +12,25 @@ describe("bpm_140", async () => {
         end: 0,
       }));
     describe(".metaevents", () => {
-      describe(".events", () => {
-        test(".timesignature", () =>
-          expect(core.metaevents.timesignature).toEqual([
-            new Core.Metaevents.Map.Timesignature({
-              denominator: 4,
-              numerator: 4,
-              start: 0,
-              duration: 0,
-              end: 0,
-            }),
-          ]));
-        test(".bpm", () =>
-          expect(core.metaevents.bpm).toEqual([
-            new Core.Metaevents.Map.Bpm({
-              value: 140,
-              start: 0,
-              duration: 0,
-              end: 0,
-            }),
-          ]));
-      });
+      test(".timesignature", () =>
+        expect(core.metaevents.timesignature).toEqual([
+          new Core.Metaevents.Map.Timesignature({
+            denominator: 4,
+            numerator: 4,
+            start: 0,
+            duration: 0,
+            end: 0,
+          }),
+        ]));
+      test(".bpm", () =>
+        expect(core.metaevents.bpm).toEqual([
+          new Core.Metaevents.Map.Bpm({
+            value: 140,
+            start: 0,
+            duration: 0,
+            end: 0,
+          }),
+        ]));
     });
     describe(".elements", () =>
       test(".length", () => expect(core.elements).toHaveLength(0)));

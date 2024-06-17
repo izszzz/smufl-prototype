@@ -1,12 +1,12 @@
 import Core from ".";
 import { Bpm } from "./bpm";
+import { Keysignature } from "./keysignature";
 import { Timesignature } from "./timesignature";
 
 // TODO: defaultの値をセットする処理
 export class Metaevents<
   T extends keyof typeof Metaevents.Map = keyof typeof Metaevents.Map,
 > {
-  // events;
   constructor(
     events: {
       name: T;
@@ -16,6 +16,7 @@ export class Metaevents<
     const set = new Set<keyof typeof Metaevents.Map>();
     for (const { name } of events) set.add(name);
     for (const name of set) {
+      // FIXME:
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       this[name.toLowerCase()] = events
@@ -31,10 +32,12 @@ export class Metaevents<
   static Map = {
     Bpm,
     Timesignature,
+    Keysignature,
   };
   find(event: InstanceType<typeof Core.Event>) {
     return (
       Object.keys(Metaevents.Map)
+        // FIXME:
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         .flatMap((className) => this[className.toLowerCase()])
