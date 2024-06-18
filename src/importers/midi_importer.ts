@@ -4,7 +4,6 @@ import Core from "../models/core";
 import { midiParser } from "../parser/midi_parser";
 import { Importer } from "./importer";
 import { Midi as MidiFile } from "../models/files/midi";
-import { match } from "ts-pattern";
 
 export class MidiImporter implements Importer {
   arrayBuffer;
@@ -53,10 +52,7 @@ export class MidiImporter implements Importer {
                   name: "Keysignature",
                   params: [
                     {
-                      tonality: match(cur.event.keySignature.mi)
-                        .with(0, () => "major" as const)
-                        .with(1, () => "minor" as const)
-                        .exhaustive(),
+                      tonality: !!cur.event.keySignature.mi,
                       accidental: cur.event.keySignature.sf,
                       start: acc.time,
                     },

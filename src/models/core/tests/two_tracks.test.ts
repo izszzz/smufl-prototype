@@ -13,7 +13,7 @@ describe("two_tracks", async () => {
       }));
     describe(".metaevents", () => {
       test(".timesignature", () =>
-        expect(core.metaevents.timesignature).toEqual([
+        expect(core.metaevents.data.timesignature).toEqual([
           new Core.Metaevents.Map.Timesignature({
             denominator: 4,
             numerator: 4,
@@ -23,7 +23,7 @@ describe("two_tracks", async () => {
           }),
         ]));
       test(".bpm", () =>
-        expect(core.metaevents.bpm).toEqual([
+        expect(core.metaevents.data.bpm).toEqual([
           new Core.Metaevents.Map.Bpm({
             value: 120,
             start: 0,
@@ -32,9 +32,9 @@ describe("two_tracks", async () => {
           }),
         ]));
       test(".keysignature", () =>
-        expect(core.metaevents.keysignature).toEqual([
+        expect(core.metaevents.data.keysignature).toEqual([
           new Core.Metaevents.Map.Keysignature({
-            tonality: "major",
+            tonality: false,
             accidental: 0,
           }),
         ]));

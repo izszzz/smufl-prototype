@@ -1,3 +1,4 @@
+import * as R from "remeda";
 import { Event } from "./event";
 import { Element } from "./element";
 import { Note } from "./note";
@@ -6,18 +7,8 @@ import { Track } from "./track";
 import { Importer } from "./importer";
 import { Metaevent } from "./metaevent";
 import { Metaevents } from "./metaevents";
+import { Identifier } from "../../helpers";
 
-declare module "../core/metaevents" {
-  type ExtractArrayType<T> = T extends new (...args: unknown[]) => infer R
-    ? R[]
-    : T[];
-  type GeneratedInterface = {
-    [K in Lowercase<keyof typeof Metaevents.Map>]: ExtractArrayType<
-      InstanceType<(typeof Metaevents.Map)[Capitalize<K>]>
-    >;
-  };
-  interface Metaevents extends GeneratedInterface {}
-}
 export interface CoreConstructor {
   new (): void;
   Element: typeof Element;
@@ -30,6 +21,9 @@ export interface CoreConstructor {
   Importer: typeof Importer;
   convertTimeToSeconds(time: number, bpm: number): number;
   convertTempoToBpm(tempo: number): number;
+  createId(ids: Identifier[]): number;
+  getEventsStart(events: Event[]): number;
+  getEventsEnd(events: Event[]): number;
 }
 
 // TODO:
@@ -46,5 +40,11 @@ const CoreClass: CoreConstructor = class Core {
   static convertTempoToBpm = (tempo: number) => Math.floor(60000000 / tempo);
   static convertTimeToSeconds = (time: number, bpm: number) =>
     (60 * time) / bpm;
+  static createId = (ids: Identifier[]) =>
+    (R.firstBy(ids, [R.prop("id"), "desc"])?.id ?? 0) + 1;
+  static getEventsStart = (events: Event[]) =>
+    R.firstBy(events, [R.prop("start"), "asc"])?.start ?? 0;
+  static getEventsEnd = (events: Event[]) =>
+    R.firstBy(events, [R.prop("end"), "desc"])?.end ?? 0;
 };
 export default CoreClass;

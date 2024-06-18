@@ -13,7 +13,7 @@ describe("bpm_140", async () => {
       }));
     describe(".metaevents", () => {
       test(".timesignature", () =>
-        expect(core.metaevents.timesignature).toEqual([
+        expect(core.metaevents.data.timesignature).toEqual([
           new Core.Metaevents.Map.Timesignature({
             denominator: 4,
             numerator: 4,
@@ -23,12 +23,19 @@ describe("bpm_140", async () => {
           }),
         ]));
       test(".bpm", () =>
-        expect(core.metaevents.bpm).toEqual([
+        expect(core.metaevents.data.bpm).toEqual([
           new Core.Metaevents.Map.Bpm({
             value: 140,
             start: 0,
             duration: 0,
             end: 0,
+          }),
+        ]));
+      test(".keysignature", () =>
+        expect(core.metaevents.data.keysignature).toEqual([
+          new Core.Metaevents.Map.Keysignature({
+            tonality: false,
+            accidental: 0,
           }),
         ]));
     });

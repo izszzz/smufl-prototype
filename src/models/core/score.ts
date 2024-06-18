@@ -1,4 +1,3 @@
-import * as R from "remeda";
 import Core from ".";
 import { Event } from "./event";
 
@@ -21,6 +20,6 @@ export class Score extends Event {
     this.metaevents = new Core.Metaevents(metaevents);
     for (const track of tracks) new Core.Track({ score: this, ...track });
     this.setStart(0);
-    this.setEnd(R.firstBy(this.elements, [R.prop("end"), "desc"])?.end ?? 0);
+    this.setEnd(Core.getEventsEnd(this.tracks));
   }
 }

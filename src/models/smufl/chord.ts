@@ -19,11 +19,7 @@ export class Chord extends SMUFL.Rect {
       match(element)
         .with(
           P.instanceOf(Core.Sequence),
-          (core) =>
-            new SMUFL.Sequence({
-              core,
-              elements,
-            })
+          (core) => new SMUFL.Sequence({ core, elements })
         )
         .with(
           P.instanceOf(Core.Element),

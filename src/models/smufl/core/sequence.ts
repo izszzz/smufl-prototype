@@ -1,4 +1,3 @@
-import * as R from "remeda";
 import Core from "../../core";
 export class Sequence extends Core.Event {
   bar?;
@@ -18,9 +17,8 @@ export class Sequence extends Core.Event {
     const groupedElements = elements.reduce(
       (acc, cur) => {
         for (const [i, elements] of acc.entries()) {
-          const start =
-            R.firstBy(elements, [(e) => e.start, "asc"])?.start ?? 0;
-          const end = R.firstBy(elements, [(e) => e.end, "desc"])?.end ?? 0;
+          const start = Core.getEventsStart(elements);
+          const end = Core.getEventsEnd(elements);
           if (start <= cur.start && end > cur.start) {
             acc[i]?.push(cur);
             return acc;

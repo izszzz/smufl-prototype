@@ -31,19 +31,11 @@ export class Bar extends SMUFL.Rect {
       core: core.sequence,
       elements: elements,
     });
-    if (
-      core.metaevents.find(
-        (metaevent) => metaevent instanceof Core.Metaevents.Map.Timesignature
-      )
-    )
+    if (core.metaevents.timesignature)
       this.timesignature = new SMUFL.Metaevents.Map.Timesignature(
         core.timesignature
       );
-    if (
-      core.metaevents.find(
-        (metaevent) => metaevent instanceof Core.Metaevents.Map.Keysignature
-      )
-    )
+    if (core.metaevents.keysignature)
       this.keysignature = new SMUFL.Metaevents.Map.Keysignature(
         core.keysignature
       );

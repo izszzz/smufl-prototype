@@ -11,7 +11,7 @@ export class Importer extends Core.Importer {
 
     let start = 0;
     let end = 0;
-    for (const timesignature of core.metaevents.timesignature) {
+    for (const timesignature of core.metaevents.data.timesignature) {
       R.times(timesignature.duration / timesignature.numerator, () => {
         end += timesignature.numerator;
         const elements = core.elements.filter(

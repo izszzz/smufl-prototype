@@ -13,7 +13,7 @@ describe("quarter_middle_c", async () => {
       }));
     describe(".metaevents", () => {
       test(".timesignature", () =>
-        expect(core.metaevents.timesignature).toEqual([
+        expect(core.metaevents.data.timesignature).toEqual([
           new Core.Metaevents.Map.Timesignature({
             denominator: 4,
             numerator: 4,
@@ -22,13 +22,13 @@ describe("quarter_middle_c", async () => {
           }),
         ]));
       test(".bpm", () =>
-        expect(core.metaevents.bpm).toEqual([
+        expect(core.metaevents.data.bpm).toEqual([
           new Core.Metaevents.Map.Bpm({ value: 120, duration: 1, end: 1 }),
         ]));
       test(".keysignature", () =>
-        expect(core.metaevents.keysignature).toEqual([
+        expect(core.metaevents.data.keysignature).toEqual([
           new Core.Metaevents.Map.Keysignature({
-            tonality: "major",
+            tonality: false,
             accidental: 0,
           }),
         ]));

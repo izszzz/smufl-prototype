@@ -3,7 +3,7 @@
   "metaevents": [
     {
       "name": "Keysignature",
-      "params": [{ "tonality": "major", "accidental": 0 }]
+      "params": [{ "tonality": false, "accidental": 0 }]
     }
   ]
 }

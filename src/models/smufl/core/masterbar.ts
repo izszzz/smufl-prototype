@@ -1,5 +1,4 @@
 import { Identifier } from "../../../helpers";
-import * as R from "remeda";
 import Core from "../../core";
 
 export class MasterBar extends Core.Event implements Identifier {
@@ -19,9 +18,8 @@ export class MasterBar extends Core.Event implements Identifier {
     elements: InstanceType<typeof Core.Element>[];
   } & ConstructorParameters<typeof Core.Event>[0]) {
     super(event);
+    this.id = Core.createId(score.masterbars);
     this.score = score;
-    this.id =
-      (R.firstBy(this.score.masterbars, [R.prop("id"), "desc"])?.id ?? 0) + 1;
     this.metaevents = this.score.metaevents.find(this);
     this.bars = score.tracks.map((track) => {
       const bar = new Core.Bar({

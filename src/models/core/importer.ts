@@ -16,7 +16,7 @@ export class Importer {
         },
         {
           name: "Keysignature",
-          params: [{ tonality: "major", accidental: 0, start: 0 }],
+          params: [{ tonality: false, accidental: 0, start: 0 }],
         },
       ];
     } else {
@@ -33,7 +33,7 @@ export class Importer {
       if (!params.metaevents.some(({ name }) => name === "Keysignature"))
         params.metaevents.push({
           name: "Keysignature",
-          params: [{ tonality: "major", accidental: 0, start: 0 }],
+          params: [{ tonality: false, accidental: 0, start: 0 }],
         });
     }
     this.params = params;
@@ -41,11 +41,11 @@ export class Importer {
   import() {
     const core = new Core.Score(this.params);
     // TODO: refactor
-    const timesignatures = core.metaevents.timesignature;
+    const timesignatures = core.metaevents.data.timesignature;
     const lastTimesignature = R.last(timesignatures);
     if (lastTimesignature) lastTimesignature.setEnd(core.end);
 
-    const bpms = core.metaevents.bpm;
+    const bpms = core.metaevents.data.bpm;
     const lastBpm = R.last(bpms);
     if (lastBpm) lastBpm.setEnd(core.end);
     return core;

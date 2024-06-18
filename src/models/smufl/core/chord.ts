@@ -15,8 +15,8 @@ export class Chord extends Core.Event {
     beat: InstanceType<typeof Core.Beat>;
   }) {
     super({
-      start: R.firstBy(elements, [(e) => e.start, "asc"])?.start ?? 0,
-      end: R.firstBy(elements, [(e) => e.end, "desc"])?.end ?? 0,
+      start: Core.getEventsStart(elements),
+      end: Core.getEventsEnd(elements),
     });
     this.elements = elements;
     this.beat = beat;

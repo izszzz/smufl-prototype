@@ -1,17 +1,17 @@
 import Core from "../core";
 import * as SMUFL from "./";
 
-interface ITrack {
-  bars: SMUFL.Bar[] | [SMUFL.Bar];
-  staffLineCount: SMUFL.Metadatas["staffLines"][number];
-  core: InstanceType<typeof Core.Track>;
-}
-
-export class Track extends SMUFL.Point implements ITrack {
-  bars: ITrack["bars"];
+export class Track extends SMUFL.Point {
+  bars;
   staffLineCount: SMUFL.Metadatas["staffLines"][number] = 5;
   core;
-  constructor({ core, bars }: Omit<ITrack, "staffLineCount" | "elements">) {
+  constructor({
+    core,
+    bars,
+  }: {
+    bars: SMUFL.Bar[];
+    core: InstanceType<typeof Core.Track>;
+  }) {
     super();
     this.core = core;
     this.bars = bars;

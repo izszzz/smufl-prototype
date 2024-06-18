@@ -4,7 +4,6 @@ import Core from "./core";
 
 export abstract class Element extends SMUFL.Rect {
   accessory?: SMUFL.Accessory;
-  spacing = new SMUFL.Spacing();
   core;
   glyph?: SMUFL.Glyph;
   private get baseDuration() {

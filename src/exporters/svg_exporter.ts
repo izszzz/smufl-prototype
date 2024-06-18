@@ -80,10 +80,11 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
               (masterBar) => masterBar.core.id === bar.core.id
             )?.width ?? 0,
             (i) => {
-              const staffGlyph = SMUFL.Staff.getStaffGlyph(
-                1,
-                track.staffLineCount
-              );
+              const staffGlyph = new SMUFL.Glyph({
+                glyphName: SMUFL.getGlyphname("staves", (glyphName) =>
+                  glyphName.includes(`staff${track.staffLineCount}LinesNarrow`)
+                ),
+              });
               staffsGroup.appendChild(
                 this.createSMULFSVGElement(staffGlyph.glyphName, {
                   type: "staff",

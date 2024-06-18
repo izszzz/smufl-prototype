@@ -11,9 +11,6 @@ export class Glyph<T extends keyof SMUFL.Glyphnames = keyof SMUFL.Glyphnames>
   bBox;
   advancedWidth;
   glyphName;
-  get staffWidth(): number {
-    return SMUFL.Staff.getStaffGlyph(this.bBox.width).bBox.width;
-  }
   constructor({ glyphName, x, y }: Constructor<T>) {
     super();
     this.bBox = new SMUFL.BBox(SMUFL.getBBox(glyphName));

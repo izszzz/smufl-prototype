@@ -1,4 +1,3 @@
-import * as R from "remeda";
 import Core from "../../core";
 import { Identifier } from "../../../helpers";
 
@@ -10,26 +9,16 @@ export class Bar extends Core.Event implements Identifier {
   masterbar;
   metaevents;
   get timesignature(): InstanceType<typeof Core.Metaevents.Map.Timesignature> {
-    const findedTimesignature = this.metaevents.find(
-      (metaevent) => metaevent instanceof Core.Metaevents.Map.Timesignature
-    );
-    if (findedTimesignature) {
-      return findedTimesignature as InstanceType<
-        typeof Core.Metaevents.Map.Timesignature
-      >;
+    if (this.metaevents.timesignature) {
+      return this.metaevents.timesignature;
     } else {
       if (!this.prev) throw new Error();
       return this.prev.timesignature;
     }
   }
   get keysignature(): InstanceType<typeof Core.Metaevents.Map.Keysignature> {
-    const findedKeysignature = this.metaevents.find(
-      (metaevent) => metaevent instanceof Core.Metaevents.Map.Keysignature
-    );
-    if (findedKeysignature) {
-      return findedKeysignature as InstanceType<
-        typeof Core.Metaevents.Map.Keysignature
-      >;
+    if (this.metaevents.keysignature) {
+      return this.metaevents.keysignature;
     } else {
       if (!this.prev) throw new Error();
       return this.prev.keysignature;
@@ -55,7 +44,7 @@ export class Bar extends Core.Event implements Identifier {
     elements: InstanceType<typeof Core.Element>[];
   } & ConstructorParameters<typeof Core.Event>[0]) {
     super(event);
-    this.id = (R.firstBy(track.bars, [R.prop("id"), "desc"])?.id ?? 0) + 1;
+    this.id = Core.createId(track.bars);
     this.track = track;
     this.masterbar = masterbar;
     this.elements = elements;

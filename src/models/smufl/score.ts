@@ -1,5 +1,5 @@
 import * as R from "remeda";
-import * as SMUFL from "./";
+import * as SMUFL from ".";
 import Core from "./core";
 
 interface IScore {

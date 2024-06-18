@@ -1,4 +1,3 @@
-import * as R from "remeda";
 import Core from "../../core";
 export class Beat extends Core.Event {
   element;
@@ -12,8 +11,8 @@ export class Beat extends Core.Event {
     sequence: InstanceType<typeof Core.Sequence>;
   }) {
     super({
-      start: R.firstBy(elements, [(e) => e.start, "asc"])?.start ?? 0,
-      end: R.firstBy(elements, [(e) => e.end, "desc"])?.end ?? 0,
+      start: Core.getEventsStart(elements),
+      end: Core.getEventsEnd(elements),
     });
     this.sequence = sequence;
     this.element =
