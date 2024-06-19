@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { Soundfont2 } from "./models/files/soundfont2";
+import { Soundfont2 } from "./models/files/riff/soundfont2";
 import * as SMUFL from "./models/smufl";
 import { AudioPlayer } from "./player/audio_player";
 import SVGRenderer from "./renderer/svg_renderer";

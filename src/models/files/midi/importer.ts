@@ -1,7 +1,7 @@
 import * as R from "remeda";
-import midi from "../../../consts/midi.json";
 import Core from "../../core";
 import { Midi as MidiFile } from ".";
+import Metadata from "./metadata.json";
 
 export class Importer {
   arrayBuffer;
@@ -115,17 +115,17 @@ export class Importer {
   isMetaEvent(
     event: MidiTrackEvent<MidiEvent | MetaEvent>
   ): event is MidiTrackEvent<MetaEvent> {
-    return event.type === midi.mtrk.metaEvent.type;
+    return event.type === Metadata.mtrk.metaEvent.type;
   }
   isNoteOnEvent(
     event: MidiTrackEvent<MidiEvent | MetaEvent>
   ): event is MidiTrackEvent<MidiEvent> {
-    return event.type === midi.mtrk.midiEvents.noteOn.type;
+    return event.type === Metadata.mtrk.midiEvents.noteOn.type;
   }
   isNoteOffEvent(
     event: MidiTrackEvent<MidiEvent | MetaEvent>
   ): event is MidiTrackEvent<MidiEvent> {
-    return event.type === midi.mtrk.midiEvents.noteOff.type;
+    return event.type === Metadata.mtrk.midiEvents.noteOff.type;
   }
 }
 interface Midi {
@@ -147,9 +147,9 @@ interface MidiTrackEvent<Event extends MetaEvent | MidiEvent> {
   event: Event;
 
   type:
-    | typeof midi.mtrk.metaEvent.type
-    | typeof midi.mtrk.midiEvents.noteOn.type
-    | typeof midi.mtrk.midiEvents.noteOff.type;
+    | typeof Metadata.mtrk.metaEvent.type
+    | typeof Metadata.mtrk.midiEvents.noteOn.type
+    | typeof Metadata.mtrk.midiEvents.noteOff.type;
 }
 interface MidiEvent {
   pitch: number;

@@ -1,15 +1,15 @@
-import { SourceExporter } from "../exporters/source_exporter";
+import { SourceExporter } from "../models/browser/audio/source_exporter";
 import Core from "../models/core";
-import { Soundfont2 } from "../models/files/soundfont2";
+import { Soundfont2 } from "../models/files/riff/soundfont2";
 // TODO: https://web.dev/articles/webaudio-intro?hl=ja
 
 export class AudioPlayer {
-  ctx: AudioContext;
-  score: Core.Score;
-  soundfont2: Soundfont2;
-  volumeNode: GainNode;
+  ctx;
+  score;
+  soundfont2;
+  volumeNode;
   sourcesCollection: ReturnType<SourceExporter["export"]> = [];
-  constructor(score: Core.Score, soundfont2: Soundfont2) {
+  constructor(score: InstanceType<typeof Core.Score>, soundfont2: Soundfont2) {
     this.ctx = new AudioContext();
     this.volumeNode = this.ctx.createGain();
     this.score = score;

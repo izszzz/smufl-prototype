@@ -1,16 +1,19 @@
 import * as R from "remeda";
-import { sf2Parser } from "../../parser/sf2_parser";
+import { Parser } from "./parser";
+import { RiffChunk } from "../riff";
+import Metadata from "./metadata.json";
 // TODO:https://qiita.com/kentaro1530/items/c89fc2d6a8aedb9e3a77#sample%E3%81%AE%E8%A7%A3%E6%9E%90
 
 export class Soundfont2 {
   data: Soundfont2Data;
   constructor(arrayBuffer: ArrayBuffer) {
     this.data = R.mapToObj(
-      sf2Parser.parse(new Uint8Array(arrayBuffer)).riff,
+      Soundfont2.Parser.parse(new Uint8Array(arrayBuffer)).riff,
       // @ts-ignore
       (data) => [data.id, data]
     ) as unknown as Soundfont2Data;
   }
+  static Parser = Parser;
   getPreset(preset: number) {
     const { data, index } = this.getPresetHeader(preset);
     const presetBags = this.getPresetBags(data, index);
@@ -22,10 +25,7 @@ export class Soundfont2 {
           (presetGenerator) => {
             if (presetGenerator.genOper !== 41) return { presetGenerator };
             const { data, index } = this.getInstrumentHeader(presetGenerator);
-            const instrumentBags = this.getInstrumentBags(
-              data as Header,
-              index
-            );
+            const instrumentBags = this.getInstrumentBags(data, index);
             return {
               presetGenerator,
               instrumentHeader: data,
@@ -90,8 +90,8 @@ export class Soundfont2 {
   }
 
   getPresetHeader(preset: number) {
-    const index = this.data.phdr.data.findIndex((data) =>
-      R.equals(data.preset, preset)
+    const index = this.data.phdr.data.findIndex(
+      (data) => data.preset === preset
     );
     return { data: this.data.phdr.data[index], index };
   }
@@ -118,17 +118,11 @@ export class Soundfont2 {
     return this.data.shdr;
   }
 }
-// TODO: mergeAllした後のオブジェクト形式に変換する。チャンクごとに必須チャンクと任意チャンクがあるのでオプショナルにする
-interface Soundfont2Data {
-  ifil: RiffChunk<"ifil", string>; // TODO: version表記の調整
-  isng: RiffChunk<"isng", string>;
-  INAM: RiffChunk<"INAM", string>;
-  ICRD: RiffChunk<"ICRD", string>;
-  IENG: RiffChunk<"IENG", string>;
-  IPRD: RiffChunk<"IPRD", string>;
-  ICOP: RiffChunk<"ICOP", string>;
-  ICMT: RiffChunk<"ICMT", string>;
-  ISFT: RiffChunk<"ISFT", string>;
+type Soundfont2Data = MetadataChunks & DataChunks;
+type MetadataChunks = {
+  [P in Metadata["metadataId"][number]]: RiffChunk<P, string>;
+};
+type DataChunks = {
   smpl: RiffChunk<"smpl", Buffer>;
   phdr: RiffChunk<"phdr", PresetHeader[]>;
   pbag: RiffChunk<"pbag", Bag[]>;
@@ -139,37 +133,7 @@ interface Soundfont2Data {
   imod: RiffChunk<"imod", Modulator[]>;
   igen: RiffChunk<"igen", Generator[]>;
   shdr: RiffChunk<"shdr", SampleHeader[]>;
-}
-interface RiffChunk<
-  Id extends RiffId | SoundFont2MetadataId | SoundFont2Id,
-  Data,
-> {
-  id: Id;
-  length: number;
-  data: Data;
-}
-type RiffId = "RIFF" | "LIST";
-type SoundFont2MetadataId =
-  | "ifil"
-  | "isng"
-  | "INAM"
-  | "ICRD"
-  | "IENG"
-  | "IPRD"
-  | "ICOP"
-  | "ICMT"
-  | "ISFT";
-type SoundFont2Id =
-  | "smpl"
-  | "phdr"
-  | "pbag"
-  | "pmod"
-  | "pgen"
-  | "inst"
-  | "ibag"
-  | "imod"
-  | "igen"
-  | "shdr";
+};
 
 interface Header {
   name: string;

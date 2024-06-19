@@ -1,7 +1,7 @@
-import Core from "../models/core";
+import Core from "../../core";
 import * as R from "remeda";
-import * as SMUFL from "../models/smufl";
-import "../extensions/svgsvgelement/create_svg_element.extensions";
+import * as SMUFL from "../../smufl";
+import "../../../extensions/svgsvgelement/create_svg_element.extensions";
 
 type Options = ConstructorParameters<typeof SMUFL.Exporter>[1] & {
   fontSizeRatio: number;

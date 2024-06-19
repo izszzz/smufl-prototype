@@ -1,7 +1,7 @@
 import { Parser as BinaryParser } from "binary-parser";
-import midi from "../../../consts/midi.json";
+import Metadata from "./metadata.json";
 
-const { metaEvents } = midi.mtrk;
+const { metaEvents } = Metadata.mtrk;
 const metaEventChoice = (
   metaEvent: keyof typeof metaEvents,
   parser: (
@@ -55,7 +55,7 @@ const midiTrackEventParser = new BinaryParser()
   .buffer("deltaTime", {
     readUntil: (item) => {
       const readUntil = prevReadUntil;
-      prevReadUntil = !(item & midi.mtrk.deltaTime.readUntil);
+      prevReadUntil = !(item & Metadata.mtrk.deltaTime.readUntil);
       return readUntil;
     },
     // TODO: 繰り返し文に直す
@@ -72,20 +72,20 @@ const midiTrackEventParser = new BinaryParser()
     },
   });
 const midiHeaderChunk = new BinaryParser()
-  .string("type", { length: midi.mthd.header.type.length })
+  .string("type", { length: Metadata.mthd.header.type.length })
   .uint32("length")
   .uint16("format")
   .uint16("trackCount")
   .uint16("resolution");
 const midiTrackChunk = new BinaryParser()
   .string("type", {
-    length: midi.mtrk.header.type.length,
+    length: Metadata.mtrk.header.type.length,
   })
   .uint32("length")
   .array("events", {
     type: midiTrackEventParser,
     readUntil: (item) =>
-      item?.event.type === midi.mtrk.metaEvents.endOfTrack.type,
+      item?.event.type === Metadata.mtrk.metaEvents.endOfTrack.type,
   });
 export const Parser = new BinaryParser()
   .useContextVars()
