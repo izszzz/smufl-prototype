@@ -1,19 +1,23 @@
-import { Parser } from "binary-parser";
-import midi from "../consts/midi.json";
+import { Parser as BinaryParser } from "binary-parser";
+import midi from "../../../consts/midi.json";
 
 const { metaEvents } = midi.mtrk;
 const metaEventChoice = (
   metaEvent: keyof typeof metaEvents,
-  parser: (parser: Parser, name: string, length: { length: string }) => Parser
+  parser: (
+    parser: BinaryParser,
+    name: string,
+    length: { length: string }
+  ) => BinaryParser
 ) => ({
   [metaEvents[metaEvent].type]: parser(
-    new Parser(),
+    new BinaryParser(),
     metaEvents[metaEvent].name,
     { length: "length" }
   ),
 });
-const midiEventParser = new Parser().uint8("pitch").uint8("velocity");
-const metaEventParser = new Parser()
+const midiEventParser = new BinaryParser().uint8("pitch").uint8("velocity");
+const metaEventParser = new BinaryParser()
   .uint8("type")
   .uint8("length")
   .choice({
@@ -29,7 +33,7 @@ const metaEventParser = new Parser()
       ...metaEventChoice("tempo", (p, n, l) => p.bit24(n, l)),
       ...metaEventChoice("timeSignature", (p, n) =>
         p.nest(n, {
-          type: new Parser()
+          type: new BinaryParser()
             .uint8("numerator")
             .uint8("denominator", { formatter: (item) => item ** 2 })
             .uint8("clock")
@@ -38,16 +42,16 @@ const metaEventParser = new Parser()
       ),
       ...metaEventChoice("keySignature", (p, n) =>
         p.nest(n, {
-          type: new Parser().int8("sf").uint8("mi"),
+          type: new BinaryParser().int8("sf").uint8("mi"),
         })
       ),
     },
-    defaultChoice: new Parser().buffer("buffer", {
+    defaultChoice: new BinaryParser().buffer("buffer", {
       length: "length",
     }),
   });
 let prevReadUntil = false;
-const midiTrackEventParser = new Parser()
+const midiTrackEventParser = new BinaryParser()
   .buffer("deltaTime", {
     readUntil: (item) => {
       const readUntil = prevReadUntil;
@@ -67,13 +71,13 @@ const midiTrackEventParser = new Parser()
       15: metaEventParser,
     },
   });
-const midiHeaderChunk = new Parser()
+const midiHeaderChunk = new BinaryParser()
   .string("type", { length: midi.mthd.header.type.length })
   .uint32("length")
   .uint16("format")
   .uint16("trackCount")
   .uint16("resolution");
-const midiTrackChunk = new Parser()
+const midiTrackChunk = new BinaryParser()
   .string("type", {
     length: midi.mtrk.header.type.length,
   })
@@ -83,7 +87,7 @@ const midiTrackChunk = new Parser()
     readUntil: (item) =>
       item?.event.type === midi.mtrk.metaEvents.endOfTrack.type,
   });
-export const midiParser = new Parser()
+export const Parser = new BinaryParser()
   .useContextVars()
   .nest("mthd", { type: midiHeaderChunk })
   .array("mtrks", { type: midiTrackChunk, length: "mthd.trackCount" });

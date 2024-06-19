@@ -50,6 +50,7 @@ describe("quarter_dot_middle_c", async () => {
       describe("[0]", () => {
         const element = smufl.elements[0];
         test("instanceof", () => expect(element).instanceOf(SMUFL.Note));
+        test(".dot", () => expect(element?.dot).toEqual(1));
         describe(".glyph", () => {
           test(".glyphName", () =>
             expect(element?.glyph?.glyphName).toEqual("noteQuarterUp"));

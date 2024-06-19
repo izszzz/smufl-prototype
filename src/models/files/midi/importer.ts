@@ -1,11 +1,9 @@
 import * as R from "remeda";
-import midi from "../consts/midi.json";
-import Core from "../models/core";
-import { midiParser } from "../parser/midi_parser";
-import { Importer } from "./importer";
-import { Midi as MidiFile } from "../models/files/midi";
+import midi from "../../../consts/midi.json";
+import Core from "../../core";
+import { Midi as MidiFile } from ".";
 
-export class MidiImporter implements Importer {
+export class Importer {
   arrayBuffer;
   constructor(arrayBuffer: ArrayBuffer) {
     this.arrayBuffer = arrayBuffer;
@@ -14,7 +12,7 @@ export class MidiImporter implements Importer {
     return this.convertScore(this.parseArrayBuffer(this.arrayBuffer));
   }
   parseArrayBuffer(arrayBuffer: ArrayBuffer): Midi {
-    return midiParser.parse(new Uint8Array(arrayBuffer));
+    return MidiFile.Parser.parse(new Uint8Array(arrayBuffer));
   }
   convertScore(data: Midi) {
     console.log({ midi: data });

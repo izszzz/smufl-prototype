@@ -1,10 +1,10 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import { MidiImporter } from "./importers/midi_importer";
 import { Soundfont2 } from "./models/files/soundfont2";
 import * as SMUFL from "./models/smufl";
 import { AudioPlayer } from "./player/audio_player";
 import SVGRenderer from "./renderer/svg_renderer";
 import Core from "./models/core";
+import { Midi } from "./models/files/midi";
 
 function App() {
   const [fontSize, setFontSize] = useState(30);
@@ -41,7 +41,7 @@ function App() {
         const arrayBuffer = e.target?.result as ArrayBuffer;
 
         if (file.type === "audio/mid")
-          score = new MidiImporter(arrayBuffer).import();
+          score = new Midi.Importer(arrayBuffer).import();
         if (file.type === "application/json")
           score = new Core.Importer(JSON.parse(reader.result)).import();
         if (ref.current) {

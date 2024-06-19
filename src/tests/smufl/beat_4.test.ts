@@ -51,6 +51,7 @@ describe("beat_4", async () => {
     describe("[0]", () => {
       const element = smufl.elements[0];
       test("instanceof", () => expect(element).instanceOf(SMUFL.Note));
+      test(".dot", () => expect(element?.dot).toEqual(0));
       describe(".glyph", () => {
         test(".glyphName", () =>
           expect(element?.glyph?.glyphName).toEqual("noteQuarterUp"));
@@ -59,6 +60,7 @@ describe("beat_4", async () => {
     describe("[1]", () => {
       const element = smufl.elements[1];
       test("instanceof", () => expect(element).instanceOf(SMUFL.Note));
+      test(".dot", () => expect(element?.dot).toEqual(0));
       describe(".glyph", () => {
         test(".glyphName", () =>
           expect(element?.glyph?.glyphName).toEqual("noteQuarterUp"));
@@ -67,6 +69,7 @@ describe("beat_4", async () => {
     describe("[2]", () => {
       const element = smufl.elements[2];
       test("instanceof", () => expect(element).instanceOf(SMUFL.Note));
+      test(".dot", () => expect(element?.dot).toEqual(0));
       describe(".glyph", () => {
         test(".glyphName", () =>
           expect(element?.glyph?.glyphName).toEqual("noteQuarterUp"));
@@ -75,6 +78,7 @@ describe("beat_4", async () => {
     describe("[3]", () => {
       const element = smufl.elements[3];
       test("instanceof", () => expect(element).instanceOf(SMUFL.Note));
+      test(".dot", () => expect(element?.dot).toEqual(0));
       describe(".glyph", () => {
         test(".glyphName", () =>
           expect(element?.glyph?.glyphName).toEqual("noteQuarterUp"));

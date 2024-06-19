@@ -1,11 +1,11 @@
 import path from "path";
 import fs from "fs";
-import { MidiImporter } from "./midi_importer";
 import { expect, test } from "vitest";
-import { importCore } from "../tests/core";
+import { importCore } from "../..";
+import { Midi } from "../../../models/files/midi";
 
 const importMidi = (fileName: string) =>
-  new MidiImporter(
+  new Midi.Importer(
     fs
       .readFileSync(path.join("src", "fixtures", "midi", `${fileName}.mid`))
       .toArrayBuffer()

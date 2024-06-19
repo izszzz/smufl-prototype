@@ -1,14 +1,12 @@
 import Core from "../models/core";
 import * as R from "remeda";
 import * as SMUFL from "../models/smufl";
-import { Exporter } from "./exporter";
-import { Exporter } from "../models/smufl/exporter";
 import "../extensions/svgsvgelement/create_svg_element.extensions";
 
-type Options = ConstructorParameters<typeof Exporter>[1] & {
+type Options = ConstructorParameters<typeof SMUFL.Exporter>[1] & {
   fontSizeRatio: number;
 };
-export class SVGExporter implements Exporter<SVGSVGElement> {
+export class SVGExporter {
   score;
   svg;
   options;
@@ -18,7 +16,7 @@ export class SVGExporter implements Exporter<SVGSVGElement> {
     this.options = options;
   }
   export() {
-    const smufl = new Exporter(this.score, this.options).export();
+    const smufl = new SMUFL.Exporter(this.score, this.options).export();
     console.log({ smufl });
     const root = this.createSVGElement("g", { y: 10 });
     smufl.rows.forEach((row) => {

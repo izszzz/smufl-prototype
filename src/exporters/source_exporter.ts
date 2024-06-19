@@ -1,18 +1,9 @@
 import * as R from "remeda";
 import Core from "../models/core";
 import { Soundfont2 } from "../models/files/soundfont2";
-import { Exporter } from "./exporter";
 import "../extensions/int16array/to_float32array.extensions";
 
-export class SourceExporter
-  implements
-    Exporter<
-      {
-        sounds: AudioBufferSourceNode[];
-        track: InstanceType<typeof Core.Track>;
-      }[]
-    >
-{
+export class SourceExporter {
   score;
   sf2;
   ctx;

@@ -49,6 +49,7 @@ describe("quarter_middle_c", async () => {
       test(".length", () => expect(smufl.elements).toHaveLength(2));
       describe("[0]", () => {
         const element = smufl.elements[0];
+        test(".dot", () => expect(element?.dot).toEqual(0));
         test("instanceof", () => expect(element).instanceOf(SMUFL.Note));
         describe(".glyph", () => {
           test(".glyphName", () =>
@@ -57,6 +58,7 @@ describe("quarter_middle_c", async () => {
       });
       describe("[1]", () => {
         const element = smufl.elements[1];
+        test(".dot", () => expect(element?.dot).toEqual(1));
         test("instanceof", () => expect(element).instanceOf(SMUFL.Rest));
         describe(".glyph", () => {
           test(".glyphName", () =>

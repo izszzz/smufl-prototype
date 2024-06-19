@@ -1,5 +1,4 @@
-import { Identifier } from "../../../helpers";
-import Core from "../../core";
+import Core, { Identifier } from "../../core";
 
 export class MasterBar extends Core.Event implements Identifier {
   id: Identifier["id"];

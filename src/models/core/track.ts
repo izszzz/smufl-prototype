@@ -1,5 +1,4 @@
-import Core from ".";
-import { Identifier } from "../../helpers";
+import Core, { Identifier } from ".";
 import { Event } from "./event";
 
 export class Track extends Event implements Identifier {

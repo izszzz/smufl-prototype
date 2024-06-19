@@ -1,6 +1,5 @@
-import Core from ".";
+import Core, { Identifier } from ".";
 import { Event } from "./event";
-import { Identifier } from "../../helpers";
 
 export abstract class Element extends Event implements Identifier {
   id: Identifier["id"];

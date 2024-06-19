@@ -7,7 +7,6 @@ import { Track } from "./track";
 import { Importer } from "./importer";
 import { Metaevent } from "./metaevent";
 import { Metaevents } from "./metaevents";
-import { Identifier } from "../../helpers";
 
 export interface CoreConstructor {
   new (): void;
@@ -24,6 +23,9 @@ export interface CoreConstructor {
   createId(ids: Identifier[]): number;
   getEventsStart(events: Event[]): number;
   getEventsEnd(events: Event[]): number;
+}
+export interface Identifier {
+  readonly id: number;
 }
 
 // TODO:

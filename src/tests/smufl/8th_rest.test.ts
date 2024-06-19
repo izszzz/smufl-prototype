@@ -2,8 +2,8 @@ import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 import * as SMUFL from "../../models/smufl";
 
-describe("8th_middle_c", async () => {
-  const core = await importCore("8th_middle_c");
+describe("8th_rest", async () => {
+  const core = await importCore("8th_rest");
   const smufl = new SMUFL.Exporter(core).export();
   describe("Score", () => {
     test(".core", () => expect(smufl.core).toEqual(core));
@@ -46,24 +46,33 @@ describe("8th_middle_c", async () => {
       });
     });
     describe(".elements", () => {
-      test(".length", () => expect(smufl.elements).toHaveLength(2));
+      test(".length", () => expect(smufl.elements).toHaveLength(3));
       describe("[0]", () => {
         const element = smufl.elements[0];
         test("instanceof", () => expect(element).instanceOf(SMUFL.Note));
-        test(".dot", () => expect(element?.dot).toEqual(0));
         describe(".glyph", () => {
           test(".glyphName", () =>
             expect(element?.glyph?.glyphName).toEqual("note8thUp"));
         });
+        test(".fraction", () => expect(element?.fraction).toEqual(8));
       });
       describe("[1]", () => {
         const element = smufl.elements[1];
         test("instanceof", () => expect(element).instanceOf(SMUFL.Rest));
-        test(".dot", () => expect(element?.dot).toEqual(2));
+        describe(".glyph", () => {
+          test(".glyphName", () =>
+            expect(element?.glyph?.glyphName).toEqual("rest8th"));
+        });
+        test(".fraction", () => expect(element?.fraction).toEqual(8));
+      });
+      describe("[2]", () => {
+        const element = smufl.elements[2];
+        test("instanceof", () => expect(element).instanceOf(SMUFL.Rest));
         describe(".glyph", () => {
           test(".glyphName", () =>
             expect(element?.glyph?.glyphName).toEqual("restHalf"));
         });
+        test(".fraction", () => expect(element?.fraction).toEqual(2));
       });
     });
   });

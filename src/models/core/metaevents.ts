@@ -4,7 +4,6 @@ import { Bpm } from "./bpm";
 import { Keysignature } from "./keysignature";
 import { Timesignature } from "./timesignature";
 
-// TODO: defaultの値をセットする処理
 export class Metaevents<
   T extends keyof typeof Metaevents.Map = keyof typeof Metaevents.Map,
 > {
