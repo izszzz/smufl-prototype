@@ -1,9 +1,9 @@
-import Core from "..";
+import Core from "../../models/core";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 
-describe("bpm_120", async () => {
-  const core = await importCore("bpm_120");
+describe("c_major", async () => {
+  const core = await importCore("c_major");
   describe("Score", () => {
     test("Event", () =>
       expect(core).toMatchObject({

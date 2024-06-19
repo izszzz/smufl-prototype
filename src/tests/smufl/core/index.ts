@@ -1,5 +1,5 @@
 import path from "path";
-import Core from "..";
+import Core from "../../../models/smufl/core";
 
 export const importCore = async (fileName: string) =>
   new Core.Importer(

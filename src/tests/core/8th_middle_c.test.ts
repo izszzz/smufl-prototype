@@ -1,4 +1,4 @@
-import Core from "..";
+import Core from "../../models/core";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 
@@ -16,7 +16,6 @@ describe("8th_middle_c", async () => {
         expect(core.metaevents.data.timesignature).toEqual([
           new Core.Metaevents.Map.Timesignature({
             denominator: 4,
-
             numerator: 4,
             duration: 0.5,
             end: 0.5,

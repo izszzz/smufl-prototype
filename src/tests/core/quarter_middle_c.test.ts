@@ -1,15 +1,15 @@
-import Core from "..";
+import Core from "../../models/core";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 
-describe("quarter_dot_middle_c", async () => {
-  const core = await importCore("quarter_dot_middle_c");
+describe("quarter_middle_c", async () => {
+  const core = await importCore("quarter_middle_c");
   describe("Score", () => {
     test("Event", () =>
       expect(core).toMatchObject({
         start: 0,
-        duration: 1.5,
-        end: 1.5,
+        duration: 1,
+        end: 1,
       }));
     describe(".metaevents", () => {
       test(".timesignature", () =>
@@ -17,17 +17,13 @@ describe("quarter_dot_middle_c", async () => {
           new Core.Metaevents.Map.Timesignature({
             denominator: 4,
             numerator: 4,
-            duration: 1.5,
-            end: 1.5,
+            duration: 1,
+            end: 1,
           }),
         ]));
       test(".bpm", () =>
         expect(core.metaevents.data.bpm).toEqual([
-          new Core.Metaevents.Map.Bpm({
-            value: 120,
-            duration: 1.5,
-            end: 1.5,
-          }),
+          new Core.Metaevents.Map.Bpm({ value: 120, duration: 1, end: 1 }),
         ]));
       test(".keysignature", () =>
         expect(core.metaevents.data.keysignature).toEqual([
@@ -44,8 +40,8 @@ describe("quarter_dot_middle_c", async () => {
         test("extends Event", () =>
           expect(core.elements[0]).toMatchObject({
             start: 0,
-            duration: 1.5,
-            end: 1.5,
+            duration: 1,
+            end: 1,
           }));
       });
     });
@@ -68,8 +64,8 @@ describe("quarter_dot_middle_c", async () => {
         test("extends Event", () =>
           expect(track0).toMatchObject({
             start: 0,
-            duration: 1.5,
-            end: 1.5,
+            duration: 1,
+            end: 1,
           }));
       });
     });

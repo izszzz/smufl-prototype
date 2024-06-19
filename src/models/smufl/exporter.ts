@@ -1,13 +1,12 @@
 import * as R from "remeda";
-import * as SMUFL from "../models/smufl";
-import Core from "../models/smufl/core";
-import { Exporter } from "./exporter";
+import * as SMUFL from ".";
+import Core from "./core";
 
 interface Options {
   clientWidth: number;
   type: SMUFL.Score["type"];
 }
-export class SMUFLExporter implements Exporter<SMUFL.Score> {
+export class Exporter {
   score;
   options;
   constructor(

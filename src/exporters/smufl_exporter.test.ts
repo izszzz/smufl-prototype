@@ -1,11 +1,11 @@
 import * as SMUFL from "../models/smufl";
 import { describe, expect, test } from "vitest";
-import { SMUFLExporter } from "./smufl_exporter";
-import { importCore } from "../models/core/tests";
+import { Exporter } from "../models/smufl/exporter";
+import { importCore } from "../tests/core";
 import Core from "../models/smufl/core";
 
 const exportSMUFL = async (fileName: string) =>
-  new SMUFLExporter(await importCore(fileName)).export();
+  new Exporter(await importCore(fileName)).export();
 
 describe("Core", () => {
   describe("Sequence", () => {

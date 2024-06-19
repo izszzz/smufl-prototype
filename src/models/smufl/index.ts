@@ -22,6 +22,7 @@ export * from "./rest";
 export * from "./sequence";
 export * from "./beat";
 export * from "./chord";
+export * from "./exporter";
 export { Metadatas, Ranges, Glyphnames, BravuraMetadata };
 
 export const getGlyphname = (

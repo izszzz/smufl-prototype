@@ -1,9 +1,9 @@
-import Core from "..";
+import Core from "../../../models/smufl/core";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 
-describe("8th_middle_c", async () => {
-  const core = await importCore("8th_middle_c");
+describe("quarter_dot_middle_c", async () => {
+  const core = await importCore("quarter_dot_middle_c");
   describe("Score", () => {
     const { masterbars, tracks } = core;
     const masterbar0 = masterbars[0];
@@ -46,8 +46,8 @@ describe("8th_middle_c", async () => {
         test("extends Event", () =>
           expect(element0).toMatchObject({
             start: 0,
-            duration: 0.5,
-            end: 0.5,
+            duration: 1.5,
+            end: 1.5,
           }));
       });
       describe("[1]", () => {
@@ -56,8 +56,8 @@ describe("8th_middle_c", async () => {
         test("instanceof", () => expect(element1).toBeInstanceOf(Core.Rest));
         test("extends Event", () =>
           expect(element1).toMatchObject({
-            start: 0.5,
-            duration: 3.5,
+            start: 1.5,
+            duration: 2.5,
             end: 4,
           }));
       });

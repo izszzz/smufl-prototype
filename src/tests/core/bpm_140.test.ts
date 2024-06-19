@@ -1,9 +1,9 @@
-import Core from "..";
+import Core from "../../models/core";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 
-describe("c_minor", async () => {
-  const core = await importCore("c_minor");
+describe("bpm_140", async () => {
+  const core = await importCore("bpm_140");
   describe("Score", () => {
     test("Event", () =>
       expect(core).toMatchObject({
@@ -17,17 +17,25 @@ describe("c_minor", async () => {
           new Core.Metaevents.Map.Timesignature({
             denominator: 4,
             numerator: 4,
+            start: 0,
+            duration: 0,
+            end: 0,
           }),
         ]));
       test(".bpm", () =>
         expect(core.metaevents.data.bpm).toEqual([
-          new Core.Metaevents.Map.Bpm({ value: 120 }),
+          new Core.Metaevents.Map.Bpm({
+            value: 140,
+            start: 0,
+            duration: 0,
+            end: 0,
+          }),
         ]));
       test(".keysignature", () =>
         expect(core.metaevents.data.keysignature).toEqual([
           new Core.Metaevents.Map.Keysignature({
-            tonality: true,
-            accidental: -3,
+            tonality: false,
+            accidental: 0,
           }),
         ]));
     });

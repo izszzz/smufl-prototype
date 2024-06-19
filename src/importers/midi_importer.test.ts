@@ -2,7 +2,7 @@ import path from "path";
 import fs from "fs";
 import { MidiImporter } from "./midi_importer";
 import { expect, test } from "vitest";
-import { importCore } from "../models/core/tests";
+import { importCore } from "../tests/core";
 
 const importMidi = (fileName: string) =>
   new MidiImporter(
