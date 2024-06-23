@@ -1,7 +1,7 @@
-import Metadata from "../consts/metadata.json";
-import Core from "../models/core";
-import * as SMUFL from "../models/smufl";
-import { SVGExporter } from "../models/browser/svg/svg_exporter";
+import Metadata from "../../../consts/metadata.json";
+import Core from "../../core";
+import * as SMUFL from "../../smufl";
+import { SVGExporter } from "./svg_exporter";
 interface SVGRendererOptions {
   layoutType: SMUFL.Score["type"];
   fontSize: number;

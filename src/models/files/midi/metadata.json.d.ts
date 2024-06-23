@@ -1,4 +1,5 @@
 interface Metadata {
+  id: ['MThd', 'MTrk'],
   mthd: {header: {type: {length: 4}}},
   mtrk: {
     header: {type: {length: 4}},

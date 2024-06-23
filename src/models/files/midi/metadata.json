@@ -1,4 +1,5 @@
 {
+  "id": ["MThd", "MTrk"],
   "mthd": {
     "header": {
       "type": { "length": 4 }

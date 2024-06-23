@@ -2,6 +2,7 @@ import * as R from "remeda";
 import Core from "../../core";
 import { Soundfont2 } from "../../files/riff/soundfont2";
 import "../../../extensions/int16array/to_float32array.extensions";
+// Reference https://github.com/gree/sf2synth.js/blob/master/src/sound_font_synth.js
 
 export class SourceExporter {
   score;
@@ -19,6 +20,7 @@ export class SourceExporter {
   export() {
     return this.score.tracks.map((track) => {
       const preset = this.sf2.getPreset(track.preset);
+      console.log(preset);
       const sounds = R.pipe(
         preset.presetBags,
         R.map((pbag) =>
@@ -30,15 +32,15 @@ export class SourceExporter {
                 const buffer = this.ctx.createBuffer(
                   1,
                   float32.length,
-                  igen.sampleHeader.data.sampleRate
+                  igen.sampleHeader.sampleRate
                 );
                 buffer.getChannelData(0).set(float32);
-                return { buffer, sampleHeader: igen.sampleHeader.data };
+                return { buffer, sampleHeader: igen.sampleHeader };
               })
             )
           )
         ),
-        R.flattenDeep(),
+        R.flat(3),
         R.compact
       );
       return {

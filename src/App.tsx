@@ -1,10 +1,11 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { Soundfont2 } from "./models/files/riff/soundfont2";
 import * as SMUFL from "./models/smufl";
-import { AudioPlayer } from "./player/audio_player";
-import SVGRenderer from "./renderer/svg_renderer";
+import { AudioPlayer } from "./models/browser/audio/audio_player";
+import SVGRenderer from "./models/browser/svg/svg_renderer";
 import Core from "./models/core";
 import { Midi } from "./models/files/midi";
+import { Riff } from "./models/files/riff";
 
 function App() {
   const [fontSize, setFontSize] = useState(30);
@@ -17,6 +18,7 @@ function App() {
 
   const ref = useRef(null);
 
+  console.log(soundfont2);
   useEffect(() => {
     (async () => {
       const buffer = await fetch("/A320U.sf2").then((res) => res.arrayBuffer());

@@ -1,176 +1,70 @@
-import * as R from "remeda";
-import { Parser } from "./parser";
-import { RiffChunk } from "../riff";
+import { Riff } from "..";
+import { Instrument } from "./instrument";
 import Metadata from "./metadata.json";
-// TODO:https://qiita.com/kentaro1530/items/c89fc2d6a8aedb9e3a77#sample%E3%81%AE%E8%A7%A3%E6%9E%90
+import {
+  bagParser,
+  generatorParser,
+  headerParser,
+  instrumentParser,
+  modulatorParser,
+  sampleHeaderParser,
+} from "./parser";
+import { Preset } from "./preset";
+import { Sample } from "./sample";
+// Reference: https://github.com/gree/sf2synth.js/blob/master/src/sf2.js
 
-export class Soundfont2 {
-  data: Soundfont2Data;
+export class Soundfont2 extends Riff {
+  phdr;
+  pbag;
+  pmod;
+  pgen;
+  inst;
+  ibag;
+  imod;
+  igen;
+  shdr;
+  smpl;
   constructor(arrayBuffer: ArrayBuffer) {
-    this.data = R.mapToObj(
-      Soundfont2.Parser.parse(new Uint8Array(arrayBuffer)).riff,
-      // @ts-ignore
-      (data) => [data.id, data]
-    ) as unknown as Soundfont2Data;
+    super(arrayBuffer);
+    let chunk;
+    chunk = this.getChunk(Metadata.id[0]);
+    this.phdr = headerParser(chunk.length).parse(chunk.data)
+      .data as InstanceType<typeof Preset.Header>[];
+    this.pbag = this.parseBag(Metadata.id[1]).data as InstanceType<
+      typeof Preset.Bag
+    >[];
+    this.pmod = this.parseModulator(Metadata.id[2])
+      .data as ConstructorParameters<typeof Preset.Modulator>[0][];
+    this.pgen = this.parseGenerator(Metadata.id[3])
+      .data as ConstructorParameters<typeof Preset.Generator>[0][];
+    chunk = this.getChunk(Metadata.id[4]);
+    this.inst = instrumentParser(chunk.length).parse(chunk.data)
+      .data as InstanceType<typeof Instrument.Header>[];
+    this.ibag = this.parseBag(Metadata.id[5]).data as InstanceType<
+      typeof Instrument.Bag
+    >[];
+    this.imod = this.parseModulator(Metadata.id[6])
+      .data as ConstructorParameters<typeof Instrument.Modulator>[0][];
+    this.igen = this.parseGenerator(Metadata.id[7])
+      .data as ConstructorParameters<typeof Instrument.Generator>[0][];
+    chunk = this.getChunk(Metadata.id[8]);
+    this.shdr = sampleHeaderParser(chunk.length).parse(chunk.data)
+      .data as InstanceType<typeof Sample.Header>[];
+    this.smpl = this.getChunk(Metadata.id[9]).data;
   }
-  static Parser = Parser;
-  getPreset(preset: number) {
-    const { data, index } = this.getPresetHeader(preset);
-    const presetBags = this.getPresetBags(data, index);
-    return {
-      presetHeader: data,
-      presetBags: presetBags.map(({ data, index }) => ({
-        presetBag: data,
-        presetGenerators: this.getPresetGenerators(data, index).map(
-          (presetGenerator) => {
-            if (presetGenerator.genOper !== 41) return { presetGenerator };
-            const { data, index } = this.getInstrumentHeader(presetGenerator);
-            const instrumentBags = this.getInstrumentBags(data, index);
-            return {
-              presetGenerator,
-              instrumentHeader: data,
-              instrumentBags: instrumentBags.map(({ data, index }) => ({
-                instrumentBag: data,
-                instrumentGenerators: this.getInstrumentGenerators(
-                  data,
-                  index
-                ).map((instrumentGenerator) => {
-                  if (instrumentGenerator.genOper !== 53)
-                    return { instrumentGenerator };
-                  const sampleHeader =
-                    this.getSampleHeader(instrumentGenerator);
-                  return {
-                    instrumentGenerator,
-                    sampleHeader,
-                    sample: this.getSample(sampleHeader),
-                  };
-                }),
-              })),
-            };
-          }
-        ),
-      })),
-    };
+  getPreset() {
+    return new Preset({ preset: 117, soundfont2: this });
   }
-
-  getSample(sampleHeader: ReturnType<typeof this.getSampleHeader>) {
-    return new Int16Array(
-      new Uint8Array(
-        this.data.smpl.data.subarray(
-          2 * sampleHeader.data.start,
-          2 * sampleHeader.data.end
-        )
-      ).buffer
-    );
+  private parseBag(id: Metadata["bag"][number]) {
+    const chunk = this.getChunk(id);
+    return bagParser(chunk.length).parse(chunk.data);
   }
-
-  getPresetBags = (...params: [Header, number]) =>
-    this.getBags("preset", ...params);
-  getInstrumentBags = (...params: [Header, number]) =>
-    this.getBags("instrument", ...params);
-  getBags(type: "instrument" | "preset", header: Header, headerIndex: number) {
-    const nextHeader =
-      this.data[type === "preset" ? "phdr" : "inst"].data[headerIndex + 1];
-    return this.data[type === "preset" ? "pbag" : "ibag"].data
-      .slice(header.bagIndex, nextHeader.bagIndex)
-      .map((bag, i) => ({ data: bag, index: header.bagIndex + i }));
+  private parseModulator(id: Metadata["mod"][number]) {
+    const chunk = this.getChunk(id);
+    return modulatorParser(chunk.length).parse(chunk.data);
   }
-
-  getPresetGenerators = (...params: [Bag, number]) =>
-    this.getGenerators("preset", ...params);
-  getInstrumentGenerators = (...params: [Bag, number]) =>
-    this.getGenerators("instrument", ...params);
-  getGenerators(type: "instrument" | "preset", bag: Bag, bagIndex: number) {
-    const nextBag =
-      this.data[type === "preset" ? "pbag" : "ibag"].data[bagIndex + 1];
-    return this.data[type === "preset" ? "pgen" : "igen"].data.slice(
-      bag.genIndex,
-      nextBag.genIndex
-    );
+  private parseGenerator(id: Metadata["gen"][number]) {
+    const chunk = this.getChunk(id);
+    return generatorParser(chunk.length).parse(chunk.data);
   }
-
-  getPresetHeader(preset: number) {
-    const index = this.data.phdr.data.findIndex(
-      (data) => data.preset === preset
-    );
-    return { data: this.data.phdr.data[index], index };
-  }
-  getInstrumentHeader = (generator: Generator) =>
-    this.getHeader("instrument", generator);
-  getSampleHeader = (generator: Generator) =>
-    this.getHeader("sample", generator);
-  getHeader<Type extends "instrument" | "sample">(
-    type: Type,
-    generator: Generator
-  ): {
-    data: Soundfont2Data[Type extends "sample" ? "shdr" : "inst"]["data"][0];
-    index: number;
-  } {
-    return {
-      data: this.data[type === "sample" ? "shdr" : "inst"].data[
-        generator.genAmount
-      ],
-      index: generator.genAmount,
-    };
-  }
-
-  getPresetHeaders() {
-    return this.data.shdr;
-  }
-}
-type Soundfont2Data = MetadataChunks & DataChunks;
-type MetadataChunks = {
-  [P in Metadata["metadataId"][number]]: RiffChunk<P, string>;
-};
-type DataChunks = {
-  smpl: RiffChunk<"smpl", Buffer>;
-  phdr: RiffChunk<"phdr", PresetHeader[]>;
-  pbag: RiffChunk<"pbag", Bag[]>;
-  pmod: RiffChunk<"pmod", Modulator[]>;
-  pgen: RiffChunk<"pgen", Generator[]>;
-  inst: RiffChunk<"inst", InstrumentHeader[]>;
-  ibag: RiffChunk<"ibag", Bag[]>;
-  imod: RiffChunk<"imod", Modulator[]>;
-  igen: RiffChunk<"igen", Generator[]>;
-  shdr: RiffChunk<"shdr", SampleHeader[]>;
-};
-
-interface Header {
-  name: string;
-  bagIndex: number;
-}
-interface PresetHeader extends Header {
-  preset: number;
-  bank: number;
-  library: number;
-  genre: number;
-  morphology: number;
-}
-interface Bag {
-  genIndex: number;
-  modIndex: number;
-}
-interface Modulator {
-  srcOper: number;
-  destOper: number;
-  modAmount: number;
-  amtSrcOper: number;
-  modTransOper: number;
-}
-interface Generator {
-  genOper: number;
-  genAmount: number;
-}
-type InstrumentHeader = Header;
-export interface SampleHeader {
-  name: string;
-  start: number;
-  end: number;
-  loopStart: number;
-  loopEnd: number;
-  sampleRate: number;
-  originalKey: number;
-  correction: number;
-  sampleLink: number;
-  type: number;
 }
