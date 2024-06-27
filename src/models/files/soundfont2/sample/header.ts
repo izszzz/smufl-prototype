@@ -2,8 +2,8 @@ export class Header {
   name: string;
   start: number;
   end: number;
-  loopStart: number;
-  loopEnd: number;
+  startLoop: number;
+  endLoop: number;
   sampleRate: number;
   originalKey: number;
   correction: number;
@@ -13,8 +13,8 @@ export class Header {
     name,
     start,
     end,
-    loopEnd,
-    loopStart,
+    endLoop,
+    startLoop,
     sampleRate,
     originalKey,
     correction,
@@ -24,8 +24,8 @@ export class Header {
     name: string;
     start: number;
     end: number;
-    loopStart: number;
-    loopEnd: number;
+    startLoop: number;
+    endLoop: number;
     sampleRate: number;
     originalKey: number;
     correction: number;
@@ -35,8 +35,8 @@ export class Header {
     this.name = name;
     this.start = start;
     this.end = end;
-    this.loopEnd = loopEnd;
-    this.loopStart = loopStart;
+    this.endLoop = endLoop;
+    this.startLoop = startLoop;
     this.sampleRate = sampleRate;
     this.originalKey = originalKey;
     this.correction = correction;

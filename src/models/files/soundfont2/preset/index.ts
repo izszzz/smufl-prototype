@@ -2,12 +2,16 @@ import { Bag } from "../bag";
 import { Generator } from "../generator";
 import { Header } from "./header";
 import { Modulator } from "../modulator";
-import { Soundfont2 } from "..";
-import { Instrument } from "../instrument";
+import Soundfont2 from "..";
+import Instrument from "../instrument";
+import Metadata from "../metadata.json";
 
-export class Preset {
+export default class Preset {
   soundfont2;
-  data;
+  header;
+  bags;
+  globalGenerators: Generator[] = [];
+  instruments: Instrument[] = [];
   constructor({
     preset,
     soundfont2,
@@ -16,24 +20,21 @@ export class Preset {
     soundfont2: Soundfont2;
   }) {
     this.soundfont2 = soundfont2;
-    this.data = this.getPreset(preset);
-  }
-
-  private getPreset(preset: number) {
-    const header = this.getHeader(preset);
-    const bags = this.getBags(header);
-    return {
-      presetHeader: header.data,
-      presetBags: bags.map((data) => ({
-        presetBag: data.data,
-        presetModulators: this.getModulators(data),
-        presetGenerators: this.getGenerators(data).map((pgen) => {
-          if (pgen.genOper === "instrument")
-            return new Instrument(this.soundfont2).getInstrument(pgen);
-          else return { presetGenerator: pgen };
-        }),
-      })),
-    };
+    this.header = this.getHeader(preset);
+    this.bags = this.getBags(this.header);
+    for (const bag of this.bags) {
+      const generators = this.getGenerators(bag);
+      const modulators = this.getModulators(bag);
+      if (
+        generators.some(
+          (generator) => generator.genOper === Metadata["generators"][41].name
+        )
+      ) {
+        for (const gen of generators)
+          if (gen.genOper === Metadata["generators"][41].name)
+            this.instruments.push(new Instrument(this, generators, modulators));
+      } else this.globalGenerators.push(...generators);
+    }
   }
 
   private getHeader(preset: number) {

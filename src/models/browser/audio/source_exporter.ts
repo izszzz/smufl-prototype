@@ -1,7 +1,7 @@
 import * as R from "remeda";
 import Core from "../../core";
-import { Soundfont2 } from "../../files/riff/soundfont2";
 import "../../../extensions/int16array/to_float32array.extensions";
+import Soundfont2 from "../../files/soundfont2";
 // Reference https://github.com/gree/sf2synth.js/blob/master/src/sound_font_synth.js
 
 export class SourceExporter {

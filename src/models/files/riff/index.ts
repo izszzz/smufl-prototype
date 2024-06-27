@@ -1,3 +1,4 @@
+import Metadata from "./metadata.json";
 import { Parser } from "./parser";
 
 interface Chunk {
@@ -6,7 +7,7 @@ interface Chunk {
   data: Uint8Array;
 }
 
-export class Riff {
+export default class Riff {
   data;
   constructor(arrayBuffer: ArrayBuffer) {
     this.data = Parser.parse(new Uint8Array(arrayBuffer)) as {
@@ -18,5 +19,5 @@ export class Riff {
     if (!chunk) throw new Error();
     return chunk;
   }
-  static Parser = Parser;
+  static ID = Metadata["id"];
 }

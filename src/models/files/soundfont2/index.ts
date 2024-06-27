@@ -1,5 +1,5 @@
-import { Riff } from "..";
-import { Instrument } from "./instrument";
+import Riff from "../riff";
+import Instrument from "./instrument";
 import Metadata from "./metadata.json";
 import {
   bagParser,
@@ -9,11 +9,11 @@ import {
   modulatorParser,
   sampleHeaderParser,
 } from "./parser";
-import { Preset } from "./preset";
-import { Sample } from "./sample";
+import Preset from "./preset";
+import Sample from "./sample";
 // Reference: https://github.com/gree/sf2synth.js/blob/master/src/sf2.js
 
-export class Soundfont2 extends Riff {
+export default class Soundfont2 extends Riff {
   phdr;
   pbag;
   pmod;
@@ -52,8 +52,8 @@ export class Soundfont2 extends Riff {
       .data as InstanceType<typeof Sample.Header>[];
     this.smpl = this.getChunk(Metadata.id[9]).data;
   }
-  getPreset() {
-    return new Preset({ preset: 117, soundfont2: this });
+  getPreset(presetNumber: number) {
+    return new Preset({ preset: presetNumber, soundfont2: this });
   }
   private parseBag(id: Metadata["bag"][number]) {
     const chunk = this.getChunk(id);

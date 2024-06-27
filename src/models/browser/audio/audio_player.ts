@@ -1,6 +1,6 @@
 import { SourceExporter } from "./source_exporter";
 import Core from "../../core";
-import { Soundfont2 } from "../../files/riff/soundfont2";
+import Soundfont2 from "../../files/soundfont2";
 // TODO: https://web.dev/articles/webaudio-intro?hl=ja
 
 export class AudioPlayer {
