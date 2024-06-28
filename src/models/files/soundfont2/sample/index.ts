@@ -176,12 +176,12 @@ export default class Sample {
           case "holdVolEnv":
           case "decayVolEnv":
           case "releaseVolEnv":
-            acc[cur.name] = (acc[cur.name] / 1200) ** 2;
+            acc[cur.name] = Math.pow(2, acc[cur.name] / 1200);
             break;
           case "initialFilterFc":
           case "freqModLFO":
           case "freqVibLFO":
-            acc[cur.name] = 8.176 * (acc[cur.name] / 1200) ** 2;
+            acc[cur.name] = 8.176 * Math.pow(2, acc[cur.name] / 1200);
             break;
         }
         return acc;
