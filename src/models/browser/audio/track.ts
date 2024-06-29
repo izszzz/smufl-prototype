@@ -1,5 +1,6 @@
 import * as Audio from ".";
 import Core from "../../core";
+import "../../../extensions/int16array/to_float32array.extensions";
 
 export class Track {
   core;
@@ -15,7 +16,7 @@ export class Track {
     this.gain = score.audioContext.createGain();
     this.gain.gain.value = 1 / 1000000;
     // TODO: 3はNoteOnの長さ
-    const noteDuration = 3;
+    const noteDuration = 1.11;
     // this.preset = score.soundfont2.getPreset(core.preset);
     this.preset = score.soundfont2.getPreset(0);
     this.buffers = this.preset.instruments
@@ -23,27 +24,25 @@ export class Track {
       .map((sample) => {
         let now = score.audioContext.currentTime;
         // buffer
-        const float32 = sample.data;
         const buffer = score.audioContext.createBuffer(
           1,
           sample.data.length,
           sample.header.data.sampleRate
         );
-        buffer.getChannelData(0).set(float32);
+        buffer.getChannelData(0).set(sample.data);
 
         // buffer source
         const bufferSource = score.audioContext.createBufferSource();
         const baseDetune =
-          (sample.generators.overridingRootKey === -1 //-1 is overridingRootKey default value
-            ? sample.header.data.originalKey
-            : sample.generators.overridingRootKey) -
-          sample.header.data.correction / 100.0 -
-          sample.generators.coarseTune -
-          sample.generators.fineTune;
-        const playbackRate =
-          1.0 * Math.pow(2, (100.0 * (60 - baseDetune)) / 1200.0);
+          (Audio.calcKey(
+            sample.generators.overridingRootKey,
+            sample.header.data.originalKey
+          ) +
+            Audio.calcCorrection(sample.header.data) +
+            Audio.calcTune(sample.generators)) *
+          Audio.calcScale(sample.generators);
+        const playbackRate = Audio.calcPlaybackRate(60, baseDetune);
         bufferSource.buffer = buffer;
-        bufferSource.playbackRate.value = playbackRate;
         if (sample.generators.sampleModes !== 0) {
           bufferSource.loop = true;
           bufferSource.loopStart =
@@ -51,17 +50,15 @@ export class Track {
           bufferSource.loopEnd =
             (sample.endLoop - sample.end) / sample.header.data.sampleRate;
         }
+        bufferSource.playbackRate.setValueAtTime(playbackRate, now);
 
         // envelope
-        const gain = score.audioContext.createGain();
         // init
+        const gain = score.audioContext.createGain();
         gain.gain.setValueAtTime(0, now);
 
         // delay
-        gain.gain.linearRampToValueAtTime(
-          0,
-          (now += sample.generators.delayVolEnv)
-        );
+        gain.gain.setValueAtTime(0, (now += sample.generators.delayVolEnv));
 
         // attack
         gain.gain.linearRampToValueAtTime(
@@ -70,30 +67,69 @@ export class Track {
         );
 
         // hold
-        gain.gain.linearRampToValueAtTime(
-          1,
-          (now += sample.generators.holdVolEnv)
-        );
+        gain.gain.setValueAtTime(1, (now += sample.generators.holdVolEnv));
 
-        //decay
-        gain.gain.linearRampToValueAtTime(
-          1 - sample.generators.sustainVolEnv,
-          (now += sample.generators.decayVolEnv + noteDuration)
+        console.log(
+          Math.max(0.5 * (1 - sample.generators.sustainVolEnv), 0.001)
         );
-        console.log(now);
+        //decay
+        gain.gain.exponentialRampToValueAtTime(
+          Math.max(0.5 * (1 - sample.generators.sustainVolEnv), 0.001),
+          (now += sample.generators.decayVolEnv)
+        );
 
         // release
-        gain.gain.linearRampToValueAtTime(
-          0,
-          (now += sample.generators.releaseVolEnv)
-        );
+        // gain.gain.exponentialRampToValueAtTime(
+        //   0.001,
+        //   (now += sample.generators.releaseVolEnv)
+        // );
 
         //filter
+        let filterNow = score.audioContext.currentTime;
         const filter = score.audioContext.createBiquadFilter();
         filter.type = "lowpass";
         // init
-        filter.frequency.setValueAtTime(sample.generators.initialFilterFc, 0);
-        filter.Q.setValueAtTime(sample.generators.initialFilterQ, 0);
+        filter.Q.setValueAtTime(sample.generators.initialFilterQ, filterNow);
+        filter.frequency.setValueAtTime(
+          sample.generators.initialFilterFc,
+          filterNow
+        );
+
+        // delay;
+        filter.frequency.linearRampToValueAtTime(
+          sample.generators.initialFilterFc,
+          (filterNow += sample.generators.delayModEnv)
+        );
+
+        // attack;
+        filter.frequency.linearRampToValueAtTime(
+          sample.generators.initialFilterFc +
+            sample.generators.modEnvToFilterFc,
+          (filterNow += sample.generators.attackModEnv)
+        );
+
+        // hold
+        filter.frequency.linearRampToValueAtTime(
+          sample.generators.initialFilterFc +
+            sample.generators.modEnvToFilterFc,
+          (filterNow += sample.generators.holdModEnv)
+        );
+
+        // decay
+        filter.frequency.linearRampToValueAtTime(
+          sample.generators.initialFilterFc +
+            sample.generators.modEnvToFilterFc -
+            (sample.generators.initialFilterFc +
+              sample.generators.modEnvToFilterFc) *
+              (1 - sample.generators.sustainModEnv),
+          (filterNow += sample.generators.decayModEnv + noteDuration)
+        );
+
+        // release
+        filter.frequency.linearRampToValueAtTime(
+          sample.generators.initialFilterFc,
+          (filterNow += sample.generators.releaseModEnv)
+        );
 
         // panner
         const panner = score.audioContext.createStereoPanner();
@@ -114,7 +150,6 @@ export class Track {
         gain.connect(this.gain);
         this.gain.connect(score.audioContext.destination);
 
-        // lfo.start();
         bufferSource.start();
       });
     this.notes = core.notes.map((note) => new Audio.Note(note));

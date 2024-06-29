@@ -57,15 +57,6 @@ export default class Sample {
     this.generators = this.setGenerators();
     this.data = this.getData();
   }
-  private getSample(igen: InstanceType<typeof Instrument.Generator>) {
-    if (typeof igen.genAmount !== "number") return;
-    const header = this.getHeader(igen.genAmount);
-    const data = this.getData();
-    return {
-      sampleHeader: header.data,
-      sample: data,
-    };
-  }
   private getHeader(genAmount: number) {
     const data = this.instrument.preset.soundfont2.shdr[genAmount];
     if (!data) throw new Error();
@@ -104,9 +95,8 @@ export default class Sample {
           const localInstrumentGenerator = this.instrumentGenerators.find(
             (generator) => generator.genOper === cur.name
           );
-          if (localInstrumentGenerator) {
+          if (localInstrumentGenerator)
             acc[cur.name] = localInstrumentGenerator.genAmount;
-          }
           // preset localZone
           const localPresetGenerator = this.instrument.presetGenerators.find(
             (generator) => generator.genOper === cur.name
