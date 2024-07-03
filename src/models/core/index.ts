@@ -7,6 +7,7 @@ import { Track } from "./track";
 import { Importer } from "./importer";
 import { Metaevent } from "./metaevent";
 import { Metaevents } from "./metaevents";
+import Metadata from "./metadata.json";
 
 export interface CoreConstructor {
   new (): void;
@@ -18,14 +19,12 @@ export interface CoreConstructor {
   Metaevents: typeof Metaevents;
   Event: typeof Event;
   Importer: typeof Importer;
+  Metadata: Metadata;
   convertTimeToSeconds(time: number, bpm: number): number;
   convertTempoToBpm(tempo: number): number;
   createId(ids: Identifier[]): number;
   getEventsStart(events: Event[]): number;
   getEventsEnd(events: Event[]): number;
-}
-export interface Identifier {
-  readonly id: number;
 }
 
 // TODO:
@@ -39,6 +38,7 @@ const CoreClass: CoreConstructor = class Core {
   static Track = Track;
   static Metaevents = Metaevents;
   static Importer = Importer;
+  static Metadata = Metadata;
   static convertTempoToBpm = (tempo: number) => Math.floor(60000000 / tempo);
   static convertTimeToSeconds = (time: number, bpm: number) =>
     (60 * time) / bpm;
@@ -50,3 +50,7 @@ const CoreClass: CoreConstructor = class Core {
     R.firstBy(events, [R.prop("end"), "desc"])?.end ?? 0;
 };
 export default CoreClass;
+
+export interface Identifier {
+  readonly id: number;
+}

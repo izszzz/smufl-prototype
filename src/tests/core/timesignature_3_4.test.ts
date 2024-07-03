@@ -12,22 +12,33 @@ describe("timesignature_3_4", async () => {
         end: 0,
       }));
     describe(".metaevents", () => {
-      test(".timesignature", () =>
-        expect(core.metaevents.data.timesignature).toEqual([
+      test(".Timesignature", () =>
+        expect(core.metaevents.data.Timesignature).toEqual([
           new Core.Metaevents.Map.Timesignature({
             denominator: 4,
             numerator: 3,
+            start: 0,
+            duration: 0,
+            end: 0,
           }),
         ]));
-      test(".bpm", () =>
-        expect(core.metaevents.data.bpm).toEqual([
-          new Core.Metaevents.Map.Bpm({ value: 120 }),
+      test(".Bpm", () =>
+        expect(core.metaevents.data.Bpm).toEqual([
+          new Core.Metaevents.Map.Bpm({
+            value: 120,
+            start: 0,
+            duration: 0,
+            end: 0,
+          }),
         ]));
-      test(".keysignature", () =>
-        expect(core.metaevents.data.keysignature).toEqual([
+      test(".Keysignature", () =>
+        expect(core.metaevents.data.Keysignature).toEqual([
           new Core.Metaevents.Map.Keysignature({
             tonality: false,
             accidental: 0,
+            start: 0,
+            duration: 0,
+            end: 0,
           }),
         ]));
     });

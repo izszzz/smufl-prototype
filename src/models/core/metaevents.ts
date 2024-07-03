@@ -3,15 +3,13 @@ import Core from ".";
 import { Bpm } from "./bpm";
 import { Keysignature } from "./keysignature";
 import { Timesignature } from "./timesignature";
-
-export class Metaevents<
-  T extends keyof typeof Metaevents.Map = keyof typeof Metaevents.Map,
-> {
+type MetaeventsMapKeys = keyof typeof Metaevents.Map;
+export class Metaevents {
   data;
   constructor(
     events: {
-      name: T;
-      params: ConstructorParameters<(typeof Metaevents.Map)[T]>;
+      name: MetaeventsMapKeys;
+      params: ConstructorParameters<(typeof Metaevents.Map)[MetaeventsMapKeys]>;
     }[]
   ) {
     this.data = R.pipe(
@@ -20,21 +18,40 @@ export class Metaevents<
       R.reduce(
         (acc, cur) => ({
           ...acc,
-          [cur.toLowerCase()]: R.pipe(
+          [cur]: R.pipe(
             events,
-            R.filter((event) => event.name === cur),
+            R.filter(({ name }) => name === cur),
             R.map(
-              ({ name: className, params }) =>
-                new (Metaevents.Map[className] as new (
-                  ...args: ConstructorParameters<(typeof Metaevents.Map)[T]>
-                ) => InstanceType<(typeof Metaevents.Map)[T]>)(...params)
+              ({ name, params }) =>
+                new (Metaevents.Map[name] as new (
+                  ...args: ConstructorParameters<
+                    (typeof Metaevents.Map)[MetaeventsMapKeys]
+                  >
+                ) => InstanceType<(typeof Metaevents.Map)[MetaeventsMapKeys]>)(
+                  ...params
+                )
             )
           ),
         }),
         {} as {
-          [P in Lowercase<T>]: InstanceType<
-            (typeof Metaevents.Map)[Capitalize<P>]
-          >[];
+          [P in MetaeventsMapKeys]: InstanceType<(typeof Metaevents.Map)[P]>[];
+        }
+      )
+    );
+  }
+  find(event: InstanceType<typeof Core.Event>) {
+    return R.pipe(
+      Metaevents.Map,
+      R.keys.strict,
+      R.reduce(
+        (acc, cur) => ({
+          ...acc,
+          [cur]: this.data[cur].find(
+            (metaevent) => metaevent.start === event.start
+          ),
+        }),
+        {} as {
+          [P in MetaeventsMapKeys]: InstanceType<(typeof Metaevents.Map)[P]>;
         }
       )
     );
@@ -44,23 +61,4 @@ export class Metaevents<
     Timesignature,
     Keysignature,
   };
-  find(event: InstanceType<typeof Core.Event>) {
-    return R.pipe(
-      Metaevents.Map,
-      R.keys.strict,
-      R.reduce(
-        (acc, cur) => ({
-          ...acc,
-          [cur.toLowerCase()]: this.data[
-            cur.toLowerCase() as Lowercase<T>
-          ].find((metaevent) => metaevent.start === event.start),
-        }),
-        {} as {
-          [P in Lowercase<T>]: InstanceType<
-            (typeof Metaevents.Map)[Capitalize<P>]
-          >;
-        }
-      )
-    );
-  }
 }

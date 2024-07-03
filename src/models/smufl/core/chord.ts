@@ -14,9 +14,12 @@ export class Chord extends Core.Event {
     elements: InstanceType<typeof Core.Element>[];
     beat: InstanceType<typeof Core.Beat>;
   }) {
+    const start = Core.getEventsStart(elements);
+    const end = Core.getEventsEnd(elements);
     super({
       start: Core.getEventsStart(elements),
       end: Core.getEventsEnd(elements),
+      duration: end - start,
     });
     this.elements = elements;
     this.beat = beat;
@@ -28,6 +31,7 @@ export class Chord extends Core.Event {
           elements: sequence,
           bar: beat.sequence.bar,
           start: this.start,
+          duration: this.duration,
           end: this.end,
         })
       );

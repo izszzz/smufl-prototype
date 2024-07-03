@@ -10,10 +10,5 @@
     { "type": "Quarter", "value": 4, "length": 1 },
     { "type": "8th", "value": 8, "length": 0.5 },
     { "type": "16th", "value": 16, "length": 0.25 }
-  ],
-  "timeSignature": {
-    "denominator": 4,
-    "numerator": 4
-  },
-  "bpm": 120
+  ]
 }

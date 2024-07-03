@@ -24,11 +24,11 @@ describe("8th_middle_c", async () => {
           test(".length", () => expect(masterbar?.bars).toHaveLength(1));
           describe("[0]", () => {
             const bar = masterbar?.bars[0];
-            describe(".keysignature", () => {
+            describe(".Keysignature", () => {
               test(".glyphs", () =>
                 expect(bar?.keysignature?.glyphs).toHaveLength(0));
             });
-            describe(".timesignature", () => {
+            describe(".Timesignature", () => {
               test(".glyphs", () =>
                 expect(bar?.timesignature?.glyphs).toHaveLength(2));
             });

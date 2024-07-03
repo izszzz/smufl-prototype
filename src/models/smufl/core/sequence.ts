@@ -38,12 +38,14 @@ export class Sequence extends Core.Event {
       for (const [i, event] of events.entries()) {
         const prev = events[i - 1];
         if (prev) {
-          const prevEnd = prev.end;
-          if (event.start !== prevEnd) {
+          const start = prev.end ?? 0;
+          const end = event.start ?? 0;
+          if (end !== start) {
             const rest = new Core.Rest({
               track: this.bar.track,
-              start: prevEnd,
-              end: event.start,
+              start,
+              end,
+              duration: end - start,
             });
             this.beats = [
               ...this.beats,

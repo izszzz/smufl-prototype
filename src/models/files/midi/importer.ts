@@ -2,6 +2,7 @@ import * as R from "remeda";
 import Core from "../../core";
 import { Midi as MidiFile } from ".";
 import Metadata from "./metadata.json";
+import { PartiallyPartial } from "../../../helpers/type/partiallypartial";
 
 export class Importer {
   arrayBuffer;
@@ -26,7 +27,7 @@ export class Importer {
             );
             if (this.isMetaEvent(cur)) {
               if (R.isNonNullish(cur.event.timeSignature))
-                trackAcc.metaevents.push({
+                trackAcc.metaevents?.push({
                   name: "Timesignature",
                   params: [
                     {
@@ -36,22 +37,24 @@ export class Importer {
                   ],
                 });
               if (R.isNonNullish(cur.event.tempo))
-                trackAcc.metaevents.push({
+                trackAcc.metaevents?.push({
                   name: "Bpm",
                   params: [
                     {
-                      value: Core.convertTempoToBpm(cur.event.tempo),
+                      ...{ value: Core.convertTempoToBpm(cur.event.tempo) },
                       start: acc.time,
                     },
                   ],
                 });
               if (R.isNonNullish(cur.event.keySignature))
-                trackAcc.metaevents.push({
+                trackAcc.metaevents?.push({
                   name: "Keysignature",
                   params: [
                     {
-                      tonality: !!cur.event.keySignature.mi,
-                      accidental: cur.event.keySignature.sf,
+                      ...{
+                        tonality: !!cur.event.keySignature.mi,
+                        accidental: cur.event.keySignature.sf,
+                      },
                       start: acc.time,
                     },
                   ],
@@ -71,13 +74,16 @@ export class Importer {
             return acc;
           },
           { notes: [], time: 0 } as {
-            notes: Omit<ConstructorParameters<typeof Core.Note>[0], "track">[];
+            notes: PartiallyPartial<
+              ConstructorParameters<typeof Core.Track>[0]["notes"][number],
+              "duration" | "end" | "start"
+            >[];
             time: number;
           }
         );
         if (R.isEmpty(notes)) return trackAcc;
         if ((trackAcc.end ?? 0) < time) trackAcc.end = time;
-        trackAcc.tracks.push({ notes });
+        trackAcc.tracks.push({ notes, end: trackAcc.end });
 
         return trackAcc;
       },
@@ -85,46 +91,19 @@ export class Importer {
         tracks: [],
         metaevents: [],
         end: 0,
-      } as ConstructorParameters<typeof Core.Score>[0]
+      } as ConstructorParameters<typeof Core.Importer>[0]
     );
 
-    // TODO: refactor
-    // timesignature
-    const timesignatures = metaevents.filter(
-      (metaevent) => metaevent.name === "Timesignature"
-    );
-    for (const [i, timesignature] of timesignatures.entries()) {
-      const prev = timesignatures[i - 1]?.params[0];
-      if (prev) prev.end = timesignature.params[0].start;
-    }
-    const lastTimesignature = R.last(timesignatures)?.params[0];
-    if (lastTimesignature) lastTimesignature.end = end;
-
-    // bpm
-    const bpms = metaevents.filter((metaevent) => metaevent.name === "Bpm");
-    for (const [i, bpm] of bpms.entries()) {
-      const prev = bpms[i - 1]?.params[0];
-      if (prev) prev.end = bpm.params[0].start;
-    }
-    const lastBpm = R.last(bpms)?.params[0];
-    if (lastBpm) lastBpm.end = end;
-
-    return new Core.Importer({ tracks, metaevents }).import();
+    return new Core.Importer({ tracks, metaevents, start: 0, end }).import();
   }
 
-  isMetaEvent(
-    event: MidiTrackEvent<MidiEvent | MetaEvent>
-  ): event is MidiTrackEvent<MetaEvent> {
+  isMetaEvent(event: MidiTrackEvent): event is MidiTrackEvent<MetaEvent> {
     return event.type === Metadata.mtrk.metaEvent.type;
   }
-  isNoteOnEvent(
-    event: MidiTrackEvent<MidiEvent | MetaEvent>
-  ): event is MidiTrackEvent<MidiEvent> {
+  isNoteOnEvent(event: MidiTrackEvent): event is MidiTrackEvent<MidiEvent> {
     return event.type === Metadata.mtrk.midiEvents.noteOn.type;
   }
-  isNoteOffEvent(
-    event: MidiTrackEvent<MidiEvent | MetaEvent>
-  ): event is MidiTrackEvent<MidiEvent> {
+  isNoteOffEvent(event: MidiTrackEvent): event is MidiTrackEvent<MidiEvent> {
     return event.type === Metadata.mtrk.midiEvents.noteOff.type;
   }
 }
@@ -138,10 +117,12 @@ interface Midi {
   };
   mtrks: {
     type: string;
-    events: MidiTrackEvent<MetaEvent | MidiEvent>[];
+    events: MidiTrackEvent[];
   }[];
 }
-interface MidiTrackEvent<Event extends MetaEvent | MidiEvent> {
+interface MidiTrackEvent<
+  Event extends MetaEvent | MidiEvent = MetaEvent | MidiEvent,
+> {
   channel: number;
   deltaTime: number;
   event: Event;
