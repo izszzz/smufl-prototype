@@ -1,26 +1,24 @@
 import Core, { Identifier } from "../../core";
 
 export class Bar extends Core.Event implements Identifier {
-  id: Identifier["id"];
+  id;
   track;
   sequence;
   elements;
   masterbar;
   metaevents;
   get timesignature(): InstanceType<typeof Core.Metaevents.Map.Timesignature> {
-    if (this.metaevents.timesignature) {
-      return this.metaevents.timesignature;
-    } else {
+    if (this.metaevents.Timesignature) return this.metaevents.Timesignature;
+    else {
       if (!this.prev) throw new Error();
       return this.prev.timesignature;
     }
   }
   get keysignature(): InstanceType<typeof Core.Metaevents.Map.Keysignature> {
-    if (this.metaevents.keysignature) {
-      return this.metaevents.keysignature;
-    } else {
+    if (this.metaevents.Keysignature) return this.metaevents.Keysignature;
+    else {
       if (!this.prev) throw new Error();
-      return this.prev.keysignature;
+      return this.prev!.keysignature;
     }
   }
   private get findedIndex() {

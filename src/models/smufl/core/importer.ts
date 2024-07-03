@@ -11,22 +11,24 @@ export class Importer extends Core.Importer {
 
     let start = 0;
     let end = 0;
-    for (const timesignature of core.metaevents.data.timesignature) {
+    for (const timesignature of core.metaevents.data.Timesignature) {
       R.times(timesignature.duration / timesignature.numerator, () => {
         end += timesignature.numerator;
         const elements = core.elements.filter(
           (element) => element.end > start && element.start < end
         );
-        const masterbar = new Core.MasterBar({
-          score: core,
-          start,
-          end,
-          elements,
-        });
+        core.masterbars.push(
+          new Core.MasterBar({
+            score: core,
+            start,
+            end,
+            elements,
+          })
+        );
         start = end;
-        core.masterbars.push(masterbar);
       });
     }
+
     return core;
   }
 }

@@ -12,28 +12,33 @@ describe("quarter_dot_middle_c", async () => {
         end: 1.5,
       }));
     describe(".metaevents", () => {
-      test(".timesignature", () =>
-        expect(core.metaevents.data.timesignature).toEqual([
+      test(".Timesignature", () =>
+        expect(core.metaevents.data.Timesignature).toEqual([
           new Core.Metaevents.Map.Timesignature({
             denominator: 4,
             numerator: 4,
+            start: 0,
             duration: 1.5,
             end: 1.5,
           }),
         ]));
-      test(".bpm", () =>
-        expect(core.metaevents.data.bpm).toEqual([
+      test(".Bpm", () =>
+        expect(core.metaevents.data.Bpm).toEqual([
           new Core.Metaevents.Map.Bpm({
             value: 120,
+            start: 0,
             duration: 1.5,
             end: 1.5,
           }),
         ]));
-      test(".keysignature", () =>
-        expect(core.metaevents.data.keysignature).toEqual([
+      test(".Keysignature", () =>
+        expect(core.metaevents.data.Keysignature).toEqual([
           new Core.Metaevents.Map.Keysignature({
             tonality: false,
             accidental: 0,
+            start: 0,
+            duration: 1.5,
+            end: 1.5,
           }),
         ]));
     });

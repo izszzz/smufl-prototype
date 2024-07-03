@@ -29,7 +29,7 @@ export class AudioPlayer {
         source.start();
         source.stop(
           this.ctx.currentTime +
-            Core.convertTimeToSeconds(track.end, track.getMetadata().bpm)
+            Core.convertTimeToSeconds(track.end, track.getMetadata().Bpm)
         );
       }
     }

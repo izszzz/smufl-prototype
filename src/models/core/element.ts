@@ -2,7 +2,7 @@ import Core, { Identifier } from ".";
 import { Event } from "./event";
 
 export abstract class Element extends Event implements Identifier {
-  id: Identifier["id"];
+  id;
   track;
   constructor({
     track,

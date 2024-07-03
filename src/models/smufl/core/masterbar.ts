@@ -1,13 +1,12 @@
 import Core, { Identifier } from "../../core";
 
 export class MasterBar extends Core.Event implements Identifier {
-  id: Identifier["id"];
+  id;
   bars;
   sequence;
   elements;
   score;
   metaevents;
-
   constructor({
     score,
     elements,
@@ -32,6 +31,6 @@ export class MasterBar extends Core.Event implements Identifier {
       return bar;
     });
     this.elements = this.bars.flatMap((bar) => bar.elements);
-    this.sequence = new Core.Sequence({ elements: this.elements });
+    this.sequence = new Core.Sequence({ elements: this.elements, ...event });
   }
 }
