@@ -37,7 +37,6 @@
     { "name": "initialFilterFc", "default": 13500, "uint": "cent" },
     { "name": "initialFilterQ", "default": 0, "uint": "cB" },
     { "name": "modLfoToFilterFc", "default": 0, "uint": "cent fs" },
-
     { "name": "modEnvToFilterFc", "default": 0, "uint": "cent fs" },
     { "name": "endAddrsCoarseOffset", "default": 0, "uint": "32k smpls" },
     { "name": "modLfoToVolume", "default": 0, "uint": "cB fs" },

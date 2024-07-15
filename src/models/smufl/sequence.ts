@@ -15,6 +15,10 @@ export class Sequence extends SMUFL.Rect {
     super();
     this.core = core;
     this.beats = core.beats.map((core) => new SMUFL.Beat({ core, elements }));
-    this.width = R.pipe(this.beats, R.map(R.prop("width")), R.reduce(R.add, 0));
+    this.width = R.pipe(
+      this.beats,
+      R.map(R.prop("width")),
+      R.reduce((acc, cur) => R.add(acc, cur), 0)
+    );
   }
 }

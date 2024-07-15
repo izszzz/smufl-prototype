@@ -1,8 +1,7 @@
 import * as R from "remeda";
 import Core from ".";
-import { ToPrimitive } from "../../helpers/type/toprimitive";
-import { DeepPartial } from "../../helpers/type/deeppartial";
 import { PartiallyPartial } from "../../helpers/type/partiallypartial";
+import { LiteralToPrimitiveDeep, PartialDeep } from "type-fest";
 
 interface Params
   extends PartiallyPartial<
@@ -33,7 +32,9 @@ export class Importer {
   constructor(
     params: Params,
     options: {
-      defaultValue: DeepPartial<ToPrimitive<typeof Core.Metadata.defaultValue>>;
+      defaultValue: PartialDeep<
+        LiteralToPrimitiveDeep<typeof Core.Metadata.defaultValue>
+      >;
     } = { defaultValue: {} }
   ) {
     const defaultValue = R.mergeDeep(
@@ -111,7 +112,6 @@ export class Importer {
     this.params = params as ConstructorParameters<typeof Core.Score>[0];
   }
   import() {
-    const core = new Core.Score(this.params);
-    return core;
+    return new Core.Score(this.params);
   }
 }

@@ -12,21 +12,25 @@ export class Importer extends Core.Importer {
     let start = 0;
     let end = 0;
     for (const timesignature of core.metaevents.data.Timesignature) {
-      R.times(timesignature.duration / timesignature.numerator, () => {
-        end += timesignature.numerator;
-        const elements = core.elements.filter(
-          (element) => element.end > start && element.start < end
-        );
-        core.masterbars.push(
-          new Core.MasterBar({
-            score: core,
-            start,
-            end,
-            elements,
-          })
-        );
-        start = end;
-      });
+      R.times(
+        Math.max(timesignature.duration / timesignature.numerator, 1),
+        () => {
+          end += timesignature.numerator;
+          const elements = core.elements.filter(
+            (element) => element.end > start && element.start < end
+          );
+          core.masterbars.push(
+            new Core.MasterBar({
+              score: core,
+              start,
+              end,
+              duration: end - start,
+              elements,
+            })
+          );
+          start = end;
+        }
+      );
     }
 
     return core;

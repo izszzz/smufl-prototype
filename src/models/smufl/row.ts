@@ -38,8 +38,8 @@ export class Row extends SMUFL.Rect {
 
     this.width = R.pipe(
       this.masterBars,
-      R.map((masterBar) => masterBar.width),
-      R.reduce(R.add, 0)
+      R.map(R.prop("width")),
+      R.reduce((acc, cur) => R.add(acc, cur), 0)
     );
   }
 }

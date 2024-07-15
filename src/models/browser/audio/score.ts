@@ -1,4 +1,4 @@
-import * as Audio from "./";
+import * as Audio from ".";
 import Core from "../../core";
 import Soundfont2 from "../../files/soundfont2";
 export class Score {

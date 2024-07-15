@@ -91,7 +91,7 @@ export class Exporter {
     if (score.type === "VerticalScroll")
       return R.pipe(
         score.masterbars,
-        R.reduce.indexed(
+        R.reduce(
           (acc, cur, i) => {
             if (
               R.pipe(
