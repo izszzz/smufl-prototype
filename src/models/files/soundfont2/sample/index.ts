@@ -1,10 +1,11 @@
+import { IntRange, LiteralToPrimitive, UnionToIntersection } from "type-fest";
 import * as R from "remeda";
 import { Generator } from "../generator";
 import Instrument from "../instrument";
 import Metadata from "../metadata.json";
 import { Modulator } from "../modulator";
 import { Header } from "./header";
-// TODO: 型修正
+import { P, match } from "ts-pattern";
 
 export default class Sample {
   header;
@@ -51,7 +52,7 @@ export default class Sample {
     this.instrumentModulators = instrumentModulators;
     this.header = this.getHeader(
       instrumentGenerators.find(
-        (generator) => generator.genOper === Metadata["generators"][53].name
+        (generator) => generator.genOper === Metadata.generators[53].name
       )!.genAmount as number
     );
     this.generators = this.setGenerators();
@@ -73,114 +74,142 @@ export default class Sample {
     );
   }
   private setGenerators() {
-    Metadata["generators"].length;
-    return Metadata["generators"].reduce(
-      (acc, cur) => {
-        if (cur) {
-          if (
-            cur.name === Metadata["generators"][41].name ||
-            cur.name === Metadata["generators"][53].name ||
-            cur.name === Metadata["generators"][60].name
-          )
-            return acc;
-          // inst globalZone
-          const globalInstrumentGenerator =
-            this.instrument.globalGenerators.find(
+    return R.pipe(
+      Metadata.generators,
+      // TODO: どうにかせいや
+      R.filter(R.isNot(R.isDeepEqual(Metadata.generators[41]))),
+      R.filter(R.isNot(R.isDeepEqual(Metadata.generators[53]))),
+      R.filter(R.isNot(R.isDeepEqual(Metadata.generators[60]))),
+      R.filter(R.isNonNullish),
+      R.reduce((acc, cur) => {
+        // inst globalZone
+        const globalInstrumentGenerator = this.instrument.globalGenerators.find(
+          (generator) => generator.genOper === cur.name
+        );
+        if (globalInstrumentGenerator)
+          acc[cur.name] = globalInstrumentGenerator.genAmount;
+
+        // inst localZone
+        const localInstrumentGenerator = this.instrumentGenerators.find(
+          (generator) => generator.genOper === cur.name
+        );
+        if (localInstrumentGenerator)
+          acc[cur.name] = localInstrumentGenerator.genAmount;
+        // preset localZone
+        const localPresetGenerator = this.instrument.presetGenerators.find(
+          (generator) => generator.genOper === cur.name
+        );
+        if (localPresetGenerator)
+          acc[cur.name] += localPresetGenerator.genAmount;
+        else {
+          const globalPresetGenerator =
+            this.instrument.preset.globalGenerators.find(
               (generator) => generator.genOper === cur.name
             );
-          if (globalInstrumentGenerator)
-            acc[cur.name] = globalInstrumentGenerator.genAmount;
-
-          // inst localZone
-          const localInstrumentGenerator = this.instrumentGenerators.find(
-            (generator) => generator.genOper === cur.name
-          );
-          if (localInstrumentGenerator)
-            acc[cur.name] = localInstrumentGenerator.genAmount;
-          // preset localZone
-          const localPresetGenerator = this.instrument.presetGenerators.find(
-            (generator) => generator.genOper === cur.name
-          );
-          if (localPresetGenerator)
-            acc[cur.name] += localPresetGenerator.genAmount;
-          else {
-            const globalPresetGenerator =
-              this.instrument.preset.globalGenerators.find(
-                (generator) => generator.genOper === cur.name
-              );
-            if (globalPresetGenerator)
-              acc[cur.name] += globalPresetGenerator.genAmount;
-          }
-
-          if (R.isNonNullish(cur.default)) acc[cur.name] = cur.default;
+          if (globalPresetGenerator)
+            acc[cur.name] += globalPresetGenerator.genAmount;
         }
-        switch (cur?.name) {
-          case "startAddrsOffset":
-          case "endAddrsOffset":
-          case "startloopAddrsOffset":
-          case "endloopAddrsOffset":
-          case "endAddrsCoarseOffset":
-          case "keyRange":
-          case "velRange":
-          case "startloopAddrsCoarseOffset":
-          case "keynum":
-          case "velocity":
-          case "endloopAddrsCoarseOffset":
-          case "fineTune":
-          case "sampleModes":
-          case "scaleTuning":
-          case "exclusiveClass":
-          case "overridingRootKey":
-            break;
-          case "modLfoToPitch":
-          case "vibLfoToPitch":
-          case "modEnvToPitch":
-          case "modLfoToFilterFc":
-          case "modEnvToFilterFc":
-          case "keynumToModEnvHold":
-          case "keynumToModEnvDecay":
-          case "keynumToVolEnvHold":
-          case "keynumToVolEnvDecay":
-            acc[cur.name] = acc[cur.name] / 100;
-            break;
-          case "initialFilterQ":
-          case "modLfoToVolume":
-          case "chorusEffectsSend":
-          case "reverbEffectsSend":
-          case "pan":
-          case "sustainModEnv":
-          case "sustainVolEnv":
-          case "initialAttenuation":
-          case "coarseTune":
-            acc[cur.name] = acc[cur.name] / 10;
-            break;
-          case "delayModLFO":
-          case "delayVibLFO":
-          case "delayModEnv":
-          case "attackModEnv":
-          case "holdModEnv":
-          case "decayModEnv":
-          case "releaseModEnv":
-          case "delayVolEnv":
-          case "attackVolEnv":
-          case "holdVolEnv":
-          case "decayVolEnv":
-          case "releaseVolEnv":
-            acc[cur.name] = Math.pow(2, acc[cur.name] / 1200);
-            break;
-          case "initialFilterFc":
-          case "freqModLFO":
-          case "freqVibLFO":
-            acc[cur.name] = 8.176 * Math.pow(2, acc[cur.name] / 1200);
-            break;
-        }
+
+        if (R.isNonNullish(cur.default)) acc[cur.name] = cur.default;
+        match(cur.name)
+          .with(
+            P.union(
+              Metadata.generators[0].name,
+              Metadata.generators[1].name,
+              Metadata.generators[2].name,
+              Metadata.generators[3].name,
+              Metadata.generators[4].name,
+              Metadata.generators[12].name,
+              Metadata.generators[43].name,
+              Metadata.generators[44].name,
+              Metadata.generators[45].name,
+              Metadata.generators[46].name,
+              Metadata.generators[47].name,
+              Metadata.generators[50].name,
+              Metadata.generators[52].name,
+              Metadata.generators[54].name,
+              Metadata.generators[56].name,
+              Metadata.generators[57].name,
+              Metadata.generators[58].name
+            ),
+            () => {}
+          )
+          .with(
+            P.union(
+              Metadata.generators[5].name,
+              Metadata.generators[6].name,
+              Metadata.generators[7].name,
+              Metadata.generators[10].name,
+              Metadata.generators[11].name,
+              Metadata.generators[31].name,
+              Metadata.generators[32].name,
+              Metadata.generators[39].name,
+              Metadata.generators[40].name
+            ),
+            (name) => (acc[name] = acc[name] / 100)
+          )
+          .with(
+            P.union(
+              Metadata.generators[9].name,
+              Metadata.generators[13].name,
+              Metadata.generators[15].name,
+              Metadata.generators[16].name,
+              Metadata.generators[17].name,
+              Metadata.generators[29].name,
+              Metadata.generators[37].name,
+              Metadata.generators[48].name,
+              Metadata.generators[51].name
+            ),
+            (name) => (acc[name] = acc[name] / 10)
+          )
+          .with(
+            P.union(
+              Metadata.generators[21].name,
+              Metadata.generators[23].name,
+              Metadata.generators[25].name,
+              Metadata.generators[26].name,
+              Metadata.generators[27].name,
+              Metadata.generators[28].name,
+              Metadata.generators[30].name,
+              Metadata.generators[33].name,
+              Metadata.generators[34].name,
+              Metadata.generators[35].name,
+              Metadata.generators[36].name,
+              Metadata.generators[38].name
+            ),
+            (name) => (acc[name] = Math.pow(2, acc[name] / 1200))
+          )
+          .with(
+            P.union(
+              Metadata.generators[8].name,
+              Metadata.generators[22].name,
+              Metadata.generators[24].name
+            ),
+            (name) => (acc[name] = 8.176 * Math.pow(2, acc[name] / 1200))
+          )
+          .exhaustive();
+
         return acc;
-      },
-      {} as Record<
-        NonNullable<Metadata["generators"][number]>["name"],
-        NonNullable<number | { lo: number; hi: number }>
-      >
+      }, {} as UnionToIntersection<AllGenerators>)
     );
   }
   static Header = Header;
 }
+type GeneratorRanges =
+  | IntRange<0, 14>
+  | IntRange<15, 18>
+  | IntRange<21, 41>
+  | IntRange<43, 49>
+  | IntRange<50, 53>
+  | IntRange<54, 55>
+  | IntRange<56, 59>;
+type GeneratorObject<T extends GeneratorRanges> = {
+  [K in Metadata["generators"][T]["name"]]: LiteralToPrimitive<
+    Metadata["generators"][T]["default"]
+  >;
+};
+type AllGenerators = GeneratorRanges extends infer T
+  ? T extends GeneratorRanges
+    ? GeneratorObject<T>
+    : never
+  : never;

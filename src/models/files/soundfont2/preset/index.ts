@@ -25,18 +25,16 @@ export default class Preset {
     for (const bag of this.bags) {
       const generators = this.getGenerators(bag);
       const modulators = this.getModulators(bag);
-      if (
-        generators.some(
-          (generator) => generator.genOper === Metadata["generators"][41].name
-        )
-      ) {
+      if (generators.some((generator) => this.isInstrument(generator))) {
         for (const gen of generators)
-          if (gen.genOper === Metadata["generators"][41].name)
+          if (this.isInstrument(gen))
             this.instruments.push(new Instrument(this, generators, modulators));
       } else this.globalGenerators.push(...generators);
     }
   }
-
+  isInstrument(generator: Generator) {
+    return generator.genOper === Metadata.generators[41].name;
+  }
   private getHeader(preset: number) {
     const index = this.soundfont2.phdr.findIndex(
       (data) => data.preset === preset

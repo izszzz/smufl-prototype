@@ -14,7 +14,7 @@ export class Metaevents {
   ) {
     this.data = R.pipe(
       Metaevents.Map,
-      R.keys.strict,
+      R.keys,
       R.reduce(
         (acc, cur) => ({
           ...acc,
@@ -42,7 +42,7 @@ export class Metaevents {
   find(event: InstanceType<typeof Core.Event>) {
     return R.pipe(
       Metaevents.Map,
-      R.keys.strict,
+      R.keys,
       R.reduce(
         (acc, cur) => ({
           ...acc,

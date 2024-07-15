@@ -2,7 +2,6 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "./models/files/soundfont2";
 import * as SMUFL from "./models/smufl";
 import * as Audio from "./models/browser/audio";
-import { AudioPlayer } from "./models/browser/audio/audio_player";
 import SVGRenderer from "./models/browser/svg/svg_renderer";
 import Core from "./models/core";
 import { Midi } from "./models/files/midi";
@@ -13,7 +12,7 @@ function App() {
     useState<SMUFL.Score["type"]>("HorizontalScroll");
   const [volume, setVolume] = useState<number>(50);
   const [svgRenderer, setSVGRenderer] = useState<SVGRenderer>();
-  const [audioPlayer, setAudioPlayer] = useState<AudioPlayer>();
+  const [audioPlayer, setAudioPlayer] = useState<Audio.Player>();
   const [soundfont2, setSoundfont2] = useState<Soundfont2>();
 
   const ref = useRef(null);
@@ -46,14 +45,13 @@ function App() {
         }
         if (file.type === "application/json")
           score = new Core.Importer(JSON.parse(reader.result)).import();
-        console.log(new Audio.Score(score, soundfont2, new AudioContext()));
         if (ref.current) {
           const svgRenderer = new SVGRenderer(ref.current, score, {
             fontSize,
             layoutType,
           });
           setSVGRenderer(svgRenderer);
-          setAudioPlayer(new AudioPlayer(score, soundfont2));
+          setAudioPlayer(new Audio.Player(score, soundfont2));
           setFontSize(svgRenderer.options.fontSize);
         }
       };
@@ -96,8 +94,8 @@ function App() {
         min={0}
         max={100}
         onChange={(e) => {
-          setVolume(Number(e.target.value));
-          if (audioPlayer) audioPlayer.volumeNode.gain.value = volume / 100;
+          // setVolume(Number(e.target.value));
+          // if (audioPlayer) audioPlayer.volume.gain.value = volume / 100;
         }}
       />
       <label>

@@ -23,7 +23,7 @@ export class GlyphGrid extends SMUFL.Rect {
     this.width = R.pipe(
       this.columns,
       R.map(R.prop("width")),
-      R.reduce(R.add, 0)
+      R.reduce((acc, cur) => R.add(acc, cur), 0)
     );
   }
 

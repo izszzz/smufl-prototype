@@ -10,9 +10,12 @@ export class Beat extends Core.Event {
     elements: InstanceType<typeof Core.Element>[];
     sequence: InstanceType<typeof Core.Sequence>;
   }) {
+    const start = Core.getEventsStart(elements);
+    const end = Core.getEventsEnd(elements);
     super({
-      start: Core.getEventsStart(elements),
-      end: Core.getEventsEnd(elements),
+      start,
+      end,
+      duration: end - start,
     });
     this.sequence = sequence;
     this.element =
