@@ -1,18 +1,17 @@
 import * as R from "remeda";
 import Core from ".";
-import { PartiallyPartial } from "../../helpers/type/partiallypartial";
-import { LiteralToPrimitiveDeep, PartialDeep } from "type-fest";
+import { LiteralToPrimitiveDeep, PartialDeep, SetOptional } from "type-fest";
 
 interface Params
-  extends PartiallyPartial<
+  extends SetOptional<
     Omit<ConstructorParameters<typeof Core.Score>[0], "tracks" | "metaevents">,
     "start" | "duration" | "end"
   > {
-  tracks: (PartiallyPartial<
+  tracks: (SetOptional<
     Omit<ConstructorParameters<typeof Core.Track>[0], "score" | "id" | "notes">,
     "preset" | "start" | "duration" | "end"
   > & {
-    notes: PartiallyPartial<
+    notes: SetOptional<
       ConstructorParameters<typeof Core.Track>[0]["notes"][number],
       "duration" | "end" | "start"
     >[];
@@ -20,7 +19,7 @@ interface Params
   metaevents?: {
     name: ConstructorParameters<typeof Core.Metaevents>[0][number]["name"];
     params: [
-      PartiallyPartial<
+      SetOptional<
         ConstructorParameters<typeof Core.Metaevents>[0][number]["params"][0],
         "duration" | "end" | "start"
       >,

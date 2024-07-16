@@ -2,7 +2,7 @@ import * as R from "remeda";
 import Core from "../../core";
 import { Midi as MidiFile } from ".";
 import Metadata from "./metadata.json";
-import { PartiallyPartial } from "../../../helpers/type/partiallypartial";
+import { SetOptional } from "type-fest";
 
 export class Importer {
   arrayBuffer;
@@ -74,7 +74,7 @@ export class Importer {
             return acc;
           },
           { notes: [], time: 0 } as {
-            notes: PartiallyPartial<
+            notes: SetOptional<
               ConstructorParameters<typeof Core.Track>[0]["notes"][number],
               "duration" | "end" | "start"
             >[];
