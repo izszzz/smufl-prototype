@@ -1,5 +1,5 @@
 import * as R from "remeda";
-import * as SMUFL from "./";
+import * as SMUFL from ".";
 
 export class Row extends SMUFL.Rect {
   tracks;

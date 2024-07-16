@@ -1,4 +1,4 @@
-import * as SMUFL from "./";
+import * as SMUFL from ".";
 import { Rest as CoreRest } from "./core/rest";
 
 export class Rest extends SMUFL.Element {

@@ -1,8 +1,8 @@
 import * as R from "remeda";
-import Metadatas from "../../consts/metadata.json";
-import BravuraMetadata from "../../consts/bravura_metadata.json";
-import Glyphnames from "../../consts/glyphnames.json";
-import Ranges from "../../consts/ranges.json";
+import Metadatas from "./metadata.json";
+import BravuraMetadata from "./bravura_metadata.json";
+import Glyphnames from "./glyphnames.json";
+import Ranges from "./ranges.json";
 
 export * from "./point";
 export * from "./rect";
