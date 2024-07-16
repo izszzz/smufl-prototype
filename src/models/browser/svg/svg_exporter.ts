@@ -18,15 +18,11 @@ export class SVGExporter {
   export() {
     const smufl = new SMUFL.Exporter(this.score, this.options).export();
     console.log({ smufl });
+    // TODO: 定数
     const root = this.createSVGElement("g", { y: 10 });
-    smufl.rows.forEach((row) => {
-      const trackRowElement = this.createSVGElement("g", {
-        type: "row",
-        y: row.y,
-      });
-      const barlinesGroup = this.createSVGElement("g", {
-        type: "barlines",
-      });
+    smufl.rows.forEach(({ y, ...row }) => {
+      const trackRowElement = this.createSVGElement("g", { type: "row", y });
+      const barlinesGroup = this.createSVGElement("g", { type: "barlines" });
       root.appendChild(trackRowElement).appendChild(barlinesGroup);
       // barline
       for (const barline of row.barlines.columns) {
@@ -62,21 +58,20 @@ export class SVGExporter {
           });
           const elementsGroup = this.createSVGElement("g", {
             type: "elements",
-            x: bar.header.width ?? 0,
+            x: bar.header.width,
           });
           const metadatasGroup = this.createSVGElement("g", {
             type: "metadata",
           });
-
           trackGroup
             .appendChild(barGroup)
             .append(metadatasGroup, elementsGroup, staffsGroup);
 
           // create staffs
           R.times(
-            smufl.masterbars.find(
+            (smufl.masterbars.find(
               (masterBar) => masterBar.core.id === bar.core.id
-            )?.width ?? 0,
+            )?.width ?? 0) + 1,
             (i) => {
               const staffGlyph = new SMUFL.Glyph({
                 glyphName: SMUFL.getGlyphname("staves", (glyphName) =>

@@ -1,4 +1,4 @@
-import Metadata from "../../consts/metadata.json";
+import Metadata from "./metadata.json";
 import * as SMUFL from "./";
 import Core from "./core";
 
