@@ -1,6 +1,5 @@
 import * as Audio from ".";
 import Core from "../../core";
-import "../../../extensions/int16array/to_float32array.extensions";
 
 export class Track {
   core;

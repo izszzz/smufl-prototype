@@ -25,13 +25,13 @@ export class SVGExporter {
       const barlinesGroup = this.createSVGElement("g", { type: "barlines" });
       root.appendChild(trackRowElement).appendChild(barlinesGroup);
       // barline
-      for (const barline of row.barlines.columns) {
+      for (const { x, glyphs } of row.barlines.columns) {
         const barlineGroup = this.createSVGElement("g", {
           type: "barline",
-          x: barline.x,
+          x: x,
         });
         barlinesGroup.appendChild(barlineGroup);
-        for (const { glyphName, x, y } of barline.glyphs) {
+        for (const { glyphName, x, y } of glyphs) {
           barlineGroup.appendChild(
             this.createSMULFSVGElement(glyphName, {
               type: "glyph",
@@ -86,12 +86,18 @@ export class SVGExporter {
               );
             }
           );
-          for (const column of bar.header.columns) {
-            for (const { y, glyphName } of column.glyphs) {
-              metadatasGroup.appendChild(
+          for (const { x, y, glyphs } of bar.header.columns) {
+            const columnGroup = this.createSVGElement("g", {
+              type: "column",
+              x,
+              y,
+            });
+            metadatasGroup.appendChild(columnGroup);
+            for (const { x, y, glyphName } of glyphs) {
+              columnGroup.appendChild(
                 this.createSMULFSVGElement(glyphName, {
-                  type: "metadata",
-                  x: column.x,
+                  type: "glyph",
+                  x,
                   y,
                 })
               );

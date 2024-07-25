@@ -17,6 +17,7 @@ export class Score implements IScore {
   tracks;
   masterbars;
   elements;
+  bars;
   rows;
   constructor({
     core,
@@ -32,43 +33,20 @@ export class Score implements IScore {
     this.core = core;
     this.type = type;
     this.clientWidth = clientWidth;
-    this.elements = R.pipe(
-      this.core.elements,
-      R.map((core) => {
-        if (core instanceof Core.Note) return new SMUFL.Note({ core });
-        if (core instanceof Core.Rest) return new SMUFL.Rest({ core });
-      }),
-      R.filter(R.isTruthy)
-    );
+    this.tracks = core.tracks.map((track) => new SMUFL.Track({ core: track }));
+    this.elements = R.pipe(this.tracks, R.flatMap(R.prop("elements")));
+    this.bars = R.pipe(this.tracks, R.flatMap(R.prop("bars")));
     this.masterbars = this.core.masterbars.map((masterbar) => {
-      const masterbarElements = this.elements.filter(
-        ({ core }) => core.bar.id === masterbar.id
+      const bars = this.bars.filter(({ core }) =>
+        masterbar.bars.some(R.piped(R.prop("id"), R.isDeepEqual(core.id)))
       );
       return new SMUFL.MasterBar({
         core: masterbar,
-        elements: masterbarElements,
-        bars: masterbar.bars.map((bar) => {
-          return new SMUFL.Bar({
-            core: bar,
-            elements: masterbarElements.filter(
-              ({ core }) =>
-                core.bar.id === bar.id && core.bar.track.id === bar.track.id
-            ),
-          });
-        }),
+        elements: R.pipe(bars, R.flatMap(R.prop("elements"))),
+        bars,
       });
     });
-    this.tracks = core.tracks.map(
-      (track) =>
-        new SMUFL.Track({
-          core: track,
-          bars: R.pipe(
-            this.masterbars,
-            R.flatMap(R.prop("bars")),
-            R.filter(({ core }) => core.track.id === track.id)
-          ),
-        })
-    );
+
     this.rows = rows;
   }
 }

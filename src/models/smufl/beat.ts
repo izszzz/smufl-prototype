@@ -4,6 +4,7 @@ import Core from "./core";
 
 export class Beat extends SMUFL.Rect {
   element;
+  stem;
   core;
   constructor({
     core,
@@ -24,6 +25,7 @@ export class Beat extends SMUFL.Rect {
         (core) => elements.find((element) => element.core.id === core.id)!
       )
       .exhaustive();
+    this.stem = new SMUFL.Glyph({ glyphName: "stem" });
     this.width = this.element.width;
   }
 }

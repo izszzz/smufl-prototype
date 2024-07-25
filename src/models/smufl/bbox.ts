@@ -26,6 +26,6 @@ export class BBox {
     this.left = this.x;
     this.right = bBoxNE[0];
     this.width = this.right - this.left;
-    this.height = this.bottom - this.top;
+    this.height = this.top + this.bottom;
   }
 }

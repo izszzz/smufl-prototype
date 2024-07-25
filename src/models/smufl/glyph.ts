@@ -1,4 +1,4 @@
-import * as SMUFL from "./";
+import * as SMUFL from ".";
 
 interface IGlyph<T> {
   glyphName: T;

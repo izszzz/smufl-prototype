@@ -11,15 +11,18 @@ export class Exporter {
   options;
   constructor(
     score: InstanceType<typeof Core.Score>,
-    options: Options = { clientWidth: 0, type: "HorizontalScroll" }
+    options: Options = {
+      clientWidth: 0,
+      type: "HorizontalScroll",
+    }
   ) {
     this.score = score;
     this.options = options;
   }
   export() {
     const score = this.generate(this.score);
-    score.clientWidth = this.options.clientWidth ?? 0;
-    score.type = this.options.type ?? "VerticalScroll";
+    score.clientWidth = this.options.clientWidth;
+    score.type = this.options.type;
     score.rows = this.layout(score);
     this.transform(score);
     return score;

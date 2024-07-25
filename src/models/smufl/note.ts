@@ -1,8 +1,10 @@
+import * as R from "remeda";
+import * as SMUFL from ".";
 import Core from "../core";
-import * as SMUFL from "./";
 
 export class Note extends SMUFL.Element {
   core;
+  track;
   private get accidental() {
     return !SMUFL.Metadatas.baseWhiteKeys.some((key) => key === this.basePitch);
   }
@@ -10,34 +12,34 @@ export class Note extends SMUFL.Element {
     return this.core.pitch - SMUFL.Metadatas.midiMiddleC;
   }
   get basePitch() {
-    return (this.pitch %
-      SMUFL.Metadatas.baseOctaveKeys
-        .length) as SMUFL.Metadatas["baseOctaveKeys"][number];
+    return modulo12(this.core.pitch);
   }
   get legerLine() {
-    // TODO: middleC以下ラ以上の場合、legerLineの本数を返すようにする
-    // もっと言うと、Noteの位置がStaveに重ならない場合は、その分のstaveの本数を返すようにする
-    return SMUFL.Metadatas.midiMiddleC >= this.core.pitch;
+    if (this.y >= 1) return Math.floor(this.y);
+    return 0;
+  }
+  get octave() {
+    return (
+      Math.trunc(this.core.pitch / SMUFL.Metadatas.baseOctaveKeys.length) - 1
+    );
   }
   private get accidentalLiteral() {
-    return "accidentalSharp" as const; // !prevNote
-    // 	? "accidentalSharp"
-    // 	: prevNote.pitch < pitch
-    // 	  ? "accidentalSharp"
-    // 	  : "accidentalFlat";
+    return "accidentalSharp" as const;
   }
   private get stemLiteral() {
     if (this.fraction === 1) return "";
     return this.pitch >= SMUFL.Metadatas.baseOctaveKeys.length ? "Down" : "Up";
   }
-  constructor({ core }: { core: InstanceType<typeof Core.Note> }) {
+  constructor(core: InstanceType<typeof Core.Note>, track: SMUFL.Track) {
     super({ core });
     this.core = core;
+    this.track = track;
     this.glyph = new SMUFL.Glyph({
       glyphName: SMUFL.getGlyphname("individualNotes", (glyphName) =>
         glyphName.includes("note" + this.fractionLiteral + this.stemLiteral)
       ),
     });
+    this.y = calcNoteY(core) + SMUFL.Metadatas.baseWhiteKeys.length * 2;
     this.accessory = new SMUFL.Accessory({
       target: this.glyph,
       left: (() => {
@@ -47,10 +49,9 @@ export class Note extends SMUFL.Element {
         return glyphs;
       })(),
       middle: (() => {
-        const glyphs = [];
-        if (this.legerLine)
-          glyphs.push(
-            // TODO: middleC以外も表示させる
+        return R.times(
+          this.legerLine,
+          (i) =>
             new SMUFL.Glyph({
               glyphName: SMUFL.getGlyphname(
                 "staves",
@@ -60,9 +61,9 @@ export class Note extends SMUFL.Element {
                     this.fractionLiteral === "Whole" ? "Wide" : ""
                   )
               ),
+              y: i - this.y + 1,
             })
-          );
-        return glyphs;
+        );
       })(),
       right: (() => {
         const glyphs = [];
@@ -71,49 +72,26 @@ export class Note extends SMUFL.Element {
         return glyphs;
       })(),
     });
-    this.y = calcNoteY(core);
     this.init();
   }
 }
 
-const isNoteAccidental = (note: InstanceType<typeof Core.Note>) =>
-    !SMUFL.Metadatas.baseWhiteKeys.some(
-      (key) => key === calcNoteBasePitch(note)
-    ),
-  calcNoteAccidental = ({
-    prev: prevNote,
-    pitch,
-  }: InstanceType<typeof Core.Note>) => "accidentalSharp" as const,
-  // !prevNote
-  // 	? "accidentalSharp"
-  // 	: prevNote.pitch < pitch
-  // 	  ? "accidentalSharp"
-  // 	  : "accidentalFlat";
-  calcNoteBasePitch = (note: InstanceType<typeof Core.Note>) =>
-    (pitchOffset(note) %
-      SMUFL.Metadatas.baseOctaveKeys
-        .length) as SMUFL.Metadatas["baseOctaveKeys"][number],
-  pitchOffset = ({ pitch }: InstanceType<typeof Core.Note>) =>
-    pitch - SMUFL.Metadatas.midiMiddleC,
-  calcNotePosition = (note: InstanceType<typeof Core.Note>) => {
-    let pitch = pitchOffset(note);
-    const accidental = isNoteAccidental(note) ? calcNoteAccidental(note) : null;
-    if (accidental === "accidentalSharp") pitch -= 1;
-    // if (accidental === "accidentalFlat") pitch += 1;
-    return pitch;
-  },
-  calcNoteY = (note: InstanceType<typeof Core.Note>) =>
-    (2 - (calcNoteWhiteKeyPosition(note) + calcNoteOctaveY(note))) *
+const calcNoteY = (note: InstanceType<typeof Core.Note>) =>
+    (2 - (calcNoteOctaveY(note) + calcNoteWhiteKeyPosition(note))) *
     SMUFL.BravuraMetadata.engravingDefaults.thickBarlineThickness,
   calcNoteOctaveY = (note: InstanceType<typeof Core.Note>) =>
-    calcNoteOctave(note) * (SMUFL.Metadatas.baseWhiteKeys.length + 1),
+    calcNoteOctave(note) * SMUFL.Metadatas.baseWhiteKeys.length,
   calcNoteWhiteKeyPosition = (note: InstanceType<typeof Core.Note>) =>
     (SMUFL.Metadatas.baseWhiteKeys as number[]).indexOf(
-      (SMUFL.Metadatas.baseOctaveKeys as number[]).indexOf(
-        calcNotePosition(note)
-      )
+      (SMUFL.Metadatas.baseOctaveKeys as number[]).indexOf(modulo12(note.pitch))
     ),
   calcNoteOctave = (note: InstanceType<typeof Core.Note>) =>
-    Math.trunc(pitchOffset(note) / SMUFL.Metadatas.baseOctaveKeys.length);
-// .filter((legerLineGlyphName) =>calcNoteFraction(note))
-// .filter((fraction) => fraction)[0]
+    Math.trunc(note.pitch / SMUFL.Metadatas.baseOctaveKeys.length) - 1;
+
+function modulo12(n: number): number {
+  return (
+    ((n % SMUFL.Metadatas.baseOctaveKeys.length) +
+      SMUFL.Metadatas.baseOctaveKeys.length) %
+    SMUFL.Metadatas.baseOctaveKeys.length
+  );
+}

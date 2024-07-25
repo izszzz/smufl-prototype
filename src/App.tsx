@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "./models/files/soundfont2";
 import * as SMUFL from "./models/smufl";
 import * as Audio from "./models/browser/audio";
-import SVGRenderer from "./models/browser/svg/svg_renderer";
+import SVGRenderer from "./models/browser/svg/renderer";
 import Core from "./models/core";
 import { Midi } from "./models/files/midi";
 
@@ -10,7 +10,7 @@ function App() {
   const [fontSize, setFontSize] = useState(30);
   const [layoutType, setLayoutType] =
     useState<SMUFL.Score["type"]>("HorizontalScroll");
-  const [volume, setVolume] = useState<number>(50);
+  const [volume, setVolume] = useState(50);
   const [svgRenderer, setSVGRenderer] = useState<SVGRenderer>();
   const [audioPlayer, setAudioPlayer] = useState<Audio.Player>();
   const [soundfont2, setSoundfont2] = useState<Soundfont2>();
