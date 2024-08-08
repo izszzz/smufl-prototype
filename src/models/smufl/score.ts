@@ -33,6 +33,7 @@ export class Score implements IScore {
     this.core = core;
     this.type = type;
     this.clientWidth = clientWidth;
+    this.rows = rows;
     this.tracks = core.tracks.map((track) => new SMUFL.Track({ core: track }));
     this.elements = R.pipe(this.tracks, R.flatMap(R.prop("elements")));
     this.bars = R.pipe(this.tracks, R.flatMap(R.prop("bars")));
@@ -46,7 +47,5 @@ export class Score implements IScore {
         bars,
       });
     });
-
-    this.rows = rows;
   }
 }

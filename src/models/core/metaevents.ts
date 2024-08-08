@@ -14,7 +14,7 @@ export class Metaevents {
   ) {
     this.data = R.pipe(
       Metaevents.Map,
-      R.keys,
+      R.keys(),
       R.reduce(
         (acc, cur) => ({
           ...acc,
@@ -39,16 +39,31 @@ export class Metaevents {
       )
     );
   }
-  find(event: InstanceType<typeof Core.Event>) {
+  get(event: InstanceType<typeof Core.Event>) {
     return R.pipe(
       Metaevents.Map,
-      R.keys,
+      R.keys(),
       R.reduce(
         (acc, cur) => ({
           ...acc,
           [cur]: this.data[cur].find(
-            (metaevent) => metaevent.start === event.start
+            ({ start, end }) => start <= event.start && end >= event.end
           ),
+        }),
+        {} as {
+          [P in MetaeventsMapKeys]: InstanceType<(typeof Metaevents.Map)[P]>;
+        }
+      )
+    );
+  }
+  find(event: InstanceType<typeof Core.Event>) {
+    return R.pipe(
+      Metaevents.Map,
+      R.keys(),
+      R.reduce(
+        (acc, cur) => ({
+          ...acc,
+          [cur]: this.data[cur].find(({ start }) => start === event.start),
         }),
         {} as {
           [P in MetaeventsMapKeys]: InstanceType<(typeof Metaevents.Map)[P]>;

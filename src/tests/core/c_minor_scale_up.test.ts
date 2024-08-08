@@ -2,8 +2,8 @@ import Core from "../../models/core";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 
-describe("c_major_scale_up", async () => {
-  const core = await importCore("c_major_scale_up");
+describe("c_minor_scale_up", async () => {
+  const core = await importCore("c_minor_scale_up");
   describe("Score", () => {
     test("Event", () =>
       expect(core).toMatchObject({
@@ -34,8 +34,8 @@ describe("c_major_scale_up", async () => {
       test(".Keysignature", () =>
         expect(core.metaevents.data.Keysignature).toEqual([
           new Core.Metaevents.Map.Keysignature({
-            tonality: false,
-            accidental: 0,
+            tonality: true,
+            accidental: -3,
             start: 0,
             duration: 8,
             end: 8,
@@ -59,56 +59,56 @@ describe("c_major_scale_up", async () => {
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
             test(".originalPitch", () =>
               expect(note?.originalPitch).toEqual(60));
-            test(".pitch", () => expect(note?.originalPitch).toEqual(60));
+            test(".pitch", () => expect(note?.pitch).toEqual(60));
           });
           describe("[1]", () => {
             const note = track0?.notes[1];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
             test(".originalPitch", () =>
               expect(note?.originalPitch).toEqual(62));
-            test(".pitch", () => expect(note?.originalPitch).toEqual(62));
+            test(".pitch", () => expect(note?.pitch).toEqual(62));
           });
           describe("[2]", () => {
             const note = track0?.notes[2];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
             test(".originalPitch", () =>
               expect(note?.originalPitch).toEqual(64));
-            test(".pitch", () => expect(note?.originalPitch).toEqual(64));
+            test(".pitch", () => expect(note?.pitch).toEqual(63));
           });
           describe("[3]", () => {
             const note = track0?.notes[3];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
             test(".originalPitch", () =>
               expect(note?.originalPitch).toEqual(65));
-            test(".pitch", () => expect(note?.originalPitch).toEqual(65));
+            test(".pitch", () => expect(note?.pitch).toEqual(65));
           });
           describe("[4]", () => {
             const note = track0?.notes[4];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
             test(".originalPitch", () =>
               expect(note?.originalPitch).toEqual(67));
-            test(".pitch", () => expect(note?.originalPitch).toEqual(67));
+            test(".pitch", () => expect(note?.pitch).toEqual(67));
           });
           describe("[5]", () => {
             const note = track0?.notes[5];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
             test(".originalPitch", () =>
               expect(note?.originalPitch).toEqual(69));
-            test(".pitch", () => expect(note?.originalPitch).toEqual(69));
+            test(".pitch", () => expect(note?.pitch).toEqual(68));
           });
           describe("[6]", () => {
             const note = track0?.notes[6];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
             test(".originalPitch", () =>
               expect(note?.originalPitch).toEqual(71));
-            test(".pitch", () => expect(note?.originalPitch).toEqual(71));
+            test(".pitch", () => expect(note?.pitch).toEqual(70));
           });
           describe("[7]", () => {
             const note = track0?.notes[7];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
             test(".originalPitch", () =>
               expect(note?.originalPitch).toEqual(72));
-            test(".pitch", () => expect(note?.originalPitch).toEqual(72));
+            test(".pitch", () => expect(note?.pitch).toEqual(72));
           });
         });
         test("extends Event", () =>

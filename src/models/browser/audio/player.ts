@@ -26,7 +26,7 @@ export class Player {
           const bufferSource = synth.createBufferSource(synth.sample);
           bufferSource.playbackRate.setValueAtTime(
             Audio.calcPlaybackRate(
-              note.core.pitch,
+              note.core.originalPitch,
               note.calcBaseDetune(synth.sample)
             ),
             this.score.audioContext.currentTime

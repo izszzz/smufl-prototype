@@ -10,20 +10,21 @@ export class Note extends SMUFL.Element {
   }
   get basePitch() {
     return (
-      ((this.core.pitch % SMUFL.Metadatas.baseOctaveKeys.length) +
+      ((this.core.originalPitch % SMUFL.Metadatas.baseOctaveKeys.length) +
         SMUFL.Metadatas.baseOctaveKeys.length) %
       SMUFL.Metadatas.baseOctaveKeys.length
     );
   }
   get legerLine() {
-    // TODO: track.heightで計算できるようにしてもいい
     if (this.y <= -4) return Math.ceil(this.y + 4);
     if (this.y >= 1) return Math.floor(this.y);
     return 0;
   }
   get octave() {
     return (
-      Math.trunc(this.core.pitch / SMUFL.Metadatas.baseOctaveKeys.length) - 1
+      Math.trunc(
+        this.core.originalPitch / SMUFL.Metadatas.baseOctaveKeys.length
+      ) - 1
     );
   }
   get whiteKey() {
@@ -36,7 +37,7 @@ export class Note extends SMUFL.Element {
   }
   private get stemLiteral() {
     if (this.fraction === 1) return "";
-    return this.core.pitch - SMUFL.Metadatas.midiMiddleC >=
+    return this.core.originalPitch - SMUFL.Metadatas.midiMiddleC >=
       SMUFL.Metadatas.baseOctaveKeys.length
       ? "Down"
       : "Up";
@@ -51,7 +52,6 @@ export class Note extends SMUFL.Element {
       ),
     });
     this.y = this.calcNoteY() + SMUFL.Metadatas.baseWhiteKeys.length * 2;
-    console.log(this.calcLegerLineY());
     this.accessory = new SMUFL.Accessory({
       target: this.glyph,
       left: (() => {
@@ -62,7 +62,6 @@ export class Note extends SMUFL.Element {
       })(),
       middle: (() => {
         return R.times(Math.abs(this.legerLine), (i) => {
-          console.log(i, this.calcLegerLineY(), this.y);
           return new SMUFL.Glyph({
             glyphName: SMUFL.getGlyphname(
               "staves",
