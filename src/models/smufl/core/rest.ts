@@ -1,4 +1,4 @@
-import Core from "../../core";
+import * as Core from ".";
 
 export class Rest extends Core.Element {
   constructor(element: ConstructorParameters<typeof Core.Element>[0]) {

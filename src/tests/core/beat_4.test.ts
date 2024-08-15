@@ -1,4 +1,4 @@
-import Core from "../../models/core";
+import * as Core from "../../models/core";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 describe("beat_4", async () => {

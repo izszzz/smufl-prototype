@@ -1,4 +1,4 @@
-import Core from "../../../models/smufl/core";
+import * as Core from "../../../models/smufl/core";
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 

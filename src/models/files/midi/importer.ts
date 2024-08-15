@@ -1,5 +1,5 @@
 import * as R from "remeda";
-import Core from "../../core";
+import * as Core from "../../core";
 import { Midi as MidiFile } from ".";
 import Metadata from "./metadata.json";
 import { SetOptional } from "type-fest";

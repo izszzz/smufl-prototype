@@ -1,7 +1,5 @@
-import { Event } from "./event";
-import Metadata from "./metadata.json";
-import { Metaevent } from "./metaevent";
-export class Keysignature extends Metaevent {
+import * as Core from ".";
+export class Keysignature extends Core.Metaevent {
   /**
    * - `true`: minor
    * - `false`: major
@@ -9,7 +7,7 @@ export class Keysignature extends Metaevent {
   tonality;
   accidental;
   get diffKeys() {
-    return Metadata.keysignature[this.tonality ? "minor" : "major"].slice(
+    return Core.Metadata.keysignature[this.tonality ? "minor" : "major"].slice(
       0,
       Math.abs(this.accidental)
     );
@@ -21,7 +19,7 @@ export class Keysignature extends Metaevent {
   }: {
     accidental: number;
     tonality: boolean;
-  } & ConstructorParameters<typeof Event>[0]) {
+  } & ConstructorParameters<typeof Core.Event>[0]) {
     super(event);
     this.tonality = tonality;
     this.accidental = accidental;

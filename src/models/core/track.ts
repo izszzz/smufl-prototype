@@ -1,7 +1,6 @@
-import Core, { Identifier } from ".";
-import { Event } from "./event";
+import * as Core from ".";
 
-export class Track extends Event implements Identifier {
+export class Track extends Core.Event implements Core.Identifier {
   id;
   elements: InstanceType<typeof Core.Element>[] = [];
   notes: InstanceType<typeof Core.Note>[] = [];
@@ -17,7 +16,7 @@ export class Track extends Event implements Identifier {
   }: {
     name?: string;
     preset: number;
-    score: InstanceType<typeof Core.Score>;
+    score: Core.Score;
     notes: Omit<ConstructorParameters<typeof Core.Note>[0], "track" | "id">[];
   } & ConstructorParameters<typeof Core.Event>[0]) {
     super(event);

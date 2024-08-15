@@ -1,6 +1,6 @@
-import Core, { Identifier } from "../../core";
+import * as Core from ".";
 
-export class MasterBar extends Core.Event implements Identifier {
+export class MasterBar extends Core.Event implements Core.Identifier {
   id;
   bars;
   sequence;
@@ -12,8 +12,8 @@ export class MasterBar extends Core.Event implements Identifier {
     elements,
     ...event
   }: {
-    score: InstanceType<typeof Core.Score>;
-    elements: InstanceType<typeof Core.Element>[];
+    score: Core.Score;
+    elements: Core.Element[];
   } & ConstructorParameters<typeof Core.Event>[0]) {
     super(event);
     this.id = Core.createId(score.masterbars);

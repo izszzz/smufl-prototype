@@ -1,4 +1,4 @@
-import Core from "../../core";
+import * as Core from ".";
 export class Beat extends Core.Event {
   element;
   sequence;
@@ -7,8 +7,8 @@ export class Beat extends Core.Event {
     elements,
     sequence,
   }: {
-    elements: InstanceType<typeof Core.Element>[];
-    sequence: InstanceType<typeof Core.Sequence>;
+    elements: Core.Element[];
+    sequence: Core.Sequence;
   }) {
     const start = Core.getEventsStart(elements);
     const end = Core.getEventsEnd(elements);

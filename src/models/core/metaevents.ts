@@ -1,5 +1,5 @@
 import * as R from "remeda";
-import Core from ".";
+import * as Core from ".";
 import { Bpm } from "./bpm";
 import { Keysignature } from "./keysignature";
 import { Timesignature } from "./timesignature";
@@ -39,7 +39,7 @@ export class Metaevents {
       )
     );
   }
-  get(event: InstanceType<typeof Core.Event>) {
+  get(event: Core.Event) {
     return R.pipe(
       Metaevents.Map,
       R.keys(),

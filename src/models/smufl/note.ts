@@ -5,14 +5,10 @@ import Core from "../core";
 export class Note extends SMUFL.Element {
   core;
   track;
-  private get accidental() {
-    return !SMUFL.Metadatas.baseWhiteKeys.some((key) => key === this.basePitch);
-  }
-  get basePitch() {
-    return (
-      ((this.core.originalPitch % SMUFL.Metadatas.baseOctaveKeys.length) +
-        SMUFL.Metadatas.baseOctaveKeys.length) %
-      SMUFL.Metadatas.baseOctaveKeys.length
+
+  get accidental() {
+    return !SMUFL.Metadatas.baseWhiteKeys.some(
+      (key) => key === this.core.pitchClass
     );
   }
   get legerLine() {
@@ -29,7 +25,7 @@ export class Note extends SMUFL.Element {
   }
   get whiteKey() {
     return (SMUFL.Metadatas.baseWhiteKeys as number[]).indexOf(
-      (SMUFL.Metadatas.baseOctaveKeys as number[]).indexOf(this.basePitch)
+      (SMUFL.Metadatas.baseOctaveKeys as number[]).indexOf(this.core.pitchClass)
     );
   }
   private get accidentalLiteral() {

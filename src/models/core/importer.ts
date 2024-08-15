@@ -1,5 +1,5 @@
 import * as R from "remeda";
-import Core from ".";
+import * as Core from ".";
 import { LiteralToPrimitiveDeep, PartialDeep, SetOptional } from "type-fest";
 
 interface Params

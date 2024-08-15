@@ -5,6 +5,13 @@ import Metadata from "./metadata.json";
 export class Keysignature extends SMUFL.Rect {
   core;
   glyphs;
+  get whiteKeys() {
+    return SMUFL.Metadatas.baseWhiteKeys.map((key) =>
+      this.core.diffKeys.includes(key)
+        ? key + (this.core.tonality ? 1 : -1)
+        : key
+    );
+  }
   constructor(core: InstanceType<typeof Core.Metaevents.Map.Keysignature>) {
     super();
     this.core = core;

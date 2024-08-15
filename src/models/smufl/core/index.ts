@@ -1,27 +1,7 @@
-import Core from "../../core";
-import { Sequence } from "./sequence";
-import { Beat } from "./beat";
-import { Chord } from "./chord";
+import * as Core from "../../core";
 import { Bar } from "./bar";
 import { MasterBar } from "./masterbar";
-import { Rest } from "./rest";
-import { Importer } from "./importer";
 
-declare module "../../core" {
-  interface CoreConstructor {
-    Rest: typeof Rest;
-    Bar: typeof Bar;
-    MasterBar: typeof MasterBar;
-    Sequence: typeof Sequence;
-    Beat: typeof Beat;
-    Chord: typeof Chord;
-  }
-}
-declare module "../../core/score" {
-  interface Score {
-    masterbars: InstanceType<typeof MasterBar>[];
-  }
-}
 declare module "../../core/element" {
   interface Element {
     bar: Bar;
@@ -32,11 +12,32 @@ declare module "../../core/track" {
     bars: Bar[];
   }
 }
-Core.Bar = Bar;
-Core.Rest = Rest;
-Core.MasterBar = MasterBar;
-Core.Sequence = Sequence;
-Core.Beat = Beat;
-Core.Chord = Chord;
-Core.Importer = Importer;
-export default Core;
+declare module "../../core/score" {
+  interface Score {
+    masterbars: InstanceType<typeof MasterBar>[];
+  }
+}
+const { createId, getEventsEnd, getEventsStart } = Core;
+export { createId, getEventsEnd, getEventsStart };
+export const Note = Core.Note;
+export type Note = Core.Note;
+export const Importer = Core.Importer;
+export type Importer = Core.Importer;
+export const Track = Core.Track;
+export type Track = Core.Track;
+export const Metaevents = Core.Metaevents;
+export type Metaevents = Core.Metaevents;
+export const Event = Core.Event;
+export type Event = Core.Event;
+export const Element = Core.Element;
+export type Element = Core.Element;
+export const Score = Core.Score;
+export type Score = Core.Score;
+export type Identifier = Core.Identifier;
+export * from "./sequence";
+export * from "./beat";
+export * from "./chord";
+export * from "./bar";
+export * from "./masterbar";
+export * from "./rest";
+export * from "./importer";

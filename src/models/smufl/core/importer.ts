@@ -1,5 +1,5 @@
 import * as R from "remeda";
-import Core from "../../core";
+import * as Core from ".";
 
 export class Importer extends Core.Importer {
   override import() {

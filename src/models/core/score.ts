@@ -1,11 +1,10 @@
-import Core from ".";
-import { Event } from "./event";
+import * as Core from ".";
 
-export class Score extends Event {
+export class Score extends Core.Event {
   name;
   metaevents;
-  tracks: InstanceType<typeof Core.Track>[] = [];
-  elements: InstanceType<typeof Core.Element>[] = [];
+  tracks: Core.Track[] = [];
+  elements: Core.Element[] = [];
   constructor({
     name,
     tracks,

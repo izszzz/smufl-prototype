@@ -1,7 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { importCore } from ".";
+import * as Core from "../../models/smufl/core";
 import * as SMUFL from "../../models/smufl";
-import Core from "../../models/smufl/core";
 
 describe("c_major_arpeggio", async () => {
   const core = await importCore("c_major_arpeggio");

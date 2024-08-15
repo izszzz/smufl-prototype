@@ -1,15 +1,12 @@
-import Core, { Identifier } from ".";
-import { Event } from "./event";
+import * as Core from ".";
 
-export abstract class Element extends Event implements Identifier {
+export class Element extends Core.Event implements Core.Identifier {
   id;
   track;
   constructor({
     track,
     ...event
-  }: { track: InstanceType<typeof Core.Track> } & ConstructorParameters<
-    typeof Core.Event
-  >[0]) {
+  }: { track: Core.Track } & ConstructorParameters<typeof Core.Event>[0]) {
     super(event);
     this.id = Core.createId(track.score.elements);
     this.track = track;

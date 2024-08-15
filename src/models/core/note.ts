@@ -1,13 +1,16 @@
-import Core from ".";
-import { Element } from "./element";
+import * as Core from ".";
 
-export class Note extends Element {
+export class Note extends Core.Element {
   originalPitch;
-  get scale() {
+  get pitchClass() {
     return ((this.originalPitch % 12) + 12) % 12;
   }
   get pitch() {
-    if ((this.metaevent.Keysignature.diffKeys as number[]).includes(this.scale))
+    if (
+      (this.metaevent.Keysignature.diffKeys as number[]).includes(
+        this.pitchClass
+      )
+    )
       return (
         this.originalPitch + (this.metaevent.Keysignature.tonality ? -1 : 1)
       );

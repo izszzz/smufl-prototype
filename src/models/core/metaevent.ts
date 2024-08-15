@@ -1,3 +1,3 @@
-import { Event } from "./event";
+import * as Core from ".";
 
-export class Metaevent extends Event {}
+export class Metaevent extends Core.Event {}

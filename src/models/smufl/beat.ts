@@ -1,6 +1,6 @@
 import { P, match } from "ts-pattern";
 import * as SMUFL from ".";
-import Core from "./core";
+import * as Core from "./core";
 
 export class Beat extends SMUFL.Rect {
   element;

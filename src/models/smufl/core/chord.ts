@@ -1,18 +1,15 @@
 import * as R from "remeda";
-import Core from "../../core";
+import * as Core from ".";
 export class Chord extends Core.Event {
   elements;
-  chord: (
-    | InstanceType<typeof Core.Sequence>
-    | InstanceType<typeof Core.Element>
-  )[];
+  chord: (Core.Sequence | Core.Element)[];
   beat;
   constructor({
     elements,
     beat,
   }: {
-    elements: InstanceType<typeof Core.Element>[];
-    beat: InstanceType<typeof Core.Beat>;
+    elements: Core.Element[];
+    beat: Core.Beat;
   }) {
     const start = Core.getEventsStart(elements);
     const end = Core.getEventsEnd(elements);
