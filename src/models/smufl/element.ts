@@ -34,7 +34,7 @@ export abstract class Element extends SMUFL.Rect {
     return SMUFL.getFractionLiteral(this.fraction);
   }
 
-  constructor({ core }: { core: InstanceType<typeof Core.Element> }) {
+  constructor({ core }: { core: Core.Element }) {
     super();
     this.core = core;
   }

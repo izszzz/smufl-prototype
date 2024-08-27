@@ -1,6 +1,6 @@
 import * as R from "remeda";
 import * as SMUFL from ".";
-import Core from "./core";
+import * as Core from "./core";
 
 export class Sequence extends SMUFL.Rect {
   core;
@@ -9,7 +9,7 @@ export class Sequence extends SMUFL.Rect {
     core,
     elements,
   }: {
-    core: InstanceType<typeof Core.Sequence>;
+    core: Core.Sequence;
     elements: SMUFL.Element[];
   }) {
     super();

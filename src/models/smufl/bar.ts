@@ -1,5 +1,5 @@
 import * as SMUFL from ".";
-import Core from "../core";
+import * as Core from "./core";
 
 export class Bar extends SMUFL.Rect {
   core;
@@ -14,7 +14,7 @@ export class Bar extends SMUFL.Rect {
     core,
     elements,
   }: {
-    core: InstanceType<typeof Core.Bar>;
+    core: Core.Bar;
     elements: SMUFL.Element[];
   }) {
     super();

@@ -1,5 +1,5 @@
 import * as Audio from ".";
-import Core from "../../core";
+import * as Core from "../../core";
 import Soundfont2 from "../../files/soundfont2";
 export class Score {
   core;
@@ -7,7 +7,7 @@ export class Score {
   tracks;
   audioContext;
   constructor(
-    core: InstanceType<typeof Core.Score>,
+    core: Core.Score,
     soundfont2: Soundfont2,
     audioContext: AudioContext
   ) {

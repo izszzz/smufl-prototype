@@ -10,7 +10,7 @@ export class SVGExporter {
   score;
   svg;
   options;
-  constructor(score: InstanceType<typeof Core.Score>, options: Options) {
+  constructor(score: Core.Score, options: Options) {
     this.score = score;
     this.svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     this.options = options;

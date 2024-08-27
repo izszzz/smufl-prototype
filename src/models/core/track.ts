@@ -2,8 +2,8 @@ import * as Core from ".";
 
 export class Track extends Core.Event implements Core.Identifier {
   id;
-  elements: InstanceType<typeof Core.Element>[] = [];
-  notes: InstanceType<typeof Core.Note>[] = [];
+  elements: Core.Element[] = [];
+  notes: Core.Note[] = [];
   name;
   score;
   preset;

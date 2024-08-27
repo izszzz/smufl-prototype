@@ -13,7 +13,7 @@ declare module "../../core/track" {
 }
 declare module "../../core/score" {
   interface Score {
-    masterbars: InstanceType<typeof MasterBar>[];
+    masterbars: MasterBar[];
   }
 }
 export {

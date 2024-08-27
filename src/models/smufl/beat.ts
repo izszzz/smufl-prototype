@@ -10,7 +10,7 @@ export class Beat extends SMUFL.Rect {
     core,
     elements,
   }: {
-    core: InstanceType<typeof Core.Beat>;
+    core: Core.Beat;
     elements: SMUFL.Element[];
   }) {
     super();

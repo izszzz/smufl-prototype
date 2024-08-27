@@ -1,4 +1,4 @@
-import Core from "../core";
+import * as Core from "../core";
 import * as SMUFL from ".";
 export class Timesignature extends SMUFL.Rect {
   core;

@@ -13,7 +13,7 @@ export class Track extends SMUFL.Point {
         ? `staff1Line`
         : `staff${this.staffLineCount}Lines`,
   }).bBox.height;
-  constructor({ core }: { core: InstanceType<typeof Core.Track> }) {
+  constructor({ core }: { core: Core.Track }) {
     super();
     this.core = core;
     this.elements = R.pipe(

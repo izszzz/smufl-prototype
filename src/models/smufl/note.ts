@@ -8,17 +8,12 @@ export class Note extends SMUFL.Element {
   track;
 
   get accidental(): "natural" | "sharp" | "flat" | undefined {
+    const keysignature = this.core.metaevent.Keysignature;
     if (
-      (this.core.metaevent.Keysignature.accidentalKeys as number[]).includes(
-        this.core.pitchClass
-      )
+      (keysignature.accidentalKeys as number[]).includes(this.core.pitchClass)
     )
       return "natural";
-    if (
-      (this.core.metaevent.Keysignature.blackKeys as number[]).includes(
-        this.core.pitchClass
-      )
-    )
+    if ((keysignature.blackKeys as number[]).includes(this.core.pitchClass))
       return "sharp";
   }
   get legerLine() {
@@ -34,14 +29,6 @@ export class Note extends SMUFL.Element {
       (Core.Metadata.pitchClasses as number[]).indexOf(this.core.pitchClass)
     );
   }
-  private get accidentalLiteral() {
-    return match(this.accidental)
-      .with("sharp", () => "accidentalSharp")
-      .with("flat", () => "accidentalFlat")
-      .with("natural", () => "accidentalNatural")
-      .with(undefined, () => "")
-      .exhaustive();
-  }
   private get stemLiteral() {
     if (this.fraction === 1) return "";
     return this.core.pitch - SMUFL.Metadatas.midiMiddleC >=
@@ -49,7 +36,7 @@ export class Note extends SMUFL.Element {
       ? "Down"
       : "Up";
   }
-  constructor(core: InstanceType<typeof Core.Note>, track: SMUFL.Track) {
+  constructor(core: Core.Note, track: SMUFL.Track) {
     super({ core });
     this.core = core;
     this.track = track;
@@ -64,7 +51,15 @@ export class Note extends SMUFL.Element {
       left: (() => {
         const glyphs = [];
         if (R.isNonNullish(this.accidental))
-          glyphs.push([new SMUFL.Glyph({ glyphName: this.accidentalLiteral })]);
+          glyphs.push([
+            new SMUFL.Glyph({
+              glyphName: match(this.accidental)
+                .with("sharp", () => "accidentalSharp" as const)
+                .with("flat", () => "accidentalFlat" as const)
+                .with("natural", () => "accidentalNatural" as const)
+                .exhaustive(),
+            }),
+          ]);
         return glyphs;
       })(),
       middle: (() => {

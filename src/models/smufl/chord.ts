@@ -10,7 +10,7 @@ export class Chord extends SMUFL.Rect {
     core,
     elements,
   }: {
-    core: InstanceType<typeof Core.Chord>;
+    core: Core.Chord;
     elements: SMUFL.Element[];
   }) {
     super();

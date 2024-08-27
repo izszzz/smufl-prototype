@@ -17,7 +17,7 @@ class SVGRenderer {
   }
   constructor(
     element: HTMLElement,
-    score: InstanceType<typeof Core.Score>,
+    score: Core.Score,
     options: SVGRendererOptions
   ) {
     this.options = options;
@@ -37,7 +37,7 @@ class SVGRenderer {
     this.element.appendChild(this.svg);
   };
 
-  private createSVGScore = (score: InstanceType<typeof Core.Score>) => {
+  private createSVGScore = (score: Core.Score) => {
     console.log({ core: score });
     const svg = new SVGExporter(score, {
       fontSizeRatio: this.fontSizeRatio,

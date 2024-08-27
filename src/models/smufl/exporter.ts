@@ -10,7 +10,7 @@ export class Exporter {
   score;
   options;
   constructor(
-    score: InstanceType<typeof Core.Score>,
+    score: Core.Score,
     options: Options = {
       clientWidth: 0,
       type: "HorizontalScroll",
@@ -27,7 +27,7 @@ export class Exporter {
     this.transform(score);
     return score;
   }
-  generate(core: InstanceType<typeof Core.Score>): SMUFL.Score {
+  generate(core: Core.Score): SMUFL.Score {
     return new SMUFL.Score({
       core,
       clientWidth: 0,

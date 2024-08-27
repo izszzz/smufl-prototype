@@ -1,5 +1,5 @@
 import * as Audio from ".";
-import Core from "../../core";
+import * as Core from "../../core";
 
 export class Track {
   core;
@@ -7,10 +7,7 @@ export class Track {
   volume;
   preset;
   notes;
-  constructor(
-    core: InstanceType<typeof Core.Track>,
-    score: InstanceType<typeof Audio.Score>
-  ) {
+  constructor(core: Core.Track, score: Audio.Score) {
     this.core = core;
     this.score = score;
     this.volume = score.audioContext.createGain();

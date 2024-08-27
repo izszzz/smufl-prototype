@@ -8,7 +8,7 @@ interface IScore {
   tracks: SMUFL.Track[];
   masterbars: SMUFL.MasterBar[];
   rows: SMUFL.Row[];
-  core: InstanceType<typeof Core.Score>;
+  core: Core.Score;
 }
 export class Score implements IScore {
   type;
@@ -28,7 +28,7 @@ export class Score implements IScore {
     type: "Pagination" | "VerticalScroll" | "HorizontalScroll";
     clientWidth?: number;
     rows: SMUFL.Row[];
-    core: InstanceType<typeof Core.Score>;
+    core: Core.Score;
   }) {
     this.core = core;
     this.type = type;

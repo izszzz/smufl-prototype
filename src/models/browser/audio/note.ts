@@ -1,11 +1,11 @@
-import Core from "../../core";
+import * as Core from "../../core";
 import * as Audio from ".";
 import Sample from "../../files/soundfont2/sample";
 
 export class Note {
   core;
   track;
-  constructor(core: InstanceType<typeof Core.Note>, track: Audio.Track) {
+  constructor(core: Core.Note, track: Audio.Track) {
     this.core = core;
     this.track = track;
   }

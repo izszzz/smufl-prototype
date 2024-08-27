@@ -1,6 +1,6 @@
 import * as R from "remeda";
 import * as SMUFL from "./";
-import Core from "../core";
+import * as Core from "./core";
 
 export class MasterBar extends SMUFL.Point {
   core;
@@ -24,15 +24,12 @@ export class MasterBar extends SMUFL.Point {
     elements,
   }: {
     bars: SMUFL.Bar[];
-    core: InstanceType<typeof Core.MasterBar>;
+    core: Core.MasterBar;
     elements: SMUFL.Element[];
   }) {
     super();
     this.bars = bars;
     this.core = core;
-    this.sequence = new SMUFL.Sequence({
-      core: core.sequence,
-      elements,
-    });
+    this.sequence = new SMUFL.Sequence({ core: core.sequence, elements });
   }
 }
