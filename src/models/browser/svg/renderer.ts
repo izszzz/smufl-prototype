@@ -1,5 +1,5 @@
 import Metadata from "../../smufl/metadata.json";
-import Core from "../../core";
+import * as Core from "../../smufl/core";
 import * as SMUFL from "../../smufl";
 import { SVGExporter } from "./exporter";
 interface SVGRendererOptions {

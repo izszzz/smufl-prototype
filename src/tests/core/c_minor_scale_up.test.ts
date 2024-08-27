@@ -57,57 +57,41 @@ describe("c_minor_scale_up", async () => {
           describe("[0]", () => {
             const note = track0?.notes[0];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
-            test(".originalPitch", () =>
-              expect(note?.originalPitch).toEqual(60));
             test(".pitch", () => expect(note?.pitch).toEqual(60));
           });
           describe("[1]", () => {
             const note = track0?.notes[1];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
-            test(".originalPitch", () =>
-              expect(note?.originalPitch).toEqual(62));
             test(".pitch", () => expect(note?.pitch).toEqual(62));
           });
           describe("[2]", () => {
             const note = track0?.notes[2];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
-            test(".originalPitch", () =>
-              expect(note?.originalPitch).toEqual(64));
-            test(".pitch", () => expect(note?.pitch).toEqual(63));
+            test(".pitch", () => expect(note?.pitch).toEqual(64));
           });
           describe("[3]", () => {
             const note = track0?.notes[3];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
-            test(".originalPitch", () =>
-              expect(note?.originalPitch).toEqual(65));
             test(".pitch", () => expect(note?.pitch).toEqual(65));
           });
           describe("[4]", () => {
             const note = track0?.notes[4];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
-            test(".originalPitch", () =>
-              expect(note?.originalPitch).toEqual(67));
             test(".pitch", () => expect(note?.pitch).toEqual(67));
           });
           describe("[5]", () => {
             const note = track0?.notes[5];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
-            test(".originalPitch", () =>
-              expect(note?.originalPitch).toEqual(69));
-            test(".pitch", () => expect(note?.pitch).toEqual(68));
+            test(".pitch", () => expect(note?.pitch).toEqual(69));
           });
           describe("[6]", () => {
             const note = track0?.notes[6];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
-            test(".originalPitch", () =>
-              expect(note?.originalPitch).toEqual(71));
-            test(".pitch", () => expect(note?.pitch).toEqual(70));
+            test(".pitch", () => expect(note?.pitch).toEqual(71));
           });
           describe("[7]", () => {
             const note = track0?.notes[7];
             test(".id", () => expect(note?.id).toBeTypeOf("number"));
-            test(".originalPitch", () =>
-              expect(note?.originalPitch).toEqual(72));
             test(".pitch", () => expect(note?.pitch).toEqual(72));
           });
         });

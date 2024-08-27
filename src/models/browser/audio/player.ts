@@ -1,5 +1,5 @@
 import * as Audio from ".";
-import Core from "../../core";
+import * as Core from "../../core";
 import Soundfont2 from "../../files/soundfont2";
 
 export class Player {
@@ -8,7 +8,7 @@ export class Player {
   score;
   volume;
   isPlaying = false;
-  constructor(core: InstanceType<typeof Core.Score>, soundfont2: Soundfont2) {
+  constructor(core: Core.Score, soundfont2: Soundfont2) {
     this.core = core;
     this.ctx = new AudioContext();
     this.volume = this.ctx.createGain();
@@ -26,7 +26,7 @@ export class Player {
           const bufferSource = synth.createBufferSource(synth.sample);
           bufferSource.playbackRate.setValueAtTime(
             Audio.calcPlaybackRate(
-              note.core.originalPitch,
+              note.core.pitch,
               note.calcBaseDetune(synth.sample)
             ),
             this.score.audioContext.currentTime

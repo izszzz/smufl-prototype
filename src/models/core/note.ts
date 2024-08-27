@@ -1,31 +1,20 @@
 import * as Core from ".";
 
 export class Note extends Core.Element {
-  originalPitch;
+  pitch;
   get pitchClass() {
-    return ((this.originalPitch % 12) + 12) % 12;
-  }
-  get pitch() {
-    if (
-      (this.metaevent.Keysignature.diffKeys as number[]).includes(
-        this.pitchClass
-      )
-    )
-      return (
-        this.originalPitch + (this.metaevent.Keysignature.tonality ? -1 : 1)
-      );
-    return this.originalPitch;
+    const keysLength = Core.Metadata.pitchClasses.length;
+    return ((this.pitch % keysLength) + keysLength) % keysLength;
   }
   get metaevent() {
     return this.track.score.metaevents.get(this);
   }
-
   constructor({
     pitch,
     ...element
   }: { pitch: number } & ConstructorParameters<typeof Core.Element>[0]) {
     super(element);
-    this.originalPitch = pitch;
+    this.pitch = pitch;
     this.track.notes.push(this);
   }
 }

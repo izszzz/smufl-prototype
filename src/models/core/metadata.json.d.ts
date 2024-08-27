@@ -7,7 +7,11 @@ interface Metadata {
       Bpm: {value: 120}
     }
   },
-  keysignature: {major: [5, 0, 7, 2, 9, 4, 11], minor: [11, 4, 9, 2, 7, 0, 5]}
+  pitchClasses: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+  majorWhiteNotes: [0, 2, 4, 5, 7, 9, 11],
+  minorWhiteNotes: [0, 2, 3, 5, 7, 8, 10],
+  majorTonicsByAccidentals: [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5],
+  minorTonicsByAccidentals: [9, 4, 11, 6, 1, 8, 3, 10, 5, 0, 7, 2]
 }
 
 declare const Metadata: Metadata;

@@ -2,8 +2,8 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "./models/files/soundfont2";
 import * as SMUFL from "./models/smufl";
 import * as Audio from "./models/browser/audio";
+import * as Core from "./models/smufl/core";
 import SVGRenderer from "./models/browser/svg/renderer";
-import Core from "./models/core";
 import { Midi } from "./models/files/midi";
 
 function App() {

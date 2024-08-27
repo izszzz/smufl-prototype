@@ -1,4 +1,3 @@
-import * as Core from "../../core";
 import { Bar } from "./bar";
 import { MasterBar } from "./masterbar";
 
@@ -17,23 +16,19 @@ declare module "../../core/score" {
     masterbars: InstanceType<typeof MasterBar>[];
   }
 }
-const { createId, getEventsEnd, getEventsStart } = Core;
-export { createId, getEventsEnd, getEventsStart };
-export const Note = Core.Note;
-export type Note = Core.Note;
-export const Importer = Core.Importer;
-export type Importer = Core.Importer;
-export const Track = Core.Track;
-export type Track = Core.Track;
-export const Metaevents = Core.Metaevents;
-export type Metaevents = Core.Metaevents;
-export const Event = Core.Event;
-export type Event = Core.Event;
-export const Element = Core.Element;
-export type Element = Core.Element;
-export const Score = Core.Score;
-export type Score = Core.Score;
-export type Identifier = Core.Identifier;
+export {
+  Score,
+  Metaevents,
+  Track,
+  Note,
+  Event,
+  Element,
+  Metadata,
+  createId,
+  getEventsEnd,
+  getEventsStart,
+} from "../../core";
+export type { Identifier } from "../../core";
 export * from "./sequence";
 export * from "./beat";
 export * from "./chord";

@@ -1,7 +1,8 @@
 import * as R from "remeda";
 import * as Core from ".";
+import * as BaseCore from "../../core";
 
-export class Importer extends Core.Importer {
+export class Importer extends BaseCore.Importer {
   override import() {
     const core = super.import();
     console.log({ core });

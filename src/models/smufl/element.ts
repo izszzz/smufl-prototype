@@ -1,6 +1,6 @@
 import Metadata from "./metadata.json";
 import * as SMUFL from ".";
-import Core from "./core";
+import * as Core from "./core";
 
 export abstract class Element extends SMUFL.Rect {
   accessory?: SMUFL.Accessory;

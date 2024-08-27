@@ -1,4 +1,4 @@
-import Core from "../../core";
+import * as Core from "../../smufl/core";
 import * as R from "remeda";
 import * as SMUFL from "../../smufl";
 import "../../../extensions/svgsvgelement/create_svg_element.extensions";

@@ -1,6 +1,6 @@
 import * as R from "remeda";
 import * as SMUFL from ".";
-import Core from "./core";
+import * as Core from "./core";
 
 interface Options {
   clientWidth: number;

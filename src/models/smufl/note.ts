@@ -1,15 +1,25 @@
 import * as R from "remeda";
 import * as SMUFL from ".";
-import Core from "../core";
+import * as Core from "./core";
+import { match } from "ts-pattern";
 
 export class Note extends SMUFL.Element {
   core;
   track;
 
-  get accidental() {
-    return !SMUFL.Metadatas.baseWhiteKeys.some(
-      (key) => key === this.core.pitchClass
-    );
+  get accidental(): "natural" | "sharp" | "flat" | undefined {
+    if (
+      (this.core.metaevent.Keysignature.accidentalKeys as number[]).includes(
+        this.core.pitchClass
+      )
+    )
+      return "natural";
+    if (
+      (this.core.metaevent.Keysignature.blackKeys as number[]).includes(
+        this.core.pitchClass
+      )
+    )
+      return "sharp";
   }
   get legerLine() {
     if (this.y <= -4) return Math.ceil(this.y + 4);
@@ -17,24 +27,25 @@ export class Note extends SMUFL.Element {
     return 0;
   }
   get octave() {
-    return (
-      Math.trunc(
-        this.core.originalPitch / SMUFL.Metadatas.baseOctaveKeys.length
-      ) - 1
-    );
+    return Math.trunc(this.core.pitch / Core.Metadata.pitchClasses.length) - 1;
   }
   get whiteKey() {
-    return (SMUFL.Metadatas.baseWhiteKeys as number[]).indexOf(
-      (SMUFL.Metadatas.baseOctaveKeys as number[]).indexOf(this.core.pitchClass)
+    return (Core.Metadata.majorWhiteNotes as number[]).indexOf(
+      (Core.Metadata.pitchClasses as number[]).indexOf(this.core.pitchClass)
     );
   }
   private get accidentalLiteral() {
-    return "accidentalSharp" as const;
+    return match(this.accidental)
+      .with("sharp", () => "accidentalSharp")
+      .with("flat", () => "accidentalFlat")
+      .with("natural", () => "accidentalNatural")
+      .with(undefined, () => "")
+      .exhaustive();
   }
   private get stemLiteral() {
     if (this.fraction === 1) return "";
-    return this.core.originalPitch - SMUFL.Metadatas.midiMiddleC >=
-      SMUFL.Metadatas.baseOctaveKeys.length
+    return this.core.pitch - SMUFL.Metadatas.midiMiddleC >=
+      Core.Metadata.pitchClasses.length
       ? "Down"
       : "Up";
   }
@@ -47,12 +58,12 @@ export class Note extends SMUFL.Element {
         glyphName.includes("note" + this.fractionLiteral + this.stemLiteral)
       ),
     });
-    this.y = this.calcNoteY() + SMUFL.Metadatas.baseWhiteKeys.length * 2;
+    this.y = this.calcNoteY() + Core.Metadata.majorWhiteNotes.length * 2;
     this.accessory = new SMUFL.Accessory({
       target: this.glyph,
       left: (() => {
         const glyphs = [];
-        if (this.accidental)
+        if (R.isNonNullish(this.accidental))
           glyphs.push([new SMUFL.Glyph({ glyphName: this.accidentalLiteral })]);
         return glyphs;
       })(),
@@ -83,7 +94,7 @@ export class Note extends SMUFL.Element {
   calcNoteY() {
     return (
       (2 -
-        (this.octave * SMUFL.Metadatas.baseWhiteKeys.length + this.whiteKey)) *
+        (this.octave * Core.Metadata.majorWhiteNotes.length + this.whiteKey)) *
       SMUFL.BravuraMetadata.engravingDefaults.thickBarlineThickness
     );
   }

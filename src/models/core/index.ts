@@ -23,5 +23,4 @@ export const getEventsEnd = (events: Event[]) =>
 export interface Identifier {
   readonly id: number;
 }
-
 export { Metadata };

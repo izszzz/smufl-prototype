@@ -93,7 +93,7 @@ describe("beat_4", async () => {
           describe("[0]", () => {
             const note0 = track0?.notes[0];
             test(".id", () => expect(note0?.id).toBeTypeOf("number"));
-            test(".pitch", () => expect(note0?.originalPitch).toEqual(60));
+            test(".pitch", () => expect(note0?.pitch).toEqual(60));
           });
         });
         test("extends Event", () =>
