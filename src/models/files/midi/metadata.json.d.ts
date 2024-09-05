@@ -14,6 +14,7 @@ interface Metadata {
       copyright: {name: 'copyright', type: 2},
       trackName: {name: 'trackName', type: 3},
       instrumentName: {name: 'instrumentName', type: 4},
+      lyric: {name: 'marker', type: 5},
       marker: {name: 'marker', type: 6},
       programName: {name: 'programName', type: 8},
       deviceName: {name: 'deviceName', type: 9},

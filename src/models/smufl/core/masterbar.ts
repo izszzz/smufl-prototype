@@ -26,7 +26,7 @@ export class MasterBar extends Core.Event implements Core.Identifier {
         elements: elements.filter((element) => element.track.id === track.id),
         ...event,
       });
-      for (const note of bar.elements) note.bar = bar;
+      for (const element of bar.elements) element.bar = bar;
       track.bars.push(bar);
       return bar;
     });

@@ -52,6 +52,10 @@
         "name": "instrumentName",
         "type": 4
       },
+      "lyric": {
+        "name": "lyric",
+        "type": 5
+      },
       "marker": {
         "name": "marker",
         "type": 6

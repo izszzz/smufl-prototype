@@ -1,6 +1,9 @@
+import * as R from "remeda";
 import { Parser as BinaryParser } from "binary-parser";
 import Metadata from "./metadata.json";
 
+let prevReadUntil = false;
+let prevStatusByte = null;
 const { metaEvents } = Metadata.mtrk;
 const metaEventChoice = (
   metaEvent: keyof typeof metaEvents,
@@ -16,8 +19,23 @@ const metaEventChoice = (
     { length: "length" }
   ),
 });
-const midiEventParser = new BinaryParser().uint8("pitch").uint8("velocity");
+const statusByteParser = new BinaryParser().bit4("type").bit4("channel");
+const noteMidiEventParser = new BinaryParser()
+  .nest("statusByte", {
+    type: statusByteParser,
+    formatter: (item) => (prevStatusByte = item),
+  })
+  .uint8("pitch")
+  .uint8("velocity");
+const controllerMidiEventParser = new BinaryParser()
+  .nest("statusByte", {
+    type: statusByteParser,
+    formatter: (item) => (prevStatusByte = item),
+  })
+  .uint8("controller")
+  .uint8("value");
 const metaEventParser = new BinaryParser()
+  .nest("statusByte", { type: statusByteParser })
   .uint8("type")
   .uint8("length")
   .choice({
@@ -27,6 +45,7 @@ const metaEventParser = new BinaryParser()
       ...metaEventChoice("copyright", (p, n, l) => p.string(n, l)),
       ...metaEventChoice("trackName", (p, n, l) => p.string(n, l)),
       ...metaEventChoice("instrumentName", (p, n, l) => p.string(n, l)),
+      ...metaEventChoice("lyric", (p, n, l) => p.string(n, l)),
       ...metaEventChoice("marker", (p, n, l) => p.string(n, l)),
       ...metaEventChoice("deviceName", (p, n, l) => p.string(n, l)),
       ...metaEventChoice("endOfTrack", (p, n, l) => p.string(n, l)),
@@ -41,16 +60,11 @@ const metaEventParser = new BinaryParser()
         })
       ),
       ...metaEventChoice("keySignature", (p, n) =>
-        p.nest(n, {
-          type: new BinaryParser().int8("sf").uint8("mi"),
-        })
+        p.nest(n, { type: new BinaryParser().int8("sf").uint8("mi") })
       ),
     },
-    defaultChoice: new BinaryParser().buffer("buffer", {
-      length: "length",
-    }),
+    defaultChoice: new BinaryParser().buffer("buffer", { length: "length" }),
   });
-let prevReadUntil = false;
 const midiTrackEventParser = new BinaryParser()
   .buffer("deltaTime", {
     readUntil: (item) => {
@@ -58,16 +72,27 @@ const midiTrackEventParser = new BinaryParser()
       prevReadUntil = !(item & Metadata.mtrk.deltaTime.readUntil);
       return readUntil;
     },
-    // TODO: 繰り返し文に直す
-    formatter: (item: Uint8Array) => ((item[0] & 0x7f) << 7) | (item[1] & 0x7f),
+    formatter: (item: Uint8Array) =>
+      R.reduce(Array.from(item), (acc, byte) => (acc << 7) | (byte & 0x7f), 0),
   })
-  .bit4("type")
-  .bit4("channel")
+  .nest("statusByte", { type: statusByteParser })
+  .seek(-1)
   .choice("event", {
-    tag: "type",
+    tag: "statusByte.type",
     choices: {
-      8: midiEventParser,
-      9: midiEventParser,
+      ...R.times(8, () =>
+        new BinaryParser()
+          .nest("statusByte", {
+            type: new BinaryParser(),
+            formatter: () => prevStatusByte,
+          })
+          .uint8("pitch")
+          .uint8("velocity")
+      ),
+      8: noteMidiEventParser,
+      9: noteMidiEventParser,
+      11: noteMidiEventParser,
+      12: controllerMidiEventParser,
       15: metaEventParser,
     },
   });
@@ -89,5 +114,7 @@ const midiTrackChunk = new BinaryParser()
   });
 export const Parser = new BinaryParser()
   .useContextVars()
-  .nest("mthd", { type: midiHeaderChunk })
+  .nest("mthd", {
+    type: midiHeaderChunk,
+  })
   .array("mtrks", { type: midiTrackChunk, length: "mthd.trackCount" });

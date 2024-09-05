@@ -1,5 +1,5 @@
 import * as R from "remeda";
-import * as Core from "../../core";
+import * as Core from "../../smufl/core";
 import { Midi as MidiFile } from ".";
 import Metadata from "./metadata.json";
 import { SetOptional } from "type-fest";
@@ -98,13 +98,13 @@ export class Importer {
   }
 
   isMetaEvent(event: MidiTrackEvent): event is MidiTrackEvent<MetaEvent> {
-    return event.type === Metadata.mtrk.metaEvent.type;
+    return event.statusByte.type === Metadata.mtrk.metaEvent.type;
   }
   isNoteOnEvent(event: MidiTrackEvent): event is MidiTrackEvent<MidiEvent> {
-    return event.type === Metadata.mtrk.midiEvents.noteOn.type;
+    return event.statusByte.type === Metadata.mtrk.midiEvents.noteOn.type;
   }
   isNoteOffEvent(event: MidiTrackEvent): event is MidiTrackEvent<MidiEvent> {
-    return event.type === Metadata.mtrk.midiEvents.noteOff.type;
+    return event.statusByte.type === Metadata.mtrk.midiEvents.noteOff.type;
   }
 }
 interface Midi {
@@ -123,14 +123,15 @@ interface Midi {
 interface MidiTrackEvent<
   Event extends MetaEvent | MidiEvent = MetaEvent | MidiEvent,
 > {
-  channel: number;
+  statusByte: {
+    type:
+      | typeof Metadata.mtrk.metaEvent.type
+      | typeof Metadata.mtrk.midiEvents.noteOn.type
+      | typeof Metadata.mtrk.midiEvents.noteOff.type;
+    channel: number;
+  };
   deltaTime: number;
   event: Event;
-
-  type:
-    | typeof Metadata.mtrk.metaEvent.type
-    | typeof Metadata.mtrk.midiEvents.noteOn.type
-    | typeof Metadata.mtrk.midiEvents.noteOff.type;
 }
 interface MidiEvent {
   pitch: number;

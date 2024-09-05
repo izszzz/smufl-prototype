@@ -1,4 +1,4 @@
-import * as SMUFL from "./";
+import * as SMUFL from ".";
 
 export class Accessory extends SMUFL.Rect {
   left;

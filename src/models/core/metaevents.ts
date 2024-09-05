@@ -56,7 +56,7 @@ export class Metaevents {
       )
     );
   }
-  find(event: InstanceType<typeof Core.Event>) {
+  find(event: Core.Event) {
     return R.pipe(
       Metaevents.Map,
       R.keys(),
