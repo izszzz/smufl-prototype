@@ -2,10 +2,9 @@ import * as R from "remeda";
 import * as Core from ".";
 import * as BaseCore from "../../core";
 
-export class Importer extends BaseCore.Importer {
-  override import() {
-    const core = super.import();
-    console.log({ core });
+export class Extender {
+  extend(core: BaseCore.Score) {
+    console.log({ extendedCore: core });
     //init
     core.masterbars = [];
     for (const track of core.tracks) track.bars = [];
@@ -19,6 +18,7 @@ export class Importer extends BaseCore.Importer {
           1
         ),
         () => {
+          // TODO: refactor
           end += timesignature.numerator;
           const notes = core.notes.filter(
             (e) => e.end > start && e.start < end
@@ -29,9 +29,9 @@ export class Importer extends BaseCore.Importer {
             const cloneTieNote = new Core.Note(tieNote);
             cloneTieNote.start = end;
             cloneTieNote.duration = cloneTieNote.end - cloneTieNote.start;
-            for (const track of core.tracks) track.notes.push(cloneTieNote);
             tieNote.end = end;
             tieNote.duration = tieNote.end - tieNote.start;
+            for (const track of core.tracks) track.notes.push(cloneTieNote);
           }
           const resultNotes = core.notes.filter(
             (e) => start <= e.start && e.end <= end

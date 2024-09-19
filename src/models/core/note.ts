@@ -15,6 +15,7 @@ export class Note extends Core.Element {
   }: { pitch: number } & ConstructorParameters<typeof Core.Element>[0]) {
     super(element);
     this.pitch = pitch;
+    this.track.score.notes.push(this);
     this.track.notes.push(this);
   }
 }

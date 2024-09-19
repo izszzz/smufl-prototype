@@ -36,4 +36,4 @@ export * from "./chord";
 export * from "./bar";
 export * from "./masterbar";
 export * from "./rest";
-export * from "./importer";
+export * from "./extender";

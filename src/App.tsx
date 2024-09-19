@@ -2,7 +2,8 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "./models/files/soundfont2";
 import * as SMUFL from "./models/smufl";
 import * as Audio from "./models/browser/audio";
-import * as Core from "./models/smufl/core";
+import * as Core from "./models/core";
+import * as SMUFL_Core from "./models/smufl/core";
 import SVGRenderer from "./models/browser/svg/renderer";
 import { Midi } from "./models/files/midi";
 
@@ -44,7 +45,9 @@ function App() {
           score = new Midi.Importer(arrayBuffer).import();
         }
         if (file.type === "application/json")
-          score = new Core.Importer(JSON.parse(reader.result)).import();
+          score = new SMUFL_Core.Extender().extend(
+            new Core.Importer(JSON.parse(reader.result)).import()
+          );
         if (ref.current) {
           const svgRenderer = new SVGRenderer(ref.current, score, {
             fontSize,
