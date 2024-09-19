@@ -4,7 +4,7 @@ export class Score extends Core.Event {
   name;
   metaevents;
   tracks: Core.Track[] = [];
-  elements: Core.Element[] = [];
+  notes: Core.Note[] = [];
   constructor({
     name,
     tracks,

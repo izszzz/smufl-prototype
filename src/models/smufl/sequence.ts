@@ -14,6 +14,7 @@ export class Sequence extends SMUFL.Rect {
   }) {
     super();
     this.core = core;
+    console.log(core, elements);
     this.beats = core.beats.map((core) => new SMUFL.Beat({ core, elements }));
     this.width = R.pipe(
       this.beats,

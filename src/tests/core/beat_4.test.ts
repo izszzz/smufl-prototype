@@ -42,38 +42,38 @@ describe("beat_4", async () => {
         ]));
     });
     describe(".elements", () => {
-      test(".length", () => expect(core.elements).toHaveLength(4));
+      test(".length", () => expect(core.notes).toHaveLength(4));
       describe("[0]", () => {
-        test(".id", () => expect(core.elements[0]?.id).toBeTypeOf("number"));
+        test(".id", () => expect(core.notes[0]?.id).toBeTypeOf("number"));
         test("extends Event", () =>
-          expect(core.elements[0]).toMatchObject({
+          expect(core.notes[0]).toMatchObject({
             start: 0,
             duration: 1,
             end: 1,
           }));
       });
       describe("[1]", () => {
-        test(".id", () => expect(core.elements[1]?.id).toBeTypeOf("number"));
+        test(".id", () => expect(core.notes[1]?.id).toBeTypeOf("number"));
         test("extends Event", () =>
-          expect(core.elements[1]).toMatchObject({
+          expect(core.notes[1]).toMatchObject({
             start: 1,
             duration: 1,
             end: 2,
           }));
       });
       describe("[2]", () => {
-        test(".id", () => expect(core.elements[2]?.id).toBeTypeOf("number"));
+        test(".id", () => expect(core.notes[2]?.id).toBeTypeOf("number"));
         test("extends Event", () =>
-          expect(core.elements[2]).toMatchObject({
+          expect(core.notes[2]).toMatchObject({
             start: 2,
             duration: 1,
             end: 3,
           }));
       });
       describe("[3]", () => {
-        test(".id", () => expect(core.elements[3]?.id).toBeTypeOf("number"));
+        test(".id", () => expect(core.notes[3]?.id).toBeTypeOf("number"));
         test("extends Event", () =>
-          expect(core.elements[3]).toMatchObject({
+          expect(core.notes[3]).toMatchObject({
             start: 3,
             duration: 1,
             end: 4,

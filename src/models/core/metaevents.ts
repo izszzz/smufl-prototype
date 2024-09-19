@@ -66,7 +66,9 @@ export class Metaevents {
           [cur]: this.data[cur].find(({ start }) => start === event.start),
         }),
         {} as {
-          [P in MetaeventsMapKeys]: InstanceType<(typeof Metaevents.Map)[P]>;
+          [P in MetaeventsMapKeys]:
+            | InstanceType<(typeof Metaevents.Map)[P]>
+            | undefined;
         }
       )
     );

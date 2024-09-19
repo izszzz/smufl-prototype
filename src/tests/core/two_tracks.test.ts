@@ -43,7 +43,7 @@ describe("two_tracks", async () => {
         ]));
     });
     describe(".elements", () =>
-      test(".length", () => expect(core.elements).toHaveLength(2)));
+      test(".length", () => expect(core.notes).toHaveLength(2)));
     describe(".tracks", () => {
       test(".length", () => expect(core.tracks).toHaveLength(2));
       describe("[0]", () => {

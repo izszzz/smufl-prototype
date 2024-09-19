@@ -14,11 +14,27 @@ export class Importer extends BaseCore.Importer {
     let end = 0;
     for (const timesignature of core.metaevents.data.Timesignature) {
       R.times(
-        Math.max(timesignature.duration / timesignature.numerator, 1),
+        Math.max(
+          Math.ceil(timesignature.duration / timesignature.numerator),
+          1
+        ),
         () => {
           end += timesignature.numerator;
-          const elements = core.elements.filter(
-            (element) => element.end > start && element.start < end
+          const notes = core.notes.filter(
+            (e) => e.end > start && e.start < end
+          );
+          // notesにendがはみ出ているものがある場合Elementを分割して、core.elementsにpushする
+          const tieNotes = notes.filter((e) => end < e.end);
+          for (const tieNote of tieNotes) {
+            const cloneTieNote = new Core.Note(tieNote);
+            cloneTieNote.start = end;
+            cloneTieNote.duration = cloneTieNote.end - cloneTieNote.start;
+            for (const track of core.tracks) track.notes.push(cloneTieNote);
+            tieNote.end = end;
+            tieNote.duration = tieNote.end - tieNote.start;
+          }
+          const resultNotes = core.notes.filter(
+            (e) => start <= e.start && e.end <= end
           );
           core.masterbars.push(
             new Core.MasterBar({
@@ -26,7 +42,7 @@ export class Importer extends BaseCore.Importer {
               start,
               end,
               duration: end - start,
-              elements,
+              elements: resultNotes,
             })
           );
           start = end;

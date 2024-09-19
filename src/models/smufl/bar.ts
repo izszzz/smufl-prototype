@@ -20,17 +20,15 @@ export class Bar extends SMUFL.Rect {
     super();
     this.core = core;
     this.elements = elements;
-    this.sequence = new SMUFL.Sequence({
-      core: core.sequence,
-      elements: elements,
-    });
-    if (core.metaevents.Timesignature)
+    if (this.core.id === 11) console.log(this);
+    this.sequence = new SMUFL.Sequence({ core: core.sequence, elements }); // barをまたぐNoteがある場合がある
+    if (core.masterbar.metaevents.Timesignature)
       this.timesignature = new SMUFL.Metaevents.Map.Timesignature(
-        core.timesignature
+        core.masterbar.metaevents.Timesignature
       );
-    if (core.metaevents.Keysignature)
+    if (core.masterbar.metaevents.Keysignature)
       this.keysignature = new SMUFL.Metaevents.Map.Keysignature(
-        core.keysignature
+        core.masterbar.metaevents.Keysignature
       );
     this.header = this.createHeader();
   }

@@ -13,7 +13,7 @@
       "readUntil": 128
     },
     "midiEvent": {
-      "type": [8, 9, 12]
+      "type": [8, 9, 11, 12, 13, 14]
     },
     "metaEvent": {
       "type": 15,

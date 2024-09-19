@@ -24,6 +24,7 @@ export class Track extends SMUFL.Point {
       }),
       R.filter(R.isTruthy)
     );
+
     this.bars = R.pipe(
       core.bars,
       R.map(

@@ -38,9 +38,9 @@ describe("8th_middle_c", async () => {
       });
     });
     describe(".elements", () => {
-      test(".length", () => expect(core?.elements).toHaveLength(2));
+      test(".length", () => expect(core?.notes).toHaveLength(2));
       describe("[0]", () => {
-        const element0 = core.elements[0];
+        const element0 = core.notes[0];
         test(".id", () => expect(element0?.id).toBeTypeOf("number"));
         test("instanceof", () => expect(element0).toBeInstanceOf(Core.Note));
         test("extends Event", () =>
@@ -51,7 +51,7 @@ describe("8th_middle_c", async () => {
           }));
       });
       describe("[1]", () => {
-        const element1 = core.elements[1];
+        const element1 = core.notes[1];
         test(".id", () => expect(element1?.id).toBeTypeOf("number"));
         test("instanceof", () => expect(element1).toBeInstanceOf(Core.Rest));
         test("extends Event", () =>

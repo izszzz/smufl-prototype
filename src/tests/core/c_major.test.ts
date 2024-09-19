@@ -43,7 +43,7 @@ describe("c_major", async () => {
         ]));
     });
     describe(".elements", () =>
-      test(".length", () => expect(core.elements).toHaveLength(0)));
+      test(".length", () => expect(core.notes).toHaveLength(0)));
     describe(".tracks", () =>
       test("length", () => expect(core.tracks).toHaveLength(0)));
   });

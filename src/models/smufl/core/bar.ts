@@ -6,29 +6,11 @@ export class Bar extends Core.Event implements Core.Identifier {
   sequence;
   elements;
   masterbar;
-  metaevents;
-  get timesignature(): InstanceType<typeof Core.Metaevents.Map.Timesignature> {
-    if (this.metaevents.Timesignature) return this.metaevents.Timesignature;
-    else {
-      if (!this.prev) throw new Error();
-      return this.prev.timesignature;
-    }
-  }
-  get keysignature(): InstanceType<typeof Core.Metaevents.Map.Keysignature> {
-    if (this.metaevents.Keysignature) return this.metaevents.Keysignature;
-    else {
-      if (!this.prev) throw new Error();
-      return this.prev!.keysignature;
-    }
-  }
-  private get findedIndex() {
-    return this.track.bars.findIndex((bar) => bar.id === this.id);
-  }
   get prev() {
-    return this.track.bars[this.findedIndex - 1];
+    return this.masterbar.prev?.bars.find((bar) => bar.track.id, this.track.id);
   }
   get next() {
-    return this.track.bars[this.findedIndex + 1];
+    return this.masterbar.next?.bars.find((bar) => bar.track.id, this.track.id);
   }
   constructor({
     track,
@@ -46,6 +28,5 @@ export class Bar extends Core.Event implements Core.Identifier {
     this.masterbar = masterbar;
     this.elements = elements;
     this.sequence = new Core.Sequence({ elements, ...event, bar: this });
-    this.metaevents = this.masterbar.metaevents;
   }
 }

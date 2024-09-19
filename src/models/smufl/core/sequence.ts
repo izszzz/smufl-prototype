@@ -29,6 +29,8 @@ export class Sequence extends Core.Event {
     this.beats = groupedElements.map(
       (elements) => new Core.Beat({ elements, sequence: this })
     );
+    if (groupedElements.flat().some((e) => e.bar?.id === 11))
+      console.log("11", groupedElements);
 
     if (this.bar) {
       const events = [{ end: this.start }, ...this.beats, { start: this.end }];

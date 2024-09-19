@@ -15,9 +15,6 @@ export abstract class Element extends SMUFL.Rect {
         return prev;
       });
   }
-  get timesignature() {
-    return this.core.bar.timesignature;
-  }
   get dot() {
     let duration = this.core.duration;
     let dot = 0;
@@ -28,7 +25,10 @@ export abstract class Element extends SMUFL.Rect {
     return dot;
   }
   get fraction() {
-    return this.timesignature.denominator * (1 / this.baseDuration);
+    return (
+      this.core.bar.masterbar.timesignature.denominator *
+      (1 / this.baseDuration)
+    );
   }
   get fractionLiteral() {
     return SMUFL.getFractionLiteral(this.fraction);

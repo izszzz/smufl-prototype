@@ -43,7 +43,7 @@ describe("c_minor_scale_up", async () => {
         ]));
     });
     describe(".elements", () =>
-      test(".length", () => expect(core.elements).toHaveLength(8)));
+      test(".length", () => expect(core.notes).toHaveLength(8)));
     describe(".tracks", () => {
       test(".length", () => expect(core.tracks).toHaveLength(1));
       const track0 = core.tracks[0];

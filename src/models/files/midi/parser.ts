@@ -5,37 +5,13 @@ import Metadata from "./metadata.json";
 let prevReadUntil = false;
 let prevStatusByte = null;
 const { metaEvents } = Metadata.mtrk;
-const metaEventChoice = (
-  metaEvent: keyof typeof metaEvents,
-  parser: (
-    parser: BinaryParser,
-    name: string,
-    length: { length: string }
-  ) => BinaryParser
-) => ({
-  [metaEvents[metaEvent].type]: parser(
-    new BinaryParser(),
-    metaEvents[metaEvent].name,
-    { length: "length" }
-  ),
-});
-const statusByteParser = new BinaryParser().bit4("type").bit4("channel");
-const noteMidiEventParser = new BinaryParser()
-  .nest("statusByte", {
-    type: statusByteParser,
-    formatter: (item) => (prevStatusByte = item),
-  })
-  .uint8("pitch")
-  .uint8("velocity");
+
+const noteMidiEventParser = new BinaryParser().uint8("pitch").uint8("velocity");
 const controllerMidiEventParser = new BinaryParser()
-  .nest("statusByte", {
-    type: statusByteParser,
-    formatter: (item) => (prevStatusByte = item),
-  })
   .uint8("controller")
   .uint8("value");
 const metaEventParser = new BinaryParser()
-  .nest("statusByte", { type: statusByteParser })
+  .seek(1)
   .uint8("type")
   .uint8("length")
   .choice({
@@ -75,25 +51,37 @@ const midiTrackEventParser = new BinaryParser()
     formatter: (item: Uint8Array) =>
       R.reduce(Array.from(item), (acc, byte) => (acc << 7) | (byte & 0x7f), 0),
   })
-  .nest("statusByte", { type: statusByteParser })
+  .nest("runningStatus", { type: new BinaryParser().bit1("flag").bit7("_") })
   .seek(-1)
-  .choice("event", {
-    tag: "statusByte.type",
+  .nest("statusByte", {
+    type: new BinaryParser().bit4("type").bit4("channel"),
+    formatter: statusByteFormatter,
+  })
+  .seek(-1)
+  .choice({
+    tag: "runningStatus.flag",
     choices: {
-      ...R.times(8, () =>
-        new BinaryParser()
-          .nest("statusByte", {
-            type: new BinaryParser(),
-            formatter: () => prevStatusByte,
-          })
-          .uint8("pitch")
-          .uint8("velocity")
-      ),
-      8: noteMidiEventParser,
-      9: noteMidiEventParser,
-      11: noteMidiEventParser,
-      12: controllerMidiEventParser,
-      15: metaEventParser,
+      0: new BinaryParser().choice("event", {
+        tag: "statusByte.type",
+        choices: {
+          8: noteMidiEventParser,
+          9: noteMidiEventParser,
+          11: noteMidiEventParser,
+          12: controllerMidiEventParser,
+        },
+      }),
+      1: new BinaryParser().choice("event", {
+        tag: "statusByte.type",
+        choices: {
+          8: new BinaryParser().seek(1).nest({ type: noteMidiEventParser }),
+          9: new BinaryParser().seek(1).nest({ type: noteMidiEventParser }),
+          11: new BinaryParser().seek(1).nest({ type: noteMidiEventParser }),
+          12: new BinaryParser()
+            .seek(1)
+            .nest({ type: controllerMidiEventParser }),
+          15: metaEventParser,
+        },
+      }),
     },
   });
 const midiHeaderChunk = new BinaryParser()
@@ -118,3 +106,32 @@ export const Parser = new BinaryParser()
     type: midiHeaderChunk,
   })
   .array("mtrks", { type: midiTrackChunk, length: "mthd.trackCount" });
+
+function metaEventChoice(
+  metaEvent: keyof typeof metaEvents,
+  parser: (
+    parser: BinaryParser,
+    name: string,
+    length: { length: string }
+  ) => BinaryParser
+) {
+  return {
+    [metaEvents[metaEvent].type]: parser(
+      new BinaryParser(),
+      metaEvents[metaEvent].name,
+      { length: "length" }
+    ),
+  };
+}
+export function statusByteFormatter(
+  this: { runningStatus: { flag: number } },
+  item: { type: number; channel: number }
+) {
+  if (Metadata.mtrk.metaEvent.type === item.type) {
+    this.runningStatus.flag = 1;
+    return item;
+  }
+  if (this.runningStatus.flag === 0) return prevStatusByte;
+  if (Metadata.mtrk.midiEvent.type.includes(item.type))
+    return (prevStatusByte = item);
+}

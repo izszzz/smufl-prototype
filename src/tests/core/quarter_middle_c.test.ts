@@ -43,11 +43,11 @@ describe("quarter_middle_c", async () => {
         ]));
     });
     describe(".elements", () => {
-      test(".length", () => expect(core.elements).toHaveLength(1));
+      test(".length", () => expect(core.notes).toHaveLength(1));
       describe("[0]", () => {
-        test(".id", () => expect(core.elements[0]?.id).toBeTypeOf("number"));
+        test(".id", () => expect(core.notes[0]?.id).toBeTypeOf("number"));
         test("extends Event", () =>
-          expect(core.elements[0]).toMatchObject({
+          expect(core.notes[0]).toMatchObject({
             start: 0,
             duration: 1,
             end: 1,
