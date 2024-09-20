@@ -2,10 +2,6 @@ import * as Core from ".";
 
 export class Note extends Core.Element {
   pitch;
-  get pitchClass() {
-    const keysLength = Core.Metadata.pitchClasses.length;
-    return ((this.pitch % keysLength) + keysLength) % keysLength;
-  }
   get metaevent() {
     return this.track.score.metaevents.get(this);
   }

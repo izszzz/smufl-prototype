@@ -1,19 +1,21 @@
 import * as R from "remeda";
 import * as SMUFL from ".";
 import * as Core from "./core";
+import * as Unit2X from "./unit2x";
 import { match } from "ts-pattern";
 
 export class Note extends SMUFL.Element {
   core;
   track;
+  pitch;
 
   get accidental(): "natural" | "sharp" | "flat" | undefined {
     const keysignature = this.core.metaevent.Keysignature;
     if (
-      (keysignature.accidentalKeys as number[]).includes(this.core.pitchClass)
+      (keysignature.accidentalKeys as number[]).includes(this.pitch.pitchClass)
     )
       return "natural";
-    if ((keysignature.blackKeys as number[]).includes(this.core.pitchClass))
+    if ((keysignature.blackKeys as number[]).includes(this.pitch.pitchClass))
       return "sharp";
   }
   get legerLine() {
@@ -26,7 +28,7 @@ export class Note extends SMUFL.Element {
   }
   get whiteKey() {
     return (Core.Metadata.majorWhiteNotes as number[]).indexOf(
-      (Core.Metadata.pitchClasses as number[]).indexOf(this.core.pitchClass)
+      (Core.Metadata.pitchClasses as number[]).indexOf(this.pitch.pitchClass)
     );
   }
   private get stemLiteral() {
@@ -40,6 +42,7 @@ export class Note extends SMUFL.Element {
     super({ core });
     this.core = core;
     this.track = track;
+    this.pitch = new Unit2X.Pitch(this.core.pitch);
     this.glyph = new SMUFL.Glyph({
       glyphName: SMUFL.getGlyphname("individualNotes", (glyphName) =>
         glyphName.includes("note" + this.fractionLiteral + this.stemLiteral)

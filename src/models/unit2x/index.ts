@@ -5,4 +5,4 @@ export * from "./centibel";
 export * from "./decibel";
 export * from "./tempo";
 export * from "./timecent";
-export * from "./pitch";
+export * from "./unit";
