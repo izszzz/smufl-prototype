@@ -22,7 +22,7 @@ export class Beat extends SMUFL.Rect {
       )
       .with(
         P.instanceOf(Core.Element),
-        (core) => elements.find((element) => element.core.id === core.id) //=> undefined
+        (core) => elements.find((element) => element.core.id === core.id) //TODO: => undefinedになる場合がある
       )
       .exhaustive();
     this.stem = new SMUFL.Glyph({ glyphName: "stem" });

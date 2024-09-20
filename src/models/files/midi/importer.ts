@@ -1,5 +1,6 @@
 import * as R from "remeda";
 import * as Core from "../../core";
+import * as Unit2X from "../../unit2x";
 import { Midi as MidiFile } from ".";
 import Metadata from "./metadata.json";
 import { SetOptional } from "type-fest";
@@ -41,7 +42,7 @@ export class Importer {
                   name: "Bpm",
                   params: [
                     {
-                      ...{ value: Core.convertTempoToBpm(cur.event.tempo) },
+                      ...{ value: new Unit2X.Tempo(cur.event.tempo).bpm },
                       start: acc.time,
                     },
                   ],

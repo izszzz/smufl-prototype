@@ -3,7 +3,7 @@ import { Parser as BinaryParser } from "binary-parser";
 import Metadata from "./metadata.json";
 
 let prevReadUntil = false;
-let prevStatusByte = null;
+let prevStatusByte: { type: number; channel: number } | null = null;
 const { metaEvents } = Metadata.mtrk;
 
 const noteMidiEventParser = new BinaryParser().uint8("pitch").uint8("velocity");
@@ -132,6 +132,6 @@ export function statusByteFormatter(
     return item;
   }
   if (this.runningStatus.flag === 0) return prevStatusByte;
-  if (Metadata.mtrk.midiEvent.type.includes(item.type))
+  if ((Metadata.mtrk.midiEvent.type as number[]).includes(item.type))
     return (prevStatusByte = item);
 }

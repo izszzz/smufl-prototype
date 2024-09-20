@@ -1,5 +1,6 @@
 import { IntRange, LiteralToPrimitive, UnionToIntersection } from "type-fest";
 import * as R from "remeda";
+import * as Unit2X from "../../../unit2x";
 import { Generator } from "../generator";
 import Instrument from "../instrument";
 import Metadata from "../metadata.json";
@@ -73,6 +74,7 @@ export default class Sample {
       ).buffer
     );
   }
+  // TODO: そもそもここで変換する必要がない。音を鳴らす側で変換したほうがいい
   private setGenerators() {
     return R.pipe(
       Metadata.generators,
@@ -126,7 +128,7 @@ export default class Sample {
               Metadata.generators[46].name,
               Metadata.generators[47].name,
               Metadata.generators[50].name,
-              Metadata.generators[52].name,
+              Metadata.generators[52].name, // TODO: unitがcentなのにここであっているかわからん
               Metadata.generators[54].name,
               Metadata.generators[56].name,
               Metadata.generators[57].name,
@@ -136,31 +138,41 @@ export default class Sample {
           )
           .with(
             P.union(
-              Metadata.generators[5].name,
-              Metadata.generators[6].name,
-              Metadata.generators[7].name,
-              Metadata.generators[10].name,
-              Metadata.generators[11].name,
               Metadata.generators[31].name,
               Metadata.generators[32].name,
               Metadata.generators[39].name,
               Metadata.generators[40].name
             ),
-            (name) => (acc[name] = acc[name] / 100)
+            (name) => (acc[name] = new Unit2X.TCent(acc[name]).semitone)
+          )
+          .with(
+            P.union(
+              Metadata.generators[5].name,
+              Metadata.generators[6].name,
+              Metadata.generators[7].name,
+              Metadata.generators[10].name,
+              Metadata.generators[11].name
+            ),
+            (name) => (acc[name] = new Unit2X.Centfs(acc[name]).semitone)
+          )
+          .with(
+            P.union(
+              Metadata.generators[15].name,
+              Metadata.generators[16].name,
+              Metadata.generators[17].name,
+              Metadata.generators[29].name,
+              Metadata.generators[51].name //TODO: smitoneなのに10で割る意味が分からん
+            ),
+            (name) => (acc[name] = acc[name] / 10)
           )
           .with(
             P.union(
               Metadata.generators[9].name,
               Metadata.generators[13].name,
-              Metadata.generators[15].name,
-              Metadata.generators[16].name,
-              Metadata.generators[17].name,
-              Metadata.generators[29].name,
               Metadata.generators[37].name,
-              Metadata.generators[48].name,
-              Metadata.generators[51].name
+              Metadata.generators[48].name
             ),
-            (name) => (acc[name] = acc[name] / 10)
+            (name) => (acc[name] = new Unit2X.Centibel(acc[name]).decibel.value)
           )
           .with(
             P.union(
@@ -177,7 +189,7 @@ export default class Sample {
               Metadata.generators[36].name,
               Metadata.generators[38].name
             ),
-            (name) => (acc[name] = Math.pow(2, acc[name] / 1200))
+            (name) => (acc[name] = new Unit2X.Timecent(acc[name]).seconds)
           )
           .with(
             P.union(
@@ -185,7 +197,7 @@ export default class Sample {
               Metadata.generators[22].name,
               Metadata.generators[24].name
             ),
-            (name) => (acc[name] = 8.176 * Math.pow(2, acc[name] / 1200))
+            (name) => (acc[name] = new Unit2X.Cent(acc[name]).hertz)
           )
           .exhaustive();
 

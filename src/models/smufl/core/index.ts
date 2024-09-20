@@ -27,7 +27,6 @@ export {
   createId,
   getEventsEnd,
   getEventsStart,
-  convertTempoToBpm,
 } from "../../core";
 export type { Identifier } from "../../core";
 export * from "./sequence";

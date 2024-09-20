@@ -1,7 +1,6 @@
 import * as Audio from ".";
 import Sample from "../../files/soundfont2/sample";
 import Envelope, { IEnvelope } from "./envelope";
-// TODO: remove sample
 export class Synth {
   sample;
   filter;

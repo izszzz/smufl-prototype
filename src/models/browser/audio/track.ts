@@ -1,5 +1,6 @@
 import * as Audio from ".";
 import * as Core from "../../core";
+import * as Unit2X from "../../unit2x";
 
 export class Track {
   core;
@@ -38,7 +39,8 @@ export class Track {
                 sample.generators.delayVolEnv +
                 sample.generators.attackVolEnv +
                 sample.generators.holdVolEnv,
-              sustain: Math.pow(10, sample.generators.sustainVolEnv / 20),
+              sustain: new Unit2X.Decibel(sample.generators.sustainVolEnv)
+                .linearVolume, // TODO: 将来的にこうしたいsample.generators.sustainVolEnv.linearVolume.value
               decay:
                 sample.generators.delayVolEnv +
                 sample.generators.attackVolEnv +

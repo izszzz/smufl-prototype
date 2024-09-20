@@ -10,8 +10,7 @@ export * from "./note";
 export * from "./track";
 export * from "./score";
 export * from "./importer";
-export const convertTempoToBpm = (tempo: number) =>
-  Math.floor(60000000 / tempo);
+
 export const convertTimeToSeconds = (time: number, bpm: number) =>
   (60 * time) / bpm;
 export const createId = (ids: Identifier[]) =>
