@@ -10,8 +10,8 @@ const noteMidiEventParser = new BinaryParser().uint8("pitch").uint8("velocity");
 const controllerMidiEventParser = new BinaryParser()
   .uint8("controller")
   .uint8("value");
+const channelPresserMidiEventParser = new BinaryParser().uint8("value");
 const metaEventParser = new BinaryParser()
-  .seek(1)
   .uint8("type")
   .uint8("length")
   .choice({
@@ -39,7 +39,6 @@ const metaEventParser = new BinaryParser()
         p.nest(n, { type: new BinaryParser().int8("sf").uint8("mi") })
       ),
     },
-    defaultChoice: new BinaryParser().buffer("buffer", { length: "length" }),
   });
 const midiTrackEventParser = new BinaryParser()
   .buffer("deltaTime", {
@@ -68,17 +67,17 @@ const midiTrackEventParser = new BinaryParser()
           9: noteMidiEventParser,
           11: noteMidiEventParser,
           12: controllerMidiEventParser,
+          14: channelPresserMidiEventParser,
         },
       }),
-      1: new BinaryParser().choice("event", {
+      1: new BinaryParser().seek(1).choice("event", {
         tag: "statusByte.type",
         choices: {
-          8: new BinaryParser().seek(1).nest({ type: noteMidiEventParser }),
-          9: new BinaryParser().seek(1).nest({ type: noteMidiEventParser }),
-          11: new BinaryParser().seek(1).nest({ type: noteMidiEventParser }),
-          12: new BinaryParser()
-            .seek(1)
-            .nest({ type: controllerMidiEventParser }),
+          8: noteMidiEventParser,
+          9: noteMidiEventParser,
+          11: noteMidiEventParser,
+          12: controllerMidiEventParser,
+          14: channelPresserMidiEventParser,
           15: metaEventParser,
         },
       }),
@@ -127,6 +126,7 @@ export function statusByteFormatter(
   this: { runningStatus: { flag: number } },
   item: { type: number; channel: number }
 ) {
+  // console.log(item, this.runningStatus, prevStatusByte);
   if (Metadata.mtrk.metaEvent.type === item.type) {
     this.runningStatus.flag = 1;
     return item;

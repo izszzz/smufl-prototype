@@ -4,6 +4,7 @@ export class Accessory extends SMUFL.Rect {
   left;
   right;
   middle: SMUFL.Glyph[] = [];
+  // TODO: targetがnullの場合はないと思う
   target: SMUFL.Glyph | null = null;
   glyphGrid;
 

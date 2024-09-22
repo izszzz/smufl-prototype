@@ -130,7 +130,7 @@ export default class Sample {
               Metadata.generators[50].name,
               Metadata.generators[52].name, // TODO: unitがcentなのにここであっているかわからん
               Metadata.generators[54].name,
-              Metadata.generators[56].name,
+              Metadata.generators[56].name, // TODO: cent/keyが使われてる
               Metadata.generators[57].name,
               Metadata.generators[58].name
             ),
@@ -189,7 +189,7 @@ export default class Sample {
               Metadata.generators[36].name,
               Metadata.generators[38].name
             ),
-            (name) => (acc[name] = new Unit2X.Timecent(acc[name]).seconds)
+            (name) => (acc[name] = new Unit2X.Timecent(acc[name]).seconds.value)
           )
           .with(
             P.union(

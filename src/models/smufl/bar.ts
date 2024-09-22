@@ -20,8 +20,7 @@ export class Bar extends SMUFL.Rect {
     super();
     this.core = core;
     this.elements = elements;
-    if (this.core.id === 11) console.log(this);
-    this.sequence = new SMUFL.Sequence({ core: core.sequence, elements }); // barをまたぐNoteがある場合がある
+    this.sequence = new SMUFL.Sequence({ core: core.sequence, elements });
     if (core.masterbar.metaevents.Timesignature)
       this.timesignature = new SMUFL.Metaevents.Map.Timesignature(
         core.masterbar.metaevents.Timesignature
