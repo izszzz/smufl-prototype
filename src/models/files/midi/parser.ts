@@ -2,7 +2,6 @@ import * as R from "remeda";
 import { Parser as BinaryParser } from "binary-parser";
 import Metadata from "./metadata.json";
 
-let prevReadUntil = false;
 let prevStatusByte: { type: number; channel: number } | null = null;
 const { metaEvents } = Metadata.mtrk;
 
@@ -10,7 +9,18 @@ const noteMidiEventParser = new BinaryParser().uint8("pitch").uint8("velocity");
 const controllerMidiEventParser = new BinaryParser()
   .uint8("controller")
   .uint8("value");
-const channelPresserMidiEventParser = new BinaryParser().uint8("value");
+const programChangeMidiEventParser = new BinaryParser().uint8("program");
+// const channelPresserMidiEventParser = new BinaryParser().uint8("value");
+const midiEventParser = new BinaryParser().choice({
+  tag: "$parent.statusByte.type",
+  choices: {
+    8: noteMidiEventParser,
+    9: noteMidiEventParser,
+    10: noteMidiEventParser,
+    11: controllerMidiEventParser,
+    12: programChangeMidiEventParser,
+  },
+});
 const metaEventParser = new BinaryParser()
   .uint8("type")
   .uint8("length")
@@ -39,48 +49,50 @@ const metaEventParser = new BinaryParser()
         p.nest(n, { type: new BinaryParser().int8("sf").uint8("mi") })
       ),
     },
+    defaultChoice: new BinaryParser().buffer("buffer", { length: "length" }),
   });
 const midiTrackEventParser = new BinaryParser()
-  .buffer("deltaTime", {
-    readUntil: (item) => {
-      const readUntil = prevReadUntil;
-      prevReadUntil = !(item & Metadata.mtrk.deltaTime.readUntil);
-      return readUntil;
-    },
+  .array("deltaTime", {
+    type: "uint8",
+    readUntil: (item) => (item & 0x80) === 0,
     formatter: (item: Uint8Array) =>
       R.reduce(Array.from(item), (acc, byte) => (acc << 7) | (byte & 0x7f), 0),
   })
-  .nest("runningStatus", { type: new BinaryParser().bit1("flag").bit7("_") })
-  .seek(-1)
+  .saveOffset("statusByteOffset")
+  .pointer("runningStatus", {
+    type: new BinaryParser().bit1("flag").bit7("_"),
+    offset: "statusByteOffset",
+  })
   .nest("statusByte", {
     type: new BinaryParser().bit4("type").bit4("channel"),
     formatter: statusByteFormatter,
   })
-  .seek(-1)
-  .choice({
-    tag: "runningStatus.flag",
+  .seek(function (this: {
+    statusByte: { type: number; channel: number };
+    runningStatus: { flag: number };
+  }) {
+    console.log(this);
+    if (this.statusByte.type === 15 && this.statusByte.channel === 15) return 0; //meta
+    if (this.statusByte.type === 15 && [0, 7].includes(this.statusByte.channel))
+      return 0; //sysex
+    if (this.runningStatus.flag === 0) return -1; // running status midi
+    return 0; //midi
+  })
+  .choice("event", {
+    tag: function (this: { statusByte: { type: number; channel: number } }) {
+      if (this.statusByte.type === 15 && this.statusByte.channel === 15)
+        return 2; //meta
+      if (
+        this.statusByte.type === 15 &&
+        [0, 7].includes(this.statusByte.channel)
+      )
+        return 1; //sysex
+      return 0; //midi
+    },
     choices: {
-      0: new BinaryParser().choice("event", {
-        tag: "statusByte.type",
-        choices: {
-          8: noteMidiEventParser,
-          9: noteMidiEventParser,
-          11: noteMidiEventParser,
-          12: controllerMidiEventParser,
-          14: channelPresserMidiEventParser,
-        },
-      }),
-      1: new BinaryParser().seek(1).choice("event", {
-        tag: "statusByte.type",
-        choices: {
-          8: noteMidiEventParser,
-          9: noteMidiEventParser,
-          11: noteMidiEventParser,
-          12: controllerMidiEventParser,
-          14: channelPresserMidiEventParser,
-          15: metaEventParser,
-        },
-      }),
+      0: midiEventParser,
+      // 1: sysExParser,
+      2: metaEventParser,
     },
   });
 const midiHeaderChunk = new BinaryParser()
@@ -96,15 +108,16 @@ const midiTrackChunk = new BinaryParser()
   .uint32("length")
   .array("events", {
     type: midiTrackEventParser,
-    readUntil: (item) =>
-      item?.event.type === Metadata.mtrk.metaEvents.endOfTrack.type,
+    lengthInBytes: "length",
+    formatter: (item) => {
+      console.log(item);
+      return item;
+    },
   });
 export const Parser = new BinaryParser()
   .useContextVars()
-  .nest("mthd", {
-    type: midiHeaderChunk,
-  })
-  .array("mtrks", { type: midiTrackChunk, length: "mthd.trackCount" });
+  .nest("mthd", { type: midiHeaderChunk })
+  .array("mtrks", { type: midiTrackChunk, readUntil: "eof" });
 
 function metaEventChoice(
   metaEvent: keyof typeof metaEvents,
@@ -122,16 +135,13 @@ function metaEventChoice(
     ),
   };
 }
-export function statusByteFormatter(
-  this: { runningStatus: { flag: number } },
-  item: { type: number; channel: number }
-) {
-  // console.log(item, this.runningStatus, prevStatusByte);
-  if (Metadata.mtrk.metaEvent.type === item.type) {
-    this.runningStatus.flag = 1;
-    return item;
-  }
-  if (this.runningStatus.flag === 0) return prevStatusByte;
-  if ((Metadata.mtrk.midiEvent.type as number[]).includes(item.type))
-    return (prevStatusByte = item);
+export function statusByteFormatter(item: { type: number; channel: number }) {
+  // meta
+  if (item.type === 15 && item.channel === 15) return item;
+  // sysEx
+  if (15 === item.type && [0, 7].includes(item.channel)) return item;
+  // runningstatus
+  if ((item.type & 0x8) === 0) return prevStatusByte;
+  // midi
+  return (prevStatusByte = item);
 }

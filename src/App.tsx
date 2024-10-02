@@ -45,14 +45,16 @@ function App() {
           score = new Midi.Importer(arrayBuffer).import();
         }
         if (file.type === "application/json")
-          score = new SMUFL_Core.Extender().extend(
-            new Core.Importer(JSON.parse(reader.result)).import()
-          );
+          score = new Core.Importer(JSON.parse(reader.result)).import();
         if (ref.current) {
-          const svgRenderer = new SVGRenderer(ref.current, score, {
-            fontSize,
-            layoutType,
-          });
+          const svgRenderer = new SVGRenderer(
+            ref.current,
+            new SMUFL_Core.Extender().extend(score),
+            {
+              fontSize,
+              layoutType,
+            }
+          );
           setSVGRenderer(svgRenderer);
           setAudioPlayer(new Audio.Player(score, soundfont2));
           setFontSize(svgRenderer.options.fontSize);

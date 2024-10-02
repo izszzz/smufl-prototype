@@ -20,7 +20,7 @@ export class Importer {
     console.log({ midi: data });
     const { tracks, metaevents, end } = data.mtrks.reduce(
       (trackAcc, trackCur) => {
-        const { notes, time } = trackCur.events.reduce(
+        const { notes, time, name } = trackCur.events.reduce(
           (acc, cur) => {
             acc.time += MidiFile.calcDuration(
               cur.deltaTime,
@@ -60,18 +60,17 @@ export class Importer {
                     },
                   ],
                 });
+              if (R.isNonNullish(cur.event.trackName))
+                acc.name = cur.event.trackName;
             }
-            if (this.isNoteOnEvent(cur))
-              acc.notes.push({
-                pitch: cur.event.pitch,
-                start: acc.time,
-              });
             if (this.isNoteOffEvent(cur)) {
               const note = acc.notes.findLast(
                 (note) => note.pitch === cur.event.pitch
               );
               if (note) note.end = acc.time;
             }
+            if (this.isNoteOnEvent(cur))
+              acc.notes.push({ pitch: cur.event.pitch, start: acc.time });
             return acc;
           },
           { notes: [], time: 0 } as {
@@ -80,11 +79,12 @@ export class Importer {
               "duration" | "end" | "start"
             >[];
             time: number;
+            name?: string;
           }
         );
         if (R.isEmpty(notes)) return trackAcc;
         if ((trackAcc.end ?? 0) < time) trackAcc.end = time;
-        trackAcc.tracks.push({ notes, end: trackAcc.end });
+        trackAcc.tracks.push({ notes, end: trackAcc.end, name });
 
         return trackAcc;
       },
@@ -99,13 +99,19 @@ export class Importer {
   }
 
   isMetaEvent(event: MidiTrackEvent): event is MidiTrackEvent<MetaEvent> {
-    return event.statusByte.type === Metadata.mtrk.metaEvent.type;
+    return (
+      event.statusByte.type === Metadata.mtrk.metaEvent.type &&
+      event.statusByte.channel === 15
+    );
   }
   isNoteOnEvent(event: MidiTrackEvent): event is MidiTrackEvent<MidiEvent> {
     return event.statusByte.type === Metadata.mtrk.midiEvents.noteOn.type;
   }
   isNoteOffEvent(event: MidiTrackEvent): event is MidiTrackEvent<MidiEvent> {
-    return event.statusByte.type === Metadata.mtrk.midiEvents.noteOff.type;
+    return (
+      event.statusByte.type === Metadata.mtrk.midiEvents.noteOff.type ||
+      (this.isNoteOnEvent(event) && event.event.velocity === 0)
+    );
   }
 }
 interface Midi {
