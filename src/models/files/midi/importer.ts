@@ -61,15 +61,14 @@ export class Importer {
                   ],
                 });
               if (R.isNonNullish(cur.event.trackName))
-                acc.name = cur.event.trackName;
+                if (cur.event.trackName) acc.name = cur.event.trackName;
             }
             if (this.isNoteOffEvent(cur)) {
               const note = acc.notes.findLast(
                 (note) => note.pitch === cur.event.pitch
               );
               if (note) note.end = acc.time;
-            }
-            if (this.isNoteOnEvent(cur))
+            } else if (this.isNoteOnEvent(cur))
               acc.notes.push({ pitch: cur.event.pitch, start: acc.time });
             return acc;
           },
@@ -104,14 +103,14 @@ export class Importer {
       event.statusByte.channel === 15
     );
   }
-  isNoteOnEvent(event: MidiTrackEvent): event is MidiTrackEvent<MidiEvent> {
-    return event.statusByte.type === Metadata.mtrk.midiEvents.noteOn.type;
-  }
   isNoteOffEvent(event: MidiTrackEvent): event is MidiTrackEvent<MidiEvent> {
     return (
       event.statusByte.type === Metadata.mtrk.midiEvents.noteOff.type ||
       (this.isNoteOnEvent(event) && event.event.velocity === 0)
     );
+  }
+  isNoteOnEvent(event: MidiTrackEvent): event is MidiTrackEvent<MidiEvent> {
+    return event.statusByte.type === Metadata.mtrk.midiEvents.noteOn.type;
   }
 }
 interface Midi {

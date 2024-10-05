@@ -71,7 +71,6 @@ const midiTrackEventParser = new BinaryParser()
     statusByte: { type: number; channel: number };
     runningStatus: { flag: number };
   }) {
-    console.log(this);
     if (this.statusByte.type === 15 && this.statusByte.channel === 15) return 0; //meta
     if (this.statusByte.type === 15 && [0, 7].includes(this.statusByte.channel))
       return 0; //sysex
@@ -106,14 +105,7 @@ const midiTrackChunk = new BinaryParser()
     length: Metadata.mtrk.header.type.length,
   })
   .uint32("length")
-  .array("events", {
-    type: midiTrackEventParser,
-    lengthInBytes: "length",
-    formatter: (item) => {
-      console.log(item);
-      return item;
-    },
-  });
+  .array("events", { type: midiTrackEventParser, lengthInBytes: "length" });
 export const Parser = new BinaryParser()
   .useContextVars()
   .nest("mthd", { type: midiHeaderChunk })
