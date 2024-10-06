@@ -2,10 +2,9 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "./models/files/soundfont2";
 import * as SMUFL from "./models/smufl";
 import * as Audio from "./models/browser/audio";
-import * as Core from "./models/core";
 import * as SMUFL_Core from "./models/smufl/core";
 import SVGRenderer from "./models/browser/svg/renderer";
-import { Midi } from "./models/files/midi";
+import * as Browser from "./models/browser";
 
 function App() {
   const [fontSize, setFontSize] = useState(30);
@@ -29,39 +28,24 @@ function App() {
   }, [fontSize, svgRenderer]);
   const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
-
     if (!soundfont2) return;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
-
-      const reader = new FileReader();
-      let score;
-      if (file.type === "application/json") reader.readAsText(file);
-      if (file.type === "audio/mid") reader.readAsArrayBuffer(file);
-      reader.onload = (e) => {
-        const arrayBuffer = e.target?.result as ArrayBuffer;
-
-        if (file.type === "audio/mid") {
-          score = new Midi.Importer(arrayBuffer).import();
-        }
-        if (file.type === "application/json")
-          score = new Core.Importer(JSON.parse(reader.result)).import();
-        if (ref.current) {
-          const svgRenderer = new SVGRenderer(
-            ref.current,
-            new SMUFL_Core.Extender().extend(score),
-            {
-              fontSize,
-              layoutType,
-            }
-          );
-          setSVGRenderer(svgRenderer);
-          setAudioPlayer(new Audio.Player(score, soundfont2));
-          setFontSize(svgRenderer.options.fontSize);
-        }
-      };
-
-      reader.readAsArrayBuffer(file);
+      if (!file) return;
+      const core = new Browser.Importer(file).core;
+      if (ref.current) {
+        const svgRenderer = new SVGRenderer(
+          ref.current,
+          new SMUFL_Core.Extender().extend(core),
+          {
+            fontSize,
+            layoutType,
+          }
+        );
+        setSVGRenderer(svgRenderer);
+        setAudioPlayer(new Audio.Player(core, soundfont2));
+        setFontSize(svgRenderer.options.fontSize);
+      }
     }
   };
 
@@ -91,7 +75,7 @@ function App() {
       <input
         type="file"
         onChange={handleFileChange}
-        accept=".midi, .mid, .json"
+        accept=".midi, .mid, .json, .mxl"
       />
       <input
         type="range"
