@@ -3,13 +3,13 @@ import { Event } from "./event";
 import Metadata from "./metadata.json";
 
 export * from "./event";
-export * from "./metaevent";
-export * from "./metaevents";
-export * from "./element";
 export * from "./note";
 export * from "./track";
 export * from "./score";
-export * from "./importer";
+export * from "./timesignature";
+export * from "./keysignature";
+export * from "./bpm";
+export * from "./create";
 
 export const convertTimeToSeconds = (time: number, bpm: number) =>
   (60 * time) / bpm;
@@ -19,6 +19,7 @@ export const getEventsStart = (events: Event[]) =>
   R.firstBy(events, [R.prop("start"), "asc"])?.start ?? 0;
 export const getEventsEnd = (events: Event[]) =>
   R.firstBy(events, [R.prop("end"), "desc"])?.end ?? 0;
+
 export interface Identifier {
   readonly id: number;
 }

@@ -1,10 +1,11 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "./models/files/soundfont2";
-import * as SMUFL from "./models/smufl";
+import * as SMUFL from "./models/tsmufl";
 import * as Audio from "./models/browser/audio";
-import * as SMUFL_Core from "./models/smufl/core";
 import SVGRenderer from "./models/browser/svg/renderer";
 import * as Browser from "./models/browser";
+import "./models/tsmufl/extensions/core";
+import "./models/svg/extensions/smufl";
 
 function App() {
   const [fontSize, setFontSize] = useState(30);
@@ -26,25 +27,19 @@ function App() {
   useEffect(() => {
     svgRenderer?.changeFontSize(fontSize);
   }, [fontSize, svgRenderer]);
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
     if (!soundfont2) return;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       if (!file) return;
-      const core = new Browser.Importer(file).core;
+      const importer = new Browser.Importer();
+      await importer.import(file);
+      console.log(importer.core.toSMUFL().toSVG());
       if (ref.current) {
-        const svgRenderer = new SVGRenderer(
-          ref.current,
-          new SMUFL_Core.Extender().extend(core),
-          {
-            fontSize,
-            layoutType,
-          }
-        );
-        setSVGRenderer(svgRenderer);
-        setAudioPlayer(new Audio.Player(core, soundfont2));
-        setFontSize(svgRenderer.options.fontSize);
+        ref.current.appendChild(importer.core.toSMUFL().toSVG());
+        // setAudioPlayer(new Audio.Player(core, soundfont2));
+        // setFontSize(svgRenderer.options.fontSize);
       }
     }
   };

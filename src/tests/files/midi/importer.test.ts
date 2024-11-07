@@ -2,14 +2,16 @@ import path from "path";
 import fs from "fs";
 import { expect, test } from "vitest";
 import { importCore } from "../..";
-import { Midi } from "../../../models/files/midi";
+import * as Midi from "../../../models/files/midi";
 
 const importMidi = (fileName: string) =>
-  new Midi.Importer(
-    fs
-      .readFileSync(path.join("src", "fixtures", "midi", `${fileName}.mid`))
-      .toArrayBuffer()
-  ).import();
+  Midi.toCore(
+    Midi.parse(
+      fs
+        .readFileSync(path.join("src", "fixtures", "midi", `${fileName}.mid`))
+        .toArrayBuffer()
+    )
+  );
 
 test("8th_middle_c", async () =>
   expect(importMidi("8th_middle_c")).toEqual(await importCore("8th_middle_c")));

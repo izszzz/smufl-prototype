@@ -1,17 +1,16 @@
 import * as Core from ".";
 
-export class Note extends Core.Element {
+export class Note extends Core.Event implements Core.Identifier {
+  id;
   pitch;
-  get metaevent() {
-    return this.track.score.metaevents.get(this);
-  }
+
   constructor({
+    id,
     pitch,
     ...element
-  }: { pitch: number } & ConstructorParameters<typeof Core.Element>[0]) {
+  }: { id: number; pitch: number } & Core.Event) {
     super(element);
+    this.id = id;
     this.pitch = pitch;
-    this.track.score.notes.push(this);
-    this.track.notes.push(this);
   }
 }

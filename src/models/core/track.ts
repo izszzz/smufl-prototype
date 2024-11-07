@@ -1,30 +1,29 @@
 import * as Core from ".";
 
-export class Track extends Core.Event implements Core.Identifier {
+export class Track<Note extends Core.Note = Core.Note>
+  extends Core.Event
+  implements Core.Identifier
+{
   id;
-  elements: Core.Element[] = [];
-  notes: Core.Note[] = [];
+  notes;
   name;
-  score;
   preset;
   constructor({
+    id,
     name,
     notes,
-    score,
     preset,
     ...event
   }: {
+    id: number;
     name?: string;
     preset: number;
-    score: Core.Score;
-    notes: Omit<ConstructorParameters<typeof Core.Note>[0], "track" | "id">[];
-  } & ConstructorParameters<typeof Core.Event>[0]) {
+    notes: Note[];
+  } & Core.Event) {
     super(event);
-    this.id = Core.createId(score.tracks);
-    this.score = score;
+    this.id = id;
     this.name = name;
     this.preset = preset;
-    for (const note of notes) new Core.Note({ track: this, ...note });
-    this.score.tracks.push(this);
+    this.notes = notes;
   }
 }

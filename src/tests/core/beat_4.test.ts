@@ -3,91 +3,24 @@ import { describe, expect, test } from "vitest";
 import { importCore } from ".";
 describe("beat_4", async () => {
   const core = await importCore("beat_4");
+  const event = { end: 4, duration: 4, start: 0 };
   describe("Score", () => {
-    test("Event", () =>
-      expect(core).toMatchObject({
-        start: 0,
-        duration: 4,
-        end: 4,
-      }));
-    describe(".metaevents", () => {
-      test(".Timesignature", () =>
-        expect(core.metaevents.data.Timesignature).toEqual([
-          new Core.Metaevents.Map.Timesignature({
-            denominator: 4,
-            numerator: 4,
-            start: 0,
-            duration: 4,
-            end: 4,
-          }),
-        ]));
-      test(".Bpm", () =>
-        expect(core.metaevents.data.Bpm).toEqual([
-          new Core.Metaevents.Map.Bpm({
-            value: 120,
-            start: 0,
-            duration: 4,
-            end: 4,
-          }),
-        ]));
-      test(".Keysignature", () =>
-        expect(core.metaevents.data.Keysignature).toEqual([
-          new Core.Metaevents.Map.Keysignature({
-            tonality: false,
-            accidental: 0,
-            start: 0,
-            duration: 4,
-            end: 4,
-          }),
-        ]));
-    });
-    describe(".elements", () => {
-      test(".length", () => expect(core.notes).toHaveLength(4));
-      describe("[0]", () => {
-        test(".id", () => expect(core.notes[0]?.id).toBeTypeOf("number"));
-        test("extends Event", () =>
-          expect(core.notes[0]).toMatchObject({
-            start: 0,
-            duration: 1,
-            end: 1,
-          }));
-      });
-      describe("[1]", () => {
-        test(".id", () => expect(core.notes[1]?.id).toBeTypeOf("number"));
-        test("extends Event", () =>
-          expect(core.notes[1]).toMatchObject({
-            start: 1,
-            duration: 1,
-            end: 2,
-          }));
-      });
-      describe("[2]", () => {
-        test(".id", () => expect(core.notes[2]?.id).toBeTypeOf("number"));
-        test("extends Event", () =>
-          expect(core.notes[2]).toMatchObject({
-            start: 2,
-            duration: 1,
-            end: 3,
-          }));
-      });
-      describe("[3]", () => {
-        test(".id", () => expect(core.notes[3]?.id).toBeTypeOf("number"));
-        test("extends Event", () =>
-          expect(core.notes[3]).toMatchObject({
-            start: 3,
-            duration: 1,
-            end: 4,
-          }));
-      });
-    });
+    test("Event", () => expect(core).toMatchObject(event));
+    test(".timesignatures", () =>
+      expect(core.timesignatures).toEqual([
+        new Core.Timesignature({ denominator: 4, numerator: 4, ...event }),
+      ]));
+    test(".bpms", () =>
+      expect(core.bpms).toEqual([new Core.Bpm({ value: 120, ...event })]));
+    test(".keysignatures", () =>
+      expect(core.keysignatures).toEqual([
+        new Core.Keysignature({ tonality: false, accidental: 0, ...event }),
+      ]));
     describe(".tracks", () => {
       test(".length", () => expect(core.tracks).toHaveLength(1));
       const track0 = core.tracks[0];
       describe("[0]", () => {
         test(".id", () => expect(track0?.id).toBeTypeOf("number"));
-        describe(".elements", () => {
-          test("length", () => expect(track0?.elements).toHaveLength(4));
-        });
         describe(".notes", () => {
           test("length", () => expect(track0?.notes).toHaveLength(4));
           describe("[0]", () => {
@@ -96,12 +29,7 @@ describe("beat_4", async () => {
             test(".pitch", () => expect(note0?.pitch).toEqual(60));
           });
         });
-        test("extends Event", () =>
-          expect(track0).toMatchObject({
-            start: 0,
-            duration: 4,
-            end: 4,
-          }));
+        test("extends Event", () => expect(track0).toMatchObject(event));
       });
     });
   });

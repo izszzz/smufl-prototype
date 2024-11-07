@@ -1,41 +1,38 @@
-import JSZip from "jszip";
 import * as Core from "../core";
-import { Midi } from "../files/midi";
+import * as Midi from "../files/midi";
 import { MusicXml } from "../files/mxl";
+import { Zip } from "../files/zip";
 export class Importer {
   core;
-  constructor(file: File) {
+  async import(file: File) {
     const reader = new FileReader();
     const extname = file.name.slice(file.name.lastIndexOf("."));
     if (file.type === "application/json") reader.readAsText(file);
     if (file.type === "audio/mid" || extname === ".mxl")
       reader.readAsArrayBuffer(file);
-    reader.onload = async () => {
-      if (!reader.result) return;
-
-      if (reader.result instanceof ArrayBuffer) {
-        if (file.type === "audio/mid")
-          this.core = new Midi.Importer(reader.result).import();
-        if (extname === ".mxl") {
-          const zip = await new JSZip().loadAsync(reader.result);
-          const data = await Promise.all(
-            Object.entries(zip.files).map(async ([fileName, zip]) => {
-              return {
-                fileName,
-                data: new DOMParser().parseFromString(
-                  await zip.async("text"),
-                  "application/xml"
-                ),
-              };
-            })
-          );
-          new MusicXml(data);
-        }
+    await new Promise((resolve) => (reader.onload = () => resolve()));
+    if (reader.result instanceof ArrayBuffer) {
+      if (file.type === "audio/mid")
+        this.core = Midi.toCore(Midi.parse(reader.result));
+      if (extname === ".mxl") {
+        const zip = await new Zip(reader.result).unzip();
+        const meta = await zip.files["META-INF/container.xml"]?.async("text");
+        if (!meta) return;
+        const rootfile = new DOMParser()
+          .parseFromString(meta, "application/xml")
+          .getElementsByTagName("rootfile")[0];
+        const pathName = rootfile?.getAttribute("full-path");
+        if (!pathName) return;
+        const data = await zip.files[pathName]?.async("text");
+        if (!data) return;
+        const score = new DOMParser().parseFromString(data, "application/xml");
+        console.log(new MusicXml(score).smufl);
       }
-      if (typeof reader.result === "string") {
-        if (extname === ".json")
-          this.core = new Core.Importer(JSON.parse(reader.result)).import();
+    }
+    if (typeof reader.result === "string") {
+      if (extname === ".json") {
+        this.core = Core.create(JSON.parse(reader.result));
       }
-    };
+    }
   }
 }

@@ -4,54 +4,24 @@ import { importCore } from ".";
 
 describe("c_minor_scale_up", async () => {
   const core = await importCore("c_minor_scale_up");
+  const event = { end: 8, duration: 8, start: 0 };
   describe("Score", () => {
-    test("Event", () =>
-      expect(core).toMatchObject({
-        start: 0,
-        duration: 8,
-        end: 8,
-      }));
-    describe(".metaevents", () => {
-      test(".Timesignature", () =>
-        expect(core.metaevents.data.Timesignature).toEqual([
-          new Core.Metaevents.Map.Timesignature({
-            denominator: 4,
-            numerator: 4,
-            start: 0,
-            duration: 8,
-            end: 8,
-          }),
-        ]));
-      test(".Bpm", () =>
-        expect(core.metaevents.data.Bpm).toEqual([
-          new Core.Metaevents.Map.Bpm({
-            value: 120,
-            start: 0,
-            duration: 8,
-            end: 8,
-          }),
-        ]));
-      test(".Keysignature", () =>
-        expect(core.metaevents.data.Keysignature).toEqual([
-          new Core.Metaevents.Map.Keysignature({
-            tonality: true,
-            accidental: -3,
-            start: 0,
-            duration: 8,
-            end: 8,
-          }),
-        ]));
-    });
-    describe(".elements", () =>
-      test(".length", () => expect(core.notes).toHaveLength(8)));
+    test("Event", () => expect(core).toMatchObject(event));
+    test(".timesignatures", () =>
+      expect(core.timesignatures).toEqual([
+        new Core.Timesignature({ denominator: 4, numerator: 4, ...event }),
+      ]));
+    test(".bpms", () =>
+      expect(core.bpms).toEqual([new Core.Bpm({ value: 120, ...event })]));
+    test(".keysignatures", () =>
+      expect(core.keysignatures).toEqual([
+        new Core.Keysignature({ tonality: true, accidental: -3, ...event }),
+      ]));
     describe(".tracks", () => {
       test(".length", () => expect(core.tracks).toHaveLength(1));
       const track0 = core.tracks[0];
       describe("[0]", () => {
         test(".id", () => expect(track0?.id).toBeTypeOf("number"));
-        describe(".elements", () => {
-          test("length", () => expect(track0?.elements).toHaveLength(8));
-        });
         describe(".notes", () => {
           test("length", () => expect(track0?.notes).toHaveLength(8));
           describe("[0]", () => {
@@ -95,12 +65,7 @@ describe("c_minor_scale_up", async () => {
             test(".pitch", () => expect(note?.pitch).toEqual(72));
           });
         });
-        test("extends Event", () =>
-          expect(track0).toMatchObject({
-            start: 0,
-            duration: 8,
-            end: 8,
-          }));
+        test("extends Event", () => expect(track0).toMatchObject(event));
       });
     });
   });

@@ -8,7 +8,6 @@ interface IScore {
   tracks: SMUFL.Track[];
   masterbars: SMUFL.MasterBar[];
   rows: SMUFL.Row[];
-  core: Core.Score;
 }
 export class Score implements IScore {
   type;

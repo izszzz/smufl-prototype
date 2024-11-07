@@ -1,5 +1,5 @@
 import * as Core from ".";
-export class Timesignature extends Core.Metaevent {
+export class Timesignature extends Core.Event {
   denominator;
   numerator;
   constructor({
@@ -9,7 +9,7 @@ export class Timesignature extends Core.Metaevent {
   }: {
     denominator: number;
     numerator: number;
-  } & ConstructorParameters<typeof Core.Event>[0]) {
+  } & Core.Event) {
     super(event);
     this.denominator = denominator;
     this.numerator = numerator;

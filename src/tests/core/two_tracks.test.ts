@@ -4,54 +4,25 @@ import { importCore } from ".";
 
 describe("two_tracks", async () => {
   const core = await importCore("two_tracks");
+  const event = { end: 1, duration: 1, start: 0 };
   describe("Score", () => {
-    test("Event", () =>
-      expect(core).toMatchObject({
-        start: 0,
-        duration: 1,
-        end: 1,
-      }));
-    describe(".metaevents", () => {
-      test(".Timesignature", () =>
-        expect(core.metaevents.data.Timesignature).toEqual([
-          new Core.Metaevents.Map.Timesignature({
-            denominator: 4,
-            numerator: 4,
-            start: 0,
-            duration: 1,
-            end: 1,
-          }),
-        ]));
-      test(".Bpm", () =>
-        expect(core.metaevents.data.Bpm).toEqual([
-          new Core.Metaevents.Map.Bpm({
-            value: 120,
-            start: 0,
-            duration: 1,
-            end: 1,
-          }),
-        ]));
-      test(".Keysignature", () =>
-        expect(core.metaevents.data.Keysignature).toEqual([
-          new Core.Metaevents.Map.Keysignature({
-            tonality: false,
-            accidental: 0,
-            start: 0,
-            duration: 1,
-            end: 1,
-          }),
-        ]));
-    });
-    describe(".elements", () =>
-      test(".length", () => expect(core.notes).toHaveLength(2)));
+    test("Event", () => expect(core).toMatchObject(event));
+
+    test(".timesignatures", () =>
+      expect(core.timesignatures).toEqual([
+        new Core.Timesignature({ denominator: 4, numerator: 4, ...event }),
+      ]));
+    test(".bpms", () =>
+      expect(core.bpms).toEqual([new Core.Bpm({ value: 120, ...event })]));
+    test(".keysignatures", () =>
+      expect(core.keysignatures).toEqual([
+        new Core.Keysignature({ tonality: false, accidental: 0, ...event }),
+      ]));
     describe(".tracks", () => {
       test(".length", () => expect(core.tracks).toHaveLength(2));
       describe("[0]", () => {
         const track0 = core.tracks[0];
         test(".id", () => expect(track0?.id).toBeTypeOf("number"));
-        describe(".elements", () => {
-          test("length", () => expect(track0?.elements).toHaveLength(1));
-        });
         describe(".notes", () => {
           test("length", () => expect(track0?.notes).toHaveLength(1));
           describe("[0]", () => {
@@ -60,12 +31,7 @@ describe("two_tracks", async () => {
             test(".pitch", () => expect(note0?.pitch).toEqual(60));
           });
         });
-        test("extends Event", () =>
-          expect(track0).toMatchObject({
-            start: 0,
-            duration: 1,
-            end: 1,
-          }));
+        test("extends Event", () => expect(track0).toMatchObject(event));
       });
       describe("[1]", () => {
         const track1 = core.tracks[1];
@@ -78,12 +44,7 @@ describe("two_tracks", async () => {
             test(".pitch", () => expect(note0?.pitch).toEqual(60));
           });
         });
-        test("extends Event", () =>
-          expect(track1).toMatchObject({
-            start: 0,
-            duration: 1,
-            end: 1,
-          }));
+        test("extends Event", () => expect(track1).toMatchObject(event));
       });
     });
   });
