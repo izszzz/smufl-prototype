@@ -23,7 +23,11 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noErrorTruncation": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "paths": {
+      "smufl": ["./src/models/tsmufl/index.ts"], // エイリアスを設定
+      "core": ["./src/models/core/"]
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
