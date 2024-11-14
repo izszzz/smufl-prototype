@@ -13,6 +13,7 @@ export * from "./bbox";
 export * from "./masterbar";
 export * from "./timesignature";
 export * from "./keysignature";
+export * from "./attributes";
 export * from "./bpm";
 export * from "./clef";
 export * from "./part";
@@ -36,4 +37,8 @@ export const getBBox = (glyphName: keyof Glyphnames) =>
 export const getAdvanceWidth = (glyphName: keyof Glyphnames) =>
   BravuraMetadata.glyphAdvanceWidths[
     glyphName as keyof BravuraMetadata["glyphAdvanceWidths"]
+  ];
+export const getAnchor = <T extends keyof Glyphnames>(glyphName: T) =>
+  BravuraMetadata.glyphsWithAnchors[
+    glyphName as keyof BravuraMetadata["glyphsWithAnchors"]
   ];

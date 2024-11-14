@@ -1,6 +1,4 @@
-import * as SMUFL from ".";
-
-export class Rect extends SMUFL.Transform {
+export class Rect {
   width = 0;
   height = 0;
 }

@@ -1,4 +1,4 @@
-export class Transform {
+export class Point {
   x = 0;
   y = 0;
 }

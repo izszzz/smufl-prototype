@@ -1,20 +1,27 @@
 import * as Core from "../core";
-import * as SMUFL from ".";
+import * as SMUFL from "smufl";
 export class Note extends Core.Note {
   track!: SMUFL.Track;
   bar!: SMUFL.Bar;
   rest;
   chord;
-  get stem() {
-    return this.isStem ? new SMUFL.Stem({ note: this }) : null;
-  }
-  get notehead() {
-    return this.isNotehead ? new SMUFL.Notehead({ note: this }) : null;
-  }
-  get flag() {
-    return this.isFlag ? new SMUFL.Flag({ note: this }) : null;
-  }
+  notehead;
+  stem: SMUFL.Stem | null = null;
+  flag: SMUFL.Flag | null = null;
 
+  get bBox() {
+    const top =
+      this.flag?.glyph.bBox.top ??
+      this.stem?.glyph.bBox.top ??
+      this.notehead?.glyph.bBox.top ??
+      0;
+    const left = this.notehead?.glyph.bBox.left ?? 0;
+    const bottom = this.notehead?.glyph.bBox.bottom ?? 0;
+    const right =
+      (this.flag?.glyph.advancedWidth ?? 0) +
+      (this.notehead?.glyph.advancedWidth ?? 0);
+    return new SMUFL.BBox({ top, bottom, left, right });
+  }
   get dot() {
     let duration = this.duration;
     let dot = 0;
@@ -29,7 +36,7 @@ export class Note extends Core.Note {
       this.bar.masterbar.timesignature.denominator * (1 / this.baseDuration)
     );
   }
-  private get isStem() {
+  get isStem() {
     if (this.fraction === 1) return false;
     return true;
   }
@@ -37,7 +44,7 @@ export class Note extends Core.Note {
     if (this.rest) return false;
     return true;
   }
-  private get isFlag() {
+  get isFlag() {
     if (this.fraction === 4) return false;
     if (this.stem === null) return false;
     return true;
@@ -56,12 +63,12 @@ export class Note extends Core.Note {
     chord = false,
     ...note
   }: {
-    stem?: "up" | "down" | null;
     rest?: boolean;
     chord?: boolean;
   } & Core.Note) {
     super(note);
     this.rest = rest;
     this.chord = chord;
+    this.notehead = this.isNotehead ? new SMUFL.Notehead({ note: this }) : null;
   }
 }

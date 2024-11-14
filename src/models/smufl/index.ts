@@ -46,7 +46,7 @@ export const getBBox = (glyphName: keyof Glyphnames) =>
   BravuraMetadata.glyphBBoxes[
     glyphName as keyof BravuraMetadata["glyphBBoxes"]
   ];
-export const getAdvanceWidth = (glyphName: keyof Glyphnames) =>
+export const getAdvanceWidth = <T>(glyphName: T) =>
   BravuraMetadata.glyphAdvanceWidths[
     glyphName as keyof BravuraMetadata["glyphAdvanceWidths"]
   ];

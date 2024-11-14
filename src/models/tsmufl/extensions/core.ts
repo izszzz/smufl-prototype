@@ -82,6 +82,8 @@ Core.Score.prototype.toSMUFL = function (this: Core.Score) {
         bar.masterbar = masterbar;
         for (const note of bar.notes) {
           note.bar = bar;
+          note.stem = note.isStem ? new SMUFL.Stem({ note }) : null;
+          note.flag = note.isFlag ? new SMUFL.Flag({ note }) : null;
         }
       }
     }

@@ -24,9 +24,10 @@
     "noUncheckedIndexedAccess": true,
     "noErrorTruncation": true,
     "strictNullChecks": true,
+    "baseUrl": ".",
     "paths": {
-      "smufl": ["./src/models/tsmufl/index.ts"], // エイリアスを設定
-      "core": ["./src/models/core/"]
+      "smufl": ["src/models/tsmufl/"],
+      "core": ["src/models/core/"]
     }
   },
   "include": ["src"],
