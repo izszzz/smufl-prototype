@@ -1,0 +1,13 @@
+{
+  "name": "smufl-test",
+  "image": "node:20-alpine",
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-bash:0": {}
+  },
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+    }
+  }
+}
