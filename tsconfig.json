@@ -27,7 +27,8 @@
     "baseUrl": ".",
     "paths": {
       "smufl": ["src/models/tsmufl/"],
-      "core": ["src/models/core/"]
+      "core": ["src/models/core/"],
+      "mxl": ["src/models/files/mxl/"]
     }
   },
   "include": ["src"],

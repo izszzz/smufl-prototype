@@ -8,6 +8,7 @@ export default defineConfig({
     alias: {
       core: "/src/models/core",
       smufl: "/src/models/tsmufl",
+      mxl: "/src/models/files/mxl",
     },
   },
 });
