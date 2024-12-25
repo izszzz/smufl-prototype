@@ -3,7 +3,12 @@
   "image": "node:20-alpine",
   "features": {
     "ghcr.io/devcontainers/features/git:1": {},
-    "ghcr.io/cirolosapio/devcontainers-features/alpine-bash:0": {}
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-bash:0": {},
+    "ghcr.io/cirolosapio/devcontainers-features/alpine-openssh:0": {}
+  },
+  "containerEnv": {
+    "WATCHPACK_POLLING": "true",
+    "CHOKIDAR_USEPOLLING": "true"
   },
   "customizations": {
     "vscode": {
