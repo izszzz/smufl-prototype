@@ -4,10 +4,90 @@ import * as xml2js from "xml2js";
 import fs from "fs";
 import * as R from "remeda";
 import * as ts from "typescript";
-// TODO: interfaceにして、default用のオブジェクトを作成する
+// TODO: groupの定義
+// TODO: attributeGroupの定義
+// TODO: choiceのプロパティ名
 // TODO: default値はobjectmapperで変換する
 const data = fs.readFileSync("src/musicxml/schema/musicxml.xsd");
 const tsNodes: ts.Statement[] = [];
+const xsTypes = [
+  {
+    name: "anyURI",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "decimal",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "ID",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "IDREF",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "NMTOKEN",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "integer",
+    value: ts.SyntaxKind.NumberKeyword,
+  },
+  {
+    name: "nonNegativeInteger",
+    value: ts.SyntaxKind.NumberKeyword,
+  },
+  {
+    name: "positiveInteger",
+    value: ts.SyntaxKind.NumberKeyword,
+  },
+  {
+    name: "token",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "date",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+];
+const xmlTypes = [
+  {
+    name: "lang",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "space",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+];
+const xlinkTypes = [
+  {
+    name: "href",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "type",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "role",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "title",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "show",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+  {
+    name: "actuate",
+    value: ts.SyntaxKind.StringKeyword,
+  },
+];
 new xml2js.Parser({
   explicitChildren: true,
   preserveChildrenOrder: true,
@@ -17,106 +97,10 @@ new xml2js.Parser({
   const Type = ts.factory.createIdentifier("Type");
 
   const complexTypes = [];
-  // TODO: refactor
-  const xsTypes = [
-    {
-      name: "anyURI",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "decimal",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "ID",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "IDREF",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "NMTOKEN",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "integer",
-      value: ts.SyntaxKind.NumberKeyword,
-    },
-    {
-      name: "nonNegativeInteger",
-      value: ts.SyntaxKind.NumberKeyword,
-    },
-    {
-      name: "positiveInteger",
-      value: ts.SyntaxKind.NumberKeyword,
-    },
-    {
-      name: "token",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "date",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-  ].map((v) =>
-    ts.factory.createTypeAliasDeclaration(
-      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-      v.name,
-      undefined,
-      ts.factory.createKeywordTypeNode(Number(v.value))
-    )
-  );
-  const xmlTypes = [
-    {
-      name: "lang",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "space",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-  ].map((v) =>
-    ts.factory.createTypeAliasDeclaration(
-      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-      v.name,
-      undefined,
-      ts.factory.createKeywordTypeNode(Number(v.value))
-    )
-  );
-  const xlinkTypes = [
-    {
-      name: "href",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "type",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "role",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "title",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "show",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-    {
-      name: "actuate",
-      value: ts.SyntaxKind.StringKeyword,
-    },
-  ].map((v) =>
-    ts.factory.createTypeAliasDeclaration(
-      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-      v.name,
-      undefined,
-      ts.factory.createKeywordTypeNode(Number(v.value))
-    )
-  );
+  const tsXsTypes = xsTypes.map(createTsTypeAilias);
+  const tsXmlTypes = xmlTypes.map(createTsTypeAilias);
+  const tsXlinkTypes = xlinkTypes.map(createTsTypeAilias);
+
   // TODO: refactor
   const simpleTypes = result["xs:schema"]["xs:simpleType"].map(
     (simpleType: any) => {
@@ -174,27 +158,27 @@ new xml2js.Parser({
     if (v["xs:complexType"]) {
       v.$.type ??= v.$.name;
       complexTypes.push(
-        createComplexType({ ...v["xs:complexType"][0], $: v.$ })
+        createComplexType()({ ...v["xs:complexType"][0], $: v.$ })
       );
     }
   });
   complexTypes.push(
-    ...result["xs:schema"]["xs:complexType"].map(createComplexType)
+    ...result["xs:schema"]["xs:complexType"].map(createComplexType())
   );
 
-  tsNodes.push(...xsTypes);
+  tsNodes.push(...tsXsTypes);
   tsNodes.push(
     ts.factory.createModuleDeclaration(
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       XML,
-      ts.factory.createModuleBlock(xmlTypes)
+      ts.factory.createModuleBlock(tsXmlTypes)
     )
   );
   tsNodes.push(
     ts.factory.createModuleDeclaration(
       [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
       XLink,
-      ts.factory.createModuleBlock(xlinkTypes)
+      ts.factory.createModuleBlock(tsXlinkTypes)
     )
   );
   tsNodes.push(
@@ -205,6 +189,14 @@ new xml2js.Parser({
     )
   );
 
+  function createTsTypeAilias(v: { name: string; value: ts.SyntaxKind }) {
+    return ts.factory.createTypeAliasDeclaration(
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+      v.name,
+      undefined,
+      ts.factory.createKeywordTypeNode(Number(v.value))
+    );
+  }
   function createAttribute(v: any) {
     return {
       name: createPropertyName(v),
@@ -225,21 +217,17 @@ new xml2js.Parser({
 
   function createIndicator(
     isProperty: boolean = false,
-    innerComplexTypes?: any[],
+
     parentClassName?: string
   ) {
     return (v: any) => [
-      ...(v["xs:element"]?.map(
-        createElement(isProperty, innerComplexTypes, parentClassName)
-      ) ?? []),
-      ...(v["xs:choice"]?.map(
-        createChoice(isProperty, innerComplexTypes, parentClassName)
-      ) ?? []),
-      ...(v["xs:group"]?.flatMap(
-        createGroup(isProperty, innerComplexTypes, parentClassName)
-      ) ?? []),
+      ...(v["xs:element"]?.map(createElement(isProperty, parentClassName)) ??
+        []),
+      ...(v["xs:choice"]?.map(createChoice(isProperty, parentClassName)) ?? []),
+      ...(v["xs:group"]?.flatMap(createGroup(isProperty, parentClassName)) ??
+        []),
       ...(v["xs:sequence"]?.flatMap(
-        createIndicator(isProperty, innerComplexTypes, parentClassName)
+        createIndicator(isProperty, parentClassName)
       ) ?? []),
       ...(v["xs:simpleContent"]?.map(createSimpleContent) ?? []),
     ];
@@ -252,41 +240,37 @@ new xml2js.Parser({
         type: v["xs:extension"][0].$.base,
       },
     };
-    return ts.factory.createParameterDeclaration(
-      [ts.factory.createModifier(ts.SyntaxKind.PublicKeyword)],
+    return ts.factory.createPropertyDeclaration(
       undefined,
       createPropertyName(value),
       undefined,
-      createType(Type)(value)
+      createType(Type)(value),
+      undefined
     );
   }
 
-  function createGroup(
-    isProperty: boolean = false,
-    innerComplexTypes?: any[],
-    parentClasName?: string
-  ) {
+  function createGroup(isProperty: boolean = false, parentClasName?: string) {
     // minOccurs maxOccurs
     return (v: any) => {
       const group = result["xs:schema"]["xs:group"].find(
         (group: any) => group.$.name === v.$.ref
       );
-      return createIndicator(
-        isProperty,
-        innerComplexTypes,
-        parentClasName
-      )(group);
+      return createIndicator(isProperty, parentClasName)(group);
     };
   }
   function createElement(
     isProperty: boolean = false,
-    innerComplexTypes?: any[],
     parentClassName?: string
   ) {
     return (v: any) => {
       if (v["xs:complexType"]) {
-        v.$.type ??= v.$.name;
-        innerComplexTypes?.push(v);
+        v.$.type = v.$.name;
+        complexTypes.push(
+          createComplexType(parentClassName)({
+            ...v["xs:complexType"][0],
+            $: v.$,
+          })
+        );
       }
       if (isProperty) {
         return ts.factory.createTypeLiteralNode([
@@ -298,31 +282,20 @@ new xml2js.Parser({
           ),
         ]);
       }
-      return ts.factory.createParameterDeclaration(
-        [ts.factory.createModifier(ts.SyntaxKind.PublicKeyword)],
+      return ts.factory.createPropertyDeclaration(
         undefined,
         createPropertyName(v),
         undefined,
         v["xs:complexType"]
           ? ts.factory.createTypeReferenceNode(
-              ts.factory.createIdentifier("InstanceType"),
-              [
-                ts.factory.createTypeQueryNode(
-                  ts.factory.createIdentifier(
-                    parentClassName + "." + createClassName(v)
-                  )
-                ),
-              ]
+              ts.factory.createIdentifier(parentClassName + createClassName(v))
             )
-          : createType(Type)(v)
+          : createType(Type)(v),
+        undefined
       );
     };
   }
-  function createChoice(
-    isProperty: boolean = false,
-    innerComplexTypes?: any[],
-    parentClassName?: string
-  ) {
+  function createChoice(isProperty: boolean = false, parentClassName?: string) {
     return (v: any) => {
       const unionTypes = ts.factory.createUnionTypeNode(
         v.$$.map((v: any) => {
@@ -331,24 +304,30 @@ new xml2js.Parser({
               return createType(Type)(v);
             case "xs:group":
               return ts.factory.createTupleTypeNode(
-                createGroup(true, innerComplexTypes, parentClassName)(v)
+                createGroup(true, parentClassName)(v)
               );
             case "xs:sequence":
               return ts.factory.createTupleTypeNode(
-                createIndicator(true, innerComplexTypes, parentClassName)(v)
+                createIndicator(true, parentClassName)(v)
               );
             case "xs:choice":
-              return createChoice(true, innerComplexTypes, parentClassName)(v);
+              return createChoice(true, parentClassName)(v);
           }
         })
       );
       const choiceName = R.pipe(
         v.$$,
         R.map((v) => {
-          if (v["#name"] === "xs:element") return v.$.name;
-          if (v["#name"] === "xs:group") return "group";
-          if (v["#name"] === "xs:sequence") return "sequence";
-          if (v["#name"] === "xs:choice") return "choice";
+          switch (v["#name"]) {
+            case "xs:element":
+              return v.$.name;
+            case "xs:group":
+              return "group";
+            case "xs:sequence":
+              return "sequence";
+            case "xs:choice":
+              return "choice";
+          }
         }),
         R.join("-or-"),
         R.toCamelCase()
@@ -363,78 +342,21 @@ new xml2js.Parser({
           ),
         ]);
       }
-      return ts.factory.createParameterDeclaration(
-        [ts.factory.createModifier(ts.SyntaxKind.PublicKeyword)],
+      return ts.factory.createPropertyDeclaration(
         undefined,
         choiceName,
         undefined,
-        unionTypes
+        unionTypes,
+        undefined
       );
     };
   }
 
-  function createComplexType(v: any) {
-    const innerComplexTypes: any[] = [];
-    const className = ts.factory.createIdentifier(createClassName(v));
-    const attributes = [
-      ...(
-        v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attributeGroup"] ?? []
-      )
-        .concat(v["xs:attributeGroup"] ?? [])
-        .flatMap(createAttributeGroup),
-      ...(
-        v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attribute"] ?? []
-      ).concat(v["xs:attribute"] ?? []),
-    ];
-    return ts.factory.createClassDeclaration(
-      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-      className,
-      undefined,
-      undefined,
-      [
-        ts.factory.createConstructorDeclaration(
-          undefined,
-          R.filter(
-            [
-              ...createIndicator(
-                undefined,
-                innerComplexTypes,
-                createClassName(v)
-              )(v),
-              createAttributeParameter(attributes),
-            ],
-            R.isTruthy
-          ),
-          ts.factory.createBlock([
-            ...attributes
-              .filter((v) => R.isNonNullish(v.$.default))
-              .map((v) =>
-                ts.factory.createExpressionStatement(
-                  ts.factory.createBinaryExpression(
-                    ts.factory.createPropertyAccessExpression(
-                      ts.factory.createIdentifier(
-                        xml2js.defaults["0.2"].attrkey ?? ""
-                      ),
-                      ts.factory.createIdentifier(createPropertyName(v))
-                    ),
-                    ts.factory.createToken(
-                      ts.SyntaxKind.QuestionQuestionEqualsToken
-                    ),
-                    createDefault(v)
-                  )
-                )
-              ),
-          ])
-        ),
-        ...innerComplexTypes.map(createInnerComplexType(createClassName(v))),
-      ]
-    );
-  }
-
-  function createInnerComplexType(parentClassName?: string) {
-    return (v: any): ts.PropertyDeclaration => {
-      const className = ts.factory.createIdentifier(createClassName(v));
-      const innerComplexTypes: any[] = [];
+  function createComplexType(parentClassName?: string) {
+    return (v: any) => {
+      const className = ts.factory.createIdentifier(
+        (parentClassName ?? "") + createClassName(v)
+      );
       const attributes = [
         ...(
           v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attributeGroup"] ??
@@ -446,59 +368,25 @@ new xml2js.Parser({
           v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attribute"] ?? []
         ).concat(v["xs:attribute"] ?? []),
       ];
-      return ts.factory.createPropertyDeclaration(
-        [ts.factory.createModifier(ts.SyntaxKind.StaticKeyword)],
+      return ts.factory.createInterfaceDeclaration(
+        [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
         className,
         undefined,
         undefined,
-        ts.factory.createClassExpression(
-          undefined,
-          undefined,
-          undefined,
-          undefined,
+        R.filter(
           [
-            ts.factory.createConstructorDeclaration(
-              undefined,
-              R.filter(
-                [
-                  ...createIndicator(
-                    undefined,
-                    innerComplexTypes,
-                    parentClassName + "." + createClassName(v)
-                  )({ ...v["xs:complexType"][0], $: v.$ }),
-                  createAttributeParameter(attributes),
-                ],
-                R.isTruthy
-              ),
-              ts.factory.createBlock([
-                ...attributes
-                  .filter((v) => R.isNonNullish(v.$.default))
-                  .map((v) =>
-                    ts.factory.createExpressionStatement(
-                      ts.factory.createBinaryExpression(
-                        ts.factory.createPropertyAccessExpression(
-                          ts.factory.createIdentifier(
-                            xml2js.defaults["0.2"].attrkey ?? ""
-                          ),
-                          ts.factory.createIdentifier(createPropertyName(v))
-                        ),
-                        ts.factory.createToken(ts.SyntaxKind.EqualsToken),
-                        createDefault(v)
-                      )
-                    )
-                  ),
-              ])
-            ),
-            ...innerComplexTypes.map(createInnerComplexType()),
-          ]
+            ...createIndicator(undefined, createClassName(v))(v),
+            createAttributeParameter(attributes),
+          ],
+          R.isTruthy
         )
       );
     };
   }
+
   function createAttributeParameter(attributes: any[]) {
     if (attributes.length === 0) return undefined;
-    return ts.factory.createParameterDeclaration(
-      [ts.factory.createModifier(ts.SyntaxKind.PublicKeyword)],
+    return ts.factory.createPropertyDeclaration(
       undefined,
       xml2js.defaults["0.2"].attrkey ?? "",
       undefined,
@@ -511,7 +399,8 @@ new xml2js.Parser({
             createType(Type)(v)
           )
         )
-      )
+      ),
+      undefined
     );
   }
   function createType(module?: ts.Identifier) {
@@ -558,7 +447,7 @@ new xml2js.Parser({
   function createDefault(v: any) {
     if (!v.$.default) return undefined;
     if (v.$.ref?.includes("xlink:")) {
-      const xlinkType = xlinkTypes.find(
+      const xlinkType = tsXlinkTypes.find(
         (xsLink: any) =>
           xsLink.name.escapedText === v.$.ref.replace("xlink:", "")
       );
@@ -566,7 +455,7 @@ new xml2js.Parser({
     }
 
     if (v.$.type?.includes("xs:")) {
-      const xsType = xsTypes.find(
+      const xsType = tsXsTypes.find(
         (xsType: any) => xsType.name.escapedText === v.$.type.replace("xs:", "")
       );
       return convertDefaultType(v, xsType!.type);
@@ -577,7 +466,7 @@ new xml2js.Parser({
         R.pipe(v.$.type.replace("xs:", ""), R.toCamelCase(), R.capitalize())
     );
     if (simpleType) {
-      const xsType = xsTypes.find(
+      const xsType = tsXsTypes.find(
         (xsType: any) =>
           xsType.name.escapedText === simpleType.type.typeName.escapedText
       );

@@ -1,7 +1,9 @@
 import * as Core from "../core";
 import * as Midi from "../files/midi";
-import { MusicXml } from "../files/mxl";
+import { Type } from "../files/mxl/schema";
 import { Zip } from "../files/zip";
+import * as xml2js from "xml2js";
+import * as R from "remeda";
 export class Importer {
   core;
   async import(file: File) {
@@ -25,8 +27,12 @@ export class Importer {
         if (!pathName) return;
         const data = await zip.files[pathName]?.async("text");
         if (!data) return;
-        const score = new DOMParser().parseFromString(data, "application/xml");
-        console.log(new MusicXml(score).smufl);
+        return (await new xml2js.Parser({
+          tagNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
+          attrNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
+        }).parseStringPromise(data)) as {
+          scorePartwise: Type.ScorePartwise;
+        };
       }
     }
     if (typeof reader.result === "string") {

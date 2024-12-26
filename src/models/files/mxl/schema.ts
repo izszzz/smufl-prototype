@@ -166,2596 +166,2828 @@ export module Type {
     export type GroupSymbolValue = "none" | "brace" | "line" | "bracket" | "square";
     export type MeasureText = token;
     export type SwingTypeValue = "16th" | "eighth";
-    export class Directive {
-        constructor(public children: string, public PrintStyle: AttributeGroup.PrintStyle, public xmlLang?: XML.lang) { }
+    export interface PartMeasure {
+        noteOrBackupOrForwardOrDirectionOrAttributesOrHarmonyOrFiguredBassOrPrintOrSoundOrListeningOrBarlineOrGroupingOrLinkOrBookmark: Type.Note | Type.Backup | Type.Forward | Type.Direction | Type.Attributes | Type.Harmony | Type.FiguredBass | Type.Print | Type.Sound | Type.Listening | Type.Barline | Type.Grouping | Type.Link | Type.Bookmark;
+        $: {
+            id?: ID;
+            number_: token;
+            text?: Type.MeasureText;
+            implicit?: Type.YesNo;
+            nonControlling?: Type.YesNo;
+            width?: Type.Tenths;
+        };
     }
-    export class AccidentalText {
-        constructor(public children: Type.AccidentalValue, public TextFormatting: AttributeGroup.TextFormatting, public smufl?: Type.SmuflAccidentalGlyphName) { }
+    export interface ScorePartwisePart {
+        measure: PartMeasure;
+        $: {
+            id: IDREF;
+        };
     }
-    export class Coda {
-        constructor(public children: [
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public smufl?: Type.SmuflCodaGlyphName) { }
+    export interface ScorePartwise {
+        part: ScorePartwisePart;
+        work: Type.Work;
+        movementNumber: string;
+        movementTitle: string;
+        identification: Type.Identification;
+        defaults: Type.Defaults;
+        credit: Type.Credit[];
+        partList: Type.PartList;
+        $: {
+            version: token;
+        };
     }
-    export class Dynamics {
-        constructor(public children: [
+    export interface MeasurePart {
+        noteOrBackupOrForwardOrDirectionOrAttributesOrHarmonyOrFiguredBassOrPrintOrSoundOrListeningOrBarlineOrGroupingOrLinkOrBookmark: Type.Note | Type.Backup | Type.Forward | Type.Direction | Type.Attributes | Type.Harmony | Type.FiguredBass | Type.Print | Type.Sound | Type.Listening | Type.Barline | Type.Grouping | Type.Link | Type.Bookmark;
+        $: {
+            id: IDREF;
+        };
+    }
+    export interface ScoreTimewiseMeasure {
+        part: MeasurePart;
+        $: {
+            id?: ID;
+            number_: token;
+            text?: Type.MeasureText;
+            implicit?: Type.YesNo;
+            nonControlling?: Type.YesNo;
+            width?: Type.Tenths;
+        };
+    }
+    export interface ScoreTimewise {
+        measure: ScoreTimewiseMeasure;
+        work: Type.Work;
+        movementNumber: string;
+        movementTitle: string;
+        identification: Type.Identification;
+        defaults: Type.Defaults;
+        credit: Type.Credit[];
+        partList: Type.PartList;
+        $: {
+            version: token;
+        };
+    }
+    export interface AttributesDirective {
+        xsString: string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            xmlLang?: XML.lang;
+        };
+    }
+    export interface AccidentalText {
+        accidentalValue: Type.AccidentalValue;
+        $: {
+            justify?: Type.LeftCenterRight;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            underline?: Type.NumberOfLines;
+            overline?: Type.NumberOfLines;
+            lineThrough?: Type.NumberOfLines;
+            rotation?: Type.RotationDegrees;
+            letterSpacing?: Type.NumberOrNormal;
+            lineHeight?: Type.NumberOrNormal;
+            dir?: Type.TextDirection;
+            enclosure?: Type.EnclosureShape;
+            xmlLang?: XML.lang;
+            xmlSpace?: XML.space;
+            smufl?: Type.SmuflAccidentalGlyphName;
+        };
+    }
+    export interface Coda {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            id?: ID;
+            smufl?: Type.SmuflCodaGlyphName;
+        };
+    }
+    export interface Dynamics {
+        pOrPpOrPppOrPpppOrPppppOrPpppppOrFOrFfOrFffOrFfffOrFffffOrFfffffOrMpOrMfOrSfOrSfpOrSfppOrFpOrRfOrRfzOrSfzOrSffzOrFzOrNOrPfOrSfzpOrOtherDynamics: Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.OtherText;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            placement?: Type.AboveBelow;
+            underline?: Type.NumberOfLines;
+            overline?: Type.NumberOfLines;
+            lineThrough?: Type.NumberOfLines;
+            enclosure?: Type.EnclosureShape;
+            id?: ID;
+        };
+    }
+    export interface Empty {
+    }
+    export interface EmptyPlacement {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+        };
+    }
+    export interface EmptyPlacementSmufl {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            smufl?: Type.SmuflGlyphName;
+        };
+    }
+    export interface EmptyPrintStyle {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+        };
+    }
+    export interface EmptyPrintStyleAlign {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+        };
+    }
+    export interface EmptyPrintStyleAlignId {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            id?: ID;
+        };
+    }
+    export interface EmptyPrintObjectStyleAlign {
+        $: {
+            printObject?: Type.YesNo;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+        };
+    }
+    export interface EmptyTrillSound {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            startNote?: Type.StartNote;
+            trillStep?: Type.TrillStep;
+            twoNoteTurn?: Type.TwoNoteTurn;
+            accelerate?: Type.YesNo;
+            beats?: Type.TrillBeats;
+            secondBeat?: Type.Percent;
+            lastBeat?: Type.Percent;
+        };
+    }
+    export interface HorizontalTurn {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            startNote?: Type.StartNote;
+            trillStep?: Type.TrillStep;
+            twoNoteTurn?: Type.TwoNoteTurn;
+            accelerate?: Type.YesNo;
+            beats?: Type.TrillBeats;
+            secondBeat?: Type.Percent;
+            lastBeat?: Type.Percent;
+            slash?: Type.YesNo;
+        };
+    }
+    export interface Fermata {
+        fermataShape: Type.FermataShape;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            id?: ID;
+            type_?: Type.UprightInverted;
+        };
+    }
+    export interface Fingering {
+        xsString: string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            substitution?: Type.YesNo;
+            alternate?: Type.YesNo;
+        };
+    }
+    export interface FormattedSymbol {
+        smuflGlyphName: Type.SmuflGlyphName;
+        $: {
+            justify?: Type.LeftCenterRight;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            underline?: Type.NumberOfLines;
+            overline?: Type.NumberOfLines;
+            lineThrough?: Type.NumberOfLines;
+            rotation?: Type.RotationDegrees;
+            letterSpacing?: Type.NumberOrNormal;
+            lineHeight?: Type.NumberOrNormal;
+            dir?: Type.TextDirection;
+            enclosure?: Type.EnclosureShape;
+        };
+    }
+    export interface FormattedSymbolId {
+        smuflGlyphName: Type.SmuflGlyphName;
+        $: {
+            justify?: Type.LeftCenterRight;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            underline?: Type.NumberOfLines;
+            overline?: Type.NumberOfLines;
+            lineThrough?: Type.NumberOfLines;
+            rotation?: Type.RotationDegrees;
+            letterSpacing?: Type.NumberOrNormal;
+            lineHeight?: Type.NumberOrNormal;
+            dir?: Type.TextDirection;
+            enclosure?: Type.EnclosureShape;
+            id?: ID;
+        };
+    }
+    export interface FormattedText {
+        xsString: string;
+        $: {
+            justify?: Type.LeftCenterRight;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            underline?: Type.NumberOfLines;
+            overline?: Type.NumberOfLines;
+            lineThrough?: Type.NumberOfLines;
+            rotation?: Type.RotationDegrees;
+            letterSpacing?: Type.NumberOrNormal;
+            lineHeight?: Type.NumberOrNormal;
+            dir?: Type.TextDirection;
+            enclosure?: Type.EnclosureShape;
+            xmlLang?: XML.lang;
+            xmlSpace?: XML.space;
+        };
+    }
+    export interface FormattedTextId {
+        xsString: string;
+        $: {
+            justify?: Type.LeftCenterRight;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            underline?: Type.NumberOfLines;
+            overline?: Type.NumberOfLines;
+            lineThrough?: Type.NumberOfLines;
+            rotation?: Type.RotationDegrees;
+            letterSpacing?: Type.NumberOrNormal;
+            lineHeight?: Type.NumberOrNormal;
+            dir?: Type.TextDirection;
+            enclosure?: Type.EnclosureShape;
+            xmlLang?: XML.lang;
+            xmlSpace?: XML.space;
+            id?: ID;
+        };
+    }
+    export interface Fret {
+        xsNonNegativeInteger: nonNegativeInteger;
+        $: {
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+        };
+    }
+    export interface Level {
+        xsString: string;
+        $: {
+            parentheses?: Type.YesNo;
+            bracket?: Type.YesNo;
+            size?: Type.SymbolSize;
+            reference?: Type.YesNo;
+            type_?: Type.StartStopSingle;
+        };
+    }
+    export interface MidiDevice {
+        xsString: string;
+        $: {
+            port?: Type.Midi16;
+            id?: IDREF;
+        };
+    }
+    export interface MidiInstrument {
+        midiChannel: Type.Midi16;
+        midiName: string;
+        midiBank: Type.Midi16384;
+        midiProgram: Type.Midi128;
+        midiUnpitched: Type.Midi128;
+        volume: Type.Percent;
+        pan: Type.RotationDegrees;
+        elevation: Type.RotationDegrees;
+        $: {
+            id: IDREF;
+        };
+    }
+    export interface NameDisplay {
+        displayTextOrAccidentalText: Type.FormattedText | Type.AccidentalText;
+        $: {
+            printObject?: Type.YesNo;
+        };
+    }
+    export interface OtherPlay {
+        xsString: string;
+        $: {
+            type_: token;
+        };
+    }
+    export interface Play {
+        ipaOrMuteOrSemiPitchedOrOtherPlay: string | Type.Mute | Type.SemiPitched | Type.OtherPlay;
+        $: {
+            id?: IDREF;
+        };
+    }
+    export interface Segno {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            id?: ID;
+            smufl?: Type.SmuflSegnoGlyphName;
+        };
+    }
+    export interface String {
+        stringNumber: Type.StringNumber;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+        };
+    }
+    export interface TypedText {
+        xsString: string;
+        $: {
+            type_?: token;
+        };
+    }
+    export interface WavyLine {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            placement?: Type.AboveBelow;
+            color?: Type.Color;
+            startNote?: Type.StartNote;
+            trillStep?: Type.TrillStep;
+            twoNoteTurn?: Type.TwoNoteTurn;
+            accelerate?: Type.YesNo;
+            beats?: Type.TrillBeats;
+            secondBeat?: Type.Percent;
+            lastBeat?: Type.Percent;
+            type_: Type.StartStopContinue;
+            number_?: Type.NumberLevel;
+            smufl?: Type.SmuflWavyLineGlyphName;
+        };
+    }
+    export interface Attributes {
+        divisions: Type.PositiveDivisions;
+        key: Type.Key[];
+        time: Type.Time[];
+        staves: nonNegativeInteger;
+        partSymbol: Type.PartSymbol;
+        instruments: nonNegativeInteger;
+        clef: Type.Clef[];
+        staffDetails: Type.StaffDetails[];
+        directive: AttributesDirective;
+        measureStyle: Type.MeasureStyle[];
+        transposeOrForPart: Type.Transpose[] | Type.ForPart[];
+        footnote: Type.FormattedText;
+        level: Type.Level;
+    }
+    export interface BeatRepeat {
+        exceptVoice: string[];
+        slashType: Type.NoteTypeValue;
+        slashDot: Type.Empty[];
+        $: {
+            type_: Type.StartStop;
+            slashes?: positiveInteger;
+            useDots?: Type.YesNo;
+        };
+    }
+    export interface Cancel {
+        fifths: Type.Fifths;
+        $: {
+            location?: Type.CancelLocation;
+        };
+    }
+    export interface Clef {
+        sign: Type.ClefSign;
+        line: Type.StaffLinePosition;
+        clefOctaveChange: integer;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            printObject?: Type.YesNo;
+            id?: ID;
+            number_?: Type.StaffNumber;
+            additional?: Type.YesNo;
+            size?: Type.SymbolSize;
+            afterBarline?: Type.YesNo;
+        };
+    }
+    export interface Double {
+        $: {
+            above?: Type.YesNo;
+        };
+    }
+    export interface ForPart {
+        partClef: Type.PartClef;
+        partTranspose: Type.PartTranspose;
+        $: {
+            id?: ID;
+            number_?: Type.StaffNumber;
+        };
+    }
+    export interface Interchangeable {
+        timeRelation: Type.TimeRelation;
+        beats: string;
+        beatType: string;
+        $: {
+            symbol_?: Type.TimeSymbol;
+            separator?: Type.TimeSeparator;
+        };
+    }
+    export interface Key {
+        keyOctave: Type.KeyOctave[];
+        groupOrGroup: [
             {
-                p: Type.Empty;
-            } | {
-                pp: Type.Empty;
-            } | {
-                ppp: Type.Empty;
-            } | {
-                pppp: Type.Empty;
-            } | {
-                ppppp: Type.Empty;
-            } | {
-                pppppp: Type.Empty;
-            } | {
-                f: Type.Empty;
-            } | {
-                ff: Type.Empty;
-            } | {
-                fff: Type.Empty;
-            } | {
-                ffff: Type.Empty;
-            } | {
-                fffff: Type.Empty;
-            } | {
-                ffffff: Type.Empty;
-            } | {
-                mp: Type.Empty;
-            } | {
-                mf: Type.Empty;
-            } | {
-                sf: Type.Empty;
-            } | {
-                sfp: Type.Empty;
-            } | {
-                sfpp: Type.Empty;
-            } | {
-                fp: Type.Empty;
-            } | {
-                rf: Type.Empty;
-            } | {
-                rfz: Type.Empty;
-            } | {
-                sfz: Type.Empty;
-            } | {
-                sffz: Type.Empty;
-            } | {
-                fz: Type.Empty;
-            } | {
-                n: Type.Empty;
-            } | {
-                pf: Type.Empty;
-            } | {
-                sfzp: Type.Empty;
-            } | {
-                otherDynamics: Type.OtherText;
-            }
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public Placement: AttributeGroup.Placement, public TextDecoration: AttributeGroup.TextDecoration, public Enclosure: AttributeGroup.Enclosure, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class Empty {
-        constructor(public children: [
-        ]) { }
-    }
-    export class EmptyPlacement {
-        constructor(public children: [
-        ], public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement) { }
-    }
-    export class EmptyPlacementSmufl {
-        constructor(public children: [
-        ], public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public Smufl: AttributeGroup.Smufl) { }
-    }
-    export class EmptyPrintStyle {
-        constructor(public children: [
-        ], public PrintStyle: AttributeGroup.PrintStyle) { }
-    }
-    export class EmptyPrintStyleAlign {
-        constructor(public children: [
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign) { }
-    }
-    export class EmptyPrintStyleAlignId {
-        constructor(public children: [
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class EmptyPrintObjectStyleAlign {
-        constructor(public children: [
-        ], public PrintObject: AttributeGroup.PrintObject, public PrintStyleAlign: AttributeGroup.PrintStyleAlign) { }
-    }
-    export class EmptyTrillSound {
-        constructor(public children: [
-        ], public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public TrillSound: AttributeGroup.TrillSound) { }
-    }
-    export class HorizontalTurn {
-        constructor(public children: [
-        ], public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public TrillSound: AttributeGroup.TrillSound, public slash?: Type.YesNo) { }
-    }
-    export class Fermata {
-        constructor(public children: Type.FermataShape, public PrintStyle: AttributeGroup.PrintStyle, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_?: Type.UprightInverted) { }
-    }
-    export class Fingering {
-        constructor(public children: string, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public substitution?: Type.YesNo, public alternate?: Type.YesNo) { }
-    }
-    export class FormattedSymbol {
-        constructor(public children: Type.SmuflGlyphName, public SymbolFormatting: AttributeGroup.SymbolFormatting) { }
-    }
-    export class FormattedSymbolId {
-        constructor(public children: Type.SmuflGlyphName, public SymbolFormatting: AttributeGroup.SymbolFormatting, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class FormattedText {
-        constructor(public children: string, public TextFormatting: AttributeGroup.TextFormatting) { }
-    }
-    export class FormattedTextId {
-        constructor(public children: string, public TextFormatting: AttributeGroup.TextFormatting, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class Fret {
-        constructor(public children: nonNegativeInteger, public Font: AttributeGroup.Font, public Color: AttributeGroup.Color) { }
-    }
-    export class Level {
-        constructor(public children: string, public LevelDisplay: AttributeGroup.LevelDisplay, public reference?: Type.YesNo, public type_?: Type.StartStopSingle) { }
-    }
-    export class MidiDevice {
-        constructor(public children: string, public port?: Type.Midi16, public id?: IDREF) { }
-    }
-    export class MidiInstrument {
-        constructor(public children: [
-            [
-                {
-                    midiChannel: Type.Midi16;
-                },
-                {
-                    midiName: string;
-                },
-                {
-                    midiBank: Type.Midi16384;
-                },
-                {
-                    midiProgram: Type.Midi128;
-                },
-                {
-                    midiUnpitched: Type.Midi128;
-                },
-                {
-                    volume: Type.Percent;
-                },
-                {
-                    pan: Type.RotationDegrees;
-                },
-                {
-                    elevation: Type.RotationDegrees;
-                }
-            ]
-        ], public id: IDREF) { }
-    }
-    export class NameDisplay {
-        constructor(public children: [
-            [
-                {
-                    displayText: Type.FormattedText;
-                } | {
-                    accidentalText: Type.AccidentalText;
-                }
-            ]
-        ], public PrintObject: AttributeGroup.PrintObject) { }
-    }
-    export class OtherPlay {
-        constructor(public children: string, public type_: token) { }
-    }
-    export class Play {
-        constructor(public children: [
-            [
-                {
-                    ipa: string;
-                } | {
-                    mute: Type.Mute;
-                } | {
-                    semiPitched: Type.SemiPitched;
-                } | {
-                    otherPlay: Type.OtherPlay;
-                }
-            ]
-        ], public id?: IDREF) { }
-    }
-    export class Segno {
-        constructor(public children: [
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public smufl?: Type.SmuflSegnoGlyphName) { }
-    }
-    export class String {
-        constructor(public children: Type.StringNumber, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement) { }
-    }
-    export class TypedText {
-        constructor(public children: string, public type_?: token) { }
-    }
-    export class WavyLine {
-        constructor(public children: [
-        ], public Position: AttributeGroup.Position, public Placement: AttributeGroup.Placement, public Color: AttributeGroup.Color, public TrillSound: AttributeGroup.TrillSound, public type_: Type.StartStopContinue, public number_?: Type.NumberLevel, public smufl?: Type.SmuflWavyLineGlyphName) { }
-    }
-    export class Attributes {
-        constructor(public children: [
-            [
-                {
-                    divisions: Type.PositiveDivisions;
-                },
-                {
-                    key: Type.Key[];
-                },
-                {
-                    time: Type.Time[];
-                },
-                {
-                    staves: nonNegativeInteger;
-                },
-                {
-                    partSymbol: Type.PartSymbol;
-                },
-                {
-                    instruments: nonNegativeInteger;
-                },
-                {
-                    clef: Type.Clef[];
-                },
-                {
-                    staffDetails: Type.StaffDetails[];
-                },
-                {
-                    directive: Type.Directive[];
-                },
-                {
-                    measureStyle: Type.MeasureStyle[];
-                },
-                {
-                    transpose: Type.Transpose[];
-                } | {
-                    forPart: Type.ForPart[];
-                },
-                Group.Editorial
-            ]
-        ]) { }
-    }
-    export class BeatRepeat {
-        constructor(public children: [
-            Group.Slash
-        ], public type_: Type.StartStop, public slashes?: positiveInteger, public useDots?: Type.YesNo) { }
-    }
-    export class Cancel {
-        constructor(public children: Type.Fifths, public location?: Type.CancelLocation) { }
-    }
-    export class Clef {
-        constructor(public children: [
-            Group.Clef
-        ], public PrintStyle: AttributeGroup.PrintStyle, public PrintObject: AttributeGroup.PrintObject, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public number_?: Type.StaffNumber, public additional?: Type.YesNo, public size?: Type.SymbolSize, public afterBarline?: Type.YesNo) { }
-    }
-    export class Double {
-        constructor(public children: [
-        ], public above?: Type.YesNo) { }
-    }
-    export class ForPart {
-        constructor(public children: [
-            [
-                {
-                    partClef: Type.PartClef;
-                },
-                {
-                    partTranspose: Type.PartTranspose;
-                }
-            ]
-        ], public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public number_?: Type.StaffNumber) { }
-    }
-    export class Interchangeable {
-        constructor(public children: [
-            [
-                {
-                    timeRelation: Type.TimeRelation;
-                },
-                Group.TimeSignature[]
-            ]
-        ], public symbol_?: Type.TimeSymbol, public separator?: Type.TimeSeparator) { }
-    }
-    export class Key {
-        constructor(public children: [
-            [
-                {
-                    keyOctave: Type.KeyOctave[];
-                },
-                Group.TraditionalKey | Group.NonTraditionalKey[]
-            ]
-        ], public PrintStyle: AttributeGroup.PrintStyle, public PrintObject: AttributeGroup.PrintObject, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public number_?: Type.StaffNumber) { }
-    }
-    export class KeyAccidental {
-        constructor(public children: Type.AccidentalValue, public smufl?: Type.SmuflAccidentalGlyphName) { }
-    }
-    export class KeyOctave {
-        constructor(public children: Type.Octave, public number_: positiveInteger, public cancel?: Type.YesNo) { }
-    }
-    export class LineDetail {
-        constructor(public children: [
-        ], public Color: AttributeGroup.Color, public LineType: AttributeGroup.LineType, public PrintObject: AttributeGroup.PrintObject, public line: Type.StaffLine, public width?: Type.Tenths) { }
-    }
-    export class MeasureRepeat {
-        constructor(public children: Type.PositiveIntegerOrEmpty, public type_: Type.StartStop, public slashes?: positiveInteger) { }
-    }
-    export class MeasureStyle {
-        constructor(public children: [
+                cancel?: Type.Cancel;
+            },
             {
-                multipleRest: Type.MultipleRest;
-            } | {
-                measureRepeat: Type.MeasureRepeat;
-            } | {
-                beatRepeat: Type.BeatRepeat;
-            } | {
-                slash: Type.Slash;
+                fifths?: Type.Fifths;
+            },
+            {
+                mode?: Type.Mode;
             }
-        ], public Font: AttributeGroup.Font, public Color: AttributeGroup.Color, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public number_?: Type.StaffNumber) { }
+        ] | [
+            {
+                keyStep?: Type.Step;
+            },
+            {
+                keyAlter?: Type.Semitones;
+            },
+            {
+                keyAccidental?: Type.KeyAccidental;
+            }
+        ];
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            printObject?: Type.YesNo;
+            id?: ID;
+            number_?: Type.StaffNumber;
+        };
     }
-    export class MultipleRest {
-        constructor(public children: positiveInteger, public useSymbols?: Type.YesNo) { }
+    export interface KeyAccidental {
+        accidentalValue: Type.AccidentalValue;
+        $: {
+            smufl?: Type.SmuflAccidentalGlyphName;
+        };
     }
-    export class PartClef {
-        constructor(public children: [
-            Group.Clef
-        ]) { }
+    export interface KeyOctave {
+        octave: Type.Octave;
+        $: {
+            number_: positiveInteger;
+            cancel?: Type.YesNo;
+        };
     }
-    export class PartSymbol {
-        constructor(public children: Type.GroupSymbolValue, public Position: AttributeGroup.Position, public Color: AttributeGroup.Color, public topStaff?: Type.StaffNumber, public bottomStaff?: Type.StaffNumber) { }
+    export interface LineDetail {
+        $: {
+            color?: Type.Color;
+            lineType?: Type.LineType;
+            printObject?: Type.YesNo;
+            line: Type.StaffLine;
+            width?: Type.Tenths;
+        };
     }
-    export class PartTranspose {
-        constructor(public children: [
-            Group.Transpose
-        ]) { }
+    export interface MeasureRepeat {
+        positiveIntegerOrEmpty: Type.PositiveIntegerOrEmpty;
+        $: {
+            type_: Type.StartStop;
+            slashes?: positiveInteger;
+        };
     }
-    export class Slash {
-        constructor(public children: [
-            Group.Slash
-        ], public type_: Type.StartStop, public useDots?: Type.YesNo, public useStems?: Type.YesNo) { }
+    export interface MeasureStyle {
+        multipleRestOrMeasureRepeatOrBeatRepeatOrSlash: Type.MultipleRest | Type.MeasureRepeat | Type.BeatRepeat | Type.Slash;
+        $: {
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            id?: ID;
+            number_?: Type.StaffNumber;
+        };
     }
-    export class StaffDetails {
-        constructor(public children: [
-            [
-                {
-                    staffType: Type.StaffType;
-                },
-                {
-                    staffTuning: Type.StaffTuning[];
-                },
-                {
-                    capo: nonNegativeInteger;
-                },
-                {
-                    staffSize: Type.StaffSize;
-                },
-                [
+    export interface MultipleRest {
+        xsPositiveInteger: positiveInteger;
+        $: {
+            useSymbols?: Type.YesNo;
+        };
+    }
+    export interface PartClef {
+        sign: Type.ClefSign;
+        line: Type.StaffLinePosition;
+        clefOctaveChange: integer;
+    }
+    export interface PartSymbol {
+        groupSymbolValue: Type.GroupSymbolValue;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            color?: Type.Color;
+            topStaff?: Type.StaffNumber;
+            bottomStaff?: Type.StaffNumber;
+        };
+    }
+    export interface PartTranspose {
+        diatonic: integer;
+        chromatic: Type.Semitones;
+        octaveChange: integer;
+        double: Type.Double;
+    }
+    export interface Slash {
+        exceptVoice: string[];
+        slashType: Type.NoteTypeValue;
+        slashDot: Type.Empty[];
+        $: {
+            type_: Type.StartStop;
+            useDots?: Type.YesNo;
+            useStems?: Type.YesNo;
+        };
+    }
+    export interface StaffDetails {
+        staffType: Type.StaffType;
+        staffTuning: Type.StaffTuning[];
+        capo: nonNegativeInteger;
+        staffSize: Type.StaffSize;
+        staffLines: nonNegativeInteger;
+        lineDetail: Type.LineDetail[];
+        $: {
+            printObject?: Type.YesNo;
+            printSpacing?: Type.YesNo;
+            number_?: Type.StaffNumber;
+            showFrets?: Type.ShowFrets;
+        };
+    }
+    export interface StaffSize {
+        nonNegativeDecimal: Type.NonNegativeDecimal;
+        $: {
+            scaling?: Type.NonNegativeDecimal;
+        };
+    }
+    export interface StaffTuning {
+        tuningStep: Type.Step;
+        tuningAlter: Type.Semitones;
+        tuningOctave: Type.Octave;
+        $: {
+            line: Type.StaffLine;
+        };
+    }
+    export interface Time {
+        sequenceOrSenzaMisura: [
+            {
+                interchangeable?: Type.Interchangeable;
+            },
+            {
+                beats?: string;
+            },
+            {
+                beatType?: string;
+            }
+        ] | string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            printObject?: Type.YesNo;
+            id?: ID;
+            number_?: Type.StaffNumber;
+            symbol_?: Type.TimeSymbol;
+            separator?: Type.TimeSeparator;
+        };
+    }
+    export interface Transpose {
+        diatonic: integer;
+        chromatic: Type.Semitones;
+        octaveChange: integer;
+        double: Type.Double;
+        $: {
+            id?: ID;
+            number_?: Type.StaffNumber;
+        };
+    }
+    export interface BarStyleColor {
+        barStyle: Type.BarStyle;
+        $: {
+            color?: Type.Color;
+        };
+    }
+    export interface Barline {
+        barStyle: Type.BarStyleColor;
+        wavyLine: Type.WavyLine;
+        segno: Type.Segno;
+        coda: Type.Coda;
+        fermata: Type.Fermata[];
+        ending: Type.Ending;
+        repeat: Type.Repeat;
+        footnote: Type.FormattedText;
+        level: Type.Level;
+        $: {
+            id?: ID;
+            location: Type.RightLeftMiddle;
+            segno?: token;
+            coda?: token;
+            divisions?: Type.Divisions;
+        };
+    }
+    export interface Ending {
+        xsString: string;
+        $: {
+            printObject?: Type.YesNo;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            system?: Type.SystemRelation;
+            number_: Type.EndingNumber;
+            type_: Type.StartStopDiscontinue;
+            endLength?: Type.Tenths;
+            textX?: Type.Tenths;
+            textY?: Type.Tenths;
+        };
+    }
+    export interface Repeat {
+        $: {
+            direction: Type.BackwardForward;
+            times?: nonNegativeInteger;
+            afterJump?: Type.YesNo;
+            winged?: Type.Winged;
+        };
+    }
+    export interface Accord {
+        tuningStep: Type.Step;
+        tuningAlter: Type.Semitones;
+        tuningOctave: Type.Octave;
+        $: {
+            string_?: Type.StringNumber;
+        };
+    }
+    export interface AccordionRegistration {
+        accordionHigh: Type.Empty;
+        accordionMiddle: Type.AccordionMiddle;
+        accordionLow: Type.Empty;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            id?: ID;
+        };
+    }
+    export interface Barre {
+        $: {
+            color?: Type.Color;
+            type_: Type.StartStop;
+        };
+    }
+    export interface Bass {
+        bassSeparator: Type.StyleText;
+        bassStep: Type.BassStep;
+        bassAlter: Type.HarmonyAlter;
+        $: {
+            arrangement?: Type.HarmonyArrangement;
+        };
+    }
+    export interface HarmonyAlter {
+        semitones: Type.Semitones;
+        $: {
+            printObject?: Type.YesNo;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            location?: Type.LeftRight;
+        };
+    }
+    export interface BassStep {
+        step: Type.Step;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            text?: token;
+        };
+    }
+    export interface Beater {
+        beaterValue: Type.BeaterValue;
+        $: {
+            tip?: Type.TipDirection;
+        };
+    }
+    export interface BeatUnitTied {
+        beatUnit: Type.NoteTypeValue;
+        beatUnitDot: Type.Empty[];
+    }
+    export interface Bracket {
+        $: {
+            lineType?: Type.LineType;
+            dashLength?: Type.Tenths;
+            spaceLength?: Type.Tenths;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            color?: Type.Color;
+            id?: ID;
+            type_: Type.StartStopContinue;
+            number_?: Type.NumberLevel;
+            lineEnd: Type.LineEnd;
+            endLength?: Type.Tenths;
+        };
+    }
+    export interface Dashes {
+        $: {
+            dashLength?: Type.Tenths;
+            spaceLength?: Type.Tenths;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            color?: Type.Color;
+            id?: ID;
+            type_: Type.StartStopContinue;
+            number_?: Type.NumberLevel;
+        };
+    }
+    export interface Degree {
+        degreeValue: Type.DegreeValue;
+        degreeAlter: Type.DegreeAlter;
+        degreeType: Type.DegreeType;
+        $: {
+            printObject?: Type.YesNo;
+        };
+    }
+    export interface DegreeAlter {
+        semitones: Type.Semitones;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            plusMinus?: Type.YesNo;
+        };
+    }
+    export interface DegreeType {
+        degreeTypeValue: Type.DegreeTypeValue;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            text?: token;
+        };
+    }
+    export interface DegreeValue {
+        xsPositiveInteger: positiveInteger;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            symbol_?: Type.DegreeSymbolValue;
+            text?: token;
+        };
+    }
+    export interface Direction {
+        directionType: Type.DirectionType[];
+        offset: Type.Offset;
+        sound: Type.Sound;
+        listening: Type.Listening;
+        footnote: Type.FormattedText;
+        level: Type.Level;
+        voice: string;
+        staff: positiveInteger;
+        $: {
+            placement?: Type.AboveBelow;
+            directive?: Type.YesNo;
+            system?: Type.SystemRelation;
+            id?: ID;
+        };
+    }
+    export interface DirectionType {
+        rehearsalOrSegnoOrCodaOrChoiceOrWedgeOrDynamicsOrDashesOrBracketOrPedalOrMetronomeOrOctaveShiftOrHarpPedalsOrDampOrDampAllOrEyeglassesOrStringMuteOrScordaturaOrImageOrPrincipalVoiceOrPercussionOrAccordionRegistrationOrStaffDivideOrOtherDirection: Type.FormattedTextId[] | Type.Segno[] | Type.Coda[] | {
+            wordsOrSymbol: Type.FormattedTextId | Type.FormattedSymbolId;
+        } | Type.Wedge | Type.Dynamics[] | Type.Dashes | Type.Bracket | Type.Pedal | Type.Metronome | Type.OctaveShift | Type.HarpPedals | Type.EmptyPrintStyleAlignId | Type.EmptyPrintStyleAlignId | Type.EmptyPrintStyleAlignId | Type.StringMute | Type.Scordatura | Type.Image | Type.PrincipalVoice | Type.Percussion[] | Type.AccordionRegistration | Type.StaffDivide | Type.OtherDirection;
+        $: {
+            id?: ID;
+        };
+    }
+    export interface Effect {
+        effectValue: Type.EffectValue;
+        $: {
+            smufl?: Type.SmuflPictogramGlyphName;
+        };
+    }
+    export interface Feature {
+        xsString: string;
+        $: {
+            type_?: token;
+        };
+    }
+    export interface FirstFret {
+        xsPositiveInteger: positiveInteger;
+        $: {
+            text?: token;
+            location?: Type.LeftRight;
+        };
+    }
+    export interface Frame {
+        frameStrings: positiveInteger;
+        frameFrets: positiveInteger;
+        firstFret: Type.FirstFret;
+        frameNote: Type.FrameNote[];
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.ValignImage;
+            id?: ID;
+            height?: Type.Tenths;
+            width?: Type.Tenths;
+            unplayed?: token;
+        };
+    }
+    export interface FrameNote {
+        string_: Type.String;
+        fret: Type.Fret;
+        fingering: Type.Fingering;
+        barre: Type.Barre;
+    }
+    export interface Glass {
+        glassValue: Type.GlassValue;
+        $: {
+            smufl?: Type.SmuflPictogramGlyphName;
+        };
+    }
+    export interface Grouping {
+        feature: Type.Feature[];
+        $: {
+            id?: ID;
+            type_: Type.StartStopSingle;
+            number_: token;
+            memberOf?: token;
+        };
+    }
+    export interface Harmony {
+        frame: Type.Frame;
+        offset: Type.Offset;
+        kind: Type.Kind;
+        inversion: Type.Inversion;
+        bass: Type.Bass;
+        degree: Type.Degree[];
+        rootOrNumeralOrFunction: Type.Root | Type.Numeral | Type.StyleText;
+        footnote: Type.FormattedText;
+        level: Type.Level;
+        staff: positiveInteger;
+        $: {
+            printObject?: Type.YesNo;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            system?: Type.SystemRelation;
+            id?: ID;
+            type_?: Type.HarmonyType;
+            printFrame?: Type.YesNo;
+            arrangement?: Type.HarmonyArrangement;
+        };
+    }
+    export interface HarpPedals {
+        pedalTuning: Type.PedalTuning[];
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            id?: ID;
+        };
+    }
+    export interface Image {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.ValignImage;
+            source: anyURI;
+            type_: token;
+            height?: Type.Tenths;
+            width?: Type.Tenths;
+            id?: ID;
+        };
+    }
+    export interface InstrumentChange {
+        instrumentSound: string;
+        virtualInstrument: Type.VirtualInstrument;
+        soloOrEnsemble: Type.Empty | Type.PositiveIntegerOrEmpty;
+        $: {
+            id: IDREF;
+        };
+    }
+    export interface Inversion {
+        xsNonNegativeInteger: nonNegativeInteger;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            text?: token;
+        };
+    }
+    export interface Kind {
+        kindValue: Type.KindValue;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            useSymbols?: Type.YesNo;
+            text?: token;
+            stackDegrees?: Type.YesNo;
+            parenthesesDegrees?: Type.YesNo;
+            bracketDegrees?: Type.YesNo;
+        };
+    }
+    export interface Listening {
+        offset: Type.Offset;
+        syncOrOtherListening: Type.Sync | Type.OtherListening;
+    }
+    export interface MeasureNumbering {
+        measureNumberingValue: Type.MeasureNumberingValue;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            system?: Type.SystemRelationNumber;
+            staff?: Type.StaffNumber;
+            multipleRestAlways?: Type.YesNo;
+            multipleRestRange?: Type.YesNo;
+        };
+    }
+    export interface Membrane {
+        membraneValue: Type.MembraneValue;
+        $: {
+            smufl?: Type.SmuflPictogramGlyphName;
+        };
+    }
+    export interface Metal {
+        metalValue: Type.MetalValue;
+        $: {
+            smufl?: Type.SmuflPictogramGlyphName;
+        };
+    }
+    export interface Metronome {
+        sequenceOrSequence: [
+            {
+                beatUnitTied?: Type.BeatUnitTied[];
+            },
+            {
+                perMinuteOrSequence: Type.PerMinute | [
                     {
-                        staffLines: nonNegativeInteger;
+                        beatUnitTied?: Type.BeatUnitTied[];
                     },
                     {
-                        lineDetail: Type.LineDetail[];
+                        beatUnit?: Type.NoteTypeValue;
+                    },
+                    {
+                        beatUnitDot?: Type.Empty[];
                     }
-                ]
-            ]
-        ], public PrintObject: AttributeGroup.PrintObject, public PrintSpacing: AttributeGroup.PrintSpacing, public number_?: Type.StaffNumber, public showFrets?: Type.ShowFrets) { }
-    }
-    export class StaffSize {
-        constructor(public children: Type.NonNegativeDecimal, public scaling?: Type.NonNegativeDecimal) { }
-    }
-    export class StaffTuning {
-        constructor(public children: [
-            Group.Tuning
-        ], public line: Type.StaffLine) { }
-    }
-    export class Time {
-        constructor(public children: [
+                ];
+            },
             {
-                senzaMisura: string;
-            } | [
-                {
-                    interchangeable: Type.Interchangeable;
-                },
-                Group.TimeSignature[]
-            ]
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public PrintObject: AttributeGroup.PrintObject, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public number_?: Type.StaffNumber, public symbol_?: Type.TimeSymbol, public separator?: Type.TimeSeparator) { }
-    }
-    export class Transpose {
-        constructor(public children: [
-            Group.Transpose
-        ], public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public number_?: Type.StaffNumber) { }
-    }
-    export class BarStyleColor {
-        constructor(public children: Type.BarStyle, public Color: AttributeGroup.Color) { }
-    }
-    export class Barline {
-        constructor(public children: [
-            [
-                {
-                    barStyle: Type.BarStyleColor;
-                },
-                {
-                    wavyLine: Type.WavyLine;
-                },
-                {
-                    segno: Type.Segno;
-                },
-                {
-                    coda: Type.Coda;
-                },
-                {
-                    fermata: Type.Fermata[];
-                },
-                {
-                    ending: Type.Ending;
-                },
-                {
-                    repeat: Type.Repeat;
-                },
-                Group.Editorial
-            ]
-        ], public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public location: Type.RightLeftMiddle = "right", public segno?: token, public coda?: token, public divisions?: Type.Divisions) { }
-    }
-    export class Ending {
-        constructor(public children: string, public PrintObject: AttributeGroup.PrintObject, public PrintStyle: AttributeGroup.PrintStyle, public SystemRelation: AttributeGroup.SystemRelation, public number_: Type.EndingNumber, public type_: Type.StartStopDiscontinue, public endLength?: Type.Tenths, public textX?: Type.Tenths, public textY?: Type.Tenths) { }
-    }
-    export class Repeat {
-        constructor(public children: [
-        ], public direction: Type.BackwardForward, public times?: nonNegativeInteger, public afterJump?: Type.YesNo, public winged?: Type.Winged) { }
-    }
-    export class Accord {
-        constructor(public children: [
-            Group.Tuning
-        ], public string_?: Type.StringNumber) { }
-    }
-    export class AccordionRegistration {
-        constructor(public children: [
-            [
-                {
-                    accordionHigh: Type.Empty;
-                },
-                {
-                    accordionMiddle: Type.AccordionMiddle;
-                },
-                {
-                    accordionLow: Type.Empty;
-                }
-            ]
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class Barre {
-        constructor(public children: [
-        ], public Color: AttributeGroup.Color, public type_: Type.StartStop) { }
-    }
-    export class Bass {
-        constructor(public children: [
-            [
-                {
-                    bassSeparator: Type.StyleText;
-                },
-                {
-                    bassStep: Type.BassStep;
-                },
-                {
-                    bassAlter: Type.HarmonyAlter;
-                }
-            ]
-        ], public arrangement?: Type.HarmonyArrangement) { }
-    }
-    export class HarmonyAlter {
-        constructor(public children: Type.Semitones, public PrintObject: AttributeGroup.PrintObject, public PrintStyle: AttributeGroup.PrintStyle, public location?: Type.LeftRight) { }
-    }
-    export class BassStep {
-        constructor(public children: Type.Step, public PrintStyle: AttributeGroup.PrintStyle, public text?: token) { }
-    }
-    export class Beater {
-        constructor(public children: Type.BeaterValue, public tip?: Type.TipDirection) { }
-    }
-    export class BeatUnitTied {
-        constructor(public children: [
-            Group.BeatUnit
-        ]) { }
-    }
-    export class Bracket {
-        constructor(public children: [
-        ], public LineType: AttributeGroup.LineType, public DashedFormatting: AttributeGroup.DashedFormatting, public Position: AttributeGroup.Position, public Color: AttributeGroup.Color, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.StartStopContinue, public lineEnd: Type.LineEnd, public number_?: Type.NumberLevel, public endLength?: Type.Tenths) { }
-    }
-    export class Dashes {
-        constructor(public children: [
-        ], public DashedFormatting: AttributeGroup.DashedFormatting, public Position: AttributeGroup.Position, public Color: AttributeGroup.Color, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.StartStopContinue, public number_?: Type.NumberLevel) { }
-    }
-    export class Degree {
-        constructor(public children: [
-            [
-                {
-                    degreeValue: Type.DegreeValue;
-                },
-                {
-                    degreeAlter: Type.DegreeAlter;
-                },
-                {
-                    degreeType: Type.DegreeType;
-                }
-            ]
-        ], public PrintObject: AttributeGroup.PrintObject) { }
-    }
-    export class DegreeAlter {
-        constructor(public children: Type.Semitones, public PrintStyle: AttributeGroup.PrintStyle, public plusMinus?: Type.YesNo) { }
-    }
-    export class DegreeType {
-        constructor(public children: Type.DegreeTypeValue, public PrintStyle: AttributeGroup.PrintStyle, public text?: token) { }
-    }
-    export class DegreeValue {
-        constructor(public children: positiveInteger, public PrintStyle: AttributeGroup.PrintStyle, public symbol_?: Type.DegreeSymbolValue, public text?: token) { }
-    }
-    export class Direction {
-        constructor(public children: [
-            [
-                {
-                    directionType: Type.DirectionType[];
-                },
-                {
-                    offset: Type.Offset;
-                },
-                {
-                    sound: Type.Sound;
-                },
-                {
-                    listening: Type.Listening;
-                },
-                Group.EditorialVoiceDirection,
-                Group.Staff
-            ]
-        ], public Placement: AttributeGroup.Placement, public Directive: AttributeGroup.Directive, public SystemRelation: AttributeGroup.SystemRelation, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class DirectionType {
-        constructor(public children: [
+                beatUnit?: Type.NoteTypeValue;
+            },
             {
-                rehearsal: Type.FormattedTextId[];
-            } | {
-                segno: Type.Segno[];
-            } | {
-                coda: Type.Coda[];
-            } | {
-                wedge: Type.Wedge;
-            } | {
-                dynamics: Type.Dynamics[];
-            } | {
-                dashes: Type.Dashes;
-            } | {
-                bracket: Type.Bracket;
-            } | {
-                pedal: Type.Pedal;
-            } | {
-                metronome: Type.Metronome;
-            } | {
-                octaveShift: Type.OctaveShift;
-            } | {
-                harpPedals: Type.HarpPedals;
-            } | {
-                damp: Type.EmptyPrintStyleAlignId;
-            } | {
-                dampAll: Type.EmptyPrintStyleAlignId;
-            } | {
-                eyeglasses: Type.EmptyPrintStyleAlignId;
-            } | {
-                stringMute: Type.StringMute;
-            } | {
-                scordatura: Type.Scordatura;
-            } | {
-                image: Type.Image;
-            } | {
-                principalVoice: Type.PrincipalVoice;
-            } | {
-                percussion: Type.Percussion[];
-            } | {
-                accordionRegistration: Type.AccordionRegistration;
-            } | {
-                staffDivide: Type.StaffDivide;
-            } | {
-                otherDirection: Type.OtherDirection;
+                beatUnitDot?: Type.Empty[];
             }
-        ], public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
+        ] | [
+            {
+                metronomeArrows?: Type.Empty;
+            },
+            {
+                metronomeNote?: Type.MetronomeNote[];
+            },
+            {
+                metronomeRelation?: string;
+            },
+            {
+                metronomeNote?: Type.MetronomeNote[];
+            }
+        ];
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            printObject?: Type.YesNo;
+            justify?: Type.LeftCenterRight;
+            id?: ID;
+            parentheses?: Type.YesNo;
+        };
     }
-    export class Effect {
-        constructor(public children: Type.EffectValue, public smufl?: Type.SmuflPictogramGlyphName) { }
+    export interface MetronomeBeam {
+        beamValue: Type.BeamValue;
+        $: {
+            number_: Type.BeamLevel;
+        };
     }
-    export class Feature {
-        constructor(public children: string, public type_?: token) { }
+    export interface MetronomeNote {
+        metronomeType: Type.NoteTypeValue;
+        metronomeDot: Type.Empty[];
+        metronomeBeam: Type.MetronomeBeam[];
+        metronomeTied: Type.MetronomeTied;
+        metronomeTuplet: Type.MetronomeTuplet;
     }
-    export class FirstFret {
-        constructor(public children: positiveInteger, public text?: token, public location?: Type.LeftRight) { }
+    export interface MetronomeTied {
+        $: {
+            type_: Type.StartStop;
+        };
     }
-    export class Frame {
-        constructor(public children: [
-            [
-                {
-                    frameStrings: positiveInteger;
-                },
-                {
-                    frameFrets: positiveInteger;
-                },
-                {
-                    firstFret: Type.FirstFret;
-                },
-                {
-                    frameNote: Type.FrameNote[];
-                }
-            ]
-        ], public Position: AttributeGroup.Position, public Color: AttributeGroup.Color, public Halign: AttributeGroup.Halign, public ValignImage: AttributeGroup.ValignImage, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public height?: Type.Tenths, public width?: Type.Tenths, public unplayed?: token) { }
+    export interface MetronomeTuplet {
     }
-    export class FrameNote {
-        constructor(public children: [
-            [
-                {
-                    string_: Type.String;
-                },
-                {
-                    fret: Type.Fret;
-                },
-                {
-                    fingering: Type.Fingering;
-                },
-                {
-                    barre: Type.Barre;
-                }
-            ]
-        ]) { }
+    export interface Numeral {
+        numeralRoot: Type.NumeralRoot;
+        numeralAlter: Type.HarmonyAlter;
+        numeralKey: Type.NumeralKey;
     }
-    export class Glass {
-        constructor(public children: Type.GlassValue, public smufl?: Type.SmuflPictogramGlyphName) { }
+    export interface NumeralKey {
+        numeralFifths: Type.Fifths;
+        numeralMode: Type.NumeralMode;
+        $: {
+            printObject?: Type.YesNo;
+        };
     }
-    export class Grouping {
-        constructor(public children: [
-            [
-                {
-                    feature: Type.Feature[];
-                }
-            ]
-        ], public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.StartStopSingle, public number_: token = "1", public memberOf?: token) { }
+    export interface NumeralRoot {
+        numeralValue: Type.NumeralValue;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            text?: token;
+        };
     }
-    export class Harmony {
-        constructor(public children: [
-            [
-                {
-                    frame: Type.Frame;
-                },
-                {
-                    offset: Type.Offset;
-                },
-                Group.HarmonyChord[],
-                Group.Editorial,
-                Group.Staff
-            ]
-        ], public PrintObject: AttributeGroup.PrintObject, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public SystemRelation: AttributeGroup.SystemRelation, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_?: Type.HarmonyType, public printFrame?: Type.YesNo, public arrangement?: Type.HarmonyArrangement) { }
+    export interface OctaveShift {
+        $: {
+            dashLength?: Type.Tenths;
+            spaceLength?: Type.Tenths;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            id?: ID;
+            type_: Type.UpDownStopContinue;
+            number_?: Type.NumberLevel;
+            size: positiveInteger;
+        };
     }
-    export class HarpPedals {
-        constructor(public children: [
-            [
-                {
-                    pedalTuning: Type.PedalTuning[];
-                }
-            ]
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
+    export interface Offset {
+        divisions: Type.Divisions;
+        $: {
+            sound?: Type.YesNo;
+        };
     }
-    export class Image {
-        constructor(public children: [
-        ], public ImageAttributes: AttributeGroup.ImageAttributes, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
+    export interface OtherDirection {
+        xsString: string;
+        $: {
+            printObject?: Type.YesNo;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            smufl?: Type.SmuflGlyphName;
+            id?: ID;
+        };
     }
-    export class InstrumentChange {
-        constructor(public children: [
-            Group.VirtualInstrumentData
-        ], public id: IDREF) { }
+    export interface OtherListening {
+        xsString: string;
+        $: {
+            type_: token;
+            player?: IDREF;
+            timeOnly?: Type.TimeOnly;
+        };
     }
-    export class Inversion {
-        constructor(public children: nonNegativeInteger, public PrintStyle: AttributeGroup.PrintStyle, public text?: token) { }
+    export interface Pedal {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            id?: ID;
+            type_: Type.PedalType;
+            number_?: Type.NumberLevel;
+            line?: Type.YesNo;
+            sign?: Type.YesNo;
+            abbreviated?: Type.YesNo;
+        };
     }
-    export class Kind {
-        constructor(public children: Type.KindValue, public PrintStyle: AttributeGroup.PrintStyle, public Halign: AttributeGroup.Halign, public Valign: AttributeGroup.Valign, public useSymbols?: Type.YesNo, public text?: token, public stackDegrees?: Type.YesNo, public parenthesesDegrees?: Type.YesNo, public bracketDegrees?: Type.YesNo) { }
+    export interface PedalTuning {
+        pedalStep: Type.Step;
+        pedalAlter: Type.Semitones;
     }
-    export class Listening {
-        constructor(public children: [
-            [
-                {
-                    offset: Type.Offset;
-                },
-                {
-                    sync: Type.Sync;
-                } | {
-                    otherListening: Type.OtherListening;
-                }
-            ]
-        ]) { }
+    export interface PerMinute {
+        xsString: string;
+        $: {
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+        };
     }
-    export class MeasureNumbering {
-        constructor(public children: Type.MeasureNumberingValue, public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public system?: Type.SystemRelationNumber, public staff?: Type.StaffNumber, public multipleRestAlways?: Type.YesNo, public multipleRestRange?: Type.YesNo) { }
+    export interface Percussion {
+        glassOrMetalOrWoodOrPitchedOrMembraneOrEffectOrTimpaniOrBeaterOrStickOrStickLocationOrOtherPercussion: Type.Glass | Type.Metal | Type.Wood | Type.Pitched | Type.Membrane | Type.Effect | Type.Timpani | Type.Beater | Type.Stick | Type.StickLocation | Type.OtherText;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            enclosure?: Type.EnclosureShape;
+            id?: ID;
+        };
     }
-    export class Membrane {
-        constructor(public children: Type.MembraneValue, public smufl?: Type.SmuflPictogramGlyphName) { }
+    export interface Pitched {
+        pitchedValue: Type.PitchedValue;
+        $: {
+            smufl?: Type.SmuflPictogramGlyphName;
+        };
     }
-    export class Metal {
-        constructor(public children: Type.MetalValue, public smufl?: Type.SmuflPictogramGlyphName) { }
+    export interface PrincipalVoice {
+        xsString: string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            id?: ID;
+            type_: Type.StartStop;
+            symbol_: Type.PrincipalVoiceSymbol;
+        };
     }
-    export class Metronome {
-        constructor(public children: [
-            [
-                {
-                    beatUnitTied: Type.BeatUnitTied[];
-                },
-                {
-                    perMinute: Type.PerMinute;
-                } | [
+    export interface Print {
+        measureLayout: Type.MeasureLayout;
+        measureNumbering: Type.MeasureNumbering;
+        partNameDisplay: Type.NameDisplay;
+        partAbbreviationDisplay: Type.NameDisplay;
+        pageLayout: Type.PageLayout;
+        systemLayout: Type.SystemLayout;
+        staffLayout: Type.StaffLayout[];
+        $: {
+            staffSpacing?: Type.Tenths;
+            newSystem?: Type.YesNo;
+            newPage?: Type.YesNo;
+            blankPage?: positiveInteger;
+            pageNumber?: token;
+            id?: ID;
+        };
+    }
+    export interface Root {
+        rootStep: Type.RootStep;
+        rootAlter: Type.HarmonyAlter;
+    }
+    export interface RootStep {
+        step: Type.Step;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            text?: token;
+        };
+    }
+    export interface Scordatura {
+        accord: Type.Accord[];
+        $: {
+            id?: ID;
+        };
+    }
+    export interface Sound {
+        swing: Type.Swing;
+        offset: Type.Offset;
+        instrumentChange: Type.InstrumentChange;
+        midiDevice: Type.MidiDevice;
+        midiInstrument: Type.MidiInstrument;
+        play: Type.Play;
+        $: {
+            id?: ID;
+            tempo?: Type.NonNegativeDecimal;
+            dynamics?: Type.NonNegativeDecimal;
+            dacapo?: Type.YesNo;
+            segno?: token;
+            dalsegno?: token;
+            coda?: token;
+            tocoda?: token;
+            divisions?: Type.Divisions;
+            forwardRepeat?: Type.YesNo;
+            fine?: token;
+            timeOnly?: Type.TimeOnly;
+            pizzicato?: Type.YesNo;
+            pan?: Type.RotationDegrees;
+            elevation?: Type.RotationDegrees;
+            damperPedal?: Type.YesNoNumber;
+            softPedal?: Type.YesNoNumber;
+            sostenutoPedal?: Type.YesNoNumber;
+        };
+    }
+    export interface StaffDivide {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            id?: ID;
+            type_: Type.StaffDivideSymbol;
+        };
+    }
+    export interface Stick {
+        stickType: Type.StickType;
+        stickMaterial: Type.StickMaterial;
+        $: {
+            tip?: Type.TipDirection;
+            parentheses?: Type.YesNo;
+            dashedCircle?: Type.YesNo;
+        };
+    }
+    export interface StringMute {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            id?: ID;
+            type_: Type.OnOff;
+        };
+    }
+    export interface Swing {
+        swingStyle: string;
+        straightOrSequence: Type.Empty | [
+            {
+                first?: positiveInteger;
+            },
+            {
+                second?: positiveInteger;
+            },
+            {
+                swingType?: Type.SwingTypeValue;
+            }
+        ];
+    }
+    export interface Sync {
+        $: {
+            type_: Type.SyncType;
+            latency?: Type.Milliseconds;
+            player?: IDREF;
+            timeOnly?: Type.TimeOnly;
+        };
+    }
+    export interface Timpani {
+        $: {
+            smufl?: Type.SmuflPictogramGlyphName;
+        };
+    }
+    export interface Wedge {
+        $: {
+            lineType?: Type.LineType;
+            dashLength?: Type.Tenths;
+            spaceLength?: Type.Tenths;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            color?: Type.Color;
+            id?: ID;
+            type_: Type.WedgeType;
+            number_?: Type.NumberLevel;
+            spread?: Type.Tenths;
+            niente?: Type.YesNo;
+        };
+    }
+    export interface Wood {
+        woodValue: Type.WoodValue;
+        $: {
+            smufl?: Type.SmuflPictogramGlyphName;
+        };
+    }
+    export interface Encoding {
+        encodingDateOrEncoderOrSoftwareOrEncodingDescriptionOrSupports: Type.YyyyMmDd | Type.TypedText | string | string | Type.Supports;
+    }
+    export interface Identification {
+        creator: Type.TypedText[];
+        rights: Type.TypedText[];
+        encoding: Type.Encoding;
+        source: string;
+        relation: Type.TypedText[];
+        miscellaneous: Type.Miscellaneous;
+    }
+    export interface Miscellaneous {
+        miscellaneousField: Type.MiscellaneousField[];
+    }
+    export interface MiscellaneousField {
+        xsString: string;
+        $: {
+            name: token;
+        };
+    }
+    export interface Supports {
+        $: {
+            type_: Type.YesNo;
+            element: NMTOKEN;
+            attribute?: NMTOKEN;
+            value?: token;
+        };
+    }
+    export interface Appearance {
+        lineWidth: Type.LineWidth[];
+        noteSize: Type.NoteSize[];
+        distance: Type.Distance[];
+        glyph: Type.Glyph[];
+        otherAppearance: Type.OtherAppearance[];
+    }
+    export interface Distance {
+        tenths: Type.Tenths;
+        $: {
+            type_: Type.DistanceType;
+        };
+    }
+    export interface Glyph {
+        smuflGlyphName: Type.SmuflGlyphName;
+        $: {
+            type_: Type.GlyphType;
+        };
+    }
+    export interface LineWidth {
+        tenths: Type.Tenths;
+        $: {
+            type_: Type.LineWidthType;
+        };
+    }
+    export interface MeasureLayout {
+        measureDistance: Type.Tenths;
+    }
+    export interface NoteSize {
+        nonNegativeDecimal: Type.NonNegativeDecimal;
+        $: {
+            type_: Type.NoteSizeType;
+        };
+    }
+    export interface OtherAppearance {
+        xsString: string;
+        $: {
+            type_: token;
+        };
+    }
+    export interface PageLayout {
+        pageMargins: Type.PageMargins[];
+        pageHeight: Type.Tenths;
+        pageWidth: Type.Tenths;
+    }
+    export interface PageMargins {
+        topMargin: Type.Tenths;
+        bottomMargin: Type.Tenths;
+        leftMargin: Type.Tenths;
+        rightMargin: Type.Tenths;
+        $: {
+            type_?: Type.MarginType;
+        };
+    }
+    export interface Scaling {
+        millimeters: Type.Millimeters;
+        tenths: Type.Tenths;
+    }
+    export interface StaffLayout {
+        staffDistance: Type.Tenths;
+        $: {
+            number_?: Type.StaffNumber;
+        };
+    }
+    export interface SystemDividers {
+        leftDivider: Type.EmptyPrintObjectStyleAlign;
+        rightDivider: Type.EmptyPrintObjectStyleAlign;
+    }
+    export interface SystemLayout {
+        systemMargins: Type.SystemMargins;
+        systemDistance: Type.Tenths;
+        topSystemDistance: Type.Tenths;
+        systemDividers: Type.SystemDividers;
+    }
+    export interface SystemMargins {
+        leftMargin: Type.Tenths;
+        rightMargin: Type.Tenths;
+    }
+    export interface Bookmark {
+        $: {
+            element?: NMTOKEN;
+            position?: positiveInteger;
+            id: ID;
+            name?: token;
+        };
+    }
+    export interface Link {
+        $: {
+            xlinkHref: XLink.href;
+            xlinkType?: XLink.type;
+            xlinkRole?: XLink.role;
+            xlinkTitle?: XLink.title;
+            xlinkShow: XLink.show;
+            xlinkActuate: XLink.actuate;
+            element?: NMTOKEN;
+            position?: positiveInteger;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            name?: token;
+        };
+    }
+    export interface Accidental {
+        accidentalValue: Type.AccidentalValue;
+        $: {
+            parentheses?: Type.YesNo;
+            bracket?: Type.YesNo;
+            size?: Type.SymbolSize;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            cautionary?: Type.YesNo;
+            editorial?: Type.YesNo;
+            smufl?: Type.SmuflAccidentalGlyphName;
+        };
+    }
+    export interface AccidentalMark {
+        accidentalValue: Type.AccidentalValue;
+        $: {
+            parentheses?: Type.YesNo;
+            bracket?: Type.YesNo;
+            size?: Type.SymbolSize;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            id?: ID;
+            smufl?: Type.SmuflAccidentalGlyphName;
+        };
+    }
+    export interface Arpeggiate {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            placement?: Type.AboveBelow;
+            color?: Type.Color;
+            id?: ID;
+            number_?: Type.NumberLevel;
+            direction?: Type.UpDown;
+            unbroken?: Type.YesNo;
+        };
+    }
+    export interface Articulations {
+        accentOrStrongAccentOrStaccatoOrTenutoOrDetachedLegatoOrStaccatissimoOrSpiccatoOrScoopOrPlopOrDoitOrFalloffOrBreathMarkOrCaesuraOrStressOrUnstressOrSoftAccentOrOtherArticulation: Type.EmptyPlacement | Type.StrongAccent | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyLine | Type.EmptyLine | Type.EmptyLine | Type.EmptyLine | Type.BreathMark | Type.Caesura | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacement | Type.OtherPlacementText;
+        $: {
+            id?: ID;
+        };
+    }
+    export interface Arrow {
+        sequenceOrCircularArrow: [
+            {
+                arrowDirection?: Type.ArrowDirection;
+            },
+            {
+                arrowStyle?: Type.ArrowStyle;
+            },
+            {
+                arrowhead?: Type.Empty;
+            }
+        ] | Type.CircularArrow;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            smufl?: Type.SmuflGlyphName;
+        };
+    }
+    export interface Assess {
+        $: {
+            type_: Type.YesNo;
+            player?: IDREF;
+            timeOnly?: Type.TimeOnly;
+        };
+    }
+    export interface Backup {
+        duration: Type.PositiveDivisions;
+        footnote: Type.FormattedText;
+        level: Type.Level;
+    }
+    export interface Beam {
+        beamValue: Type.BeamValue;
+        $: {
+            color?: Type.Color;
+            id?: ID;
+            number_: Type.BeamLevel;
+            repeater?: Type.YesNo;
+            fan?: Type.Fan;
+        };
+    }
+    export interface Bend {
+        bendAlter: Type.Semitones;
+        withBar: Type.PlacementText;
+        preBendOrRelease: Type.Empty | Type.Release;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            accelerate?: Type.YesNo;
+            beats?: Type.TrillBeats;
+            firstBeat?: Type.Percent;
+            lastBeat?: Type.Percent;
+            shape?: Type.BendShape;
+        };
+    }
+    export interface BreathMark {
+        breathMarkValue: Type.BreathMarkValue;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+        };
+    }
+    export interface Caesura {
+        caesuraValue: Type.CaesuraValue;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+        };
+    }
+    export interface Elision {
+        xsString: string;
+        $: {
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            smufl?: Type.SmuflLyricsGlyphName;
+        };
+    }
+    export interface EmptyLine {
+        $: {
+            lineShape?: Type.LineShape;
+            lineType?: Type.LineType;
+            lineLength?: Type.LineLength;
+            dashLength?: Type.Tenths;
+            spaceLength?: Type.Tenths;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+        };
+    }
+    export interface Extend {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            color?: Type.Color;
+            type_?: Type.StartStopContinue;
+        };
+    }
+    export interface Figure {
+        prefix: Type.StyleText;
+        figureNumber: Type.StyleText;
+        suffix: Type.StyleText;
+        extend: Type.Extend;
+        footnote: Type.FormattedText;
+        level: Type.Level;
+    }
+    export interface FiguredBass {
+        figure: Type.Figure[];
+        duration: Type.PositiveDivisions;
+        footnote: Type.FormattedText;
+        level: Type.Level;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            halign?: Type.LeftCenterRight;
+            valign?: Type.Valign;
+            placement?: Type.AboveBelow;
+            printObject?: Type.YesNo;
+            printSpacing?: Type.YesNo;
+            printDot?: Type.YesNo;
+            printLyric?: Type.YesNo;
+            id?: ID;
+            parentheses?: Type.YesNo;
+        };
+    }
+    export interface Forward {
+        duration: Type.PositiveDivisions;
+        footnote: Type.FormattedText;
+        level: Type.Level;
+        voice: string;
+        staff: positiveInteger;
+    }
+    export interface Glissando {
+        xsString: string;
+        $: {
+            lineType?: Type.LineType;
+            dashLength?: Type.Tenths;
+            spaceLength?: Type.Tenths;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            id?: ID;
+            type_: Type.StartStop;
+            number_: Type.NumberLevel;
+        };
+    }
+    export interface Grace {
+        $: {
+            stealTimePrevious?: Type.Percent;
+            stealTimeFollowing?: Type.Percent;
+            makeTime?: Type.Divisions;
+            slash?: Type.YesNo;
+        };
+    }
+    export interface HammerOnPullOff {
+        xsString: string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            type_: Type.StartStop;
+            number_: Type.NumberLevel;
+        };
+    }
+    export interface Handbell {
+        handbellValue: Type.HandbellValue;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+        };
+    }
+    export interface HarmonClosed {
+        harmonClosedValue: Type.HarmonClosedValue;
+        $: {
+            location?: Type.HarmonClosedLocation;
+        };
+    }
+    export interface HarmonMute {
+        harmonClosed: Type.HarmonClosed;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+        };
+    }
+    export interface Harmonic {
+        naturalOrArtificial: Type.Empty | Type.Empty;
+        basePitchOrTouchingPitchOrSoundingPitch: Type.Empty | Type.Empty | Type.Empty;
+        $: {
+            printObject?: Type.YesNo;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+        };
+    }
+    export interface HeelToe {
+    }
+    export interface Hole {
+        holeType: string;
+        holeClosed: Type.HoleClosed;
+        holeShape: string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+        };
+    }
+    export interface HoleClosed {
+        holeClosedValue: Type.HoleClosedValue;
+        $: {
+            location?: Type.HoleClosedLocation;
+        };
+    }
+    export interface Instrument {
+        $: {
+            id: IDREF;
+        };
+    }
+    export interface Listen {
+        assessOrWaitOrOtherListen: Type.Assess | Type.Wait | Type.OtherListening;
+    }
+    export interface Lyric {
+        endLine: Type.Empty;
+        endParagraph: Type.Empty;
+        sequenceOrExtendOrLaughingOrHumming: [
+            {
+                syllabic?: Type.Syllabic;
+            },
+            {
+                text?: Type.TextElementData;
+            },
+            {
+                extend?: Type.Extend;
+            },
+            {
+                text?: Type.TextElementData;
+            },
+            {
+                elision?: Type.Elision;
+            },
+            {
+                syllabic?: Type.Syllabic;
+            }
+        ] | Type.Extend | Type.Empty | Type.Empty;
+        footnote: Type.FormattedText;
+        level: Type.Level;
+        $: {
+            justify?: Type.LeftCenterRight;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            placement?: Type.AboveBelow;
+            color?: Type.Color;
+            printObject?: Type.YesNo;
+            id?: ID;
+            number_?: NMTOKEN;
+            name?: token;
+            timeOnly?: Type.TimeOnly;
+        };
+    }
+    export interface Mordent {
+    }
+    export interface NonArpeggiate {
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            placement?: Type.AboveBelow;
+            color?: Type.Color;
+            id?: ID;
+            type_: Type.TopBottom;
+            number_?: Type.NumberLevel;
+        };
+    }
+    export interface Notations {
+        tiedOrSlurOrTupletOrGlissandoOrSlideOrOrnamentsOrTechnicalOrArticulationsOrDynamicsOrFermataOrArpeggiateOrNonArpeggiateOrAccidentalMarkOrOtherNotation: Type.Tied | Type.Slur | Type.Tuplet | Type.Glissando | Type.Slide | Type.Ornaments | Type.Technical | Type.Articulations | Type.Dynamics | Type.Fermata | Type.Arpeggiate | Type.NonArpeggiate | Type.AccidentalMark | Type.OtherNotation;
+        footnote: Type.FormattedText;
+        level: Type.Level;
+        $: {
+            printObject?: Type.YesNo;
+            id?: ID;
+        };
+    }
+    export interface Note {
+        instrument: Type.Instrument[];
+        type_: Type.NoteType;
+        dot: Type.EmptyPlacement[];
+        accidental: Type.Accidental;
+        timeModification: Type.TimeModification;
+        stem: Type.Stem;
+        notehead: Type.Notehead;
+        noteheadText: Type.NoteheadText;
+        beam: Type.Beam[];
+        notations: Type.Notations[];
+        lyric: Type.Lyric[];
+        play: Type.Play;
+        listen: Type.Listen;
+        sequenceOrSequenceOrSequence: [
+            {
+                grace?: Type.Grace;
+            },
+            {
+                sequenceOrSequence: [
                     {
-                        beatUnitTied: Type.BeatUnitTied[];
+                        tie?: Type.Tie[];
                     },
-                    Group.BeatUnit
-                ],
-                Group.BeatUnit
-            ] | [
-                {
-                    metronomeArrows: Type.Empty;
-                },
-                {
-                    metronomeNote: Type.MetronomeNote[];
-                },
-                [
                     {
-                        metronomeRelation: string;
+                        chord?: Type.Empty;
                     },
                     {
-                        metronomeNote: Type.MetronomeNote[];
+                        pitchOrUnpitchedOrRest: Type.Pitch | Type.Unpitched | Type.Rest;
                     }
-                ]
-            ]
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public PrintObject: AttributeGroup.PrintObject, public Justify: AttributeGroup.Justify, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public parentheses?: Type.YesNo) { }
-    }
-    export class MetronomeBeam {
-        constructor(public children: Type.BeamValue, public number_: Type.BeamLevel = 1) { }
-    }
-    export class MetronomeNote {
-        constructor(public children: [
-            [
-                {
-                    metronomeType: Type.NoteTypeValue;
-                },
-                {
-                    metronomeDot: Type.Empty[];
-                },
-                {
-                    metronomeBeam: Type.MetronomeBeam[];
-                },
-                {
-                    metronomeTied: Type.MetronomeTied;
-                },
-                {
-                    metronomeTuplet: Type.MetronomeTuplet;
-                }
-            ]
-        ]) { }
-    }
-    export class MetronomeTied {
-        constructor(public children: [
-        ], public type_: Type.StartStop) { }
-    }
-    export class MetronomeTuplet {
-        constructor(public children: [
-        ]) { }
-    }
-    export class Numeral {
-        constructor(public children: [
-            [
-                {
-                    numeralRoot: Type.NumeralRoot;
-                },
-                {
-                    numeralAlter: Type.HarmonyAlter;
-                },
-                {
-                    numeralKey: Type.NumeralKey;
-                }
-            ]
-        ]) { }
-    }
-    export class NumeralKey {
-        constructor(public children: [
-            [
-                {
-                    numeralFifths: Type.Fifths;
-                },
-                {
-                    numeralMode: Type.NumeralMode;
-                }
-            ]
-        ], public PrintObject: AttributeGroup.PrintObject) { }
-    }
-    export class NumeralRoot {
-        constructor(public children: Type.NumeralValue, public PrintStyle: AttributeGroup.PrintStyle, public text?: token) { }
-    }
-    export class OctaveShift {
-        constructor(public children: [
-        ], public DashedFormatting: AttributeGroup.DashedFormatting, public PrintStyle: AttributeGroup.PrintStyle, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.UpDownStopContinue, public size: positiveInteger = 8, public number_?: Type.NumberLevel) { }
-    }
-    export class Offset {
-        constructor(public children: Type.Divisions, public sound?: Type.YesNo) { }
-    }
-    export class OtherDirection {
-        constructor(public children: string, public PrintObject: AttributeGroup.PrintObject, public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public Smufl: AttributeGroup.Smufl, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class OtherListening {
-        constructor(public children: string, public type_: token, public player?: IDREF, public timeOnly?: Type.TimeOnly) { }
-    }
-    export class Pedal {
-        constructor(public children: [
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.PedalType, public number_?: Type.NumberLevel, public line?: Type.YesNo, public sign?: Type.YesNo, public abbreviated?: Type.YesNo) { }
-    }
-    export class PedalTuning {
-        constructor(public children: [
-            [
-                {
-                    pedalStep: Type.Step;
-                },
-                {
-                    pedalAlter: Type.Semitones;
-                }
-            ]
-        ]) { }
-    }
-    export class PerMinute {
-        constructor(public children: string, public Font: AttributeGroup.Font) { }
-    }
-    export class Percussion {
-        constructor(public children: [
-            {
-                glass: Type.Glass;
-            } | {
-                metal: Type.Metal;
-            } | {
-                wood: Type.Wood;
-            } | {
-                pitched: Type.Pitched;
-            } | {
-                membrane: Type.Membrane;
-            } | {
-                effect: Type.Effect;
-            } | {
-                timpani: Type.Timpani;
-            } | {
-                beater: Type.Beater;
-            } | {
-                stick: Type.Stick;
-            } | {
-                stickLocation: Type.StickLocation;
-            } | {
-                otherPercussion: Type.OtherText;
-            }
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public Enclosure: AttributeGroup.Enclosure, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class Pitched {
-        constructor(public children: Type.PitchedValue, public smufl?: Type.SmuflPictogramGlyphName) { }
-    }
-    export class PrincipalVoice {
-        constructor(public children: string, public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.StartStop, public symbol_: Type.PrincipalVoiceSymbol) { }
-    }
-    export class Print {
-        constructor(public children: [
-            [
-                {
-                    measureLayout: Type.MeasureLayout;
-                },
-                {
-                    measureNumbering: Type.MeasureNumbering;
-                },
-                {
-                    partNameDisplay: Type.NameDisplay;
-                },
-                {
-                    partAbbreviationDisplay: Type.NameDisplay;
-                },
-                Group.Layout
-            ]
-        ], public PrintAttributes: AttributeGroup.PrintAttributes, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class Root {
-        constructor(public children: [
-            [
-                {
-                    rootStep: Type.RootStep;
-                },
-                {
-                    rootAlter: Type.HarmonyAlter;
-                }
-            ]
-        ]) { }
-    }
-    export class RootStep {
-        constructor(public children: Type.Step, public PrintStyle: AttributeGroup.PrintStyle, public text?: token) { }
-    }
-    export class Scordatura {
-        constructor(public children: [
-            [
-                {
-                    accord: Type.Accord[];
-                }
-            ]
-        ], public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class Sound {
-        constructor(public children: [
-            [
-                {
-                    swing: Type.Swing;
-                },
-                {
-                    offset: Type.Offset;
-                },
-                [
-                    {
-                        instrumentChange: Type.InstrumentChange;
-                    },
-                    {
-                        midiDevice: Type.MidiDevice;
-                    },
-                    {
-                        midiInstrument: Type.MidiInstrument;
-                    },
-                    {
-                        play: Type.Play;
-                    }
-                ]
-            ]
-        ], public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public tempo?: Type.NonNegativeDecimal, public dynamics?: Type.NonNegativeDecimal, public dacapo?: Type.YesNo, public segno?: token, public dalsegno?: token, public coda?: token, public tocoda?: token, public divisions?: Type.Divisions, public forwardRepeat?: Type.YesNo, public fine?: token, public timeOnly?: Type.TimeOnly, public pizzicato?: Type.YesNo, public pan?: Type.RotationDegrees, public elevation?: Type.RotationDegrees, public damperPedal?: Type.YesNoNumber, public softPedal?: Type.YesNoNumber, public sostenutoPedal?: Type.YesNoNumber) { }
-    }
-    export class StaffDivide {
-        constructor(public children: [
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.StaffDivideSymbol) { }
-    }
-    export class Stick {
-        constructor(public children: [
-            [
-                {
-                    stickType: Type.StickType;
-                },
-                {
-                    stickMaterial: Type.StickMaterial;
-                }
-            ]
-        ], public tip?: Type.TipDirection, public parentheses?: Type.YesNo, public dashedCircle?: Type.YesNo) { }
-    }
-    export class StringMute {
-        constructor(public children: [
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.OnOff) { }
-    }
-    export class Swing {
-        constructor(public children: [
-            [
-                {
-                    swingStyle: string;
-                },
-                {
-                    straight: Type.Empty;
-                } | [
-                    {
-                        first: positiveInteger;
-                    },
-                    {
-                        second: positiveInteger;
-                    },
-                    {
-                        swingType: Type.SwingTypeValue;
-                    }
-                ]
-            ]
-        ]) { }
-    }
-    export class Sync {
-        constructor(public children: [
-        ], public type_: Type.SyncType, public latency?: Type.Milliseconds, public player?: IDREF, public timeOnly?: Type.TimeOnly) { }
-    }
-    export class Timpani {
-        constructor(public children: [
-        ], public smufl?: Type.SmuflPictogramGlyphName) { }
-    }
-    export class Wedge {
-        constructor(public children: [
-        ], public LineType: AttributeGroup.LineType, public DashedFormatting: AttributeGroup.DashedFormatting, public Position: AttributeGroup.Position, public Color: AttributeGroup.Color, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.WedgeType, public number_?: Type.NumberLevel, public spread?: Type.Tenths, public niente?: Type.YesNo) { }
-    }
-    export class Wood {
-        constructor(public children: Type.WoodValue, public smufl?: Type.SmuflPictogramGlyphName) { }
-    }
-    export class Encoding {
-        constructor(public children: [
-            {
-                encodingDate: Type.YyyyMmDd;
-            } | {
-                encoder: Type.TypedText;
-            } | {
-                software: string;
-            } | {
-                encodingDescription: string;
-            } | {
-                supports: Type.Supports;
-            }
-        ]) { }
-    }
-    export class Identification {
-        constructor(public children: [
-            [
-                {
-                    creator: Type.TypedText[];
-                },
-                {
-                    rights: Type.TypedText[];
-                },
-                {
-                    encoding: Type.Encoding;
-                },
-                {
-                    source: string;
-                },
-                {
-                    relation: Type.TypedText[];
-                },
-                {
-                    miscellaneous: Type.Miscellaneous;
-                }
-            ]
-        ]) { }
-    }
-    export class Miscellaneous {
-        constructor(public children: [
-            [
-                {
-                    miscellaneousField: Type.MiscellaneousField[];
-                }
-            ]
-        ]) { }
-    }
-    export class MiscellaneousField {
-        constructor(public children: string, public name: token) { }
-    }
-    export class Supports {
-        constructor(public children: [
-        ], public type_: Type.YesNo, public element: NMTOKEN, public attribute?: NMTOKEN, public value?: token) { }
-    }
-    export class Appearance {
-        constructor(public children: [
-            [
-                {
-                    lineWidth: Type.LineWidth[];
-                },
-                {
-                    noteSize: Type.NoteSize[];
-                },
-                {
-                    distance: Type.Distance[];
-                },
-                {
-                    glyph: Type.Glyph[];
-                },
-                {
-                    otherAppearance: Type.OtherAppearance[];
-                }
-            ]
-        ]) { }
-    }
-    export class Distance {
-        constructor(public children: Type.Tenths, public type_: Type.DistanceType) { }
-    }
-    export class Glyph {
-        constructor(public children: Type.SmuflGlyphName, public type_: Type.GlyphType) { }
-    }
-    export class LineWidth {
-        constructor(public children: Type.Tenths, public type_: Type.LineWidthType) { }
-    }
-    export class MeasureLayout {
-        constructor(public children: [
-            [
-                {
-                    measureDistance: Type.Tenths;
-                }
-            ]
-        ]) { }
-    }
-    export class NoteSize {
-        constructor(public children: Type.NonNegativeDecimal, public type_: Type.NoteSizeType) { }
-    }
-    export class OtherAppearance {
-        constructor(public children: string, public type_: token) { }
-    }
-    export class PageLayout {
-        constructor(public children: [
-            [
-                {
-                    pageMargins: Type.PageMargins[];
-                },
-                [
-                    {
-                        pageHeight: Type.Tenths;
-                    },
-                    {
-                        pageWidth: Type.Tenths;
-                    }
-                ]
-            ]
-        ]) { }
-    }
-    export class PageMargins {
-        constructor(public children: [
-            Group.AllMargins
-        ], public type_?: Type.MarginType) { }
-    }
-    export class Scaling {
-        constructor(public children: [
-            [
-                {
-                    millimeters: Type.Millimeters;
-                },
-                {
-                    tenths: Type.Tenths;
-                }
-            ]
-        ]) { }
-    }
-    export class StaffLayout {
-        constructor(public children: [
-            [
-                {
-                    staffDistance: Type.Tenths;
-                }
-            ]
-        ], public number_?: Type.StaffNumber) { }
-    }
-    export class SystemDividers {
-        constructor(public children: [
-            [
-                {
-                    leftDivider: Type.EmptyPrintObjectStyleAlign;
-                },
-                {
-                    rightDivider: Type.EmptyPrintObjectStyleAlign;
-                }
-            ]
-        ]) { }
-    }
-    export class SystemLayout {
-        constructor(public children: [
-            [
-                {
-                    systemMargins: Type.SystemMargins;
-                },
-                {
-                    systemDistance: Type.Tenths;
-                },
-                {
-                    topSystemDistance: Type.Tenths;
-                },
-                {
-                    systemDividers: Type.SystemDividers;
-                }
-            ]
-        ]) { }
-    }
-    export class SystemMargins {
-        constructor(public children: [
-            Group.LeftRightMargins
-        ]) { }
-    }
-    export class Bookmark {
-        constructor(public children: [
-        ], public ElementPosition: AttributeGroup.ElementPosition, public id: ID, public name?: token) { }
-    }
-    export class Link {
-        constructor(public children: [
-        ], public LinkAttributes: AttributeGroup.LinkAttributes, public ElementPosition: AttributeGroup.ElementPosition, public Position: AttributeGroup.Position, public name?: token) { }
-    }
-    export class Accidental {
-        constructor(public children: Type.AccidentalValue, public LevelDisplay: AttributeGroup.LevelDisplay, public PrintStyle: AttributeGroup.PrintStyle, public cautionary?: Type.YesNo, public editorial?: Type.YesNo, public smufl?: Type.SmuflAccidentalGlyphName) { }
-    }
-    export class AccidentalMark {
-        constructor(public children: Type.AccidentalValue, public LevelDisplay: AttributeGroup.LevelDisplay, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public smufl?: Type.SmuflAccidentalGlyphName) { }
-    }
-    export class Arpeggiate {
-        constructor(public children: [
-        ], public Position: AttributeGroup.Position, public Placement: AttributeGroup.Placement, public Color: AttributeGroup.Color, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public number_?: Type.NumberLevel, public direction?: Type.UpDown, public unbroken?: Type.YesNo) { }
-    }
-    export class Articulations {
-        constructor(public children: [
-            {
-                accent: Type.EmptyPlacement;
-            } | {
-                strongAccent: Type.StrongAccent;
-            } | {
-                staccato: Type.EmptyPlacement;
-            } | {
-                tenuto: Type.EmptyPlacement;
-            } | {
-                detachedLegato: Type.EmptyPlacement;
-            } | {
-                staccatissimo: Type.EmptyPlacement;
-            } | {
-                spiccato: Type.EmptyPlacement;
-            } | {
-                scoop: Type.EmptyLine;
-            } | {
-                plop: Type.EmptyLine;
-            } | {
-                doit: Type.EmptyLine;
-            } | {
-                falloff: Type.EmptyLine;
-            } | {
-                breathMark: Type.BreathMark;
-            } | {
-                caesura: Type.Caesura;
-            } | {
-                stress: Type.EmptyPlacement;
-            } | {
-                unstress: Type.EmptyPlacement;
-            } | {
-                softAccent: Type.EmptyPlacement;
-            } | {
-                otherArticulation: Type.OtherPlacementText;
-            }
-        ], public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class Arrow {
-        constructor(public children: [
-            {
-                circularArrow: Type.CircularArrow;
-            } | [
-                {
-                    arrowDirection: Type.ArrowDirection;
-                },
-                {
-                    arrowStyle: Type.ArrowStyle;
-                },
-                {
-                    arrowhead: Type.Empty;
-                }
-            ]
-        ], public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public Smufl: AttributeGroup.Smufl) { }
-    }
-    export class Assess {
-        constructor(public children: [
-        ], public type_: Type.YesNo, public player?: IDREF, public timeOnly?: Type.TimeOnly) { }
-    }
-    export class Backup {
-        constructor(public children: [
-            [
-                Group.Duration,
-                Group.Editorial
-            ]
-        ]) { }
-    }
-    export class Beam {
-        constructor(public children: Type.BeamValue, public Color: AttributeGroup.Color, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public number_: Type.BeamLevel = 1, public repeater?: Type.YesNo, public fan?: Type.Fan) { }
-    }
-    export class Bend {
-        constructor(public children: [
-            [
-                {
-                    bendAlter: Type.Semitones;
-                },
-                {
-                    withBar: Type.PlacementText;
-                },
-                {
-                    preBend: Type.Empty;
-                } | {
-                    release: Type.Release;
-                }
-            ]
-        ], public PrintStyle: AttributeGroup.PrintStyle, public BendSound: AttributeGroup.BendSound, public shape?: Type.BendShape) { }
-    }
-    export class BreathMark {
-        constructor(public children: Type.BreathMarkValue, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement) { }
-    }
-    export class Caesura {
-        constructor(public children: Type.CaesuraValue, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement) { }
-    }
-    export class Elision {
-        constructor(public children: string, public Font: AttributeGroup.Font, public Color: AttributeGroup.Color, public smufl?: Type.SmuflLyricsGlyphName) { }
-    }
-    export class EmptyLine {
-        constructor(public children: [
-        ], public LineShape: AttributeGroup.LineShape, public LineType: AttributeGroup.LineType, public LineLength: AttributeGroup.LineLength, public DashedFormatting: AttributeGroup.DashedFormatting, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement) { }
-    }
-    export class Extend {
-        constructor(public children: [
-        ], public Position: AttributeGroup.Position, public Color: AttributeGroup.Color, public type_?: Type.StartStopContinue) { }
-    }
-    export class Figure {
-        constructor(public children: [
-            [
-                {
-                    prefix: Type.StyleText;
-                },
-                {
-                    figureNumber: Type.StyleText;
-                },
-                {
-                    suffix: Type.StyleText;
-                },
-                {
-                    extend: Type.Extend;
-                },
-                Group.Editorial
-            ]
-        ]) { }
-    }
-    export class FiguredBass {
-        constructor(public children: [
-            [
-                {
-                    figure: Type.Figure[];
-                },
-                Group.Duration,
-                Group.Editorial
-            ]
-        ], public PrintStyleAlign: AttributeGroup.PrintStyleAlign, public Placement: AttributeGroup.Placement, public Printout: AttributeGroup.Printout, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public parentheses?: Type.YesNo) { }
-    }
-    export class Forward {
-        constructor(public children: [
-            [
-                Group.Duration,
-                Group.EditorialVoice,
-                Group.Staff
-            ]
-        ]) { }
-    }
-    export class Glissando {
-        constructor(public children: string, public LineType: AttributeGroup.LineType, public DashedFormatting: AttributeGroup.DashedFormatting, public PrintStyle: AttributeGroup.PrintStyle, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.StartStop, public number_: Type.NumberLevel = 1) { }
-    }
-    export class Grace {
-        constructor(public children: [
-        ], public stealTimePrevious?: Type.Percent, public stealTimeFollowing?: Type.Percent, public makeTime?: Type.Divisions, public slash?: Type.YesNo) { }
-    }
-    export class HammerOnPullOff {
-        constructor(public children: string, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public type_: Type.StartStop, public number_: Type.NumberLevel = 1) { }
-    }
-    export class Handbell {
-        constructor(public children: Type.HandbellValue, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement) { }
-    }
-    export class HarmonClosed {
-        constructor(public children: Type.HarmonClosedValue, public location?: Type.HarmonClosedLocation) { }
-    }
-    export class HarmonMute {
-        constructor(public children: [
-            [
-                {
-                    harmonClosed: Type.HarmonClosed;
-                }
-            ]
-        ], public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement) { }
-    }
-    export class Harmonic {
-        constructor(public children: [
-            [
-                {
-                    natural: Type.Empty;
-                } | {
-                    artificial: Type.Empty;
-                },
-                {
-                    basePitch: Type.Empty;
-                } | {
-                    touchingPitch: Type.Empty;
-                } | {
-                    soundingPitch: Type.Empty;
-                }
-            ]
-        ], public PrintObject: AttributeGroup.PrintObject, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement) { }
-    }
-    export class HeelToe {
-        constructor(public children: [
-        ]) { }
-    }
-    export class Hole {
-        constructor(public children: [
-            [
-                {
-                    holeType: string;
-                },
-                {
-                    holeClosed: Type.HoleClosed;
-                },
-                {
-                    holeShape: string;
-                }
-            ]
-        ], public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement) { }
-    }
-    export class HoleClosed {
-        constructor(public children: Type.HoleClosedValue, public location?: Type.HoleClosedLocation) { }
-    }
-    export class Instrument {
-        constructor(public children: [
-        ], public id: IDREF) { }
-    }
-    export class Listen {
-        constructor(public children: [
-            {
-                assess: Type.Assess;
-            } | {
-                wait: Type.Wait;
-            } | {
-                otherListen: Type.OtherListening;
-            }
-        ]) { }
-    }
-    export class Lyric {
-        constructor(public children: [
-            [
-                {
-                    endLine: Type.Empty;
-                },
-                {
-                    endParagraph: Type.Empty;
-                },
-                {
-                    extend: Type.Extend;
-                } | {
-                    laughing: Type.Empty;
-                } | {
-                    humming: Type.Empty;
-                } | [
-                    {
-                        syllabic: Type.Syllabic;
-                    },
-                    {
-                        text: Type.TextElementData;
-                    },
-                    {
-                        extend: Type.Extend;
-                    },
-                    [
-                        {
-                            text: Type.TextElementData;
-                        },
-                        [
-                            {
-                                elision: Type.Elision;
-                            },
-                            {
-                                syllabic: Type.Syllabic;
-                            }
-                        ]
-                    ]
-                ],
-                Group.Editorial
-            ]
-        ], public Justify: AttributeGroup.Justify, public Position: AttributeGroup.Position, public Placement: AttributeGroup.Placement, public Color: AttributeGroup.Color, public PrintObject: AttributeGroup.PrintObject, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public number_?: NMTOKEN, public name?: token, public timeOnly?: Type.TimeOnly) { }
-    }
-    export class Mordent {
-        constructor(public children: [
-        ]) { }
-    }
-    export class NonArpeggiate {
-        constructor(public children: [
-        ], public Position: AttributeGroup.Position, public Placement: AttributeGroup.Placement, public Color: AttributeGroup.Color, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.TopBottom, public number_?: Type.NumberLevel) { }
-    }
-    export class Notations {
-        constructor(public children: [
-            [
-                {
-                    tied: Type.Tied;
-                } | {
-                    slur: Type.Slur;
-                } | {
-                    tuplet: Type.Tuplet;
-                } | {
-                    glissando: Type.Glissando;
-                } | {
-                    slide: Type.Slide;
-                } | {
-                    ornaments: Type.Ornaments;
-                } | {
-                    technical: Type.Technical;
-                } | {
-                    articulations: Type.Articulations;
-                } | {
-                    dynamics: Type.Dynamics;
-                } | {
-                    fermata: Type.Fermata;
-                } | {
-                    arpeggiate: Type.Arpeggiate;
-                } | {
-                    nonArpeggiate: Type.NonArpeggiate;
-                } | {
-                    accidentalMark: Type.AccidentalMark;
-                } | {
-                    otherNotation: Type.OtherNotation;
-                },
-                Group.Editorial
-            ]
-        ], public PrintObject: AttributeGroup.PrintObject, public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class Note {
-        constructor(public children: [
-            [
-                {
-                    instrument: Type.Instrument[];
-                },
-                {
-                    type_: Type.NoteType;
-                },
-                {
-                    dot: Type.EmptyPlacement[];
-                },
-                {
-                    accidental: Type.Accidental;
-                },
-                {
-                    timeModification: Type.TimeModification;
-                },
-                {
-                    stem: Type.Stem;
-                },
-                {
-                    notehead: Type.Notehead;
-                },
-                {
-                    noteheadText: Type.NoteheadText;
-                },
-                {
-                    beam: Type.Beam[];
-                },
-                {
-                    notations: Type.Notations[];
-                },
-                {
-                    lyric: Type.Lyric[];
-                },
-                {
-                    play: Type.Play;
-                },
-                {
-                    listen: Type.Listen;
-                },
-                [
-                    {
-                        grace: Type.Grace;
-                    },
-                    [
-                        {
-                            tie: Type.Tie[];
-                        },
-                        Group.FullNote
-                    ] | [
-                        {
-                            cue: Type.Empty;
-                        },
-                        Group.FullNote
-                    ]
                 ] | [
                     {
-                        cue: Type.Empty;
+                        cue?: Type.Empty;
                     },
-                    Group.FullNote,
-                    Group.Duration
-                ] | [
                     {
-                        tie: Type.Tie[];
+                        chord?: Type.Empty;
                     },
-                    Group.FullNote,
-                    Group.Duration
-                ],
-                Group.EditorialVoice,
-                Group.Staff
-            ]
-        ], public XPosition: AttributeGroup.XPosition, public Font: AttributeGroup.Font, public Color: AttributeGroup.Color, public Printout: AttributeGroup.Printout, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public printLeger?: Type.YesNo, public dynamics?: Type.NonNegativeDecimal, public endDynamics?: Type.NonNegativeDecimal, public attack?: Type.Divisions, public release?: Type.Divisions, public timeOnly?: Type.TimeOnly, public pizzicato?: Type.YesNo) { }
-    }
-    export class NoteType {
-        constructor(public children: Type.NoteTypeValue, public size?: Type.SymbolSize) { }
-    }
-    export class Notehead {
-        constructor(public children: Type.NoteheadValue, public Font: AttributeGroup.Font, public Color: AttributeGroup.Color, public Smufl: AttributeGroup.Smufl, public filled?: Type.YesNo, public parentheses?: Type.YesNo) { }
-    }
-    export class NoteheadText {
-        constructor(public children: [
-            [
-                {
-                    displayText: Type.FormattedText;
-                } | {
-                    accidentalText: Type.AccidentalText;
-                }
-            ]
-        ]) { }
-    }
-    export class Ornaments {
-        constructor(public children: [
-            [
-                {
-                    accidentalMark: Type.AccidentalMark[];
-                },
-                {
-                    trillMark: Type.EmptyTrillSound;
-                } | {
-                    turn: Type.HorizontalTurn;
-                } | {
-                    delayedTurn: Type.HorizontalTurn;
-                } | {
-                    invertedTurn: Type.HorizontalTurn;
-                } | {
-                    delayedInvertedTurn: Type.HorizontalTurn;
-                } | {
-                    verticalTurn: Type.EmptyTrillSound;
-                } | {
-                    invertedVerticalTurn: Type.EmptyTrillSound;
-                } | {
-                    shake: Type.EmptyTrillSound;
-                } | {
-                    wavyLine: Type.WavyLine;
-                } | {
-                    mordent: Type.Mordent;
-                } | {
-                    invertedMordent: Type.Mordent;
-                } | {
-                    schleifer: Type.EmptyPlacement;
-                } | {
-                    tremolo: Type.Tremolo;
-                } | {
-                    haydn: Type.EmptyTrillSound;
-                } | {
-                    otherOrnament: Type.OtherPlacementText;
-                }
-            ]
-        ], public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class OtherNotation {
-        constructor(public children: string, public PrintObject: AttributeGroup.PrintObject, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public Smufl: AttributeGroup.Smufl, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.StartStopSingle, public number_: Type.NumberLevel = 1) { }
-    }
-    export class OtherPlacementText {
-        constructor(public children: string, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public Smufl: AttributeGroup.Smufl) { }
-    }
-    export class OtherText {
-        constructor(public children: string, public Smufl: AttributeGroup.Smufl) { }
-    }
-    export class Pitch {
-        constructor(public children: [
-            [
-                {
-                    step: Type.Step;
-                },
-                {
-                    alter: Type.Semitones;
-                },
-                {
-                    octave: Type.Octave;
-                }
-            ]
-        ]) { }
-    }
-    export class PlacementText {
-        constructor(public children: string, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement) { }
-    }
-    export class Release {
-        constructor(public children: [
-        ]) { }
-    }
-    export class Rest {
-        constructor(public children: [
-            [
-                Group.DisplayStepOctave
-            ]
-        ], public measure?: Type.YesNo) { }
-    }
-    export class Slide {
-        constructor(public children: string, public LineType: AttributeGroup.LineType, public DashedFormatting: AttributeGroup.DashedFormatting, public PrintStyle: AttributeGroup.PrintStyle, public BendSound: AttributeGroup.BendSound, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.StartStop, public number_: Type.NumberLevel = 1) { }
-    }
-    export class Slur {
-        constructor(public children: [
-        ], public LineType: AttributeGroup.LineType, public DashedFormatting: AttributeGroup.DashedFormatting, public Position: AttributeGroup.Position, public Placement: AttributeGroup.Placement, public Orientation: AttributeGroup.Orientation, public Bezier: AttributeGroup.Bezier, public Color: AttributeGroup.Color, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.StartStopContinue, public number_: Type.NumberLevel = 1) { }
-    }
-    export class Stem {
-        constructor(public children: Type.StemValue, public YPosition: AttributeGroup.YPosition, public Color: AttributeGroup.Color) { }
-    }
-    export class StrongAccent {
-        constructor(public children: [
-        ]) { }
-    }
-    export class StyleText {
-        constructor(public children: string, public PrintStyle: AttributeGroup.PrintStyle) { }
-    }
-    export class Tap {
-        constructor(public children: string, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public hand?: Type.TapHand) { }
-    }
-    export class Technical {
-        constructor(public children: [
-            {
-                upBow: Type.EmptyPlacement;
-            } | {
-                downBow: Type.EmptyPlacement;
-            } | {
-                harmonic: Type.Harmonic;
-            } | {
-                openString: Type.EmptyPlacement;
-            } | {
-                thumbPosition: Type.EmptyPlacement;
-            } | {
-                fingering: Type.Fingering;
-            } | {
-                pluck: Type.PlacementText;
-            } | {
-                doubleTongue: Type.EmptyPlacement;
-            } | {
-                tripleTongue: Type.EmptyPlacement;
-            } | {
-                stopped: Type.EmptyPlacementSmufl;
-            } | {
-                snapPizzicato: Type.EmptyPlacement;
-            } | {
-                fret: Type.Fret;
-            } | {
-                string_: Type.String;
-            } | {
-                hammerOn: Type.HammerOnPullOff;
-            } | {
-                pullOff: Type.HammerOnPullOff;
-            } | {
-                bend: Type.Bend;
-            } | {
-                tap: Type.Tap;
-            } | {
-                heel: Type.HeelToe;
-            } | {
-                toe: Type.HeelToe;
-            } | {
-                fingernails: Type.EmptyPlacement;
-            } | {
-                hole: Type.Hole;
-            } | {
-                arrow: Type.Arrow;
-            } | {
-                handbell: Type.Handbell;
-            } | {
-                brassBend: Type.EmptyPlacement;
-            } | {
-                flip: Type.EmptyPlacement;
-            } | {
-                smear: Type.EmptyPlacement;
-            } | {
-                open: Type.EmptyPlacementSmufl;
-            } | {
-                halfMuted: Type.EmptyPlacementSmufl;
-            } | {
-                harmonMute: Type.HarmonMute;
-            } | {
-                golpe: Type.EmptyPlacement;
-            } | {
-                otherTechnical: Type.OtherPlacementText;
+                    {
+                        pitchOrUnpitchedOrRest: Type.Pitch | Type.Unpitched | Type.Rest;
+                    }
+                ];
             }
-        ], public OptionalUniqueId: AttributeGroup.OptionalUniqueId) { }
-    }
-    export class TextElementData {
-        constructor(public children: string, public Font: AttributeGroup.Font, public Color: AttributeGroup.Color, public TextDecoration: AttributeGroup.TextDecoration, public TextRotation: AttributeGroup.TextRotation, public LetterSpacing: AttributeGroup.LetterSpacing, public TextDirection: AttributeGroup.TextDirection, public xmlLang?: XML.lang) { }
-    }
-    export class Tie {
-        constructor(public children: [
-        ], public type_: Type.StartStop, public timeOnly?: Type.TimeOnly) { }
-    }
-    export class Tied {
-        constructor(public children: [
-        ], public LineType: AttributeGroup.LineType, public DashedFormatting: AttributeGroup.DashedFormatting, public Position: AttributeGroup.Position, public Placement: AttributeGroup.Placement, public Orientation: AttributeGroup.Orientation, public Bezier: AttributeGroup.Bezier, public Color: AttributeGroup.Color, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.TiedType, public number_?: Type.NumberLevel) { }
-    }
-    export class TimeModification {
-        constructor(public children: [
-            [
-                {
-                    actualNotes: nonNegativeInteger;
-                },
-                {
-                    normalNotes: nonNegativeInteger;
-                },
-                [
-                    {
-                        normalType: Type.NoteTypeValue;
-                    },
-                    {
-                        normalDot: Type.Empty[];
-                    }
-                ]
-            ]
-        ]) { }
-    }
-    export class Tremolo {
-        constructor(public children: Type.TremoloMarks, public PrintStyle: AttributeGroup.PrintStyle, public Placement: AttributeGroup.Placement, public Smufl: AttributeGroup.Smufl, public type_: Type.TremoloType = "single") { }
-    }
-    export class Tuplet {
-        constructor(public children: [
-            [
-                {
-                    tupletActual: Type.TupletPortion;
-                },
-                {
-                    tupletNormal: Type.TupletPortion;
-                }
-            ]
-        ], public LineShape: AttributeGroup.LineShape, public Position: AttributeGroup.Position, public Placement: AttributeGroup.Placement, public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public type_: Type.StartStop, public number_?: Type.NumberLevel, public bracket?: Type.YesNo, public showNumber?: Type.ShowTuplet, public showType?: Type.ShowTuplet) { }
-    }
-    export class TupletDot {
-        constructor(public children: [
-        ], public Font: AttributeGroup.Font, public Color: AttributeGroup.Color) { }
-    }
-    export class TupletNumber {
-        constructor(public children: nonNegativeInteger, public Font: AttributeGroup.Font, public Color: AttributeGroup.Color) { }
-    }
-    export class TupletPortion {
-        constructor(public children: [
-            [
-                {
-                    tupletNumber: Type.TupletNumber;
-                },
-                {
-                    tupletType: Type.TupletType;
-                },
-                {
-                    tupletDot: Type.TupletDot[];
-                }
-            ]
-        ]) { }
-    }
-    export class TupletType {
-        constructor(public children: Type.NoteTypeValue, public Font: AttributeGroup.Font, public Color: AttributeGroup.Color) { }
-    }
-    export class Unpitched {
-        constructor(public children: [
-            [
-                Group.DisplayStepOctave
-            ]
-        ]) { }
-    }
-    export class Wait {
-        constructor(public children: [
-        ], public player?: IDREF, public timeOnly?: Type.TimeOnly) { }
-    }
-    export class Credit {
-        constructor(public children: [
-            [
-                {
-                    creditType: string[];
-                },
-                {
-                    link: Type.Link[];
-                },
-                {
-                    bookmark: Type.Bookmark[];
-                },
-                {
-                    creditImage: Type.Image;
-                } | [
-                    {
-                        creditWords: Type.FormattedTextId;
-                    } | {
-                        creditSymbol: Type.FormattedSymbolId;
-                    },
-                    [
-                        {
-                            link: Type.Link[];
-                        },
-                        {
-                            bookmark: Type.Bookmark[];
-                        },
-                        {
-                            creditWords: Type.FormattedTextId;
-                        } | {
-                            creditSymbol: Type.FormattedSymbolId;
-                        }
-                    ]
-                ]
-            ]
-        ], public OptionalUniqueId: AttributeGroup.OptionalUniqueId, public page?: positiveInteger) { }
-    }
-    export class Defaults {
-        constructor(public children: [
-            [
-                {
-                    scaling: Type.Scaling;
-                },
-                {
-                    concertScore: Type.Empty;
-                },
-                {
-                    appearance: Type.Appearance;
-                },
-                {
-                    musicFont: Type.EmptyFont;
-                },
-                {
-                    wordFont: Type.EmptyFont;
-                },
-                {
-                    lyricFont: Type.LyricFont[];
-                },
-                {
-                    lyricLanguage: Type.LyricLanguage[];
-                },
-                Group.Layout
-            ]
-        ]) { }
-    }
-    export class EmptyFont {
-        constructor(public children: [
-        ], public Font: AttributeGroup.Font) { }
-    }
-    export class GroupBarline {
-        constructor(public children: Type.GroupBarlineValue, public Color: AttributeGroup.Color) { }
-    }
-    export class GroupName {
-        constructor(public children: string, public GroupNameText: AttributeGroup.GroupNameText) { }
-    }
-    export class GroupSymbol {
-        constructor(public children: Type.GroupSymbolValue, public Position: AttributeGroup.Position, public Color: AttributeGroup.Color) { }
-    }
-    export class InstrumentLink {
-        constructor(public children: [
-        ], public id: IDREF) { }
-    }
-    export class LyricFont {
-        constructor(public children: [
-        ], public Font: AttributeGroup.Font, public number_?: NMTOKEN, public name?: token) { }
-    }
-    export class LyricLanguage {
-        constructor(public children: [
-        ], public xmlLang: XML.lang, public number_?: NMTOKEN, public name?: token) { }
-    }
-    export class Opus {
-        constructor(public children: [
-        ], public LinkAttributes: AttributeGroup.LinkAttributes) { }
-    }
-    export class PartGroup {
-        constructor(public children: [
-            [
-                {
-                    groupName: Type.GroupName;
-                },
-                {
-                    groupNameDisplay: Type.NameDisplay;
-                },
-                {
-                    groupAbbreviation: Type.GroupName;
-                },
-                {
-                    groupAbbreviationDisplay: Type.NameDisplay;
-                },
-                {
-                    groupSymbol: Type.GroupSymbol;
-                },
-                {
-                    groupBarline: Type.GroupBarline;
-                },
-                {
-                    groupTime: Type.Empty;
-                },
-                Group.Editorial
-            ]
-        ], public type_: Type.StartStop, public number_: token = "1") { }
-    }
-    export class PartLink {
-        constructor(public children: [
-            [
-                {
-                    instrumentLink: Type.InstrumentLink[];
-                },
-                {
-                    groupLink: string[];
-                }
-            ]
-        ], public LinkAttributes: AttributeGroup.LinkAttributes) { }
-    }
-    export class PartList {
-        constructor(public children: [
-            [
-                Group.PartGroup | Group.ScorePart,
-                Group.PartGroup[],
-                Group.ScorePart
-            ]
-        ]) { }
-    }
-    export class PartName {
-        constructor(public children: string, public PartNameText: AttributeGroup.PartNameText) { }
-    }
-    export class Player {
-        constructor(public children: [
-            [
-                {
-                    playerName: string;
-                }
-            ]
-        ], public id: ID) { }
-    }
-    export class ScoreInstrument {
-        constructor(public children: [
-            [
-                {
-                    instrumentName: string;
-                },
-                {
-                    instrumentAbbreviation: string;
-                },
-                Group.VirtualInstrumentData
-            ]
-        ], public id: ID) { }
-    }
-    export class ScorePart {
-        constructor(public children: [
-            [
-                {
-                    identification: Type.Identification;
-                },
-                {
-                    partLink: Type.PartLink[];
-                },
-                {
-                    partName: Type.PartName;
-                },
-                {
-                    partNameDisplay: Type.NameDisplay;
-                },
-                {
-                    partAbbreviation: Type.PartName;
-                },
-                {
-                    partAbbreviationDisplay: Type.NameDisplay;
-                },
-                {
-                    group: string[];
-                },
-                {
-                    scoreInstrument: Type.ScoreInstrument[];
-                },
-                {
-                    player: Type.Player[];
-                },
-                [
-                    {
-                        midiDevice: Type.MidiDevice;
-                    },
-                    {
-                        midiInstrument: Type.MidiInstrument;
-                    }
-                ]
-            ]
-        ], public id: ID) { }
-    }
-    export class VirtualInstrument {
-        constructor(public children: [
-            [
-                {
-                    virtualLibrary: string;
-                },
-                {
-                    virtualName: string;
-                }
-            ]
-        ]) { }
-    }
-    export class Work {
-        constructor(public children: [
-            [
-                {
-                    workNumber: string;
-                },
-                {
-                    workTitle: string;
-                },
-                {
-                    opus: Type.Opus;
-                }
-            ]
-        ]) { }
-    }
-}
-export module Group {
-    export class Editorial {
-        constructor(public children: [
-            [
-                Group.Footnote,
-                Group.Level
-            ]
-        ]) { }
-    }
-    export class EditorialVoice {
-        constructor(public children: [
-            [
-                Group.Footnote,
-                Group.Level,
-                Group.Voice
-            ]
-        ]) { }
-    }
-    export class EditorialVoiceDirection {
-        constructor(public children: [
-            [
-                Group.Footnote,
-                Group.Level,
-                Group.Voice
-            ]
-        ]) { }
-    }
-    export class Footnote {
-        constructor(public children: [
-            [
-                {
-                    footnote: Type.FormattedText;
-                }
-            ]
-        ]) { }
-    }
-    export class Level {
-        constructor(public children: [
-            [
-                {
-                    level: Type.Level;
-                }
-            ]
-        ]) { }
-    }
-    export class Staff {
-        constructor(public children: [
-            [
-                {
-                    staff: positiveInteger;
-                }
-            ]
-        ]) { }
-    }
-    export class Tuning {
-        constructor(public children: [
-            [
-                {
-                    tuningStep: Type.Step;
-                },
-                {
-                    tuningAlter: Type.Semitones;
-                },
-                {
-                    tuningOctave: Type.Octave;
-                }
-            ]
-        ]) { }
-    }
-    export class VirtualInstrumentData {
-        constructor(public children: [
-            [
-                {
-                    instrumentSound: string;
-                },
-                {
-                    virtualInstrument: Type.VirtualInstrument;
-                },
-                {
-                    solo: Type.Empty;
-                } | {
-                    ensemble: Type.PositiveIntegerOrEmpty;
-                }
-            ]
-        ]) { }
-    }
-    export class Voice {
-        constructor(public children: [
-            [
-                {
-                    voice: string;
-                }
-            ]
-        ]) { }
-    }
-    export class Clef {
-        constructor(public children: [
-            [
-                {
-                    sign: Type.ClefSign;
-                },
-                {
-                    line: Type.StaffLinePosition;
-                },
-                {
-                    clefOctaveChange: integer;
-                }
-            ]
-        ]) { }
-    }
-    export class NonTraditionalKey {
-        constructor(public children: [
-            [
-                {
-                    keyStep: Type.Step;
-                },
-                {
-                    keyAlter: Type.Semitones;
-                },
-                {
-                    keyAccidental: Type.KeyAccidental;
-                }
-            ]
-        ]) { }
-    }
-    export class Slash {
-        constructor(public children: [
-            [
-                {
-                    exceptVoice: string[];
-                },
-                [
-                    {
-                        slashType: Type.NoteTypeValue;
-                    },
-                    {
-                        slashDot: Type.Empty[];
-                    }
-                ]
-            ]
-        ]) { }
-    }
-    export class TimeSignature {
-        constructor(public children: [
-            [
-                {
-                    beats: string;
-                },
-                {
-                    beatType: string;
-                }
-            ]
-        ]) { }
-    }
-    export class TraditionalKey {
-        constructor(public children: [
-            [
-                {
-                    cancel: Type.Cancel;
-                },
-                {
-                    fifths: Type.Fifths;
-                },
-                {
-                    mode: Type.Mode;
-                }
-            ]
-        ]) { }
-    }
-    export class Transpose {
-        constructor(public children: [
-            [
-                {
-                    diatonic: integer;
-                },
-                {
-                    chromatic: Type.Semitones;
-                },
-                {
-                    octaveChange: integer;
-                },
-                {
-                    double: Type.Double;
-                }
-            ]
-        ]) { }
-    }
-    export class BeatUnit {
-        constructor(public children: [
-            [
-                {
-                    beatUnit: Type.NoteTypeValue;
-                },
-                {
-                    beatUnitDot: Type.Empty[];
-                }
-            ]
-        ]) { }
-    }
-    export class HarmonyChord {
-        constructor(public children: [
-            [
-                {
-                    kind: Type.Kind;
-                },
-                {
-                    inversion: Type.Inversion;
-                },
-                {
-                    bass: Type.Bass;
-                },
-                {
-                    degree: Type.Degree[];
-                },
-                {
-                    root: Type.Root;
-                } | {
-                    numeral: Type.Numeral;
-                } | {
-                    function_: Type.StyleText;
-                }
-            ]
-        ]) { }
-    }
-    export class AllMargins {
-        constructor(public children: [
-            [
-                {
-                    topMargin: Type.Tenths;
-                },
-                {
-                    bottomMargin: Type.Tenths;
-                },
-                Group.LeftRightMargins
-            ]
-        ]) { }
-    }
-    export class Layout {
-        constructor(public children: [
-            [
-                {
-                    pageLayout: Type.PageLayout;
-                },
-                {
-                    systemLayout: Type.SystemLayout;
-                },
-                {
-                    staffLayout: Type.StaffLayout[];
-                }
-            ]
-        ]) { }
-    }
-    export class LeftRightMargins {
-        constructor(public children: [
-            [
-                {
-                    leftMargin: Type.Tenths;
-                },
-                {
-                    rightMargin: Type.Tenths;
-                }
-            ]
-        ]) { }
-    }
-    export class Duration {
-        constructor(public children: [
-            [
-                {
-                    duration: Type.PositiveDivisions;
-                }
-            ]
-        ]) { }
-    }
-    export class DisplayStepOctave {
-        constructor(public children: [
-            [
-                {
-                    displayStep: Type.Step;
-                },
-                {
-                    displayOctave: Type.Octave;
-                }
-            ]
-        ]) { }
-    }
-    export class FullNote {
-        constructor(public children: [
-            [
-                {
-                    chord: Type.Empty;
-                },
-                {
-                    pitch: Type.Pitch;
-                } | {
-                    unpitched: Type.Unpitched;
-                } | {
-                    rest: Type.Rest;
-                }
-            ]
-        ]) { }
-    }
-    export class MusicData {
-        constructor(public children: [
-            [
-                {
-                    note: Type.Note;
-                } | {
-                    backup: Type.Backup;
-                } | {
-                    forward: Type.Forward;
-                } | {
-                    direction: Type.Direction;
-                } | {
-                    attributes: Type.Attributes;
-                } | {
-                    harmony: Type.Harmony;
-                } | {
-                    figuredBass: Type.FiguredBass;
-                } | {
-                    print: Type.Print;
-                } | {
-                    sound: Type.Sound;
-                } | {
-                    listening: Type.Listening;
-                } | {
-                    barline: Type.Barline;
-                } | {
-                    grouping: Type.Grouping;
-                } | {
-                    link: Type.Link;
-                } | {
-                    bookmark: Type.Bookmark;
-                }
-            ]
-        ]) { }
-    }
-    export class PartGroup {
-        constructor(public children: [
-            [
-                {
-                    partGroup: Type.PartGroup;
-                }
-            ]
-        ]) { }
-    }
-    export class ScoreHeader {
-        constructor(public children: [
-            [
-                {
-                    work: Type.Work;
-                },
-                {
-                    movementNumber: string;
-                },
-                {
-                    movementTitle: string;
-                },
-                {
-                    identification: Type.Identification;
-                },
-                {
-                    defaults: Type.Defaults;
-                },
-                {
-                    credit: Type.Credit[];
-                },
-                {
-                    partList: Type.PartList;
-                }
-            ]
-        ]) { }
-    }
-    export class ScorePart {
-        constructor(public children: [
-            [
-                {
-                    scorePart: Type.ScorePart;
-                }
-            ]
-        ]) { }
-    }
-}
-export module AttributeGroup {
-    export class BendSound {
-        constructor(public accelerate?: Type.YesNo, public beats?: Type.TrillBeats, public firstBeat?: Type.Percent, public lastBeat?: Type.Percent) { }
-    }
-    export class Bezier {
-        constructor(public bezierX?: Type.Tenths, public bezierY?: Type.Tenths, public bezierX2?: Type.Tenths, public bezierY2?: Type.Tenths, public bezierOffset?: Type.Divisions, public bezierOffset2?: Type.Divisions) { }
-    }
-    export class Color {
-        constructor(public color?: Type.Color) { }
-    }
-    export class DashedFormatting {
-        constructor(public dashLength?: Type.Tenths, public spaceLength?: Type.Tenths) { }
-    }
-    export class Directive {
-        constructor(public directive?: Type.YesNo) { }
-    }
-    export class DocumentAttributes {
-        constructor(public version: token = "1.0") { }
-    }
-    export class Enclosure {
-        constructor(public enclosure?: Type.EnclosureShape) { }
-    }
-    export class Font {
-        constructor(public fontFamily?: Type.FontFamily, public fontStyle?: Type.FontStyle, public fontSize?: Type.FontSize, public fontWeight?: Type.FontWeight) { }
-    }
-    export class Halign {
-        constructor(public halign?: Type.LeftCenterRight) { }
-    }
-    export class Justify {
-        constructor(public justify?: Type.LeftCenterRight) { }
-    }
-    export class LetterSpacing {
-        constructor(public letterSpacing?: Type.NumberOrNormal) { }
-    }
-    export class LevelDisplay {
-        constructor(public parentheses?: Type.YesNo, public bracket?: Type.YesNo, public size?: Type.SymbolSize) { }
-    }
-    export class LineHeight {
-        constructor(public lineHeight?: Type.NumberOrNormal) { }
-    }
-    export class LineLength {
-        constructor(public lineLength?: Type.LineLength) { }
-    }
-    export class LineShape {
-        constructor(public lineShape?: Type.LineShape) { }
-    }
-    export class LineType {
-        constructor(public lineType?: Type.LineType) { }
-    }
-    export class OptionalUniqueId {
-        constructor(public id?: ID) { }
-    }
-    export class Orientation {
-        constructor(public orientation?: Type.OverUnder) { }
-    }
-    export class Placement {
-        constructor(public placement?: Type.AboveBelow) { }
-    }
-    export class Position {
-        constructor(public defaultX?: Type.Tenths, public defaultY?: Type.Tenths, public relativeX?: Type.Tenths, public relativeY?: Type.Tenths) { }
-    }
-    export class PrintObject {
-        constructor(public printObject?: Type.YesNo) { }
-    }
-    export class PrintSpacing {
-        constructor(public printSpacing?: Type.YesNo) { }
-    }
-    export class PrintStyle {
-        constructor() { }
-    }
-    export class PrintStyleAlign {
-        constructor() { }
-    }
-    export class Printout {
-        constructor(public printDot?: Type.YesNo, public printLyric?: Type.YesNo) { }
-    }
-    export class Smufl {
-        constructor(public smufl?: Type.SmuflGlyphName) { }
-    }
-    export class SystemRelation {
-        constructor(public system?: Type.SystemRelation) { }
-    }
-    export class SymbolFormatting {
-        constructor() { }
-    }
-    export class TextDecoration {
-        constructor(public underline?: Type.NumberOfLines, public overline?: Type.NumberOfLines, public lineThrough?: Type.NumberOfLines) { }
-    }
-    export class TextDirection {
-        constructor(public dir?: Type.TextDirection) { }
-    }
-    export class TextFormatting {
-        constructor(public xmlLang?: XML.lang, public xmlSpace?: XML.space) { }
-    }
-    export class TextRotation {
-        constructor(public rotation?: Type.RotationDegrees) { }
-    }
-    export class TrillSound {
-        constructor(public startNote?: Type.StartNote, public trillStep?: Type.TrillStep, public twoNoteTurn?: Type.TwoNoteTurn, public accelerate?: Type.YesNo, public beats?: Type.TrillBeats, public secondBeat?: Type.Percent, public lastBeat?: Type.Percent) { }
-    }
-    export class Valign {
-        constructor(public valign?: Type.Valign) { }
-    }
-    export class ValignImage {
-        constructor(public valign?: Type.ValignImage) { }
-    }
-    export class XPosition {
-        constructor(public defaultX?: Type.Tenths, public defaultY?: Type.Tenths, public relativeX?: Type.Tenths, public relativeY?: Type.Tenths) { }
-    }
-    export class YPosition {
-        constructor(public defaultX?: Type.Tenths, public defaultY?: Type.Tenths, public relativeX?: Type.Tenths, public relativeY?: Type.Tenths) { }
-    }
-    export class ImageAttributes {
-        constructor(public source: anyURI, public type_: token, public height?: Type.Tenths, public width?: Type.Tenths) { }
-    }
-    export class PrintAttributes {
-        constructor(public staffSpacing?: Type.Tenths, public newSystem?: Type.YesNo, public newPage?: Type.YesNo, public blankPage?: positiveInteger, public pageNumber?: token) { }
-    }
-    export class ElementPosition {
-        constructor(public element?: NMTOKEN, public position?: positiveInteger) { }
-    }
-    export class LinkAttributes {
-        constructor(public xlinkHref: XLink.href, public xlinkShow: XLink.show = "replace", public xlinkActuate: XLink.actuate = "onRequest", public xlinkType?: XLink.type, public xlinkRole?: XLink.role, public xlinkTitle?: XLink.title) { }
-    }
-    export class GroupNameText {
-        constructor() { }
-    }
-    export class MeasureAttributes {
-        constructor(public number_: token, public text?: Type.MeasureText, public implicit?: Type.YesNo, public nonControlling?: Type.YesNo, public width?: Type.Tenths) { }
-    }
-    export class PartAttributes {
-        constructor(public id: IDREF) { }
-    }
-    export class PartNameText {
-        constructor() { }
+        ] | [
+            {
+                cue?: Type.Empty;
+            },
+            {
+                chord?: Type.Empty;
+            },
+            {
+                pitchOrUnpitchedOrRest: Type.Pitch | Type.Unpitched | Type.Rest;
+            },
+            {
+                duration?: Type.PositiveDivisions;
+            }
+        ] | [
+            {
+                tie?: Type.Tie[];
+            },
+            {
+                chord?: Type.Empty;
+            },
+            {
+                pitchOrUnpitchedOrRest: Type.Pitch | Type.Unpitched | Type.Rest;
+            },
+            {
+                duration?: Type.PositiveDivisions;
+            }
+        ];
+        footnote: Type.FormattedText;
+        level: Type.Level;
+        voice: string;
+        staff: positiveInteger;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            printObject?: Type.YesNo;
+            printSpacing?: Type.YesNo;
+            printDot?: Type.YesNo;
+            printLyric?: Type.YesNo;
+            id?: ID;
+            printLeger?: Type.YesNo;
+            dynamics?: Type.NonNegativeDecimal;
+            endDynamics?: Type.NonNegativeDecimal;
+            attack?: Type.Divisions;
+            release?: Type.Divisions;
+            timeOnly?: Type.TimeOnly;
+            pizzicato?: Type.YesNo;
+        };
+    }
+    export interface NoteType {
+        noteTypeValue: Type.NoteTypeValue;
+        $: {
+            size?: Type.SymbolSize;
+        };
+    }
+    export interface Notehead {
+        noteheadValue: Type.NoteheadValue;
+        $: {
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            smufl?: Type.SmuflGlyphName;
+            filled?: Type.YesNo;
+            parentheses?: Type.YesNo;
+        };
+    }
+    export interface NoteheadText {
+        displayTextOrAccidentalText: Type.FormattedText | Type.AccidentalText;
+    }
+    export interface Ornaments {
+        accidentalMark: Type.AccidentalMark[];
+        trillMarkOrTurnOrDelayedTurnOrInvertedTurnOrDelayedInvertedTurnOrVerticalTurnOrInvertedVerticalTurnOrShakeOrWavyLineOrMordentOrInvertedMordentOrSchleiferOrTremoloOrHaydnOrOtherOrnament: Type.EmptyTrillSound | Type.HorizontalTurn | Type.HorizontalTurn | Type.HorizontalTurn | Type.HorizontalTurn | Type.EmptyTrillSound | Type.EmptyTrillSound | Type.EmptyTrillSound | Type.WavyLine | Type.Mordent | Type.Mordent | Type.EmptyPlacement | Type.Tremolo | Type.EmptyTrillSound | Type.OtherPlacementText;
+        $: {
+            id?: ID;
+        };
+    }
+    export interface OtherNotation {
+        xsString: string;
+        $: {
+            printObject?: Type.YesNo;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            smufl?: Type.SmuflGlyphName;
+            id?: ID;
+            type_: Type.StartStopSingle;
+            number_: Type.NumberLevel;
+        };
+    }
+    export interface OtherPlacementText {
+        xsString: string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            smufl?: Type.SmuflGlyphName;
+        };
+    }
+    export interface OtherText {
+        xsString: string;
+        $: {
+            smufl?: Type.SmuflGlyphName;
+        };
+    }
+    export interface Pitch {
+        step: Type.Step;
+        alter: Type.Semitones;
+        octave: Type.Octave;
+    }
+    export interface PlacementText {
+        xsString: string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+        };
+    }
+    export interface Release {
+    }
+    export interface Rest {
+        displayStep: Type.Step;
+        displayOctave: Type.Octave;
+        $: {
+            measure?: Type.YesNo;
+        };
+    }
+    export interface Slide {
+        xsString: string;
+        $: {
+            lineType?: Type.LineType;
+            dashLength?: Type.Tenths;
+            spaceLength?: Type.Tenths;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            accelerate?: Type.YesNo;
+            beats?: Type.TrillBeats;
+            firstBeat?: Type.Percent;
+            lastBeat?: Type.Percent;
+            id?: ID;
+            type_: Type.StartStop;
+            number_: Type.NumberLevel;
+        };
+    }
+    export interface Slur {
+        $: {
+            lineType?: Type.LineType;
+            dashLength?: Type.Tenths;
+            spaceLength?: Type.Tenths;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            placement?: Type.AboveBelow;
+            orientation?: Type.OverUnder;
+            bezierX?: Type.Tenths;
+            bezierY?: Type.Tenths;
+            bezierX2?: Type.Tenths;
+            bezierY2?: Type.Tenths;
+            bezierOffset?: Type.Divisions;
+            bezierOffset2?: Type.Divisions;
+            color?: Type.Color;
+            id?: ID;
+            type_: Type.StartStopContinue;
+            number_: Type.NumberLevel;
+        };
+    }
+    export interface Stem {
+        stemValue: Type.StemValue;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            color?: Type.Color;
+        };
+    }
+    export interface StrongAccent {
+    }
+    export interface StyleText {
+        xsString: string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+        };
+    }
+    export interface Tap {
+        xsString: string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            hand?: Type.TapHand;
+        };
+    }
+    export interface Technical {
+        upBowOrDownBowOrHarmonicOrOpenStringOrThumbPositionOrFingeringOrPluckOrDoubleTongueOrTripleTongueOrStoppedOrSnapPizzicatoOrFretOrStringOrHammerOnOrPullOffOrBendOrTapOrHeelOrToeOrFingernailsOrHoleOrArrowOrHandbellOrBrassBendOrFlipOrSmearOrOpenOrHalfMutedOrHarmonMuteOrGolpeOrOtherTechnical: Type.EmptyPlacement | Type.EmptyPlacement | Type.Harmonic | Type.EmptyPlacement | Type.EmptyPlacement | Type.Fingering | Type.PlacementText | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacementSmufl | Type.EmptyPlacement | Type.Fret | Type.String | Type.HammerOnPullOff | Type.HammerOnPullOff | Type.Bend | Type.Tap | Type.HeelToe | Type.HeelToe | Type.EmptyPlacement | Type.Hole | Type.Arrow | Type.Handbell | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacementSmufl | Type.EmptyPlacementSmufl | Type.HarmonMute | Type.EmptyPlacement | Type.OtherPlacementText;
+        $: {
+            id?: ID;
+        };
+    }
+    export interface TextElementData {
+        xsString: string;
+        $: {
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            underline?: Type.NumberOfLines;
+            overline?: Type.NumberOfLines;
+            lineThrough?: Type.NumberOfLines;
+            rotation?: Type.RotationDegrees;
+            letterSpacing?: Type.NumberOrNormal;
+            dir?: Type.TextDirection;
+            xmlLang?: XML.lang;
+        };
+    }
+    export interface Tie {
+        $: {
+            type_: Type.StartStop;
+            timeOnly?: Type.TimeOnly;
+        };
+    }
+    export interface Tied {
+        $: {
+            lineType?: Type.LineType;
+            dashLength?: Type.Tenths;
+            spaceLength?: Type.Tenths;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            placement?: Type.AboveBelow;
+            orientation?: Type.OverUnder;
+            bezierX?: Type.Tenths;
+            bezierY?: Type.Tenths;
+            bezierX2?: Type.Tenths;
+            bezierY2?: Type.Tenths;
+            bezierOffset?: Type.Divisions;
+            bezierOffset2?: Type.Divisions;
+            color?: Type.Color;
+            id?: ID;
+            type_: Type.TiedType;
+            number_?: Type.NumberLevel;
+        };
+    }
+    export interface TimeModification {
+        actualNotes: nonNegativeInteger;
+        normalNotes: nonNegativeInteger;
+        normalType: Type.NoteTypeValue;
+        normalDot: Type.Empty[];
+    }
+    export interface Tremolo {
+        tremoloMarks: Type.TremoloMarks;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            placement?: Type.AboveBelow;
+            smufl?: Type.SmuflGlyphName;
+            type_: Type.TremoloType;
+        };
+    }
+    export interface Tuplet {
+        tupletActual: Type.TupletPortion;
+        tupletNormal: Type.TupletPortion;
+        $: {
+            lineShape?: Type.LineShape;
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            placement?: Type.AboveBelow;
+            id?: ID;
+            type_: Type.StartStop;
+            number_?: Type.NumberLevel;
+            bracket?: Type.YesNo;
+            showNumber?: Type.ShowTuplet;
+            showType?: Type.ShowTuplet;
+        };
+    }
+    export interface TupletDot {
+        $: {
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+        };
+    }
+    export interface TupletNumber {
+        xsNonNegativeInteger: nonNegativeInteger;
+        $: {
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+        };
+    }
+    export interface TupletPortion {
+        tupletNumber: Type.TupletNumber;
+        tupletType: Type.TupletType;
+        tupletDot: Type.TupletDot[];
+    }
+    export interface TupletType {
+        noteTypeValue: Type.NoteTypeValue;
+        $: {
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+        };
+    }
+    export interface Unpitched {
+        displayStep: Type.Step;
+        displayOctave: Type.Octave;
+    }
+    export interface Wait {
+        $: {
+            player?: IDREF;
+            timeOnly?: Type.TimeOnly;
+        };
+    }
+    export interface Credit {
+        creditType: string[];
+        link: Type.Link[];
+        bookmark: Type.Bookmark[];
+        creditImageOrSequence: Type.Image | [
+            {
+                creditWordsOrCreditSymbol: Type.FormattedTextId | Type.FormattedSymbolId;
+            },
+            {
+                link?: Type.Link[];
+            },
+            {
+                bookmark?: Type.Bookmark[];
+            },
+            {
+                creditWordsOrCreditSymbol: Type.FormattedTextId | Type.FormattedSymbolId;
+            }
+        ];
+        $: {
+            id?: ID;
+            page?: positiveInteger;
+        };
+    }
+    export interface Defaults {
+        scaling: Type.Scaling;
+        concertScore: Type.Empty;
+        appearance: Type.Appearance;
+        musicFont: Type.EmptyFont;
+        wordFont: Type.EmptyFont;
+        lyricFont: Type.LyricFont[];
+        lyricLanguage: Type.LyricLanguage[];
+        pageLayout: Type.PageLayout;
+        systemLayout: Type.SystemLayout;
+        staffLayout: Type.StaffLayout[];
+    }
+    export interface EmptyFont {
+        $: {
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+        };
+    }
+    export interface GroupBarline {
+        groupBarlineValue: Type.GroupBarlineValue;
+        $: {
+            color?: Type.Color;
+        };
+    }
+    export interface GroupName {
+        xsString: string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            justify?: Type.LeftCenterRight;
+        };
+    }
+    export interface GroupSymbol {
+        groupSymbolValue: Type.GroupSymbolValue;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            color?: Type.Color;
+        };
+    }
+    export interface InstrumentLink {
+        $: {
+            id: IDREF;
+        };
+    }
+    export interface LyricFont {
+        $: {
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            number_?: NMTOKEN;
+            name?: token;
+        };
+    }
+    export interface LyricLanguage {
+        $: {
+            number_?: NMTOKEN;
+            name?: token;
+            xmlLang: XML.lang;
+        };
+    }
+    export interface Opus {
+        $: {
+            xlinkHref: XLink.href;
+            xlinkType?: XLink.type;
+            xlinkRole?: XLink.role;
+            xlinkTitle?: XLink.title;
+            xlinkShow: XLink.show;
+            xlinkActuate: XLink.actuate;
+        };
+    }
+    export interface PartGroup {
+        groupName: Type.GroupName;
+        groupNameDisplay: Type.NameDisplay;
+        groupAbbreviation: Type.GroupName;
+        groupAbbreviationDisplay: Type.NameDisplay;
+        groupSymbol: Type.GroupSymbol;
+        groupBarline: Type.GroupBarline;
+        groupTime: Type.Empty;
+        footnote: Type.FormattedText;
+        level: Type.Level;
+        $: {
+            type_: Type.StartStop;
+            number_: token;
+        };
+    }
+    export interface PartLink {
+        instrumentLink: Type.InstrumentLink[];
+        groupLink: string[];
+        $: {
+            xlinkHref: XLink.href;
+            xlinkType?: XLink.type;
+            xlinkRole?: XLink.role;
+            xlinkTitle?: XLink.title;
+            xlinkShow: XLink.show;
+            xlinkActuate: XLink.actuate;
+        };
+    }
+    export interface PartList {
+        groupOrGroup: [
+            {
+                partGroup?: Type.PartGroup;
+            }
+        ] | [
+            {
+                scorePart?: Type.ScorePart;
+            }
+        ];
+        partGroup: Type.PartGroup;
+        scorePart: Type.ScorePart;
+    }
+    export interface PartName {
+        xsString: string;
+        $: {
+            defaultX?: Type.Tenths;
+            defaultY?: Type.Tenths;
+            relativeX?: Type.Tenths;
+            relativeY?: Type.Tenths;
+            fontFamily?: Type.FontFamily;
+            fontStyle?: Type.FontStyle;
+            fontSize?: Type.FontSize;
+            fontWeight?: Type.FontWeight;
+            color?: Type.Color;
+            printObject?: Type.YesNo;
+            justify?: Type.LeftCenterRight;
+        };
+    }
+    export interface Player {
+        playerName: string;
+        $: {
+            id: ID;
+        };
+    }
+    export interface ScoreInstrument {
+        instrumentName: string;
+        instrumentAbbreviation: string;
+        instrumentSound: string;
+        virtualInstrument: Type.VirtualInstrument;
+        soloOrEnsemble: Type.Empty | Type.PositiveIntegerOrEmpty;
+        $: {
+            id: ID;
+        };
+    }
+    export interface ScorePart {
+        identification: Type.Identification;
+        partLink: Type.PartLink[];
+        partName: Type.PartName;
+        partNameDisplay: Type.NameDisplay;
+        partAbbreviation: Type.PartName;
+        partAbbreviationDisplay: Type.NameDisplay;
+        group: string[];
+        scoreInstrument: Type.ScoreInstrument[];
+        player: Type.Player[];
+        midiDevice: Type.MidiDevice;
+        midiInstrument: Type.MidiInstrument;
+        $: {
+            id: ID;
+        };
+    }
+    export interface VirtualInstrument {
+        virtualLibrary: string;
+        virtualName: string;
+    }
+    export interface Work {
+        workNumber: string;
+        workTitle: string;
+        opus: Type.Opus;
     }
 }
