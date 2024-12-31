@@ -95,6 +95,7 @@ new xml2js.Parser({
   const XML = ts.factory.createIdentifier("XML");
   const XLink = ts.factory.createIdentifier("XLink");
   const Type = ts.factory.createIdentifier("Type");
+  const Group = ts.factory.createIdentifier("Group");
 
   const complexTypes = [];
   const tsXsTypes = xsTypes.map(createTsTypeAilias);
@@ -162,6 +163,8 @@ new xml2js.Parser({
       );
     }
   });
+
+  const tsGroup = result["xs:schema"]["xs:group"].map(createTsGroup);
   complexTypes.push(
     ...result["xs:schema"]["xs:complexType"].map(createComplexType())
   );
@@ -188,6 +191,13 @@ new xml2js.Parser({
       ts.factory.createModuleBlock([...simpleTypes, ...complexTypes])
     )
   );
+  tsNodes.push(
+    ts.factory.createModuleDeclaration(
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+      Group,
+      ts.factory.createModuleBlock(tsGroup)
+    )
+  );
 
   function createTsTypeAilias(v: { name: string; value: ts.SyntaxKind }) {
     return ts.factory.createTypeAliasDeclaration(
@@ -195,6 +205,14 @@ new xml2js.Parser({
       v.name,
       undefined,
       ts.factory.createKeywordTypeNode(Number(v.value))
+    );
+  }
+  function createTsGroup(v: any) {
+    return ts.factory.createTypeAliasDeclaration(
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+      createClassName(v),
+      undefined,
+      ts.factory.createIntersectionTypeNode(createIndicator()(v))
     );
   }
   function createAttribute(v: any) {
@@ -215,148 +233,79 @@ new xml2js.Parser({
     ];
   }
 
-  function createIndicator(
-    isProperty: boolean = false,
-
-    parentClassName?: string
-  ) {
-    return (v: any) => [
-      ...(v["xs:element"]?.map(createElement(isProperty, parentClassName)) ??
-        []),
-      ...(v["xs:choice"]?.map(createChoice(isProperty, parentClassName)) ?? []),
-      ...(v["xs:group"]?.flatMap(createGroup(isProperty, parentClassName)) ??
-        []),
-      ...(v["xs:sequence"]?.flatMap(
-        createIndicator(isProperty, parentClassName)
-      ) ?? []),
-      ...(v["xs:simpleContent"]?.map(createSimpleContent) ?? []),
-    ];
+  function createIndicator(parentClassName?: string) {
+    return (v: any) => {
+      return [
+        ...(v["xs:element"]?.map(createElement(parentClassName)) ?? []),
+        ...(v["xs:choice"]?.flatMap(createChoice(parentClassName)) ?? []),
+        ...(v["xs:group"]?.flatMap(createType(Group)) ?? []),
+        ...(v["xs:sequence"]?.flatMap(createIndicator(parentClassName)) ?? []),
+        ...(v["xs:simpleContent"]?.map(createSimpleContent) ?? []),
+      ];
+    };
   }
 
   function createSimpleContent(v: any) {
-    const value = {
+    return createElement()({
       $: {
         name: v["xs:extension"][0].$.base,
         type: v["xs:extension"][0].$.base,
       },
-    };
-    return ts.factory.createPropertyDeclaration(
-      undefined,
-      createPropertyName(value),
-      undefined,
-      createType(Type)(value),
-      undefined
-    );
+    });
   }
-
-  function createGroup(isProperty: boolean = false, parentClasName?: string) {
-    // minOccurs maxOccurs
+  function createElement(parentClassName?: string) {
     return (v: any) => {
-      const group = result["xs:schema"]["xs:group"].find(
-        (group: any) => group.$.name === v.$.ref
-      );
-      return createIndicator(isProperty, parentClasName)(group);
-    };
-  }
-  function createElement(
-    isProperty: boolean = false,
-    parentClassName?: string
-  ) {
-    return (v: any) => {
-      if (v["xs:complexType"]) {
-        v.$.type = v.$.name;
-        complexTypes.push(
-          createComplexType(parentClassName)({
-            ...v["xs:complexType"][0],
-            $: v.$,
-          })
-        );
-      }
-      if (isProperty) {
-        return ts.factory.createTypeLiteralNode([
-          ts.factory.createPropertySignature(
-            undefined,
-            createPropertyName(v),
-            createUse(v),
-            createType(Type)(v)
-          ),
-        ]);
-      }
-      return ts.factory.createPropertyDeclaration(
-        undefined,
-        createPropertyName(v),
-        undefined,
-        v["xs:complexType"]
-          ? ts.factory.createTypeReferenceNode(
-              ts.factory.createIdentifier(parentClassName + createClassName(v))
-            )
-          : createType(Type)(v),
-        undefined
-      );
+      return ts.factory.createTypeLiteralNode([
+        ts.factory.createPropertyDeclaration(
+          undefined,
+          createPropertyName(v),
+          undefined,
+          v["xs:complexType"]
+            ? (() => {
+                v.$.type = v.$.name;
+                complexTypes.push(
+                  createComplexType(parentClassName)({
+                    ...v["xs:complexType"][0],
+                    $: v.$,
+                  })
+                );
+                return createOccurs(
+                  v,
+                  ts.factory.createTypeReferenceNode(
+                    ts.factory.createIdentifier(
+                      parentClassName + createClassName(v)
+                    )
+                  )
+                );
+              })()
+            : createType(Type)(v),
+          undefined
+        ),
+      ]);
     };
   }
-  function createChoice(isProperty: boolean = false, parentClassName?: string) {
-    return (v: any) => {
-      const unionTypes = ts.factory.createUnionTypeNode(
-        v.$$.map((v: any) => {
+  function createChoice(parentClassName?: string) {
+    return (choiceV: any) =>
+      ts.factory.createUnionTypeNode(
+        choiceV.$$.flatMap((v: any) => {
+          v.$ = { ...v.$, ...choiceV.$ };
           switch (v["#name"]) {
             case "xs:element":
-              return createType(Type)(v);
+              return createElement(parentClassName)(v);
             case "xs:group":
-              return ts.factory.createTupleTypeNode(
-                createGroup(true, parentClassName)(v)
-              );
+              return createType(Group)(v);
             case "xs:sequence":
-              return ts.factory.createTupleTypeNode(
-                createIndicator(true, parentClassName)(v)
-              );
+              return createIndicator(parentClassName)(v);
             case "xs:choice":
-              return createChoice(true, parentClassName)(v);
+              return createChoice(parentClassName)(v);
           }
         })
       );
-      const choiceName = R.pipe(
-        v.$$,
-        R.map((v) => {
-          switch (v["#name"]) {
-            case "xs:element":
-              return v.$.name;
-            case "xs:group":
-              return "group";
-            case "xs:sequence":
-              return "sequence";
-            case "xs:choice":
-              return "choice";
-          }
-        }),
-        R.join("-or-"),
-        R.toCamelCase()
-      );
-      if (isProperty) {
-        return ts.factory.createTypeLiteralNode([
-          ts.factory.createPropertySignature(
-            undefined,
-            choiceName,
-            undefined,
-            unionTypes
-          ),
-        ]);
-      }
-      return ts.factory.createPropertyDeclaration(
-        undefined,
-        choiceName,
-        undefined,
-        unionTypes,
-        undefined
-      );
-    };
   }
 
   function createComplexType(parentClassName?: string) {
+    //TODO: complexContent
     return (v: any) => {
-      const className = ts.factory.createIdentifier(
-        (parentClassName ?? "") + createClassName(v)
-      );
       const attributes = [
         ...(
           v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attributeGroup"] ??
@@ -368,17 +317,22 @@ new xml2js.Parser({
           v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attribute"] ?? []
         ).concat(v["xs:attribute"] ?? []),
       ];
-      return ts.factory.createInterfaceDeclaration(
+      const a = R.filter(
+        [
+          ...createIndicator(createClassName(v))(v),
+          createAttributeParameter(attributes),
+        ],
+        R.isTruthy
+      );
+
+      return ts.factory.createTypeAliasDeclaration(
         [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
-        className,
+        ts.factory.createIdentifier(
+          (parentClassName ?? "") + createClassName(v)
+        ),
         undefined,
-        undefined,
-        R.filter(
-          [
-            ...createIndicator(undefined, createClassName(v))(v),
-            createAttributeParameter(attributes),
-          ],
-          R.isTruthy
+        ts.factory.createIntersectionTypeNode(
+          R.isEmpty(a) ? [ts.factory.createNull()] : a
         )
       );
     };
@@ -386,22 +340,24 @@ new xml2js.Parser({
 
   function createAttributeParameter(attributes: any[]) {
     if (attributes.length === 0) return undefined;
-    return ts.factory.createPropertyDeclaration(
-      undefined,
-      xml2js.defaults["0.2"].attrkey ?? "",
-      undefined,
-      ts.factory.createTypeLiteralNode(
-        attributes.map((v) =>
-          ts.factory.createPropertySignature(
-            undefined,
-            createPropertyName(v),
-            createUse(v),
-            createType(Type)(v)
+    return ts.factory.createTypeLiteralNode([
+      ts.factory.createPropertyDeclaration(
+        undefined,
+        xml2js.defaults["0.2"].attrkey ?? "",
+        undefined,
+        ts.factory.createTypeLiteralNode(
+          attributes.map((v) =>
+            ts.factory.createPropertySignature(
+              undefined,
+              createPropertyName(v),
+              createUse(v),
+              createType(Type)(v)
+            )
           )
-        )
+        ),
+        undefined
       ),
-      undefined
-    );
+    ]);
   }
   function createType(module?: ts.Identifier) {
     return (v: any) => {
@@ -416,16 +372,18 @@ new xml2js.Parser({
               : (module?.escapedText ? module.escapedText + "." : "") +
                 R.pipe(typeName, R.toCamelCase(), R.capitalize())
       );
-      //TODO:
-      // 要素がなくてもいい場合オプショナルにする
-      v.$.maxOccurs ??= "1";
-      v.$.minOccurs ??= "1";
-      if (v.$.maxOccurs === "1") return typeNode;
-      if (v.$.maxOccurs === "unbounded" || parseInt(v.$.maxOccurs) > 1) {
-        return ts.factory.createArrayTypeNode(typeNode);
-      }
-      return typeNode;
+      return createOccurs(v, typeNode);
     };
+  }
+  function createOccurs(v: any, typeNode: ts.TypeNode) {
+    v.$ ??= {};
+    v.$.maxOccurs ??= "1";
+    v.$.minOccurs ??= "1";
+    if (v.$.maxOccurs === "1") return typeNode;
+    if (v.$.maxOccurs === "unbounded" || parseInt(v.$.maxOccurs) > 1) {
+      return ts.factory.createArrayTypeNode(typeNode);
+    }
+    return typeNode;
   }
   function createUse(v: any) {
     return isRequired(v)
@@ -481,15 +439,6 @@ new xml2js.Parser({
         return ts.factory.createStringLiteral(v.$.default);
       case ts.SyntaxKind.NumberKeyword:
         return ts.factory.createNumericLiteral(v.$.default);
-      case ts.SyntaxKind.UnionType:
-        switch (type.types.find((type) => type.literal.text === v.$.default)) {
-          case ts.SyntaxKind.StringLiteral:
-            return ts.factory.createStringLiteral(v.$.default);
-          case ts.SyntaxKind.NumericLiteral:
-            return ts.factory.createNumericLiteral(v.$.default);
-          default:
-            return ts.factory.createStringLiteral(v.$.default);
-        }
       default:
         return ts.factory.createStringLiteral(v.$.default);
     }
