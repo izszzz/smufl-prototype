@@ -1,22 +1,26 @@
-import * as SMUFL from ".";
+import * as SMUFL from "smufl";
 
-interface IGlyph<T> {
-  glyphName: T;
-}
-interface Constructor<T> extends IGlyph<T>, Partial<SMUFL.Point> {}
-export class Glyph<T extends keyof SMUFL.Glyphnames = keyof SMUFL.Glyphnames>
-  extends SMUFL.Point
-  implements IGlyph<T>
-{
+export class Glyph<T extends keyof SMUFL.Glyphnames> {
   bBox;
   advancedWidth;
   glyphName;
-  constructor({ glyphName, x, y }: Constructor<T>) {
-    super();
+  anchor;
+  get codepoint() {
+    return parseInt(
+      SMUFL.Glyphnames[this.glyphName].codepoint.replace("U+", ""),
+      16
+    );
+  }
+  constructor(glyphName: T) {
     this.bBox = new SMUFL.BBox(SMUFL.getBBox(glyphName));
     this.advancedWidth = SMUFL.getAdvanceWidth(glyphName);
+    this.anchor = SMUFL.getAnchor(glyphName);
     this.glyphName = glyphName;
-    if (x) this.x = x;
-    if (y) this.y = y;
+  }
+  static find(
+    type: keyof SMUFL.Ranges,
+    predicate: (glyph: SMUFL.Ranges[typeof type]["glyphs"][number]) => boolean
+  ) {
+    return new Glyph(SMUFL.Ranges[type].glyphs.find(predicate)!);
   }
 }
