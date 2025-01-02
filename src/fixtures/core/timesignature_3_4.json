@@ -1,14 +1,4 @@
 {
   "tracks": [],
-  "metaevents": [
-    {
-      "name": "Timesignature",
-      "params": [
-        {
-          "numerator": 3,
-          "denominator": 4
-        }
-      ]
-    }
-  ]
+  "timesignatures": [{ "numerator": 3, "denominator": 4 }]
 }

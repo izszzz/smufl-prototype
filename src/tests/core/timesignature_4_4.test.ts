@@ -4,46 +4,19 @@ import { importCore } from ".";
 
 describe("timesignature_4_4", async () => {
   const core = await importCore("timesignature_4_4");
+  const event = { end: 0, duration: 0, start: 0 };
   describe("Score", () => {
-    test("Event", () =>
-      expect(core).toMatchObject({
-        start: 0,
-        duration: 0,
-        end: 0,
-      }));
-    describe(".metaevents", () => {
-      test(".Timesignature", () =>
-        expect(core.metaevents.data.Timesignature).toEqual([
-          new Core.Metaevents.Map.Timesignature({
-            denominator: 4,
-            numerator: 4,
-            start: 0,
-            duration: 0,
-            end: 0,
-          }),
-        ]));
-      test(".Bpm", () =>
-        expect(core.metaevents.data.Bpm).toEqual([
-          new Core.Metaevents.Map.Bpm({
-            value: 120,
-            start: 0,
-            duration: 0,
-            end: 0,
-          }),
-        ]));
-      test(".Keysignature", () =>
-        expect(core.metaevents.data.Keysignature).toEqual([
-          new Core.Metaevents.Map.Keysignature({
-            tonality: false,
-            accidental: 0,
-            start: 0,
-            duration: 0,
-            end: 0,
-          }),
-        ]));
-    });
-    describe(".elements", () =>
-      test(".length", () => expect(core.notes).toHaveLength(0)));
+    test("Event", () => expect(core).toMatchObject(event));
+    test(".timesignatures", () =>
+      expect(core.timesignatures).toEqual([
+        new Core.Timesignature({ denominator: 4, numerator: 4, ...event }),
+      ]));
+    test(".bpms", () =>
+      expect(core.bpms).toEqual([new Core.Bpm({ value: 120, ...event })]));
+    test(".keysignatures", () =>
+      expect(core.keysignatures).toEqual([
+        new Core.Keysignature({ tonality: false, accidental: 0, ...event }),
+      ]));
     describe(".tracks", () =>
       test("length", () => expect(core.tracks).toHaveLength(0)));
   });

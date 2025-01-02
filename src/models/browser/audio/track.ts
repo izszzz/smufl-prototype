@@ -1,33 +1,40 @@
 import * as Audio from ".";
 import * as Core from "../../core";
 import * as Unit2X from "../../unit2x";
+import Soundfont2 from "../../files/soundfont2";
 
-export class Track {
-  core;
-  score;
+export class Track extends Core.Track<Audio.Note> {
   volume;
-  preset;
-  notes;
-  constructor(core: Core.Track, score: Audio.Score) {
-    this.core = core;
-    this.score = score;
-    this.volume = score.audioContext.createGain();
+  audioContext;
+  soundfont2;
+  soundfont2Preset;
+  constructor({
+    soundfont2,
+    audioContext,
+    ...core
+  }: {
+    soundfont2: Soundfont2;
+    audioContext: AudioContext;
+  } & Core.Track<Audio.Note>) {
+    super(core);
+    this.volume = audioContext.createGain();
     this.volume.gain.value = 1 / 100000;
-    this.preset = score.soundfont2.getPreset(core.preset);
-    this.notes = core.notes.map((note) => new Audio.Note(note, this));
+    this.soundfont2Preset = soundfont2.getPreset(core.preset);
+    this.audioContext = audioContext;
+    this.soundfont2 = soundfont2;
   }
   createSynths() {
-    return this.preset.instruments
+    return this.soundfont2Preset.instruments
       .flatMap((instrument) => instrument.samples)
       .map((sample) => {
-        const buffer = this.score.audioContext.createBuffer(
+        const buffer = this.audioContext.createBuffer(
           1,
           sample.data.length,
           sample.header.data.sampleRate
         );
         buffer.getChannelData(0).set(sample.data);
         return new Audio.Synth(
-          this.score.audioContext,
+          this.audioContext,
           buffer,
           sample,
           {

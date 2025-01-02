@@ -1,12 +1,14 @@
 import { describe, expect, test } from "vitest";
-import { importCore } from ".";
-import * as SMUFL from "../../models/smufl";
+import { checkNote, checkTimesignature, importCore } from ".";
 
 describe("quarter_rest", async () => {
   const core = await importCore("quarter_rest");
-  const smufl = new SMUFL.Exporter(core).export();
+  const smufl = core.toSMUFL();
   describe("Score", () => {
-    test(".core", () => expect(smufl.core).toEqual(core));
+    describe(".timesignatures", () => {
+      test(".length", () => expect(smufl.timesignatures).toHaveLength(1));
+      checkTimesignature(smufl.timesignatures[0]!);
+    });
     describe(".tracks", () => {
       test(".length", () => expect(smufl.tracks).toHaveLength(1));
       describe("[0]", () => {
@@ -24,55 +26,39 @@ describe("quarter_rest", async () => {
           test(".length", () => expect(masterbar?.bars).toHaveLength(1));
           describe("[0]", () => {
             const bar = masterbar?.bars[0];
-            describe(".Keysignature", () => {
+            describe(".keysignature", () => {
               test(".glyphs", () =>
-                expect(bar?.keysignature?.glyphs).toHaveLength(0));
+                expect(bar?.masterbar.keysignature?.glyphs).toHaveLength(0));
             });
-            describe(".Timesignature", () => {
-              test(".glyphs", () =>
-                expect(bar?.timesignature?.glyphs).toHaveLength(2));
-            });
+            describe(".timesignature", () =>
+              checkTimesignature(bar!.masterbar.timesignature));
           });
         });
       });
     });
-    describe(".rows", () => {
-      test(".length", () => expect(smufl.rows).toHaveLength(1));
+    describe(".notes", () => {
+      test(".length", () => expect(smufl.notes).toHaveLength(3));
       describe("[0]", () => {
-        const row = smufl.rows[0];
-        describe(".bars", () => {
-          test(".length", () => expect(row?.masterBars).toHaveLength(1));
+        checkNote(smufl.notes[0]!, {
+          notehead: { glyphName: "noteheadBlack" },
+          stem: { glyphName: "stem", type: "Up" },
         });
-      });
-    });
-    describe(".elements", () => {
-      test(".length", () => expect(smufl.elements).toHaveLength(3));
-      describe("[0]", () => {
-        const element = smufl.elements[0];
-        test("instanceof", () => expect(element).instanceOf(SMUFL.Note));
-        describe(".glyph", () => {
-          test(".glyphName", () =>
-            expect(element?.glyph?.glyphName).toEqual("noteQuarterUp"));
-        });
-        test(".fraction", () => expect(element?.fraction).toEqual(4));
       });
       describe("[1]", () => {
-        const element = smufl.elements[1];
-        test("instanceof", () => expect(element).instanceOf(SMUFL.Rest));
+        const note = smufl.notes[1];
         describe(".glyph", () => {
           test(".glyphName", () =>
-            expect(element?.glyph?.glyphName).toEqual("restQuarter"));
+            expect(note?.glyph?.glyphName).toEqual("restQuarter"));
         });
-        test(".fraction", () => expect(element?.fraction).toEqual(4));
+        test(".fraction", () => expect(note?.fraction).toEqual(4));
       });
       describe("[2]", () => {
-        const element = smufl.elements[2];
-        test("instanceof", () => expect(element).instanceOf(SMUFL.Rest));
+        const note = smufl.notes[2];
         describe(".glyph", () => {
           test(".glyphName", () =>
-            expect(element?.glyph?.glyphName).toEqual("restHalf"));
+            expect(note?.glyph?.glyphName).toEqual("restHalf"));
         });
-        test(".fraction", () => expect(element?.fraction).toEqual(2));
+        test(".fraction", () => expect(note?.fraction).toEqual(2));
       });
     });
   });

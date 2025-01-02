@@ -1,10 +1,7 @@
 import * as Core from ".";
-export class Bpm extends Core.Metaevent {
+export class Bpm extends Core.Event {
   value;
-  constructor({
-    value,
-    ...event
-  }: { value: number } & ConstructorParameters<typeof Core.Event>[0]) {
+  constructor({ value, ...event }: { value: number } & Core.Event) {
     super(event);
     this.value = value;
   }

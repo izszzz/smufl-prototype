@@ -1,9 +1,4 @@
 {
   "tracks": [],
-  "metaevents": [
-    {
-      "name": "Keysignature",
-      "params": [{ "tonality": true, "accidental": -3 }]
-    }
-  ]
+  "keysignatures": [{ "tonality": true, "accidental": -3 }]
 }

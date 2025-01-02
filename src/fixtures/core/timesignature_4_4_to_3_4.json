@@ -12,28 +12,18 @@
       ]
     }
   ],
-  "metaevents": [
+  "timesignatures": [
     {
-      "name": "Timesignature",
-      "params": [
-        {
-          "numerator": 4,
-          "denominator": 4,
-          "start": 0,
-          "duration": 4
-        }
-      ]
+      "numerator": 4,
+      "denominator": 4,
+      "start": 0,
+      "duration": 4
     },
     {
-      "name": "Timesignature",
-      "params": [
-        {
-          "numerator": 3,
-          "denominator": 4,
-          "start": 4,
-          "duration": 3
-        }
-      ]
+      "numerator": 3,
+      "denominator": 4,
+      "start": 4,
+      "duration": 3
     }
   ]
 }

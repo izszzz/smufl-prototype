@@ -12,7 +12,7 @@ export class Player {
     this.core = core;
     this.ctx = new AudioContext();
     this.volume = this.ctx.createGain();
-    this.score = new Audio.Score(core, soundfont2, this.ctx);
+    this.score = core.toAudio(soundfont2, this.ctx);
     console.log({ audio: this.score });
 
     this.volume.connect(this.ctx.destination);
@@ -26,19 +26,17 @@ export class Player {
           const bufferSource = synth.createBufferSource(synth.sample);
           bufferSource.playbackRate.setValueAtTime(
             Audio.calcPlaybackRate(
-              note.core.pitch,
+              note.pitch,
               note.calcBaseDetune(synth.sample)
             ),
-            this.score.audioContext.currentTime
+            track.audioContext.currentTime
           );
           synth.noteOn(
-            this.ctx.currentTime +
-              Core.convertTimeToSeconds(note.core.start, 120),
+            this.ctx.currentTime + Core.convertTimeToSeconds(note.start, 120),
             bufferSource
           );
           synth.noteOff(
-            this.ctx.currentTime +
-              Core.convertTimeToSeconds(note.core.end, 120),
+            this.ctx.currentTime + Core.convertTimeToSeconds(note.end, 120),
             bufferSource
           );
           bufferSource.connect(synth.filter);

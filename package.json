@@ -8,24 +8,31 @@
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "test": "vitest"
+    "test": "vitest",
+    "generate:mxl": "npx tsx ./src/models/files/xsd/parser.ts"
   },
   "dependencies": {
-    "@types/jszip": "^3.4.1",
+    "@types/object-mapper": "^6.2.2",
     "binary-parser": "^2.2.1",
-    "class-transformer": "^0.5.1",
+    "d3": "^7.9.0",
+    "events": "^3.3.0",
     "jszip": "^3.10.1",
+    "object-mapper": "^6.2.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "remeda": "^2.5.0",
+    "remeda": "^2.17.3",
     "ts-json-as-const": "^1.0.7",
-    "ts-pattern": "^5.1.1"
+    "ts-pattern": "^5.1.1",
+    "xml2js": "^0.6.2"
   },
   "devDependencies": {
     "@types/binary-parser": "^1.5.5",
+    "@types/d3": "^7.4.3",
+    "@types/jszip": "^3.4.0",
     "@types/node": "^20.12.8",
     "@types/react": "^18.2.66",
     "@types/react-dom": "^18.2.22",
+    "@types/xml2js": "^0.4.14",
     "@typescript-eslint/eslint-plugin": "^7.2.0",
     "@typescript-eslint/parser": "^7.2.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
@@ -35,7 +42,7 @@
     "eslint-plugin-react-refresh": "^0.4.6",
     "prettier": "3.2.5",
     "type-fest": "^4.21.0",
-    "typescript": "^5.2.2",
+    "typescript": "^5.7.2",
     "vite": "^5.2.0",
     "vitest": "^1.6.0"
   }

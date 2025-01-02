@@ -1,17 +1,18 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "./models/files/soundfont2";
-import * as SMUFL from "./models/smufl";
+
 import * as Audio from "./models/browser/audio";
-import * as SMUFL_Core from "./models/smufl/core";
-import SVGRenderer from "./models/browser/svg/renderer";
+
 import * as Browser from "./models/browser";
+
+import "./models/files/mxl/extensions/sheet";
+import "./models/sheet/extensions/svg";
 
 function App() {
   const [fontSize, setFontSize] = useState(30);
-  const [layoutType, setLayoutType] =
-    useState<SMUFL.Score["type"]>("HorizontalScroll");
+
   const [volume, setVolume] = useState(50);
-  const [svgRenderer, setSVGRenderer] = useState<SVGRenderer>();
+
   const [audioPlayer, setAudioPlayer] = useState<Audio.Player>();
   const [soundfont2, setSoundfont2] = useState<Soundfont2>();
 
@@ -23,28 +24,19 @@ function App() {
       setSoundfont2(new Soundfont2(new Uint8Array(buffer)));
     })();
   }, []);
-  useEffect(() => {
-    svgRenderer?.changeFontSize(fontSize);
-  }, [fontSize, svgRenderer]);
-  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+
+  const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
     if (!soundfont2) return;
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       if (!file) return;
-      const core = new Browser.Importer(file).core;
+      const importer = new Browser.Importer();
+      await importer.import(file);
       if (ref.current) {
-        const svgRenderer = new SVGRenderer(
-          ref.current,
-          new SMUFL_Core.Extender().extend(core),
-          {
-            fontSize,
-            layoutType,
-          }
-        );
-        setSVGRenderer(svgRenderer);
-        setAudioPlayer(new Audio.Player(core, soundfont2));
-        setFontSize(svgRenderer.options.fontSize);
+        ref.current.appendChild(importer.core.toSVG());
+        // setAudioPlayer(new Audio.Player(core, soundfont2));
+        // setFontSize(svgRenderer.options.fontSize);
       }
     }
   };
@@ -95,17 +87,7 @@ function App() {
           onChange={(e) => setFontSize(Number(e.target.value))}
         />
       </label>
-      <label>
-        layout
-        <select
-          value={layoutType}
-          onChange={(e) => setLayoutType(e.target.value as typeof layoutType)}
-        >
-          <option value="Page">Page</option>
-          <option value="VerticalScroll">VerticalScroll</option>
-          <option value="HorizontalScroll">HorizontalScroll</option>
-        </select>
-      </label>
+      <label>layout</label>
     </div>
   );
 }

@@ -3,17 +3,15 @@
     "track": {
       "preset": 0
     },
-    "metaevent": {
-      "Timesignature": {
-        "denominator": 4,
-        "numerator": 4
-      },
-      "Keysignature": {
-        "tonality": false,
-        "accidental": 0
-      },
-      "Bpm": { "value": 120 }
-    }
+    "timesignatures": {
+      "denominator": 4,
+      "numerator": 4
+    },
+    "keysignatures": {
+      "tonality": false,
+      "accidental": 0
+    },
+    "bpms": { "value": 120 }
   },
   "pitchClasses": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
   "majorWhiteNotes": [0, 2, 4, 5, 7, 9, 11],

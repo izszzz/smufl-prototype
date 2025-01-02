@@ -23,7 +23,14 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noErrorTruncation": true,
-    "strictNullChecks": true
+    "strictNullChecks": true,
+    "baseUrl": ".",
+    "paths": {
+      "smufl": ["src/models/smufl/"],
+      "sheet": ["src/models/sheet/"],
+      "core": ["src/models/core/"],
+      "mxl": ["src/models/files/mxl/"]
+    }
   },
   "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]

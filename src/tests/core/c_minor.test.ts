@@ -11,39 +11,35 @@ describe("c_minor", async () => {
         duration: 0,
         end: 0,
       }));
-    describe(".metaevents", () => {
-      test(".Timesignature", () =>
-        expect(core.metaevents.data.Timesignature).toEqual([
-          new Core.Metaevents.Map.Timesignature({
-            denominator: 4,
-            numerator: 4,
-            start: 0,
-            duration: 0,
-            end: 0,
-          }),
-        ]));
-      test(".Bpm", () =>
-        expect(core.metaevents.data.Bpm).toEqual([
-          new Core.Metaevents.Map.Bpm({
-            value: 120,
-            start: 0,
-            duration: 0,
-            end: 0,
-          }),
-        ]));
-      test(".Keysignature", () =>
-        expect(core.metaevents.data.Keysignature).toEqual([
-          new Core.Metaevents.Map.Keysignature({
-            tonality: true,
-            accidental: -3,
-            start: 0,
-            duration: 0,
-            end: 0,
-          }),
-        ]));
-    });
-    describe(".elements", () =>
-      test(".length", () => expect(core.notes).toHaveLength(0)));
+    test(".timesignatures", () =>
+      expect(core.timesignatures).toEqual([
+        new Core.Timesignature({
+          denominator: 4,
+          numerator: 4,
+          start: 0,
+          end: 0,
+          duration: 0,
+        }),
+      ]));
+    test(".bpms", () =>
+      expect(core.bpms).toEqual([
+        new Core.Bpm({
+          value: 120,
+          start: 0,
+          duration: 0,
+          end: 0,
+        }),
+      ]));
+    test(".keysignatures", () =>
+      expect(core.keysignatures).toEqual([
+        new Core.Keysignature({
+          tonality: true,
+          accidental: -3,
+          start: 0,
+          duration: 0,
+          end: 0,
+        }),
+      ]));
     describe(".tracks", () =>
       test("length", () => expect(core.tracks).toHaveLength(0)));
   });
