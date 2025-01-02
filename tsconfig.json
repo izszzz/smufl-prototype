@@ -26,7 +26,8 @@
     "strictNullChecks": true,
     "baseUrl": ".",
     "paths": {
-      "smufl": ["src/models/tsmufl/"],
+      "smufl": ["src/models/smufl/"],
+      "sheet": ["src/models/sheet/"],
       "core": ["src/models/core/"],
       "mxl": ["src/models/files/mxl/"]
     }

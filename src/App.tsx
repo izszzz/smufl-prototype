@@ -1,18 +1,18 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "./models/files/soundfont2";
-import * as SMUFL from "./models/tsmufl";
+
 import * as Audio from "./models/browser/audio";
-import SVGRenderer from "./models/browser/svg/renderer";
+
 import * as Browser from "./models/browser";
-import "./models/tsmufl/extensions/core";
-import "./models/svg/extensions/smufl";
+
+import "./models/files/mxl/extensions/sheet";
+import "./models/sheet/extensions/svg";
 
 function App() {
   const [fontSize, setFontSize] = useState(30);
-  const [layoutType, setLayoutType] =
-    useState<SMUFL.Score["type"]>("HorizontalScroll");
+
   const [volume, setVolume] = useState(50);
-  const [svgRenderer, setSVGRenderer] = useState<SVGRenderer>();
+
   const [audioPlayer, setAudioPlayer] = useState<Audio.Player>();
   const [soundfont2, setSoundfont2] = useState<Soundfont2>();
 
@@ -24,9 +24,7 @@ function App() {
       setSoundfont2(new Soundfont2(new Uint8Array(buffer)));
     })();
   }, []);
-  useEffect(() => {
-    svgRenderer?.changeFontSize(fontSize);
-  }, [fontSize, svgRenderer]);
+
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
     if (!soundfont2) return;
@@ -35,9 +33,8 @@ function App() {
       if (!file) return;
       const importer = new Browser.Importer();
       await importer.import(file);
-      console.log(importer.core.toSMUFL().toSVG());
       if (ref.current) {
-        ref.current.appendChild(importer.core.toSMUFL().toSVG());
+        ref.current.appendChild(importer.core.toSVG());
         // setAudioPlayer(new Audio.Player(core, soundfont2));
         // setFontSize(svgRenderer.options.fontSize);
       }
@@ -90,17 +87,7 @@ function App() {
           onChange={(e) => setFontSize(Number(e.target.value))}
         />
       </label>
-      <label>
-        layout
-        <select
-          value={layoutType}
-          onChange={(e) => setLayoutType(e.target.value as typeof layoutType)}
-        >
-          <option value="Page">Page</option>
-          <option value="VerticalScroll">VerticalScroll</option>
-          <option value="HorizontalScroll">HorizontalScroll</option>
-        </select>
-      </label>
+      <label>layout</label>
     </div>
   );
 }

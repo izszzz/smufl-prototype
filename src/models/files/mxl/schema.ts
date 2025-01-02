@@ -166,8 +166,7 @@ export module Type {
     export type GroupSymbolValue = "none" | "brace" | "line" | "bracket" | "square";
     export type MeasureText = token;
     export type SwingTypeValue = "16th" | "eighth";
-    export interface PartMeasure {
-        noteOrBackupOrForwardOrDirectionOrAttributesOrHarmonyOrFiguredBassOrPrintOrSoundOrListeningOrBarlineOrGroupingOrLinkOrBookmark: Type.Note | Type.Backup | Type.Forward | Type.Direction | Type.Attributes | Type.Harmony | Type.FiguredBass | Type.Print | Type.Sound | Type.Listening | Type.Barline | Type.Grouping | Type.Link | Type.Bookmark;
+    export type PartMeasure = Group.MusicData & {
         $: {
             id?: ID;
             number_: token;
@@ -176,34 +175,29 @@ export module Type {
             nonControlling?: Type.YesNo;
             width?: Type.Tenths;
         };
-    }
-    export interface ScorePartwisePart {
-        measure: PartMeasure;
+    };
+    export type ScorePartwisePart = {
+        measure: PartMeasure[];
+    } & {
         $: {
             id: IDREF;
         };
-    }
-    export interface ScorePartwise {
-        part: ScorePartwisePart;
-        work: Type.Work;
-        movementNumber: string;
-        movementTitle: string;
-        identification: Type.Identification;
-        defaults: Type.Defaults;
-        credit: Type.Credit[];
-        partList: Type.PartList;
+    };
+    export type ScorePartwise = {
+        part: ScorePartwisePart[];
+    } & Group.ScoreHeader & {
         $: {
             version: token;
         };
-    }
-    export interface MeasurePart {
-        noteOrBackupOrForwardOrDirectionOrAttributesOrHarmonyOrFiguredBassOrPrintOrSoundOrListeningOrBarlineOrGroupingOrLinkOrBookmark: Type.Note | Type.Backup | Type.Forward | Type.Direction | Type.Attributes | Type.Harmony | Type.FiguredBass | Type.Print | Type.Sound | Type.Listening | Type.Barline | Type.Grouping | Type.Link | Type.Bookmark;
+    };
+    export type MeasurePart = Group.MusicData & {
         $: {
             id: IDREF;
         };
-    }
-    export interface ScoreTimewiseMeasure {
-        part: MeasurePart;
+    };
+    export type ScoreTimewiseMeasure = {
+        part: MeasurePart[];
+    } & {
         $: {
             id?: ID;
             number_: token;
@@ -212,22 +206,17 @@ export module Type {
             nonControlling?: Type.YesNo;
             width?: Type.Tenths;
         };
-    }
-    export interface ScoreTimewise {
-        measure: ScoreTimewiseMeasure;
-        work: Type.Work;
-        movementNumber: string;
-        movementTitle: string;
-        identification: Type.Identification;
-        defaults: Type.Defaults;
-        credit: Type.Credit[];
-        partList: Type.PartList;
+    };
+    export type ScoreTimewise = {
+        measure: ScoreTimewiseMeasure[];
+    } & Group.ScoreHeader & {
         $: {
             version: token;
         };
-    }
-    export interface AttributesDirective {
+    };
+    export type AttributesDirective = {
         xsString: string;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -240,9 +229,10 @@ export module Type {
             color?: Type.Color;
             xmlLang?: XML.lang;
         };
-    }
-    export interface AccidentalText {
+    };
+    export type AccidentalText = {
         accidentalValue: Type.AccidentalValue;
+    } & {
         $: {
             justify?: Type.LeftCenterRight;
             defaultX?: Type.Tenths;
@@ -268,8 +258,8 @@ export module Type {
             xmlSpace?: XML.space;
             smufl?: Type.SmuflAccidentalGlyphName;
         };
-    }
-    export interface Coda {
+    };
+    export type Coda = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -285,9 +275,62 @@ export module Type {
             id?: ID;
             smufl?: Type.SmuflCodaGlyphName;
         };
-    }
-    export interface Dynamics {
-        pOrPpOrPppOrPpppOrPppppOrPpppppOrFOrFfOrFffOrFfffOrFffffOrFfffffOrMpOrMfOrSfOrSfpOrSfppOrFpOrRfOrRfzOrSfzOrSffzOrFzOrNOrPfOrSfzpOrOtherDynamics: Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.Empty | Type.OtherText;
+    };
+    export type Dynamics = ({
+        p: Type.Empty[];
+    } | {
+        pp: Type.Empty[];
+    } | {
+        ppp: Type.Empty[];
+    } | {
+        pppp: Type.Empty[];
+    } | {
+        ppppp: Type.Empty[];
+    } | {
+        pppppp: Type.Empty[];
+    } | {
+        f: Type.Empty[];
+    } | {
+        ff: Type.Empty[];
+    } | {
+        fff: Type.Empty[];
+    } | {
+        ffff: Type.Empty[];
+    } | {
+        fffff: Type.Empty[];
+    } | {
+        ffffff: Type.Empty[];
+    } | {
+        mp: Type.Empty[];
+    } | {
+        mf: Type.Empty[];
+    } | {
+        sf: Type.Empty[];
+    } | {
+        sfp: Type.Empty[];
+    } | {
+        sfpp: Type.Empty[];
+    } | {
+        fp: Type.Empty[];
+    } | {
+        rf: Type.Empty[];
+    } | {
+        rfz: Type.Empty[];
+    } | {
+        sfz: Type.Empty[];
+    } | {
+        sffz: Type.Empty[];
+    } | {
+        fz: Type.Empty[];
+    } | {
+        n: Type.Empty[];
+    } | {
+        pf: Type.Empty[];
+    } | {
+        sfzp: Type.Empty[];
+    } | {
+        otherDynamics: Type.OtherText[];
+    }) & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -307,10 +350,9 @@ export module Type {
             enclosure?: Type.EnclosureShape;
             id?: ID;
         };
-    }
-    export interface Empty {
-    }
-    export interface EmptyPlacement {
+    };
+    export type Empty = null;
+    export type EmptyPlacement = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -323,8 +365,8 @@ export module Type {
             color?: Type.Color;
             placement?: Type.AboveBelow;
         };
-    }
-    export interface EmptyPlacementSmufl {
+    };
+    export type EmptyPlacementSmufl = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -338,8 +380,8 @@ export module Type {
             placement?: Type.AboveBelow;
             smufl?: Type.SmuflGlyphName;
         };
-    }
-    export interface EmptyPrintStyle {
+    };
+    export type EmptyPrintStyle = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -351,8 +393,8 @@ export module Type {
             fontWeight?: Type.FontWeight;
             color?: Type.Color;
         };
-    }
-    export interface EmptyPrintStyleAlign {
+    };
+    export type EmptyPrintStyleAlign = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -366,8 +408,8 @@ export module Type {
             halign?: Type.LeftCenterRight;
             valign?: Type.Valign;
         };
-    }
-    export interface EmptyPrintStyleAlignId {
+    };
+    export type EmptyPrintStyleAlignId = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -382,8 +424,8 @@ export module Type {
             valign?: Type.Valign;
             id?: ID;
         };
-    }
-    export interface EmptyPrintObjectStyleAlign {
+    };
+    export type EmptyPrintObjectStyleAlign = {
         $: {
             printObject?: Type.YesNo;
             defaultX?: Type.Tenths;
@@ -398,8 +440,8 @@ export module Type {
             halign?: Type.LeftCenterRight;
             valign?: Type.Valign;
         };
-    }
-    export interface EmptyTrillSound {
+    };
+    export type EmptyTrillSound = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -419,8 +461,8 @@ export module Type {
             secondBeat?: Type.Percent;
             lastBeat?: Type.Percent;
         };
-    }
-    export interface HorizontalTurn {
+    };
+    export type HorizontalTurn = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -441,9 +483,10 @@ export module Type {
             lastBeat?: Type.Percent;
             slash?: Type.YesNo;
         };
-    }
-    export interface Fermata {
+    };
+    export type Fermata = {
         fermataShape: Type.FermataShape;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -457,9 +500,10 @@ export module Type {
             id?: ID;
             type_?: Type.UprightInverted;
         };
-    }
-    export interface Fingering {
+    };
+    export type Fingering = {
         xsString: string;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -474,9 +518,10 @@ export module Type {
             substitution?: Type.YesNo;
             alternate?: Type.YesNo;
         };
-    }
-    export interface FormattedSymbol {
+    };
+    export type FormattedSymbol = {
         smuflGlyphName: Type.SmuflGlyphName;
+    } & {
         $: {
             justify?: Type.LeftCenterRight;
             defaultX?: Type.Tenths;
@@ -499,9 +544,10 @@ export module Type {
             dir?: Type.TextDirection;
             enclosure?: Type.EnclosureShape;
         };
-    }
-    export interface FormattedSymbolId {
+    };
+    export type FormattedSymbolId = {
         smuflGlyphName: Type.SmuflGlyphName;
+    } & {
         $: {
             justify?: Type.LeftCenterRight;
             defaultX?: Type.Tenths;
@@ -525,9 +571,10 @@ export module Type {
             enclosure?: Type.EnclosureShape;
             id?: ID;
         };
-    }
-    export interface FormattedText {
+    };
+    export type FormattedText = {
         xsString: string;
+    } & {
         $: {
             justify?: Type.LeftCenterRight;
             defaultX?: Type.Tenths;
@@ -552,9 +599,10 @@ export module Type {
             xmlLang?: XML.lang;
             xmlSpace?: XML.space;
         };
-    }
-    export interface FormattedTextId {
+    };
+    export type FormattedTextId = {
         xsString: string;
+    } & {
         $: {
             justify?: Type.LeftCenterRight;
             defaultX?: Type.Tenths;
@@ -580,9 +628,10 @@ export module Type {
             xmlSpace?: XML.space;
             id?: ID;
         };
-    }
-    export interface Fret {
+    };
+    export type Fret = {
         xsNonNegativeInteger: nonNegativeInteger;
+    } & {
         $: {
             fontFamily?: Type.FontFamily;
             fontStyle?: Type.FontStyle;
@@ -590,9 +639,10 @@ export module Type {
             fontWeight?: Type.FontWeight;
             color?: Type.Color;
         };
-    }
-    export interface Level {
+    };
+    export type Level = {
         xsString: string;
+    } & {
         $: {
             parentheses?: Type.YesNo;
             bracket?: Type.YesNo;
@@ -600,46 +650,66 @@ export module Type {
             reference?: Type.YesNo;
             type_?: Type.StartStopSingle;
         };
-    }
-    export interface MidiDevice {
+    };
+    export type MidiDevice = {
         xsString: string;
+    } & {
         $: {
             port?: Type.Midi16;
             id?: IDREF;
         };
-    }
-    export interface MidiInstrument {
+    };
+    export type MidiInstrument = {
         midiChannel: Type.Midi16;
+    } & {
         midiName: string;
+    } & {
         midiBank: Type.Midi16384;
+    } & {
         midiProgram: Type.Midi128;
+    } & {
         midiUnpitched: Type.Midi128;
+    } & {
         volume: Type.Percent;
+    } & {
         pan: Type.RotationDegrees;
+    } & {
         elevation: Type.RotationDegrees;
+    } & {
         $: {
             id: IDREF;
         };
-    }
-    export interface NameDisplay {
-        displayTextOrAccidentalText: Type.FormattedText | Type.AccidentalText;
+    };
+    export type NameDisplay = ({
+        displayText: Type.FormattedText[];
+    } | {
+        accidentalText: Type.AccidentalText[];
+    }) & {
         $: {
             printObject?: Type.YesNo;
         };
-    }
-    export interface OtherPlay {
+    };
+    export type OtherPlay = {
         xsString: string;
+    } & {
         $: {
             type_: token;
         };
-    }
-    export interface Play {
-        ipaOrMuteOrSemiPitchedOrOtherPlay: string | Type.Mute | Type.SemiPitched | Type.OtherPlay;
+    };
+    export type Play = ({
+        ipa: string[];
+    } | {
+        mute: Type.Mute[];
+    } | {
+        semiPitched: Type.SemiPitched[];
+    } | {
+        otherPlay: Type.OtherPlay[];
+    }) & {
         $: {
             id?: IDREF;
         };
-    }
-    export interface Segno {
+    };
+    export type Segno = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -655,9 +725,10 @@ export module Type {
             id?: ID;
             smufl?: Type.SmuflSegnoGlyphName;
         };
-    }
-    export interface String {
+    };
+    export type String = {
         stringNumber: Type.StringNumber;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -670,14 +741,15 @@ export module Type {
             color?: Type.Color;
             placement?: Type.AboveBelow;
         };
-    }
-    export interface TypedText {
+    };
+    export type TypedText = {
         xsString: string;
+    } & {
         $: {
             type_?: token;
         };
-    }
-    export interface WavyLine {
+    };
+    export type WavyLine = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -696,42 +768,47 @@ export module Type {
             number_?: Type.NumberLevel;
             smufl?: Type.SmuflWavyLineGlyphName;
         };
-    }
-    export interface Attributes {
+    };
+    export type Attributes = {
         divisions: Type.PositiveDivisions;
+    } & {
         key: Type.Key[];
+    } & {
         time: Type.Time[];
+    } & {
         staves: nonNegativeInteger;
+    } & {
         partSymbol: Type.PartSymbol;
+    } & {
         instruments: nonNegativeInteger;
+    } & {
         clef: Type.Clef[];
+    } & {
         staffDetails: Type.StaffDetails[];
-        directive: AttributesDirective;
+    } & {
+        directive: AttributesDirective[];
+    } & {
         measureStyle: Type.MeasureStyle[];
-        transposeOrForPart: Type.Transpose[] | Type.ForPart[];
-        footnote: Type.FormattedText;
-        level: Type.Level;
-    }
-    export interface BeatRepeat {
-        exceptVoice: string[];
-        slashType: Type.NoteTypeValue;
-        slashDot: Type.Empty[];
+    } & ({
+        transpose: Type.Transpose[];
+    } | {
+        forPart: Type.ForPart[];
+    }) & Group.Editorial;
+    export type BeatRepeat = Group.Slash & {
         $: {
             type_: Type.StartStop;
             slashes?: positiveInteger;
             useDots?: Type.YesNo;
         };
-    }
-    export interface Cancel {
+    };
+    export type Cancel = {
         fifths: Type.Fifths;
+    } & {
         $: {
             location?: Type.CancelLocation;
         };
-    }
-    export interface Clef {
-        sign: Type.ClefSign;
-        line: Type.StaffLinePosition;
-        clefOctaveChange: integer;
+    };
+    export type Clef = Group.Clef & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -749,52 +826,33 @@ export module Type {
             size?: Type.SymbolSize;
             afterBarline?: Type.YesNo;
         };
-    }
-    export interface Double {
+    };
+    export type Double = {
         $: {
             above?: Type.YesNo;
         };
-    }
-    export interface ForPart {
+    };
+    export type ForPart = {
         partClef: Type.PartClef;
+    } & {
         partTranspose: Type.PartTranspose;
+    } & {
         $: {
             id?: ID;
             number_?: Type.StaffNumber;
         };
-    }
-    export interface Interchangeable {
+    };
+    export type Interchangeable = {
         timeRelation: Type.TimeRelation;
-        beats: string;
-        beatType: string;
+    } & Group.TimeSignature[] & {
         $: {
             symbol_?: Type.TimeSymbol;
             separator?: Type.TimeSeparator;
         };
-    }
-    export interface Key {
+    };
+    export type Key = {
         keyOctave: Type.KeyOctave[];
-        groupOrGroup: [
-            {
-                cancel?: Type.Cancel;
-            },
-            {
-                fifths?: Type.Fifths;
-            },
-            {
-                mode?: Type.Mode;
-            }
-        ] | [
-            {
-                keyStep?: Type.Step;
-            },
-            {
-                keyAlter?: Type.Semitones;
-            },
-            {
-                keyAccidental?: Type.KeyAccidental;
-            }
-        ];
+    } & (Group.TraditionalKey | Group.NonTraditionalKey[]) & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -809,21 +867,23 @@ export module Type {
             id?: ID;
             number_?: Type.StaffNumber;
         };
-    }
-    export interface KeyAccidental {
+    };
+    export type KeyAccidental = {
         accidentalValue: Type.AccidentalValue;
+    } & {
         $: {
             smufl?: Type.SmuflAccidentalGlyphName;
         };
-    }
-    export interface KeyOctave {
+    };
+    export type KeyOctave = {
         octave: Type.Octave;
+    } & {
         $: {
             number_: positiveInteger;
             cancel?: Type.YesNo;
         };
-    }
-    export interface LineDetail {
+    };
+    export type LineDetail = {
         $: {
             color?: Type.Color;
             lineType?: Type.LineType;
@@ -831,16 +891,24 @@ export module Type {
             line: Type.StaffLine;
             width?: Type.Tenths;
         };
-    }
-    export interface MeasureRepeat {
+    };
+    export type MeasureRepeat = {
         positiveIntegerOrEmpty: Type.PositiveIntegerOrEmpty;
+    } & {
         $: {
             type_: Type.StartStop;
             slashes?: positiveInteger;
         };
-    }
-    export interface MeasureStyle {
-        multipleRestOrMeasureRepeatOrBeatRepeatOrSlash: Type.MultipleRest | Type.MeasureRepeat | Type.BeatRepeat | Type.Slash;
+    };
+    export type MeasureStyle = ({
+        multipleRest: Type.MultipleRest;
+    } | {
+        measureRepeat: Type.MeasureRepeat;
+    } | {
+        beatRepeat: Type.BeatRepeat;
+    } | {
+        slash: Type.Slash;
+    }) & {
         $: {
             fontFamily?: Type.FontFamily;
             fontStyle?: Type.FontStyle;
@@ -850,20 +918,18 @@ export module Type {
             id?: ID;
             number_?: Type.StaffNumber;
         };
-    }
-    export interface MultipleRest {
+    };
+    export type MultipleRest = {
         xsPositiveInteger: positiveInteger;
+    } & {
         $: {
             useSymbols?: Type.YesNo;
         };
-    }
-    export interface PartClef {
-        sign: Type.ClefSign;
-        line: Type.StaffLinePosition;
-        clefOctaveChange: integer;
-    }
-    export interface PartSymbol {
+    };
+    export type PartClef = Group.Clef;
+    export type PartSymbol = {
         groupSymbolValue: Type.GroupSymbolValue;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -873,63 +939,52 @@ export module Type {
             topStaff?: Type.StaffNumber;
             bottomStaff?: Type.StaffNumber;
         };
-    }
-    export interface PartTranspose {
-        diatonic: integer;
-        chromatic: Type.Semitones;
-        octaveChange: integer;
-        double: Type.Double;
-    }
-    export interface Slash {
-        exceptVoice: string[];
-        slashType: Type.NoteTypeValue;
-        slashDot: Type.Empty[];
+    };
+    export type PartTranspose = Group.Transpose;
+    export type Slash = Group.Slash & {
         $: {
             type_: Type.StartStop;
             useDots?: Type.YesNo;
             useStems?: Type.YesNo;
         };
-    }
-    export interface StaffDetails {
+    };
+    export type StaffDetails = {
         staffType: Type.StaffType;
+    } & {
         staffTuning: Type.StaffTuning[];
+    } & {
         capo: nonNegativeInteger;
+    } & {
         staffSize: Type.StaffSize;
+    } & {
         staffLines: nonNegativeInteger;
+    } & {
         lineDetail: Type.LineDetail[];
+    } & {
         $: {
             printObject?: Type.YesNo;
             printSpacing?: Type.YesNo;
             number_?: Type.StaffNumber;
             showFrets?: Type.ShowFrets;
         };
-    }
-    export interface StaffSize {
+    };
+    export type StaffSize = {
         nonNegativeDecimal: Type.NonNegativeDecimal;
+    } & {
         $: {
             scaling?: Type.NonNegativeDecimal;
         };
-    }
-    export interface StaffTuning {
-        tuningStep: Type.Step;
-        tuningAlter: Type.Semitones;
-        tuningOctave: Type.Octave;
+    };
+    export type StaffTuning = Group.Tuning & {
         $: {
             line: Type.StaffLine;
         };
-    }
-    export interface Time {
-        sequenceOrSenzaMisura: [
-            {
-                interchangeable?: Type.Interchangeable;
-            },
-            {
-                beats?: string;
-            },
-            {
-                beatType?: string;
-            }
-        ] | string;
+    };
+    export type Time = ({
+        interchangeable: Type.Interchangeable;
+    } | Group.TimeSignature[] | {
+        senzaMisura: string;
+    }) & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -948,33 +1003,35 @@ export module Type {
             symbol_?: Type.TimeSymbol;
             separator?: Type.TimeSeparator;
         };
-    }
-    export interface Transpose {
-        diatonic: integer;
-        chromatic: Type.Semitones;
-        octaveChange: integer;
-        double: Type.Double;
+    };
+    export type Transpose = Group.Transpose & {
         $: {
             id?: ID;
             number_?: Type.StaffNumber;
         };
-    }
-    export interface BarStyleColor {
+    };
+    export type BarStyleColor = {
         barStyle: Type.BarStyle;
+    } & {
         $: {
             color?: Type.Color;
         };
-    }
-    export interface Barline {
+    };
+    export type Barline = {
         barStyle: Type.BarStyleColor;
+    } & {
         wavyLine: Type.WavyLine;
+    } & {
         segno: Type.Segno;
+    } & {
         coda: Type.Coda;
+    } & {
         fermata: Type.Fermata[];
+    } & {
         ending: Type.Ending;
+    } & {
         repeat: Type.Repeat;
-        footnote: Type.FormattedText;
-        level: Type.Level;
+    } & Group.Editorial & {
         $: {
             id?: ID;
             location: Type.RightLeftMiddle;
@@ -982,9 +1039,10 @@ export module Type {
             coda?: token;
             divisions?: Type.Divisions;
         };
-    }
-    export interface Ending {
+    };
+    export type Ending = {
         xsString: string;
+    } & {
         $: {
             printObject?: Type.YesNo;
             defaultX?: Type.Tenths;
@@ -1003,27 +1061,27 @@ export module Type {
             textX?: Type.Tenths;
             textY?: Type.Tenths;
         };
-    }
-    export interface Repeat {
+    };
+    export type Repeat = {
         $: {
             direction: Type.BackwardForward;
             times?: nonNegativeInteger;
             afterJump?: Type.YesNo;
             winged?: Type.Winged;
         };
-    }
-    export interface Accord {
-        tuningStep: Type.Step;
-        tuningAlter: Type.Semitones;
-        tuningOctave: Type.Octave;
+    };
+    export type Accord = Group.Tuning & {
         $: {
             string_?: Type.StringNumber;
         };
-    }
-    export interface AccordionRegistration {
+    };
+    export type AccordionRegistration = {
         accordionHigh: Type.Empty;
+    } & {
         accordionMiddle: Type.AccordionMiddle;
+    } & {
         accordionLow: Type.Empty;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1038,23 +1096,27 @@ export module Type {
             valign?: Type.Valign;
             id?: ID;
         };
-    }
-    export interface Barre {
+    };
+    export type Barre = {
         $: {
             color?: Type.Color;
             type_: Type.StartStop;
         };
-    }
-    export interface Bass {
+    };
+    export type Bass = {
         bassSeparator: Type.StyleText;
+    } & {
         bassStep: Type.BassStep;
+    } & {
         bassAlter: Type.HarmonyAlter;
+    } & {
         $: {
             arrangement?: Type.HarmonyArrangement;
         };
-    }
-    export interface HarmonyAlter {
+    };
+    export type HarmonyAlter = {
         semitones: Type.Semitones;
+    } & {
         $: {
             printObject?: Type.YesNo;
             defaultX?: Type.Tenths;
@@ -1068,9 +1130,10 @@ export module Type {
             color?: Type.Color;
             location?: Type.LeftRight;
         };
-    }
-    export interface BassStep {
+    };
+    export type BassStep = {
         step: Type.Step;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1083,18 +1146,16 @@ export module Type {
             color?: Type.Color;
             text?: token;
         };
-    }
-    export interface Beater {
+    };
+    export type Beater = {
         beaterValue: Type.BeaterValue;
+    } & {
         $: {
             tip?: Type.TipDirection;
         };
-    }
-    export interface BeatUnitTied {
-        beatUnit: Type.NoteTypeValue;
-        beatUnitDot: Type.Empty[];
-    }
-    export interface Bracket {
+    };
+    export type BeatUnitTied = Group.BeatUnit;
+    export type Bracket = {
         $: {
             lineType?: Type.LineType;
             dashLength?: Type.Tenths;
@@ -1110,8 +1171,8 @@ export module Type {
             lineEnd: Type.LineEnd;
             endLength?: Type.Tenths;
         };
-    }
-    export interface Dashes {
+    };
+    export type Dashes = {
         $: {
             dashLength?: Type.Tenths;
             spaceLength?: Type.Tenths;
@@ -1124,17 +1185,21 @@ export module Type {
             type_: Type.StartStopContinue;
             number_?: Type.NumberLevel;
         };
-    }
-    export interface Degree {
+    };
+    export type Degree = {
         degreeValue: Type.DegreeValue;
+    } & {
         degreeAlter: Type.DegreeAlter;
+    } & {
         degreeType: Type.DegreeType;
+    } & {
         $: {
             printObject?: Type.YesNo;
         };
-    }
-    export interface DegreeAlter {
+    };
+    export type DegreeAlter = {
         semitones: Type.Semitones;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1147,9 +1212,10 @@ export module Type {
             color?: Type.Color;
             plusMinus?: Type.YesNo;
         };
-    }
-    export interface DegreeType {
+    };
+    export type DegreeType = {
         degreeTypeValue: Type.DegreeTypeValue;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1162,9 +1228,10 @@ export module Type {
             color?: Type.Color;
             text?: token;
         };
-    }
-    export interface DegreeValue {
+    };
+    export type DegreeValue = {
         xsPositiveInteger: positiveInteger;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1178,55 +1245,107 @@ export module Type {
             symbol_?: Type.DegreeSymbolValue;
             text?: token;
         };
-    }
-    export interface Direction {
+    };
+    export type Direction = {
         directionType: Type.DirectionType[];
+    } & {
         offset: Type.Offset;
+    } & {
         sound: Type.Sound;
+    } & {
         listening: Type.Listening;
-        footnote: Type.FormattedText;
-        level: Type.Level;
-        voice: string;
-        staff: positiveInteger;
+    } & Group.EditorialVoiceDirection & Group.Staff & {
         $: {
             placement?: Type.AboveBelow;
             directive?: Type.YesNo;
             system?: Type.SystemRelation;
             id?: ID;
         };
-    }
-    export interface DirectionType {
-        rehearsalOrSegnoOrCodaOrChoiceOrWedgeOrDynamicsOrDashesOrBracketOrPedalOrMetronomeOrOctaveShiftOrHarpPedalsOrDampOrDampAllOrEyeglassesOrStringMuteOrScordaturaOrImageOrPrincipalVoiceOrPercussionOrAccordionRegistrationOrStaffDivideOrOtherDirection: Type.FormattedTextId[] | Type.Segno[] | Type.Coda[] | {
-            wordsOrSymbol: Type.FormattedTextId | Type.FormattedSymbolId;
-        } | Type.Wedge | Type.Dynamics[] | Type.Dashes | Type.Bracket | Type.Pedal | Type.Metronome | Type.OctaveShift | Type.HarpPedals | Type.EmptyPrintStyleAlignId | Type.EmptyPrintStyleAlignId | Type.EmptyPrintStyleAlignId | Type.StringMute | Type.Scordatura | Type.Image | Type.PrincipalVoice | Type.Percussion[] | Type.AccordionRegistration | Type.StaffDivide | Type.OtherDirection;
+    };
+    export type DirectionType = ({
+        rehearsal: Type.FormattedTextId[];
+    } | {
+        segno: Type.Segno[];
+    } | {
+        coda: Type.Coda[];
+    } | ({
+        words: Type.FormattedTextId[];
+    } | {
+        symbol_: Type.FormattedSymbolId[];
+    }) | {
+        wedge: Type.Wedge;
+    } | {
+        dynamics: Type.Dynamics[];
+    } | {
+        dashes: Type.Dashes;
+    } | {
+        bracket: Type.Bracket;
+    } | {
+        pedal: Type.Pedal;
+    } | {
+        metronome: Type.Metronome;
+    } | {
+        octaveShift: Type.OctaveShift;
+    } | {
+        harpPedals: Type.HarpPedals;
+    } | {
+        damp: Type.EmptyPrintStyleAlignId;
+    } | {
+        dampAll: Type.EmptyPrintStyleAlignId;
+    } | {
+        eyeglasses: Type.EmptyPrintStyleAlignId;
+    } | {
+        stringMute: Type.StringMute;
+    } | {
+        scordatura: Type.Scordatura;
+    } | {
+        image: Type.Image;
+    } | {
+        principalVoice: Type.PrincipalVoice;
+    } | {
+        percussion: Type.Percussion[];
+    } | {
+        accordionRegistration: Type.AccordionRegistration;
+    } | {
+        staffDivide: Type.StaffDivide;
+    } | {
+        otherDirection: Type.OtherDirection;
+    }) & {
         $: {
             id?: ID;
         };
-    }
-    export interface Effect {
+    };
+    export type Effect = {
         effectValue: Type.EffectValue;
+    } & {
         $: {
             smufl?: Type.SmuflPictogramGlyphName;
         };
-    }
-    export interface Feature {
+    };
+    export type Feature = {
         xsString: string;
+    } & {
         $: {
             type_?: token;
         };
-    }
-    export interface FirstFret {
+    };
+    export type FirstFret = {
         xsPositiveInteger: positiveInteger;
+    } & {
         $: {
             text?: token;
             location?: Type.LeftRight;
         };
-    }
-    export interface Frame {
+    };
+    export type Frame = {
         frameStrings: positiveInteger;
+    } & {
         frameFrets: positiveInteger;
+    } & {
         firstFret: Type.FirstFret;
+    } & {
         frameNote: Type.FrameNote[];
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1240,39 +1359,38 @@ export module Type {
             width?: Type.Tenths;
             unplayed?: token;
         };
-    }
-    export interface FrameNote {
+    };
+    export type FrameNote = {
         string_: Type.String;
+    } & {
         fret: Type.Fret;
+    } & {
         fingering: Type.Fingering;
+    } & {
         barre: Type.Barre;
-    }
-    export interface Glass {
+    };
+    export type Glass = {
         glassValue: Type.GlassValue;
+    } & {
         $: {
             smufl?: Type.SmuflPictogramGlyphName;
         };
-    }
-    export interface Grouping {
+    };
+    export type Grouping = {
         feature: Type.Feature[];
+    } & {
         $: {
             id?: ID;
             type_: Type.StartStopSingle;
             number_: token;
             memberOf?: token;
         };
-    }
-    export interface Harmony {
+    };
+    export type Harmony = {
         frame: Type.Frame;
+    } & {
         offset: Type.Offset;
-        kind: Type.Kind;
-        inversion: Type.Inversion;
-        bass: Type.Bass;
-        degree: Type.Degree[];
-        rootOrNumeralOrFunction: Type.Root | Type.Numeral | Type.StyleText;
-        footnote: Type.FormattedText;
-        level: Type.Level;
-        staff: positiveInteger;
+    } & Group.HarmonyChord[] & Group.Editorial & Group.Staff & {
         $: {
             printObject?: Type.YesNo;
             defaultX?: Type.Tenths;
@@ -1291,9 +1409,10 @@ export module Type {
             printFrame?: Type.YesNo;
             arrangement?: Type.HarmonyArrangement;
         };
-    }
-    export interface HarpPedals {
+    };
+    export type HarpPedals = {
         pedalTuning: Type.PedalTuning[];
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1308,8 +1427,8 @@ export module Type {
             valign?: Type.Valign;
             id?: ID;
         };
-    }
-    export interface Image {
+    };
+    export type Image = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1323,17 +1442,15 @@ export module Type {
             width?: Type.Tenths;
             id?: ID;
         };
-    }
-    export interface InstrumentChange {
-        instrumentSound: string;
-        virtualInstrument: Type.VirtualInstrument;
-        soloOrEnsemble: Type.Empty | Type.PositiveIntegerOrEmpty;
+    };
+    export type InstrumentChange = Group.VirtualInstrumentData & {
         $: {
             id: IDREF;
         };
-    }
-    export interface Inversion {
+    };
+    export type Inversion = {
         xsNonNegativeInteger: nonNegativeInteger;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1346,9 +1463,10 @@ export module Type {
             color?: Type.Color;
             text?: token;
         };
-    }
-    export interface Kind {
+    };
+    export type Kind = {
         kindValue: Type.KindValue;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1367,13 +1485,17 @@ export module Type {
             parenthesesDegrees?: Type.YesNo;
             bracketDegrees?: Type.YesNo;
         };
-    }
-    export interface Listening {
+    };
+    export type Listening = {
         offset: Type.Offset;
-        syncOrOtherListening: Type.Sync | Type.OtherListening;
-    }
-    export interface MeasureNumbering {
+    } & ({
+        sync: Type.Sync[];
+    } | {
+        otherListening: Type.OtherListening[];
+    });
+    export type MeasureNumbering = {
         measureNumberingValue: Type.MeasureNumberingValue;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1391,57 +1513,36 @@ export module Type {
             multipleRestAlways?: Type.YesNo;
             multipleRestRange?: Type.YesNo;
         };
-    }
-    export interface Membrane {
+    };
+    export type Membrane = {
         membraneValue: Type.MembraneValue;
+    } & {
         $: {
             smufl?: Type.SmuflPictogramGlyphName;
         };
-    }
-    export interface Metal {
+    };
+    export type Metal = {
         metalValue: Type.MetalValue;
+    } & {
         $: {
             smufl?: Type.SmuflPictogramGlyphName;
         };
-    }
-    export interface Metronome {
-        sequenceOrSequence: [
-            {
-                beatUnitTied?: Type.BeatUnitTied[];
-            },
-            {
-                perMinuteOrSequence: Type.PerMinute | [
-                    {
-                        beatUnitTied?: Type.BeatUnitTied[];
-                    },
-                    {
-                        beatUnit?: Type.NoteTypeValue;
-                    },
-                    {
-                        beatUnitDot?: Type.Empty[];
-                    }
-                ];
-            },
-            {
-                beatUnit?: Type.NoteTypeValue;
-            },
-            {
-                beatUnitDot?: Type.Empty[];
-            }
-        ] | [
-            {
-                metronomeArrows?: Type.Empty;
-            },
-            {
-                metronomeNote?: Type.MetronomeNote[];
-            },
-            {
-                metronomeRelation?: string;
-            },
-            {
-                metronomeNote?: Type.MetronomeNote[];
-            }
-        ];
+    };
+    export type Metronome = ({
+        beatUnitTied: Type.BeatUnitTied[];
+    } | ({
+        perMinute: Type.PerMinute;
+    } | {
+        beatUnitTied: Type.BeatUnitTied[];
+    } | Group.BeatUnit) | Group.BeatUnit | {
+        metronomeArrows: Type.Empty;
+    } | {
+        metronomeNote: Type.MetronomeNote[];
+    } | {
+        metronomeRelation: string;
+    } | {
+        metronomeNote: Type.MetronomeNote[];
+    }) & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1459,41 +1560,50 @@ export module Type {
             id?: ID;
             parentheses?: Type.YesNo;
         };
-    }
-    export interface MetronomeBeam {
+    };
+    export type MetronomeBeam = {
         beamValue: Type.BeamValue;
+    } & {
         $: {
             number_: Type.BeamLevel;
         };
-    }
-    export interface MetronomeNote {
+    };
+    export type MetronomeNote = {
         metronomeType: Type.NoteTypeValue;
+    } & {
         metronomeDot: Type.Empty[];
+    } & {
         metronomeBeam: Type.MetronomeBeam[];
+    } & {
         metronomeTied: Type.MetronomeTied;
+    } & {
         metronomeTuplet: Type.MetronomeTuplet;
-    }
-    export interface MetronomeTied {
+    };
+    export type MetronomeTied = {
         $: {
             type_: Type.StartStop;
         };
-    }
-    export interface MetronomeTuplet {
-    }
-    export interface Numeral {
+    };
+    export type MetronomeTuplet = null;
+    export type Numeral = {
         numeralRoot: Type.NumeralRoot;
+    } & {
         numeralAlter: Type.HarmonyAlter;
+    } & {
         numeralKey: Type.NumeralKey;
-    }
-    export interface NumeralKey {
+    };
+    export type NumeralKey = {
         numeralFifths: Type.Fifths;
+    } & {
         numeralMode: Type.NumeralMode;
+    } & {
         $: {
             printObject?: Type.YesNo;
         };
-    }
-    export interface NumeralRoot {
+    };
+    export type NumeralRoot = {
         numeralValue: Type.NumeralValue;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1506,8 +1616,8 @@ export module Type {
             color?: Type.Color;
             text?: token;
         };
-    }
-    export interface OctaveShift {
+    };
+    export type OctaveShift = {
         $: {
             dashLength?: Type.Tenths;
             spaceLength?: Type.Tenths;
@@ -1525,15 +1635,17 @@ export module Type {
             number_?: Type.NumberLevel;
             size: positiveInteger;
         };
-    }
-    export interface Offset {
+    };
+    export type Offset = {
         divisions: Type.Divisions;
+    } & {
         $: {
             sound?: Type.YesNo;
         };
-    }
-    export interface OtherDirection {
+    };
+    export type OtherDirection = {
         xsString: string;
+    } & {
         $: {
             printObject?: Type.YesNo;
             defaultX?: Type.Tenths;
@@ -1550,16 +1662,17 @@ export module Type {
             smufl?: Type.SmuflGlyphName;
             id?: ID;
         };
-    }
-    export interface OtherListening {
+    };
+    export type OtherListening = {
         xsString: string;
+    } & {
         $: {
             type_: token;
             player?: IDREF;
             timeOnly?: Type.TimeOnly;
         };
-    }
-    export interface Pedal {
+    };
+    export type Pedal = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1579,22 +1692,45 @@ export module Type {
             sign?: Type.YesNo;
             abbreviated?: Type.YesNo;
         };
-    }
-    export interface PedalTuning {
+    };
+    export type PedalTuning = {
         pedalStep: Type.Step;
+    } & {
         pedalAlter: Type.Semitones;
-    }
-    export interface PerMinute {
+    };
+    export type PerMinute = {
         xsString: string;
+    } & {
         $: {
             fontFamily?: Type.FontFamily;
             fontStyle?: Type.FontStyle;
             fontSize?: Type.FontSize;
             fontWeight?: Type.FontWeight;
         };
-    }
-    export interface Percussion {
-        glassOrMetalOrWoodOrPitchedOrMembraneOrEffectOrTimpaniOrBeaterOrStickOrStickLocationOrOtherPercussion: Type.Glass | Type.Metal | Type.Wood | Type.Pitched | Type.Membrane | Type.Effect | Type.Timpani | Type.Beater | Type.Stick | Type.StickLocation | Type.OtherText;
+    };
+    export type Percussion = ({
+        glass: Type.Glass;
+    } | {
+        metal: Type.Metal;
+    } | {
+        wood: Type.Wood;
+    } | {
+        pitched: Type.Pitched;
+    } | {
+        membrane: Type.Membrane;
+    } | {
+        effect: Type.Effect;
+    } | {
+        timpani: Type.Timpani;
+    } | {
+        beater: Type.Beater;
+    } | {
+        stick: Type.Stick;
+    } | {
+        stickLocation: Type.StickLocation;
+    } | {
+        otherPercussion: Type.OtherText;
+    }) & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1610,15 +1746,17 @@ export module Type {
             enclosure?: Type.EnclosureShape;
             id?: ID;
         };
-    }
-    export interface Pitched {
+    };
+    export type Pitched = {
         pitchedValue: Type.PitchedValue;
+    } & {
         $: {
             smufl?: Type.SmuflPictogramGlyphName;
         };
-    }
-    export interface PrincipalVoice {
+    };
+    export type PrincipalVoice = {
         xsString: string;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1635,15 +1773,16 @@ export module Type {
             type_: Type.StartStop;
             symbol_: Type.PrincipalVoiceSymbol;
         };
-    }
-    export interface Print {
+    };
+    export type Print = {
         measureLayout: Type.MeasureLayout;
+    } & {
         measureNumbering: Type.MeasureNumbering;
+    } & {
         partNameDisplay: Type.NameDisplay;
+    } & {
         partAbbreviationDisplay: Type.NameDisplay;
-        pageLayout: Type.PageLayout;
-        systemLayout: Type.SystemLayout;
-        staffLayout: Type.StaffLayout[];
+    } & Group.Layout & {
         $: {
             staffSpacing?: Type.Tenths;
             newSystem?: Type.YesNo;
@@ -1652,13 +1791,15 @@ export module Type {
             pageNumber?: token;
             id?: ID;
         };
-    }
-    export interface Root {
+    };
+    export type Root = {
         rootStep: Type.RootStep;
+    } & {
         rootAlter: Type.HarmonyAlter;
-    }
-    export interface RootStep {
+    };
+    export type RootStep = {
         step: Type.Step;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1671,20 +1812,27 @@ export module Type {
             color?: Type.Color;
             text?: token;
         };
-    }
-    export interface Scordatura {
+    };
+    export type Scordatura = {
         accord: Type.Accord[];
+    } & {
         $: {
             id?: ID;
         };
-    }
-    export interface Sound {
+    };
+    export type Sound = {
         swing: Type.Swing;
+    } & {
         offset: Type.Offset;
+    } & {
         instrumentChange: Type.InstrumentChange;
+    } & {
         midiDevice: Type.MidiDevice;
+    } & {
         midiInstrument: Type.MidiInstrument;
+    } & {
         play: Type.Play;
+    } & {
         $: {
             id?: ID;
             tempo?: Type.NonNegativeDecimal;
@@ -1705,8 +1853,8 @@ export module Type {
             softPedal?: Type.YesNoNumber;
             sostenutoPedal?: Type.YesNoNumber;
         };
-    }
-    export interface StaffDivide {
+    };
+    export type StaffDivide = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1722,17 +1870,19 @@ export module Type {
             id?: ID;
             type_: Type.StaffDivideSymbol;
         };
-    }
-    export interface Stick {
+    };
+    export type Stick = {
         stickType: Type.StickType;
+    } & {
         stickMaterial: Type.StickMaterial;
+    } & {
         $: {
             tip?: Type.TipDirection;
             parentheses?: Type.YesNo;
             dashedCircle?: Type.YesNo;
         };
-    }
-    export interface StringMute {
+    };
+    export type StringMute = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1748,35 +1898,32 @@ export module Type {
             id?: ID;
             type_: Type.OnOff;
         };
-    }
-    export interface Swing {
+    };
+    export type Swing = {
         swingStyle: string;
-        straightOrSequence: Type.Empty | [
-            {
-                first?: positiveInteger;
-            },
-            {
-                second?: positiveInteger;
-            },
-            {
-                swingType?: Type.SwingTypeValue;
-            }
-        ];
-    }
-    export interface Sync {
+    } & ({
+        straight: Type.Empty;
+    } | {
+        first: positiveInteger;
+    } | {
+        second: positiveInteger;
+    } | {
+        swingType: Type.SwingTypeValue;
+    });
+    export type Sync = {
         $: {
             type_: Type.SyncType;
             latency?: Type.Milliseconds;
             player?: IDREF;
             timeOnly?: Type.TimeOnly;
         };
-    }
-    export interface Timpani {
+    };
+    export type Timpani = {
         $: {
             smufl?: Type.SmuflPictogramGlyphName;
         };
-    }
-    export interface Wedge {
+    };
+    export type Wedge = {
         $: {
             lineType?: Type.LineType;
             dashLength?: Type.Tenths;
@@ -1792,128 +1939,153 @@ export module Type {
             spread?: Type.Tenths;
             niente?: Type.YesNo;
         };
-    }
-    export interface Wood {
+    };
+    export type Wood = {
         woodValue: Type.WoodValue;
+    } & {
         $: {
             smufl?: Type.SmuflPictogramGlyphName;
         };
-    }
-    export interface Encoding {
-        encodingDateOrEncoderOrSoftwareOrEncodingDescriptionOrSupports: Type.YyyyMmDd | Type.TypedText | string | string | Type.Supports;
-    }
-    export interface Identification {
+    };
+    export type Encoding = ({
+        encodingDate: Type.YyyyMmDd[];
+    } | {
+        encoder: Type.TypedText[];
+    } | {
+        software: string[];
+    } | {
+        encodingDescription: string[];
+    } | {
+        supports: Type.Supports[];
+    });
+    export type Identification = {
         creator: Type.TypedText[];
+    } & {
         rights: Type.TypedText[];
+    } & {
         encoding: Type.Encoding;
+    } & {
         source: string;
+    } & {
         relation: Type.TypedText[];
+    } & {
         miscellaneous: Type.Miscellaneous;
-    }
-    export interface Miscellaneous {
+    };
+    export type Miscellaneous = {
         miscellaneousField: Type.MiscellaneousField[];
-    }
-    export interface MiscellaneousField {
+    };
+    export type MiscellaneousField = {
         xsString: string;
+    } & {
         $: {
             name: token;
         };
-    }
-    export interface Supports {
+    };
+    export type Supports = {
         $: {
             type_: Type.YesNo;
             element: NMTOKEN;
             attribute?: NMTOKEN;
             value?: token;
         };
-    }
-    export interface Appearance {
+    };
+    export type Appearance = {
         lineWidth: Type.LineWidth[];
+    } & {
         noteSize: Type.NoteSize[];
+    } & {
         distance: Type.Distance[];
+    } & {
         glyph: Type.Glyph[];
+    } & {
         otherAppearance: Type.OtherAppearance[];
-    }
-    export interface Distance {
+    };
+    export type Distance = {
         tenths: Type.Tenths;
+    } & {
         $: {
             type_: Type.DistanceType;
         };
-    }
-    export interface Glyph {
+    };
+    export type Glyph = {
         smuflGlyphName: Type.SmuflGlyphName;
+    } & {
         $: {
             type_: Type.GlyphType;
         };
-    }
-    export interface LineWidth {
+    };
+    export type LineWidth = {
         tenths: Type.Tenths;
+    } & {
         $: {
             type_: Type.LineWidthType;
         };
-    }
-    export interface MeasureLayout {
+    };
+    export type MeasureLayout = {
         measureDistance: Type.Tenths;
-    }
-    export interface NoteSize {
+    };
+    export type NoteSize = {
         nonNegativeDecimal: Type.NonNegativeDecimal;
+    } & {
         $: {
             type_: Type.NoteSizeType;
         };
-    }
-    export interface OtherAppearance {
+    };
+    export type OtherAppearance = {
         xsString: string;
+    } & {
         $: {
             type_: token;
         };
-    }
-    export interface PageLayout {
+    };
+    export type PageLayout = {
         pageMargins: Type.PageMargins[];
+    } & {
         pageHeight: Type.Tenths;
+    } & {
         pageWidth: Type.Tenths;
-    }
-    export interface PageMargins {
-        topMargin: Type.Tenths;
-        bottomMargin: Type.Tenths;
-        leftMargin: Type.Tenths;
-        rightMargin: Type.Tenths;
+    };
+    export type PageMargins = Group.AllMargins & {
         $: {
             type_?: Type.MarginType;
         };
-    }
-    export interface Scaling {
+    };
+    export type Scaling = {
         millimeters: Type.Millimeters;
+    } & {
         tenths: Type.Tenths;
-    }
-    export interface StaffLayout {
+    };
+    export type StaffLayout = {
         staffDistance: Type.Tenths;
+    } & {
         $: {
             number_?: Type.StaffNumber;
         };
-    }
-    export interface SystemDividers {
+    };
+    export type SystemDividers = {
         leftDivider: Type.EmptyPrintObjectStyleAlign;
+    } & {
         rightDivider: Type.EmptyPrintObjectStyleAlign;
-    }
-    export interface SystemLayout {
+    };
+    export type SystemLayout = {
         systemMargins: Type.SystemMargins;
+    } & {
         systemDistance: Type.Tenths;
+    } & {
         topSystemDistance: Type.Tenths;
+    } & {
         systemDividers: Type.SystemDividers;
-    }
-    export interface SystemMargins {
-        leftMargin: Type.Tenths;
-        rightMargin: Type.Tenths;
-    }
-    export interface Bookmark {
+    };
+    export type SystemMargins = Group.LeftRightMargins;
+    export type Bookmark = {
         $: {
             element?: NMTOKEN;
             position?: positiveInteger;
             id: ID;
             name?: token;
         };
-    }
-    export interface Link {
+    };
+    export type Link = {
         $: {
             xlinkHref: XLink.href;
             xlinkType?: XLink.type;
@@ -1929,9 +2101,10 @@ export module Type {
             relativeY?: Type.Tenths;
             name?: token;
         };
-    }
-    export interface Accidental {
+    };
+    export type Accidental = {
         accidentalValue: Type.AccidentalValue;
+    } & {
         $: {
             parentheses?: Type.YesNo;
             bracket?: Type.YesNo;
@@ -1949,9 +2122,10 @@ export module Type {
             editorial?: Type.YesNo;
             smufl?: Type.SmuflAccidentalGlyphName;
         };
-    }
-    export interface AccidentalMark {
+    };
+    export type AccidentalMark = {
         accidentalValue: Type.AccidentalValue;
+    } & {
         $: {
             parentheses?: Type.YesNo;
             bracket?: Type.YesNo;
@@ -1969,8 +2143,8 @@ export module Type {
             id?: ID;
             smufl?: Type.SmuflAccidentalGlyphName;
         };
-    }
-    export interface Arpeggiate {
+    };
+    export type Arpeggiate = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -1983,25 +2157,55 @@ export module Type {
             direction?: Type.UpDown;
             unbroken?: Type.YesNo;
         };
-    }
-    export interface Articulations {
-        accentOrStrongAccentOrStaccatoOrTenutoOrDetachedLegatoOrStaccatissimoOrSpiccatoOrScoopOrPlopOrDoitOrFalloffOrBreathMarkOrCaesuraOrStressOrUnstressOrSoftAccentOrOtherArticulation: Type.EmptyPlacement | Type.StrongAccent | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyLine | Type.EmptyLine | Type.EmptyLine | Type.EmptyLine | Type.BreathMark | Type.Caesura | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacement | Type.OtherPlacementText;
+    };
+    export type Articulations = ({
+        accent: Type.EmptyPlacement[];
+    } | {
+        strongAccent: Type.StrongAccent[];
+    } | {
+        staccato: Type.EmptyPlacement[];
+    } | {
+        tenuto: Type.EmptyPlacement[];
+    } | {
+        detachedLegato: Type.EmptyPlacement[];
+    } | {
+        staccatissimo: Type.EmptyPlacement[];
+    } | {
+        spiccato: Type.EmptyPlacement[];
+    } | {
+        scoop: Type.EmptyLine[];
+    } | {
+        plop: Type.EmptyLine[];
+    } | {
+        doit: Type.EmptyLine[];
+    } | {
+        falloff: Type.EmptyLine[];
+    } | {
+        breathMark: Type.BreathMark[];
+    } | {
+        caesura: Type.Caesura[];
+    } | {
+        stress: Type.EmptyPlacement[];
+    } | {
+        unstress: Type.EmptyPlacement[];
+    } | {
+        softAccent: Type.EmptyPlacement[];
+    } | {
+        otherArticulation: Type.OtherPlacementText[];
+    }) & {
         $: {
             id?: ID;
         };
-    }
-    export interface Arrow {
-        sequenceOrCircularArrow: [
-            {
-                arrowDirection?: Type.ArrowDirection;
-            },
-            {
-                arrowStyle?: Type.ArrowStyle;
-            },
-            {
-                arrowhead?: Type.Empty;
-            }
-        ] | Type.CircularArrow;
+    };
+    export type Arrow = ({
+        arrowDirection: Type.ArrowDirection;
+    } | {
+        arrowStyle: Type.ArrowStyle;
+    } | {
+        arrowhead: Type.Empty;
+    } | {
+        circularArrow: Type.CircularArrow;
+    }) & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2015,21 +2219,18 @@ export module Type {
             placement?: Type.AboveBelow;
             smufl?: Type.SmuflGlyphName;
         };
-    }
-    export interface Assess {
+    };
+    export type Assess = {
         $: {
             type_: Type.YesNo;
             player?: IDREF;
             timeOnly?: Type.TimeOnly;
         };
-    }
-    export interface Backup {
-        duration: Type.PositiveDivisions;
-        footnote: Type.FormattedText;
-        level: Type.Level;
-    }
-    export interface Beam {
+    };
+    export type Backup = Group.Duration & Group.Editorial;
+    export type Beam = {
         beamValue: Type.BeamValue;
+    } & {
         $: {
             color?: Type.Color;
             id?: ID;
@@ -2037,11 +2238,16 @@ export module Type {
             repeater?: Type.YesNo;
             fan?: Type.Fan;
         };
-    }
-    export interface Bend {
+    };
+    export type Bend = {
         bendAlter: Type.Semitones;
+    } & {
         withBar: Type.PlacementText;
-        preBendOrRelease: Type.Empty | Type.Release;
+    } & ({
+        preBend: Type.Empty;
+    } | {
+        release: Type.Release;
+    }) & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2058,9 +2264,10 @@ export module Type {
             lastBeat?: Type.Percent;
             shape?: Type.BendShape;
         };
-    }
-    export interface BreathMark {
+    };
+    export type BreathMark = {
         breathMarkValue: Type.BreathMarkValue;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2073,9 +2280,10 @@ export module Type {
             color?: Type.Color;
             placement?: Type.AboveBelow;
         };
-    }
-    export interface Caesura {
+    };
+    export type Caesura = {
         caesuraValue: Type.CaesuraValue;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2088,9 +2296,10 @@ export module Type {
             color?: Type.Color;
             placement?: Type.AboveBelow;
         };
-    }
-    export interface Elision {
+    };
+    export type Elision = {
         xsString: string;
+    } & {
         $: {
             fontFamily?: Type.FontFamily;
             fontStyle?: Type.FontStyle;
@@ -2099,8 +2308,8 @@ export module Type {
             color?: Type.Color;
             smufl?: Type.SmuflLyricsGlyphName;
         };
-    }
-    export interface EmptyLine {
+    };
+    export type EmptyLine = {
         $: {
             lineShape?: Type.LineShape;
             lineType?: Type.LineType;
@@ -2118,8 +2327,8 @@ export module Type {
             color?: Type.Color;
             placement?: Type.AboveBelow;
         };
-    }
-    export interface Extend {
+    };
+    export type Extend = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2128,20 +2337,19 @@ export module Type {
             color?: Type.Color;
             type_?: Type.StartStopContinue;
         };
-    }
-    export interface Figure {
+    };
+    export type Figure = {
         prefix: Type.StyleText;
+    } & {
         figureNumber: Type.StyleText;
+    } & {
         suffix: Type.StyleText;
+    } & {
         extend: Type.Extend;
-        footnote: Type.FormattedText;
-        level: Type.Level;
-    }
-    export interface FiguredBass {
+    } & Group.Editorial;
+    export type FiguredBass = {
         figure: Type.Figure[];
-        duration: Type.PositiveDivisions;
-        footnote: Type.FormattedText;
-        level: Type.Level;
+    } & Group.Duration & Group.Editorial & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2162,16 +2370,11 @@ export module Type {
             id?: ID;
             parentheses?: Type.YesNo;
         };
-    }
-    export interface Forward {
-        duration: Type.PositiveDivisions;
-        footnote: Type.FormattedText;
-        level: Type.Level;
-        voice: string;
-        staff: positiveInteger;
-    }
-    export interface Glissando {
+    };
+    export type Forward = Group.Duration & Group.EditorialVoice & Group.Staff;
+    export type Glissando = {
         xsString: string;
+    } & {
         $: {
             lineType?: Type.LineType;
             dashLength?: Type.Tenths;
@@ -2189,17 +2392,18 @@ export module Type {
             type_: Type.StartStop;
             number_: Type.NumberLevel;
         };
-    }
-    export interface Grace {
+    };
+    export type Grace = {
         $: {
             stealTimePrevious?: Type.Percent;
             stealTimeFollowing?: Type.Percent;
             makeTime?: Type.Divisions;
             slash?: Type.YesNo;
         };
-    }
-    export interface HammerOnPullOff {
+    };
+    export type HammerOnPullOff = {
         xsString: string;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2214,9 +2418,10 @@ export module Type {
             type_: Type.StartStop;
             number_: Type.NumberLevel;
         };
-    }
-    export interface Handbell {
+    };
+    export type Handbell = {
         handbellValue: Type.HandbellValue;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2229,15 +2434,17 @@ export module Type {
             color?: Type.Color;
             placement?: Type.AboveBelow;
         };
-    }
-    export interface HarmonClosed {
+    };
+    export type HarmonClosed = {
         harmonClosedValue: Type.HarmonClosedValue;
+    } & {
         $: {
             location?: Type.HarmonClosedLocation;
         };
-    }
-    export interface HarmonMute {
+    };
+    export type HarmonMute = {
         harmonClosed: Type.HarmonClosed;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2250,10 +2457,18 @@ export module Type {
             color?: Type.Color;
             placement?: Type.AboveBelow;
         };
-    }
-    export interface Harmonic {
-        naturalOrArtificial: Type.Empty | Type.Empty;
-        basePitchOrTouchingPitchOrSoundingPitch: Type.Empty | Type.Empty | Type.Empty;
+    };
+    export type Harmonic = ({
+        natural: Type.Empty;
+    } | {
+        artificial: Type.Empty;
+    }) & ({
+        basePitch: Type.Empty;
+    } | {
+        touchingPitch: Type.Empty;
+    } | {
+        soundingPitch: Type.Empty;
+    }) & {
         $: {
             printObject?: Type.YesNo;
             defaultX?: Type.Tenths;
@@ -2267,13 +2482,15 @@ export module Type {
             color?: Type.Color;
             placement?: Type.AboveBelow;
         };
-    }
-    export interface HeelToe {
-    }
-    export interface Hole {
+    };
+    export type HeelToe = null;
+    export type Hole = {
         holeType: string;
+    } & {
         holeClosed: Type.HoleClosed;
+    } & {
         holeShape: string;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2286,46 +2503,49 @@ export module Type {
             color?: Type.Color;
             placement?: Type.AboveBelow;
         };
-    }
-    export interface HoleClosed {
+    };
+    export type HoleClosed = {
         holeClosedValue: Type.HoleClosedValue;
+    } & {
         $: {
             location?: Type.HoleClosedLocation;
         };
-    }
-    export interface Instrument {
+    };
+    export type Instrument = {
         $: {
             id: IDREF;
         };
-    }
-    export interface Listen {
-        assessOrWaitOrOtherListen: Type.Assess | Type.Wait | Type.OtherListening;
-    }
-    export interface Lyric {
+    };
+    export type Listen = ({
+        assess: Type.Assess[];
+    } | {
+        wait: Type.Wait[];
+    } | {
+        otherListen: Type.OtherListening[];
+    });
+    export type Lyric = {
         endLine: Type.Empty;
+    } & {
         endParagraph: Type.Empty;
-        sequenceOrExtendOrLaughingOrHumming: [
-            {
-                syllabic?: Type.Syllabic;
-            },
-            {
-                text?: Type.TextElementData;
-            },
-            {
-                extend?: Type.Extend;
-            },
-            {
-                text?: Type.TextElementData;
-            },
-            {
-                elision?: Type.Elision;
-            },
-            {
-                syllabic?: Type.Syllabic;
-            }
-        ] | Type.Extend | Type.Empty | Type.Empty;
-        footnote: Type.FormattedText;
-        level: Type.Level;
+    } & ({
+        syllabic: Type.Syllabic;
+    } | {
+        text: Type.TextElementData;
+    } | {
+        extend: Type.Extend;
+    } | {
+        text: Type.TextElementData;
+    } | {
+        elision: Type.Elision;
+    } | {
+        syllabic: Type.Syllabic;
+    } | {
+        extend: Type.Extend;
+    } | {
+        laughing: Type.Empty;
+    } | {
+        humming: Type.Empty;
+    }) & Group.Editorial & {
         $: {
             justify?: Type.LeftCenterRight;
             defaultX?: Type.Tenths;
@@ -2340,10 +2560,9 @@ export module Type {
             name?: token;
             timeOnly?: Type.TimeOnly;
         };
-    }
-    export interface Mordent {
-    }
-    export interface NonArpeggiate {
+    };
+    export type Mordent = null;
+    export type NonArpeggiate = {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2355,88 +2574,78 @@ export module Type {
             type_: Type.TopBottom;
             number_?: Type.NumberLevel;
         };
-    }
-    export interface Notations {
-        tiedOrSlurOrTupletOrGlissandoOrSlideOrOrnamentsOrTechnicalOrArticulationsOrDynamicsOrFermataOrArpeggiateOrNonArpeggiateOrAccidentalMarkOrOtherNotation: Type.Tied | Type.Slur | Type.Tuplet | Type.Glissando | Type.Slide | Type.Ornaments | Type.Technical | Type.Articulations | Type.Dynamics | Type.Fermata | Type.Arpeggiate | Type.NonArpeggiate | Type.AccidentalMark | Type.OtherNotation;
-        footnote: Type.FormattedText;
-        level: Type.Level;
+    };
+    export type Notations = ({
+        tied: Type.Tied[];
+    } | {
+        slur: Type.Slur[];
+    } | {
+        tuplet: Type.Tuplet[];
+    } | {
+        glissando: Type.Glissando[];
+    } | {
+        slide: Type.Slide[];
+    } | {
+        ornaments: Type.Ornaments[];
+    } | {
+        technical: Type.Technical[];
+    } | {
+        articulations: Type.Articulations[];
+    } | {
+        dynamics: Type.Dynamics[];
+    } | {
+        fermata: Type.Fermata[];
+    } | {
+        arpeggiate: Type.Arpeggiate[];
+    } | {
+        nonArpeggiate: Type.NonArpeggiate[];
+    } | {
+        accidentalMark: Type.AccidentalMark[];
+    } | {
+        otherNotation: Type.OtherNotation[];
+    }) & Group.Editorial & {
         $: {
             printObject?: Type.YesNo;
             id?: ID;
         };
-    }
-    export interface Note {
+    };
+    export type Note = {
         instrument: Type.Instrument[];
+    } & {
         type_: Type.NoteType;
+    } & {
         dot: Type.EmptyPlacement[];
+    } & {
         accidental: Type.Accidental;
+    } & {
         timeModification: Type.TimeModification;
+    } & {
         stem: Type.Stem;
+    } & {
         notehead: Type.Notehead;
+    } & {
         noteheadText: Type.NoteheadText;
+    } & {
         beam: Type.Beam[];
+    } & {
         notations: Type.Notations[];
+    } & {
         lyric: Type.Lyric[];
+    } & {
         play: Type.Play;
+    } & {
         listen: Type.Listen;
-        sequenceOrSequenceOrSequence: [
-            {
-                grace?: Type.Grace;
-            },
-            {
-                sequenceOrSequence: [
-                    {
-                        tie?: Type.Tie[];
-                    },
-                    {
-                        chord?: Type.Empty;
-                    },
-                    {
-                        pitchOrUnpitchedOrRest: Type.Pitch | Type.Unpitched | Type.Rest;
-                    }
-                ] | [
-                    {
-                        cue?: Type.Empty;
-                    },
-                    {
-                        chord?: Type.Empty;
-                    },
-                    {
-                        pitchOrUnpitchedOrRest: Type.Pitch | Type.Unpitched | Type.Rest;
-                    }
-                ];
-            }
-        ] | [
-            {
-                cue?: Type.Empty;
-            },
-            {
-                chord?: Type.Empty;
-            },
-            {
-                pitchOrUnpitchedOrRest: Type.Pitch | Type.Unpitched | Type.Rest;
-            },
-            {
-                duration?: Type.PositiveDivisions;
-            }
-        ] | [
-            {
-                tie?: Type.Tie[];
-            },
-            {
-                chord?: Type.Empty;
-            },
-            {
-                pitchOrUnpitchedOrRest: Type.Pitch | Type.Unpitched | Type.Rest;
-            },
-            {
-                duration?: Type.PositiveDivisions;
-            }
-        ];
-        footnote: Type.FormattedText;
-        level: Type.Level;
-        voice: string;
-        staff: positiveInteger;
+    } & ({
+        grace: Type.Grace;
+    } | ({
+        tie: Type.Tie[];
+    } | Group.FullNote | {
+        cue: Type.Empty;
+    } | Group.FullNote) | {
+        cue: Type.Empty;
+    } | Group.FullNote | Group.Duration | {
+        tie: Type.Tie[];
+    } | Group.FullNote | Group.Duration) & Group.EditorialVoice & Group.Staff & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2460,15 +2669,17 @@ export module Type {
             timeOnly?: Type.TimeOnly;
             pizzicato?: Type.YesNo;
         };
-    }
-    export interface NoteType {
+    };
+    export type NoteType = {
         noteTypeValue: Type.NoteTypeValue;
+    } & {
         $: {
             size?: Type.SymbolSize;
         };
-    }
-    export interface Notehead {
+    };
+    export type Notehead = {
         noteheadValue: Type.NoteheadValue;
+    } & {
         $: {
             fontFamily?: Type.FontFamily;
             fontStyle?: Type.FontStyle;
@@ -2479,19 +2690,52 @@ export module Type {
             filled?: Type.YesNo;
             parentheses?: Type.YesNo;
         };
-    }
-    export interface NoteheadText {
-        displayTextOrAccidentalText: Type.FormattedText | Type.AccidentalText;
-    }
-    export interface Ornaments {
+    };
+    export type NoteheadText = ({
+        displayText: Type.FormattedText[];
+    } | {
+        accidentalText: Type.AccidentalText[];
+    });
+    export type Ornaments = {
         accidentalMark: Type.AccidentalMark[];
-        trillMarkOrTurnOrDelayedTurnOrInvertedTurnOrDelayedInvertedTurnOrVerticalTurnOrInvertedVerticalTurnOrShakeOrWavyLineOrMordentOrInvertedMordentOrSchleiferOrTremoloOrHaydnOrOtherOrnament: Type.EmptyTrillSound | Type.HorizontalTurn | Type.HorizontalTurn | Type.HorizontalTurn | Type.HorizontalTurn | Type.EmptyTrillSound | Type.EmptyTrillSound | Type.EmptyTrillSound | Type.WavyLine | Type.Mordent | Type.Mordent | Type.EmptyPlacement | Type.Tremolo | Type.EmptyTrillSound | Type.OtherPlacementText;
+    } & ({
+        trillMark: Type.EmptyTrillSound;
+    } | {
+        turn: Type.HorizontalTurn;
+    } | {
+        delayedTurn: Type.HorizontalTurn;
+    } | {
+        invertedTurn: Type.HorizontalTurn;
+    } | {
+        delayedInvertedTurn: Type.HorizontalTurn;
+    } | {
+        verticalTurn: Type.EmptyTrillSound;
+    } | {
+        invertedVerticalTurn: Type.EmptyTrillSound;
+    } | {
+        shake: Type.EmptyTrillSound;
+    } | {
+        wavyLine: Type.WavyLine;
+    } | {
+        mordent: Type.Mordent;
+    } | {
+        invertedMordent: Type.Mordent;
+    } | {
+        schleifer: Type.EmptyPlacement;
+    } | {
+        tremolo: Type.Tremolo;
+    } | {
+        haydn: Type.EmptyTrillSound;
+    } | {
+        otherOrnament: Type.OtherPlacementText;
+    }) & {
         $: {
             id?: ID;
         };
-    }
-    export interface OtherNotation {
+    };
+    export type OtherNotation = {
         xsString: string;
+    } & {
         $: {
             printObject?: Type.YesNo;
             defaultX?: Type.Tenths;
@@ -2509,9 +2753,10 @@ export module Type {
             type_: Type.StartStopSingle;
             number_: Type.NumberLevel;
         };
-    }
-    export interface OtherPlacementText {
+    };
+    export type OtherPlacementText = {
         xsString: string;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2525,20 +2770,24 @@ export module Type {
             placement?: Type.AboveBelow;
             smufl?: Type.SmuflGlyphName;
         };
-    }
-    export interface OtherText {
+    };
+    export type OtherText = {
         xsString: string;
+    } & {
         $: {
             smufl?: Type.SmuflGlyphName;
         };
-    }
-    export interface Pitch {
+    };
+    export type Pitch = {
         step: Type.Step;
+    } & {
         alter: Type.Semitones;
+    } & {
         octave: Type.Octave;
-    }
-    export interface PlacementText {
+    };
+    export type PlacementText = {
         xsString: string;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2551,18 +2800,16 @@ export module Type {
             color?: Type.Color;
             placement?: Type.AboveBelow;
         };
-    }
-    export interface Release {
-    }
-    export interface Rest {
-        displayStep: Type.Step;
-        displayOctave: Type.Octave;
+    };
+    export type Release = null;
+    export type Rest = Group.DisplayStepOctave & {
         $: {
             measure?: Type.YesNo;
         };
-    }
-    export interface Slide {
+    };
+    export type Slide = {
         xsString: string;
+    } & {
         $: {
             lineType?: Type.LineType;
             dashLength?: Type.Tenths;
@@ -2584,8 +2831,8 @@ export module Type {
             type_: Type.StartStop;
             number_: Type.NumberLevel;
         };
-    }
-    export interface Slur {
+    };
+    export type Slur = {
         $: {
             lineType?: Type.LineType;
             dashLength?: Type.Tenths;
@@ -2607,9 +2854,10 @@ export module Type {
             type_: Type.StartStopContinue;
             number_: Type.NumberLevel;
         };
-    }
-    export interface Stem {
+    };
+    export type Stem = {
         stemValue: Type.StemValue;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2617,11 +2865,11 @@ export module Type {
             relativeY?: Type.Tenths;
             color?: Type.Color;
         };
-    }
-    export interface StrongAccent {
-    }
-    export interface StyleText {
+    };
+    export type StrongAccent = null;
+    export type StyleText = {
         xsString: string;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2633,9 +2881,10 @@ export module Type {
             fontWeight?: Type.FontWeight;
             color?: Type.Color;
         };
-    }
-    export interface Tap {
+    };
+    export type Tap = {
         xsString: string;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2649,15 +2898,77 @@ export module Type {
             placement?: Type.AboveBelow;
             hand?: Type.TapHand;
         };
-    }
-    export interface Technical {
-        upBowOrDownBowOrHarmonicOrOpenStringOrThumbPositionOrFingeringOrPluckOrDoubleTongueOrTripleTongueOrStoppedOrSnapPizzicatoOrFretOrStringOrHammerOnOrPullOffOrBendOrTapOrHeelOrToeOrFingernailsOrHoleOrArrowOrHandbellOrBrassBendOrFlipOrSmearOrOpenOrHalfMutedOrHarmonMuteOrGolpeOrOtherTechnical: Type.EmptyPlacement | Type.EmptyPlacement | Type.Harmonic | Type.EmptyPlacement | Type.EmptyPlacement | Type.Fingering | Type.PlacementText | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacementSmufl | Type.EmptyPlacement | Type.Fret | Type.String | Type.HammerOnPullOff | Type.HammerOnPullOff | Type.Bend | Type.Tap | Type.HeelToe | Type.HeelToe | Type.EmptyPlacement | Type.Hole | Type.Arrow | Type.Handbell | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacement | Type.EmptyPlacementSmufl | Type.EmptyPlacementSmufl | Type.HarmonMute | Type.EmptyPlacement | Type.OtherPlacementText;
+    };
+    export type Technical = ({
+        upBow: Type.EmptyPlacement[];
+    } | {
+        downBow: Type.EmptyPlacement[];
+    } | {
+        harmonic: Type.Harmonic[];
+    } | {
+        openString: Type.EmptyPlacement[];
+    } | {
+        thumbPosition: Type.EmptyPlacement[];
+    } | {
+        fingering: Type.Fingering[];
+    } | {
+        pluck: Type.PlacementText[];
+    } | {
+        doubleTongue: Type.EmptyPlacement[];
+    } | {
+        tripleTongue: Type.EmptyPlacement[];
+    } | {
+        stopped: Type.EmptyPlacementSmufl[];
+    } | {
+        snapPizzicato: Type.EmptyPlacement[];
+    } | {
+        fret: Type.Fret[];
+    } | {
+        string_: Type.String[];
+    } | {
+        hammerOn: Type.HammerOnPullOff[];
+    } | {
+        pullOff: Type.HammerOnPullOff[];
+    } | {
+        bend: Type.Bend[];
+    } | {
+        tap: Type.Tap[];
+    } | {
+        heel: Type.HeelToe[];
+    } | {
+        toe: Type.HeelToe[];
+    } | {
+        fingernails: Type.EmptyPlacement[];
+    } | {
+        hole: Type.Hole[];
+    } | {
+        arrow: Type.Arrow[];
+    } | {
+        handbell: Type.Handbell[];
+    } | {
+        brassBend: Type.EmptyPlacement[];
+    } | {
+        flip: Type.EmptyPlacement[];
+    } | {
+        smear: Type.EmptyPlacement[];
+    } | {
+        open: Type.EmptyPlacementSmufl[];
+    } | {
+        halfMuted: Type.EmptyPlacementSmufl[];
+    } | {
+        harmonMute: Type.HarmonMute[];
+    } | {
+        golpe: Type.EmptyPlacement[];
+    } | {
+        otherTechnical: Type.OtherPlacementText[];
+    }) & {
         $: {
             id?: ID;
         };
-    }
-    export interface TextElementData {
+    };
+    export type TextElementData = {
         xsString: string;
+    } & {
         $: {
             fontFamily?: Type.FontFamily;
             fontStyle?: Type.FontStyle;
@@ -2672,14 +2983,14 @@ export module Type {
             dir?: Type.TextDirection;
             xmlLang?: XML.lang;
         };
-    }
-    export interface Tie {
+    };
+    export type Tie = {
         $: {
             type_: Type.StartStop;
             timeOnly?: Type.TimeOnly;
         };
-    }
-    export interface Tied {
+    };
+    export type Tied = {
         $: {
             lineType?: Type.LineType;
             dashLength?: Type.Tenths;
@@ -2701,15 +3012,19 @@ export module Type {
             type_: Type.TiedType;
             number_?: Type.NumberLevel;
         };
-    }
-    export interface TimeModification {
+    };
+    export type TimeModification = {
         actualNotes: nonNegativeInteger;
+    } & {
         normalNotes: nonNegativeInteger;
+    } & {
         normalType: Type.NoteTypeValue;
+    } & {
         normalDot: Type.Empty[];
-    }
-    export interface Tremolo {
+    };
+    export type Tremolo = {
         tremoloMarks: Type.TremoloMarks;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2724,10 +3039,12 @@ export module Type {
             smufl?: Type.SmuflGlyphName;
             type_: Type.TremoloType;
         };
-    }
-    export interface Tuplet {
+    };
+    export type Tuplet = {
         tupletActual: Type.TupletPortion;
+    } & {
         tupletNormal: Type.TupletPortion;
+    } & {
         $: {
             lineShape?: Type.LineShape;
             defaultX?: Type.Tenths;
@@ -2742,8 +3059,8 @@ export module Type {
             showNumber?: Type.ShowTuplet;
             showType?: Type.ShowTuplet;
         };
-    }
-    export interface TupletDot {
+    };
+    export type TupletDot = {
         $: {
             fontFamily?: Type.FontFamily;
             fontStyle?: Type.FontStyle;
@@ -2751,9 +3068,10 @@ export module Type {
             fontWeight?: Type.FontWeight;
             color?: Type.Color;
         };
-    }
-    export interface TupletNumber {
+    };
+    export type TupletNumber = {
         xsNonNegativeInteger: nonNegativeInteger;
+    } & {
         $: {
             fontFamily?: Type.FontFamily;
             fontStyle?: Type.FontStyle;
@@ -2761,14 +3079,17 @@ export module Type {
             fontWeight?: Type.FontWeight;
             color?: Type.Color;
         };
-    }
-    export interface TupletPortion {
+    };
+    export type TupletPortion = {
         tupletNumber: Type.TupletNumber;
+    } & {
         tupletType: Type.TupletType;
+    } & {
         tupletDot: Type.TupletDot[];
-    }
-    export interface TupletType {
+    };
+    export type TupletType = {
         noteTypeValue: Type.NoteTypeValue;
+    } & {
         $: {
             fontFamily?: Type.FontFamily;
             fontStyle?: Type.FontStyle;
@@ -2776,68 +3097,73 @@ export module Type {
             fontWeight?: Type.FontWeight;
             color?: Type.Color;
         };
-    }
-    export interface Unpitched {
-        displayStep: Type.Step;
-        displayOctave: Type.Octave;
-    }
-    export interface Wait {
+    };
+    export type Unpitched = Group.DisplayStepOctave;
+    export type Wait = {
         $: {
             player?: IDREF;
             timeOnly?: Type.TimeOnly;
         };
-    }
-    export interface Credit {
+    };
+    export type Credit = {
         creditType: string[];
+    } & {
         link: Type.Link[];
+    } & {
         bookmark: Type.Bookmark[];
-        creditImageOrSequence: Type.Image | [
-            {
-                creditWordsOrCreditSymbol: Type.FormattedTextId | Type.FormattedSymbolId;
-            },
-            {
-                link?: Type.Link[];
-            },
-            {
-                bookmark?: Type.Bookmark[];
-            },
-            {
-                creditWordsOrCreditSymbol: Type.FormattedTextId | Type.FormattedSymbolId;
-            }
-        ];
+    } & ({
+        creditImage: Type.Image;
+    } | ({
+        creditWords: Type.FormattedTextId;
+    } | {
+        creditSymbol: Type.FormattedSymbolId;
+    }) | {
+        link: Type.Link[];
+    } | {
+        bookmark: Type.Bookmark[];
+    } | ({
+        creditWords: Type.FormattedTextId;
+    } | {
+        creditSymbol: Type.FormattedSymbolId;
+    })) & {
         $: {
             id?: ID;
             page?: positiveInteger;
         };
-    }
-    export interface Defaults {
+    };
+    export type Defaults = {
         scaling: Type.Scaling;
+    } & {
         concertScore: Type.Empty;
+    } & {
         appearance: Type.Appearance;
+    } & {
         musicFont: Type.EmptyFont;
+    } & {
         wordFont: Type.EmptyFont;
+    } & {
         lyricFont: Type.LyricFont[];
+    } & {
         lyricLanguage: Type.LyricLanguage[];
-        pageLayout: Type.PageLayout;
-        systemLayout: Type.SystemLayout;
-        staffLayout: Type.StaffLayout[];
-    }
-    export interface EmptyFont {
+    } & Group.Layout;
+    export type EmptyFont = {
         $: {
             fontFamily?: Type.FontFamily;
             fontStyle?: Type.FontStyle;
             fontSize?: Type.FontSize;
             fontWeight?: Type.FontWeight;
         };
-    }
-    export interface GroupBarline {
+    };
+    export type GroupBarline = {
         groupBarlineValue: Type.GroupBarlineValue;
+    } & {
         $: {
             color?: Type.Color;
         };
-    }
-    export interface GroupName {
+    };
+    export type GroupName = {
         xsString: string;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2850,9 +3176,10 @@ export module Type {
             color?: Type.Color;
             justify?: Type.LeftCenterRight;
         };
-    }
-    export interface GroupSymbol {
+    };
+    export type GroupSymbol = {
         groupSymbolValue: Type.GroupSymbolValue;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2860,13 +3187,13 @@ export module Type {
             relativeY?: Type.Tenths;
             color?: Type.Color;
         };
-    }
-    export interface InstrumentLink {
+    };
+    export type InstrumentLink = {
         $: {
             id: IDREF;
         };
-    }
-    export interface LyricFont {
+    };
+    export type LyricFont = {
         $: {
             fontFamily?: Type.FontFamily;
             fontStyle?: Type.FontStyle;
@@ -2875,15 +3202,15 @@ export module Type {
             number_?: NMTOKEN;
             name?: token;
         };
-    }
-    export interface LyricLanguage {
+    };
+    export type LyricLanguage = {
         $: {
             number_?: NMTOKEN;
             name?: token;
             xmlLang: XML.lang;
         };
-    }
-    export interface Opus {
+    };
+    export type Opus = {
         $: {
             xlinkHref: XLink.href;
             xlinkType?: XLink.type;
@@ -2892,25 +3219,32 @@ export module Type {
             xlinkShow: XLink.show;
             xlinkActuate: XLink.actuate;
         };
-    }
-    export interface PartGroup {
+    };
+    export type PartGroup = {
         groupName: Type.GroupName;
+    } & {
         groupNameDisplay: Type.NameDisplay;
+    } & {
         groupAbbreviation: Type.GroupName;
+    } & {
         groupAbbreviationDisplay: Type.NameDisplay;
+    } & {
         groupSymbol: Type.GroupSymbol;
+    } & {
         groupBarline: Type.GroupBarline;
+    } & {
         groupTime: Type.Empty;
-        footnote: Type.FormattedText;
-        level: Type.Level;
+    } & Group.Editorial & {
         $: {
             type_: Type.StartStop;
             number_: token;
         };
-    }
-    export interface PartLink {
+    };
+    export type PartLink = {
         instrumentLink: Type.InstrumentLink[];
+    } & {
         groupLink: string[];
+    } & {
         $: {
             xlinkHref: XLink.href;
             xlinkType?: XLink.type;
@@ -2919,22 +3253,11 @@ export module Type {
             xlinkShow: XLink.show;
             xlinkActuate: XLink.actuate;
         };
-    }
-    export interface PartList {
-        groupOrGroup: [
-            {
-                partGroup?: Type.PartGroup;
-            }
-        ] | [
-            {
-                scorePart?: Type.ScorePart;
-            }
-        ];
-        partGroup: Type.PartGroup;
-        scorePart: Type.ScorePart;
-    }
-    export interface PartName {
+    };
+    export type PartList = (Group.PartGroup[] | Group.ScorePart[]) & Group.PartGroup[] & Group.ScorePart;
+    export type PartName = {
         xsString: string;
+    } & {
         $: {
             defaultX?: Type.Tenths;
             defaultY?: Type.Tenths;
@@ -2948,46 +3271,239 @@ export module Type {
             printObject?: Type.YesNo;
             justify?: Type.LeftCenterRight;
         };
-    }
-    export interface Player {
+    };
+    export type Player = {
         playerName: string;
+    } & {
         $: {
             id: ID;
         };
-    }
-    export interface ScoreInstrument {
+    };
+    export type ScoreInstrument = {
         instrumentName: string;
+    } & {
         instrumentAbbreviation: string;
-        instrumentSound: string;
-        virtualInstrument: Type.VirtualInstrument;
-        soloOrEnsemble: Type.Empty | Type.PositiveIntegerOrEmpty;
+    } & Group.VirtualInstrumentData & {
         $: {
             id: ID;
         };
-    }
-    export interface ScorePart {
+    };
+    export type ScorePart = {
         identification: Type.Identification;
+    } & {
         partLink: Type.PartLink[];
+    } & {
         partName: Type.PartName;
+    } & {
         partNameDisplay: Type.NameDisplay;
+    } & {
         partAbbreviation: Type.PartName;
+    } & {
         partAbbreviationDisplay: Type.NameDisplay;
+    } & {
         group: string[];
+    } & {
         scoreInstrument: Type.ScoreInstrument[];
+    } & {
         player: Type.Player[];
+    } & {
         midiDevice: Type.MidiDevice;
+    } & {
         midiInstrument: Type.MidiInstrument;
+    } & {
         $: {
             id: ID;
         };
-    }
-    export interface VirtualInstrument {
+    };
+    export type VirtualInstrument = {
         virtualLibrary: string;
+    } & {
         virtualName: string;
-    }
-    export interface Work {
+    };
+    export type Work = {
         workNumber: string;
+    } & {
         workTitle: string;
+    } & {
         opus: Type.Opus;
-    }
+    };
+}
+export module Group {
+    export type Editorial = Group.Footnote & Group.Level;
+    export type EditorialVoice = Group.Footnote & Group.Level & Group.Voice;
+    export type EditorialVoiceDirection = Group.Footnote & Group.Level & Group.Voice;
+    export type Footnote = {
+        footnote: Type.FormattedText;
+    };
+    export type Level = {
+        level: Type.Level;
+    };
+    export type Staff = {
+        staff: positiveInteger;
+    };
+    export type Tuning = {
+        tuningStep: Type.Step;
+    } & {
+        tuningAlter: Type.Semitones;
+    } & {
+        tuningOctave: Type.Octave;
+    };
+    export type VirtualInstrumentData = {
+        instrumentSound: string;
+    } & {
+        virtualInstrument: Type.VirtualInstrument;
+    } & ({
+        solo: Type.Empty;
+    } | {
+        ensemble: Type.PositiveIntegerOrEmpty;
+    });
+    export type Voice = {
+        voice: string;
+    };
+    export type Clef = {
+        sign: Type.ClefSign;
+    } & {
+        line: Type.StaffLinePosition;
+    } & {
+        clefOctaveChange: integer;
+    };
+    export type NonTraditionalKey = {
+        keyStep: Type.Step;
+    } & {
+        keyAlter: Type.Semitones;
+    } & {
+        keyAccidental: Type.KeyAccidental;
+    };
+    export type Slash = {
+        exceptVoice: string[];
+    } & {
+        slashType: Type.NoteTypeValue;
+    } & {
+        slashDot: Type.Empty[];
+    };
+    export type TimeSignature = {
+        beats: string;
+    } & {
+        beatType: string;
+    };
+    export type TraditionalKey = {
+        cancel: Type.Cancel;
+    } & {
+        fifths: Type.Fifths;
+    } & {
+        mode: Type.Mode;
+    };
+    export type Transpose = {
+        diatonic: integer;
+    } & {
+        chromatic: Type.Semitones;
+    } & {
+        octaveChange: integer;
+    } & {
+        double: Type.Double;
+    };
+    export type BeatUnit = {
+        beatUnit: Type.NoteTypeValue;
+    } & {
+        beatUnitDot: Type.Empty[];
+    };
+    export type HarmonyChord = {
+        kind: Type.Kind;
+    } & {
+        inversion: Type.Inversion;
+    } & {
+        bass: Type.Bass;
+    } & {
+        degree: Type.Degree[];
+    } & ({
+        root: Type.Root;
+    } | {
+        numeral: Type.Numeral;
+    } | {
+        function_: Type.StyleText;
+    });
+    export type AllMargins = {
+        topMargin: Type.Tenths;
+    } & {
+        bottomMargin: Type.Tenths;
+    } & Group.LeftRightMargins;
+    export type Layout = {
+        pageLayout: Type.PageLayout;
+    } & {
+        systemLayout: Type.SystemLayout;
+    } & {
+        staffLayout: Type.StaffLayout[];
+    };
+    export type LeftRightMargins = {
+        leftMargin: Type.Tenths;
+    } & {
+        rightMargin: Type.Tenths;
+    };
+    export type Duration = {
+        duration: Type.PositiveDivisions;
+    };
+    export type DisplayStepOctave = {
+        displayStep: Type.Step;
+    } & {
+        displayOctave: Type.Octave;
+    };
+    export type FullNote = {
+        chord: Type.Empty;
+    } & ({
+        pitch: Type.Pitch;
+    } | {
+        unpitched: Type.Unpitched;
+    } | {
+        rest: Type.Rest;
+    });
+    export type MusicData = ({
+        note: Type.Note[];
+    } | {
+        backup: Type.Backup[];
+    } | {
+        forward: Type.Forward[];
+    } | {
+        direction: Type.Direction[];
+    } | {
+        attributes: Type.Attributes[];
+    } | {
+        harmony: Type.Harmony[];
+    } | {
+        figuredBass: Type.FiguredBass[];
+    } | {
+        print: Type.Print[];
+    } | {
+        sound: Type.Sound[];
+    } | {
+        listening: Type.Listening[];
+    } | {
+        barline: Type.Barline[];
+    } | {
+        grouping: Type.Grouping[];
+    } | {
+        link: Type.Link[];
+    } | {
+        bookmark: Type.Bookmark[];
+    });
+    export type PartGroup = {
+        partGroup: Type.PartGroup;
+    };
+    export type ScoreHeader = {
+        work: Type.Work;
+    } & {
+        movementNumber: string;
+    } & {
+        movementTitle: string;
+    } & {
+        identification: Type.Identification;
+    } & {
+        defaults: Type.Defaults;
+    } & {
+        credit: Type.Credit[];
+    } & {
+        partList: Type.PartList;
+    };
+    export type ScorePart = {
+        scorePart: Type.ScorePart;
+    };
 }

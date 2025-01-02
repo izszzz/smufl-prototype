@@ -4,6 +4,7 @@ import { Type } from "../files/mxl/schema";
 import { Zip } from "../files/zip";
 import * as xml2js from "xml2js";
 import * as R from "remeda";
+import { MusicXml } from "../files/mxl";
 export class Importer {
   core;
   async import(file: File) {
@@ -27,12 +28,16 @@ export class Importer {
         if (!pathName) return;
         const data = await zip.files[pathName]?.async("text");
         if (!data) return;
-        return (await new xml2js.Parser({
-          tagNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
-          attrNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
-        }).parseStringPromise(data)) as {
-          scorePartwise: Type.ScorePartwise;
-        };
+        this.core = new MusicXml(
+          (
+            (await new xml2js.Parser({
+              tagNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
+              attrNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
+            }).parseStringPromise(data)) as {
+              scorePartwise: Type.ScorePartwise;
+            }
+          ).scorePartwise
+        ).toSheet();
       }
     }
     if (typeof reader.result === "string") {

@@ -7,8 +7,9 @@ export default defineConfig({
   resolve: {
     alias: {
       core: "/src/models/core",
-      smufl: "/src/models/tsmufl",
+      smufl: "/src/models/smufl",
       mxl: "/src/models/files/mxl",
+      sheet: "/src/models/sheet",
     },
   },
 });
