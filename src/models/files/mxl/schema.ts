@@ -167,114 +167,49 @@ export module Type {
     export type MeasureText = token;
     export type SwingTypeValue = "16th" | "eighth";
     export type PartMeasure = Group.MusicData & {
-        $: {
-            id?: ID;
-            number_: token;
-            text?: Type.MeasureText;
-            implicit?: Type.YesNo;
-            nonControlling?: Type.YesNo;
-            width?: Type.Tenths;
-        };
+        $: AttributeGroup.MeasureAttributes;
     };
     export type ScorePartwisePart = {
         measure: PartMeasure[];
     } & {
-        $: {
-            id: IDREF;
-        };
+        $: AttributeGroup.PartAttributes;
     };
     export type ScorePartwise = {
         part: ScorePartwisePart[];
     } & Group.ScoreHeader & {
-        $: {
-            version: token;
-        };
+        $: AttributeGroup.DocumentAttributes;
     };
     export type MeasurePart = Group.MusicData & {
-        $: {
-            id: IDREF;
-        };
+        $: AttributeGroup.PartAttributes;
     };
     export type ScoreTimewiseMeasure = {
         part: MeasurePart[];
     } & {
-        $: {
-            id?: ID;
-            number_: token;
-            text?: Type.MeasureText;
-            implicit?: Type.YesNo;
-            nonControlling?: Type.YesNo;
-            width?: Type.Tenths;
-        };
+        $: AttributeGroup.MeasureAttributes;
     };
     export type ScoreTimewise = {
         measure: ScoreTimewiseMeasure[];
     } & Group.ScoreHeader & {
-        $: {
-            version: token;
-        };
+        $: AttributeGroup.DocumentAttributes;
     };
     export type AttributesDirective = {
         xsString: string;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
             xmlLang?: XML.lang;
-        };
+        } & AttributeGroup.PrintStyle;
     };
     export type AccidentalText = {
         accidentalValue: Type.AccidentalValue;
     } & {
         $: {
-            justify?: Type.LeftCenterRight;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            underline?: Type.NumberOfLines;
-            overline?: Type.NumberOfLines;
-            lineThrough?: Type.NumberOfLines;
-            rotation?: Type.RotationDegrees;
-            letterSpacing?: Type.NumberOrNormal;
-            lineHeight?: Type.NumberOrNormal;
-            dir?: Type.TextDirection;
-            enclosure?: Type.EnclosureShape;
-            xmlLang?: XML.lang;
-            xmlSpace?: XML.space;
             smufl?: Type.SmuflAccidentalGlyphName;
-        };
+        } & AttributeGroup.TextFormatting;
     };
     export type Coda = {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            id?: ID;
             smufl?: Type.SmuflCodaGlyphName;
-        };
+        } & AttributeGroup.PrintStyleAlign & AttributeGroup.OptionalUniqueId;
     };
     export type Dynamics = ({
         p: Type.Empty[];
@@ -331,331 +266,91 @@ export module Type {
     } | {
         otherDynamics: Type.OtherText[];
     }) & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            placement?: Type.AboveBelow;
-            underline?: Type.NumberOfLines;
-            overline?: Type.NumberOfLines;
-            lineThrough?: Type.NumberOfLines;
-            enclosure?: Type.EnclosureShape;
-            id?: ID;
-        };
+        $: AttributeGroup.PrintStyleAlign & AttributeGroup.Placement & AttributeGroup.TextDecoration & AttributeGroup.Enclosure & AttributeGroup.OptionalUniqueId;
     };
     export type Empty = null;
     export type EmptyPlacement = {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type EmptyPlacementSmufl = {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-            smufl?: Type.SmuflGlyphName;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement & AttributeGroup.Smufl;
     };
     export type EmptyPrintStyle = {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-        };
+        $: AttributeGroup.PrintStyle;
     };
     export type EmptyPrintStyleAlign = {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-        };
+        $: AttributeGroup.PrintStyleAlign;
     };
     export type EmptyPrintStyleAlignId = {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            id?: ID;
-        };
+        $: AttributeGroup.PrintStyleAlign & AttributeGroup.OptionalUniqueId;
     };
     export type EmptyPrintObjectStyleAlign = {
-        $: {
-            printObject?: Type.YesNo;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-        };
+        $: AttributeGroup.PrintObject & AttributeGroup.PrintStyleAlign;
     };
     export type EmptyTrillSound = {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-            startNote?: Type.StartNote;
-            trillStep?: Type.TrillStep;
-            twoNoteTurn?: Type.TwoNoteTurn;
-            accelerate?: Type.YesNo;
-            beats?: Type.TrillBeats;
-            secondBeat?: Type.Percent;
-            lastBeat?: Type.Percent;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement & AttributeGroup.TrillSound;
     };
     export type HorizontalTurn = {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-            startNote?: Type.StartNote;
-            trillStep?: Type.TrillStep;
-            twoNoteTurn?: Type.TwoNoteTurn;
-            accelerate?: Type.YesNo;
-            beats?: Type.TrillBeats;
-            secondBeat?: Type.Percent;
-            lastBeat?: Type.Percent;
             slash?: Type.YesNo;
-        };
+        } & AttributeGroup.PrintStyle & AttributeGroup.Placement & AttributeGroup.TrillSound;
     };
     export type Fermata = {
         fermataShape: Type.FermataShape;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            id?: ID;
             type_?: Type.UprightInverted;
-        };
+        } & AttributeGroup.PrintStyle & AttributeGroup.OptionalUniqueId;
     };
     export type Fingering = {
         xsString: string;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
             substitution?: Type.YesNo;
+        } & {
             alternate?: Type.YesNo;
-        };
+        } & AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type FormattedSymbol = {
         smuflGlyphName: Type.SmuflGlyphName;
     } & {
-        $: {
-            justify?: Type.LeftCenterRight;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            underline?: Type.NumberOfLines;
-            overline?: Type.NumberOfLines;
-            lineThrough?: Type.NumberOfLines;
-            rotation?: Type.RotationDegrees;
-            letterSpacing?: Type.NumberOrNormal;
-            lineHeight?: Type.NumberOrNormal;
-            dir?: Type.TextDirection;
-            enclosure?: Type.EnclosureShape;
-        };
+        $: AttributeGroup.SymbolFormatting;
     };
     export type FormattedSymbolId = {
         smuflGlyphName: Type.SmuflGlyphName;
     } & {
-        $: {
-            justify?: Type.LeftCenterRight;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            underline?: Type.NumberOfLines;
-            overline?: Type.NumberOfLines;
-            lineThrough?: Type.NumberOfLines;
-            rotation?: Type.RotationDegrees;
-            letterSpacing?: Type.NumberOrNormal;
-            lineHeight?: Type.NumberOrNormal;
-            dir?: Type.TextDirection;
-            enclosure?: Type.EnclosureShape;
-            id?: ID;
-        };
+        $: AttributeGroup.SymbolFormatting & AttributeGroup.OptionalUniqueId;
     };
     export type FormattedText = {
         xsString: string;
     } & {
-        $: {
-            justify?: Type.LeftCenterRight;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            underline?: Type.NumberOfLines;
-            overline?: Type.NumberOfLines;
-            lineThrough?: Type.NumberOfLines;
-            rotation?: Type.RotationDegrees;
-            letterSpacing?: Type.NumberOrNormal;
-            lineHeight?: Type.NumberOrNormal;
-            dir?: Type.TextDirection;
-            enclosure?: Type.EnclosureShape;
-            xmlLang?: XML.lang;
-            xmlSpace?: XML.space;
-        };
+        $: AttributeGroup.TextFormatting;
     };
     export type FormattedTextId = {
         xsString: string;
     } & {
-        $: {
-            justify?: Type.LeftCenterRight;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            underline?: Type.NumberOfLines;
-            overline?: Type.NumberOfLines;
-            lineThrough?: Type.NumberOfLines;
-            rotation?: Type.RotationDegrees;
-            letterSpacing?: Type.NumberOrNormal;
-            lineHeight?: Type.NumberOrNormal;
-            dir?: Type.TextDirection;
-            enclosure?: Type.EnclosureShape;
-            xmlLang?: XML.lang;
-            xmlSpace?: XML.space;
-            id?: ID;
-        };
+        $: AttributeGroup.TextFormatting & AttributeGroup.OptionalUniqueId;
     };
     export type Fret = {
         xsNonNegativeInteger: nonNegativeInteger;
     } & {
-        $: {
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-        };
+        $: AttributeGroup.Font & AttributeGroup.Color;
     };
     export type Level = {
         xsString: string;
     } & {
         $: {
-            parentheses?: Type.YesNo;
-            bracket?: Type.YesNo;
-            size?: Type.SymbolSize;
             reference?: Type.YesNo;
+        } & {
             type_?: Type.StartStopSingle;
-        };
+        } & AttributeGroup.LevelDisplay;
     };
     export type MidiDevice = {
         xsString: string;
     } & {
         $: {
             port?: Type.Midi16;
+        } & {
             id?: IDREF;
         };
     };
@@ -685,9 +380,7 @@ export module Type {
     } | {
         accidentalText: Type.AccidentalText[];
     }) & {
-        $: {
-            printObject?: Type.YesNo;
-        };
+        $: AttributeGroup.PrintObject;
     };
     export type OtherPlay = {
         xsString: string;
@@ -711,36 +404,13 @@ export module Type {
     };
     export type Segno = {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            id?: ID;
             smufl?: Type.SmuflSegnoGlyphName;
-        };
+        } & AttributeGroup.PrintStyleAlign & AttributeGroup.OptionalUniqueId;
     };
     export type String = {
         stringNumber: Type.StringNumber;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type TypedText = {
         xsString: string;
@@ -751,23 +421,12 @@ export module Type {
     };
     export type WavyLine = {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            placement?: Type.AboveBelow;
-            color?: Type.Color;
-            startNote?: Type.StartNote;
-            trillStep?: Type.TrillStep;
-            twoNoteTurn?: Type.TwoNoteTurn;
-            accelerate?: Type.YesNo;
-            beats?: Type.TrillBeats;
-            secondBeat?: Type.Percent;
-            lastBeat?: Type.Percent;
             type_: Type.StartStopContinue;
+        } & {
             number_?: Type.NumberLevel;
+        } & {
             smufl?: Type.SmuflWavyLineGlyphName;
-        };
+        } & AttributeGroup.Position & AttributeGroup.Placement & AttributeGroup.Color & AttributeGroup.TrillSound;
     };
     export type Attributes = {
         divisions: Type.PositiveDivisions;
@@ -797,7 +456,9 @@ export module Type {
     export type BeatRepeat = Group.Slash & {
         $: {
             type_: Type.StartStop;
+        } & {
             slashes?: positiveInteger;
+        } & {
             useDots?: Type.YesNo;
         };
     };
@@ -810,22 +471,14 @@ export module Type {
     };
     export type Clef = Group.Clef & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            printObject?: Type.YesNo;
-            id?: ID;
             number_?: Type.StaffNumber;
+        } & {
             additional?: Type.YesNo;
+        } & {
             size?: Type.SymbolSize;
+        } & {
             afterBarline?: Type.YesNo;
-        };
+        } & AttributeGroup.PrintStyle & AttributeGroup.PrintObject & AttributeGroup.OptionalUniqueId;
     };
     export type Double = {
         $: {
@@ -838,15 +491,15 @@ export module Type {
         partTranspose: Type.PartTranspose;
     } & {
         $: {
-            id?: ID;
             number_?: Type.StaffNumber;
-        };
+        } & AttributeGroup.OptionalUniqueId;
     };
     export type Interchangeable = {
         timeRelation: Type.TimeRelation;
     } & Group.TimeSignature[] & {
         $: {
             symbol_?: Type.TimeSymbol;
+        } & {
             separator?: Type.TimeSeparator;
         };
     };
@@ -854,19 +507,8 @@ export module Type {
         keyOctave: Type.KeyOctave[];
     } & (Group.TraditionalKey | Group.NonTraditionalKey[]) & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            printObject?: Type.YesNo;
-            id?: ID;
             number_?: Type.StaffNumber;
-        };
+        } & AttributeGroup.PrintStyle & AttributeGroup.PrintObject & AttributeGroup.OptionalUniqueId;
     };
     export type KeyAccidental = {
         accidentalValue: Type.AccidentalValue;
@@ -880,23 +522,23 @@ export module Type {
     } & {
         $: {
             number_: positiveInteger;
+        } & {
             cancel?: Type.YesNo;
         };
     };
     export type LineDetail = {
         $: {
-            color?: Type.Color;
-            lineType?: Type.LineType;
-            printObject?: Type.YesNo;
             line: Type.StaffLine;
+        } & {
             width?: Type.Tenths;
-        };
+        } & AttributeGroup.Color & AttributeGroup.LineType & AttributeGroup.PrintObject;
     };
     export type MeasureRepeat = {
         positiveIntegerOrEmpty: Type.PositiveIntegerOrEmpty;
     } & {
         $: {
             type_: Type.StartStop;
+        } & {
             slashes?: positiveInteger;
         };
     };
@@ -910,14 +552,8 @@ export module Type {
         slash: Type.Slash;
     }) & {
         $: {
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            id?: ID;
             number_?: Type.StaffNumber;
-        };
+        } & AttributeGroup.Font & AttributeGroup.Color & AttributeGroup.OptionalUniqueId;
     };
     export type MultipleRest = {
         xsPositiveInteger: positiveInteger;
@@ -931,20 +567,18 @@ export module Type {
         groupSymbolValue: Type.GroupSymbolValue;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            color?: Type.Color;
             topStaff?: Type.StaffNumber;
+        } & {
             bottomStaff?: Type.StaffNumber;
-        };
+        } & AttributeGroup.Position & AttributeGroup.Color;
     };
     export type PartTranspose = Group.Transpose;
     export type Slash = Group.Slash & {
         $: {
             type_: Type.StartStop;
+        } & {
             useDots?: Type.YesNo;
+        } & {
             useStems?: Type.YesNo;
         };
     };
@@ -962,11 +596,10 @@ export module Type {
         lineDetail: Type.LineDetail[];
     } & {
         $: {
-            printObject?: Type.YesNo;
-            printSpacing?: Type.YesNo;
             number_?: Type.StaffNumber;
+        } & {
             showFrets?: Type.ShowFrets;
-        };
+        } & AttributeGroup.PrintObject & AttributeGroup.PrintSpacing;
     };
     export type StaffSize = {
         nonNegativeDecimal: Type.NonNegativeDecimal;
@@ -986,36 +619,22 @@ export module Type {
         senzaMisura: string;
     }) & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            printObject?: Type.YesNo;
-            id?: ID;
             number_?: Type.StaffNumber;
+        } & {
             symbol_?: Type.TimeSymbol;
+        } & {
             separator?: Type.TimeSeparator;
-        };
+        } & AttributeGroup.PrintStyleAlign & AttributeGroup.PrintObject & AttributeGroup.OptionalUniqueId;
     };
     export type Transpose = Group.Transpose & {
         $: {
-            id?: ID;
             number_?: Type.StaffNumber;
-        };
+        } & AttributeGroup.OptionalUniqueId;
     };
     export type BarStyleColor = {
         barStyle: Type.BarStyle;
     } & {
-        $: {
-            color?: Type.Color;
-        };
+        $: AttributeGroup.Color;
     };
     export type Barline = {
         barStyle: Type.BarStyleColor;
@@ -1033,40 +652,38 @@ export module Type {
         repeat: Type.Repeat;
     } & Group.Editorial & {
         $: {
-            id?: ID;
             location: Type.RightLeftMiddle;
+        } & {
             segno?: token;
+        } & {
             coda?: token;
+        } & {
             divisions?: Type.Divisions;
-        };
+        } & AttributeGroup.OptionalUniqueId;
     };
     export type Ending = {
         xsString: string;
     } & {
         $: {
-            printObject?: Type.YesNo;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            system?: Type.SystemRelation;
             number_: Type.EndingNumber;
+        } & {
             type_: Type.StartStopDiscontinue;
+        } & {
             endLength?: Type.Tenths;
+        } & {
             textX?: Type.Tenths;
+        } & {
             textY?: Type.Tenths;
-        };
+        } & AttributeGroup.PrintObject & AttributeGroup.PrintStyle & AttributeGroup.SystemRelation;
     };
     export type Repeat = {
         $: {
             direction: Type.BackwardForward;
+        } & {
             times?: nonNegativeInteger;
+        } & {
             afterJump?: Type.YesNo;
+        } & {
             winged?: Type.Winged;
         };
     };
@@ -1082,26 +699,12 @@ export module Type {
     } & {
         accordionLow: Type.Empty;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            id?: ID;
-        };
+        $: AttributeGroup.PrintStyleAlign & AttributeGroup.OptionalUniqueId;
     };
     export type Barre = {
         $: {
-            color?: Type.Color;
             type_: Type.StartStop;
-        };
+        } & AttributeGroup.Color;
     };
     export type Bass = {
         bassSeparator: Type.StyleText;
@@ -1118,34 +721,15 @@ export module Type {
         semitones: Type.Semitones;
     } & {
         $: {
-            printObject?: Type.YesNo;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
             location?: Type.LeftRight;
-        };
+        } & AttributeGroup.PrintObject & AttributeGroup.PrintStyle;
     };
     export type BassStep = {
         step: Type.Step;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
             text?: token;
-        };
+        } & AttributeGroup.PrintStyle;
     };
     export type Beater = {
         beaterValue: Type.BeaterValue;
@@ -1157,34 +741,21 @@ export module Type {
     export type BeatUnitTied = Group.BeatUnit;
     export type Bracket = {
         $: {
-            lineType?: Type.LineType;
-            dashLength?: Type.Tenths;
-            spaceLength?: Type.Tenths;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            color?: Type.Color;
-            id?: ID;
             type_: Type.StartStopContinue;
+        } & {
             number_?: Type.NumberLevel;
+        } & {
             lineEnd: Type.LineEnd;
+        } & {
             endLength?: Type.Tenths;
-        };
+        } & AttributeGroup.LineType & AttributeGroup.DashedFormatting & AttributeGroup.Position & AttributeGroup.Color & AttributeGroup.OptionalUniqueId;
     };
     export type Dashes = {
         $: {
-            dashLength?: Type.Tenths;
-            spaceLength?: Type.Tenths;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            color?: Type.Color;
-            id?: ID;
             type_: Type.StartStopContinue;
+        } & {
             number_?: Type.NumberLevel;
-        };
+        } & AttributeGroup.DashedFormatting & AttributeGroup.Position & AttributeGroup.Color & AttributeGroup.OptionalUniqueId;
     };
     export type Degree = {
         degreeValue: Type.DegreeValue;
@@ -1193,58 +764,30 @@ export module Type {
     } & {
         degreeType: Type.DegreeType;
     } & {
-        $: {
-            printObject?: Type.YesNo;
-        };
+        $: AttributeGroup.PrintObject;
     };
     export type DegreeAlter = {
         semitones: Type.Semitones;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
             plusMinus?: Type.YesNo;
-        };
+        } & AttributeGroup.PrintStyle;
     };
     export type DegreeType = {
         degreeTypeValue: Type.DegreeTypeValue;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
             text?: token;
-        };
+        } & AttributeGroup.PrintStyle;
     };
     export type DegreeValue = {
         xsPositiveInteger: positiveInteger;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
             symbol_?: Type.DegreeSymbolValue;
+        } & {
             text?: token;
-        };
+        } & AttributeGroup.PrintStyle;
     };
     export type Direction = {
         directionType: Type.DirectionType[];
@@ -1255,12 +798,7 @@ export module Type {
     } & {
         listening: Type.Listening;
     } & Group.EditorialVoiceDirection & Group.Staff & {
-        $: {
-            placement?: Type.AboveBelow;
-            directive?: Type.YesNo;
-            system?: Type.SystemRelation;
-            id?: ID;
-        };
+        $: AttributeGroup.Placement & AttributeGroup.Directive & AttributeGroup.SystemRelation & AttributeGroup.OptionalUniqueId;
     };
     export type DirectionType = ({
         rehearsal: Type.FormattedTextId[];
@@ -1311,9 +849,7 @@ export module Type {
     } | {
         otherDirection: Type.OtherDirection;
     }) & {
-        $: {
-            id?: ID;
-        };
+        $: AttributeGroup.OptionalUniqueId;
     };
     export type Effect = {
         effectValue: Type.EffectValue;
@@ -1334,6 +870,7 @@ export module Type {
     } & {
         $: {
             text?: token;
+        } & {
             location?: Type.LeftRight;
         };
     };
@@ -1347,18 +884,12 @@ export module Type {
         frameNote: Type.FrameNote[];
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.ValignImage;
-            id?: ID;
             height?: Type.Tenths;
+        } & {
             width?: Type.Tenths;
+        } & {
             unplayed?: token;
-        };
+        } & AttributeGroup.Position & AttributeGroup.Color & AttributeGroup.Halign & AttributeGroup.ValignImage & AttributeGroup.OptionalUniqueId;
     };
     export type FrameNote = {
         string_: Type.String;
@@ -1380,11 +911,12 @@ export module Type {
         feature: Type.Feature[];
     } & {
         $: {
-            id?: ID;
             type_: Type.StartStopSingle;
+        } & {
             number_: token;
+        } & {
             memberOf?: token;
-        };
+        } & AttributeGroup.OptionalUniqueId;
     };
     export type Harmony = {
         frame: Type.Frame;
@@ -1392,56 +924,20 @@ export module Type {
         offset: Type.Offset;
     } & Group.HarmonyChord[] & Group.Editorial & Group.Staff & {
         $: {
-            printObject?: Type.YesNo;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-            system?: Type.SystemRelation;
-            id?: ID;
             type_?: Type.HarmonyType;
+        } & {
             printFrame?: Type.YesNo;
+        } & {
             arrangement?: Type.HarmonyArrangement;
-        };
+        } & AttributeGroup.PrintObject & AttributeGroup.PrintStyle & AttributeGroup.Placement & AttributeGroup.SystemRelation & AttributeGroup.OptionalUniqueId;
     };
     export type HarpPedals = {
         pedalTuning: Type.PedalTuning[];
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            id?: ID;
-        };
+        $: AttributeGroup.PrintStyleAlign & AttributeGroup.OptionalUniqueId;
     };
     export type Image = {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.ValignImage;
-            source: anyURI;
-            type_: token;
-            height?: Type.Tenths;
-            width?: Type.Tenths;
-            id?: ID;
-        };
+        $: AttributeGroup.ImageAttributes & AttributeGroup.OptionalUniqueId;
     };
     export type InstrumentChange = Group.VirtualInstrumentData & {
         $: {
@@ -1452,39 +948,23 @@ export module Type {
         xsNonNegativeInteger: nonNegativeInteger;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
             text?: token;
-        };
+        } & AttributeGroup.PrintStyle;
     };
     export type Kind = {
         kindValue: Type.KindValue;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
             useSymbols?: Type.YesNo;
+        } & {
             text?: token;
+        } & {
             stackDegrees?: Type.YesNo;
+        } & {
             parenthesesDegrees?: Type.YesNo;
+        } & {
             bracketDegrees?: Type.YesNo;
-        };
+        } & AttributeGroup.PrintStyle & AttributeGroup.Halign & AttributeGroup.Valign;
     };
     export type Listening = {
         offset: Type.Offset;
@@ -1497,22 +977,14 @@ export module Type {
         measureNumberingValue: Type.MeasureNumberingValue;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
             system?: Type.SystemRelationNumber;
+        } & {
             staff?: Type.StaffNumber;
+        } & {
             multipleRestAlways?: Type.YesNo;
+        } & {
             multipleRestRange?: Type.YesNo;
-        };
+        } & AttributeGroup.PrintStyleAlign;
     };
     export type Membrane = {
         membraneValue: Type.MembraneValue;
@@ -1544,22 +1016,8 @@ export module Type {
         metronomeNote: Type.MetronomeNote[];
     }) & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            printObject?: Type.YesNo;
-            justify?: Type.LeftCenterRight;
-            id?: ID;
             parentheses?: Type.YesNo;
-        };
+        } & AttributeGroup.PrintStyleAlign & AttributeGroup.PrintObject & AttributeGroup.Justify & AttributeGroup.OptionalUniqueId;
     };
     export type MetronomeBeam = {
         beamValue: Type.BeamValue;
@@ -1597,44 +1055,23 @@ export module Type {
     } & {
         numeralMode: Type.NumeralMode;
     } & {
-        $: {
-            printObject?: Type.YesNo;
-        };
+        $: AttributeGroup.PrintObject;
     };
     export type NumeralRoot = {
         numeralValue: Type.NumeralValue;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
             text?: token;
-        };
+        } & AttributeGroup.PrintStyle;
     };
     export type OctaveShift = {
         $: {
-            dashLength?: Type.Tenths;
-            spaceLength?: Type.Tenths;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            id?: ID;
             type_: Type.UpDownStopContinue;
+        } & {
             number_?: Type.NumberLevel;
+        } & {
             size: positiveInteger;
-        };
+        } & AttributeGroup.DashedFormatting & AttributeGroup.PrintStyle & AttributeGroup.OptionalUniqueId;
     };
     export type Offset = {
         divisions: Type.Divisions;
@@ -1646,52 +1083,31 @@ export module Type {
     export type OtherDirection = {
         xsString: string;
     } & {
-        $: {
-            printObject?: Type.YesNo;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            smufl?: Type.SmuflGlyphName;
-            id?: ID;
-        };
+        $: AttributeGroup.PrintObject & AttributeGroup.PrintStyleAlign & AttributeGroup.Smufl & AttributeGroup.OptionalUniqueId;
     };
     export type OtherListening = {
         xsString: string;
     } & {
         $: {
             type_: token;
+        } & {
             player?: IDREF;
+        } & {
             timeOnly?: Type.TimeOnly;
         };
     };
     export type Pedal = {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            id?: ID;
             type_: Type.PedalType;
+        } & {
             number_?: Type.NumberLevel;
+        } & {
             line?: Type.YesNo;
+        } & {
             sign?: Type.YesNo;
+        } & {
             abbreviated?: Type.YesNo;
-        };
+        } & AttributeGroup.PrintStyleAlign & AttributeGroup.OptionalUniqueId;
     };
     export type PedalTuning = {
         pedalStep: Type.Step;
@@ -1701,12 +1117,7 @@ export module Type {
     export type PerMinute = {
         xsString: string;
     } & {
-        $: {
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-        };
+        $: AttributeGroup.Font;
     };
     export type Percussion = ({
         glass: Type.Glass;
@@ -1731,21 +1142,7 @@ export module Type {
     } | {
         otherPercussion: Type.OtherText;
     }) & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            enclosure?: Type.EnclosureShape;
-            id?: ID;
-        };
+        $: AttributeGroup.PrintStyleAlign & AttributeGroup.Enclosure & AttributeGroup.OptionalUniqueId;
     };
     export type Pitched = {
         pitchedValue: Type.PitchedValue;
@@ -1758,21 +1155,10 @@ export module Type {
         xsString: string;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            id?: ID;
             type_: Type.StartStop;
+        } & {
             symbol_: Type.PrincipalVoiceSymbol;
-        };
+        } & AttributeGroup.PrintStyleAlign & AttributeGroup.OptionalUniqueId;
     };
     export type Print = {
         measureLayout: Type.MeasureLayout;
@@ -1783,14 +1169,7 @@ export module Type {
     } & {
         partAbbreviationDisplay: Type.NameDisplay;
     } & Group.Layout & {
-        $: {
-            staffSpacing?: Type.Tenths;
-            newSystem?: Type.YesNo;
-            newPage?: Type.YesNo;
-            blankPage?: positiveInteger;
-            pageNumber?: token;
-            id?: ID;
-        };
+        $: AttributeGroup.PrintAttributes & AttributeGroup.OptionalUniqueId;
     };
     export type Root = {
         rootStep: Type.RootStep;
@@ -1801,24 +1180,13 @@ export module Type {
         step: Type.Step;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
             text?: token;
-        };
+        } & AttributeGroup.PrintStyle;
     };
     export type Scordatura = {
         accord: Type.Accord[];
     } & {
-        $: {
-            id?: ID;
-        };
+        $: AttributeGroup.OptionalUniqueId;
     };
     export type Sound = {
         swing: Type.Swing;
@@ -1834,42 +1202,45 @@ export module Type {
         play: Type.Play;
     } & {
         $: {
-            id?: ID;
             tempo?: Type.NonNegativeDecimal;
+        } & {
             dynamics?: Type.NonNegativeDecimal;
+        } & {
             dacapo?: Type.YesNo;
+        } & {
             segno?: token;
+        } & {
             dalsegno?: token;
+        } & {
             coda?: token;
+        } & {
             tocoda?: token;
+        } & {
             divisions?: Type.Divisions;
+        } & {
             forwardRepeat?: Type.YesNo;
+        } & {
             fine?: token;
+        } & {
             timeOnly?: Type.TimeOnly;
+        } & {
             pizzicato?: Type.YesNo;
+        } & {
             pan?: Type.RotationDegrees;
+        } & {
             elevation?: Type.RotationDegrees;
+        } & {
             damperPedal?: Type.YesNoNumber;
+        } & {
             softPedal?: Type.YesNoNumber;
+        } & {
             sostenutoPedal?: Type.YesNoNumber;
-        };
+        } & AttributeGroup.OptionalUniqueId;
     };
     export type StaffDivide = {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            id?: ID;
             type_: Type.StaffDivideSymbol;
-        };
+        } & AttributeGroup.PrintStyleAlign & AttributeGroup.OptionalUniqueId;
     };
     export type Stick = {
         stickType: Type.StickType;
@@ -1878,26 +1249,16 @@ export module Type {
     } & {
         $: {
             tip?: Type.TipDirection;
+        } & {
             parentheses?: Type.YesNo;
+        } & {
             dashedCircle?: Type.YesNo;
         };
     };
     export type StringMute = {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            id?: ID;
             type_: Type.OnOff;
-        };
+        } & AttributeGroup.PrintStyleAlign & AttributeGroup.OptionalUniqueId;
     };
     export type Swing = {
         swingStyle: string;
@@ -1913,8 +1274,11 @@ export module Type {
     export type Sync = {
         $: {
             type_: Type.SyncType;
+        } & {
             latency?: Type.Milliseconds;
+        } & {
             player?: IDREF;
+        } & {
             timeOnly?: Type.TimeOnly;
         };
     };
@@ -1925,20 +1289,14 @@ export module Type {
     };
     export type Wedge = {
         $: {
-            lineType?: Type.LineType;
-            dashLength?: Type.Tenths;
-            spaceLength?: Type.Tenths;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            color?: Type.Color;
-            id?: ID;
             type_: Type.WedgeType;
+        } & {
             number_?: Type.NumberLevel;
+        } & {
             spread?: Type.Tenths;
+        } & {
             niente?: Type.YesNo;
-        };
+        } & AttributeGroup.LineType & AttributeGroup.DashedFormatting & AttributeGroup.Position & AttributeGroup.Color & AttributeGroup.OptionalUniqueId;
     };
     export type Wood = {
         woodValue: Type.WoodValue;
@@ -1984,8 +1342,11 @@ export module Type {
     export type Supports = {
         $: {
             type_: Type.YesNo;
+        } & {
             element: NMTOKEN;
+        } & {
             attribute?: NMTOKEN;
+        } & {
             value?: token;
         };
     };
@@ -2079,84 +1440,42 @@ export module Type {
     export type SystemMargins = Group.LeftRightMargins;
     export type Bookmark = {
         $: {
-            element?: NMTOKEN;
-            position?: positiveInteger;
             id: ID;
+        } & {
             name?: token;
-        };
+        } & AttributeGroup.ElementPosition;
     };
     export type Link = {
         $: {
-            xlinkHref: XLink.href;
-            xlinkType?: XLink.type;
-            xlinkRole?: XLink.role;
-            xlinkTitle?: XLink.title;
-            xlinkShow: XLink.show;
-            xlinkActuate: XLink.actuate;
-            element?: NMTOKEN;
-            position?: positiveInteger;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
             name?: token;
-        };
+        } & AttributeGroup.LinkAttributes & AttributeGroup.ElementPosition & AttributeGroup.Position;
     };
     export type Accidental = {
         accidentalValue: Type.AccidentalValue;
     } & {
         $: {
-            parentheses?: Type.YesNo;
-            bracket?: Type.YesNo;
-            size?: Type.SymbolSize;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
             cautionary?: Type.YesNo;
+        } & {
             editorial?: Type.YesNo;
+        } & {
             smufl?: Type.SmuflAccidentalGlyphName;
-        };
+        } & AttributeGroup.LevelDisplay & AttributeGroup.PrintStyle;
     };
     export type AccidentalMark = {
         accidentalValue: Type.AccidentalValue;
     } & {
         $: {
-            parentheses?: Type.YesNo;
-            bracket?: Type.YesNo;
-            size?: Type.SymbolSize;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-            id?: ID;
             smufl?: Type.SmuflAccidentalGlyphName;
-        };
+        } & AttributeGroup.LevelDisplay & AttributeGroup.PrintStyle & AttributeGroup.Placement & AttributeGroup.OptionalUniqueId;
     };
     export type Arpeggiate = {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            placement?: Type.AboveBelow;
-            color?: Type.Color;
-            id?: ID;
             number_?: Type.NumberLevel;
+        } & {
             direction?: Type.UpDown;
+        } & {
             unbroken?: Type.YesNo;
-        };
+        } & AttributeGroup.Position & AttributeGroup.Placement & AttributeGroup.Color & AttributeGroup.OptionalUniqueId;
     };
     export type Articulations = ({
         accent: Type.EmptyPlacement[];
@@ -2193,9 +1512,7 @@ export module Type {
     } | {
         otherArticulation: Type.OtherPlacementText[];
     }) & {
-        $: {
-            id?: ID;
-        };
+        $: AttributeGroup.OptionalUniqueId;
     };
     export type Arrow = ({
         arrowDirection: Type.ArrowDirection;
@@ -2206,24 +1523,14 @@ export module Type {
     } | {
         circularArrow: Type.CircularArrow;
     }) & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-            smufl?: Type.SmuflGlyphName;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement & AttributeGroup.Smufl;
     };
     export type Assess = {
         $: {
             type_: Type.YesNo;
+        } & {
             player?: IDREF;
+        } & {
             timeOnly?: Type.TimeOnly;
         };
     };
@@ -2232,12 +1539,12 @@ export module Type {
         beamValue: Type.BeamValue;
     } & {
         $: {
-            color?: Type.Color;
-            id?: ID;
             number_: Type.BeamLevel;
+        } & {
             repeater?: Type.YesNo;
+        } & {
             fan?: Type.Fan;
-        };
+        } & AttributeGroup.Color & AttributeGroup.OptionalUniqueId;
     };
     export type Bend = {
         bendAlter: Type.Semitones;
@@ -2249,94 +1556,33 @@ export module Type {
         release: Type.Release;
     }) & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            accelerate?: Type.YesNo;
-            beats?: Type.TrillBeats;
-            firstBeat?: Type.Percent;
-            lastBeat?: Type.Percent;
             shape?: Type.BendShape;
-        };
+        } & AttributeGroup.PrintStyle & AttributeGroup.BendSound;
     };
     export type BreathMark = {
         breathMarkValue: Type.BreathMarkValue;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type Caesura = {
         caesuraValue: Type.CaesuraValue;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type Elision = {
         xsString: string;
     } & {
         $: {
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
             smufl?: Type.SmuflLyricsGlyphName;
-        };
+        } & AttributeGroup.Font & AttributeGroup.Color;
     };
     export type EmptyLine = {
-        $: {
-            lineShape?: Type.LineShape;
-            lineType?: Type.LineType;
-            lineLength?: Type.LineLength;
-            dashLength?: Type.Tenths;
-            spaceLength?: Type.Tenths;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-        };
+        $: AttributeGroup.LineShape & AttributeGroup.LineType & AttributeGroup.LineLength & AttributeGroup.DashedFormatting & AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type Extend = {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            color?: Type.Color;
             type_?: Type.StartStopContinue;
-        };
+        } & AttributeGroup.Position & AttributeGroup.Color;
     };
     export type Figure = {
         prefix: Type.StyleText;
@@ -2351,53 +1597,27 @@ export module Type {
         figure: Type.Figure[];
     } & Group.Duration & Group.Editorial & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            halign?: Type.LeftCenterRight;
-            valign?: Type.Valign;
-            placement?: Type.AboveBelow;
-            printObject?: Type.YesNo;
-            printSpacing?: Type.YesNo;
-            printDot?: Type.YesNo;
-            printLyric?: Type.YesNo;
-            id?: ID;
             parentheses?: Type.YesNo;
-        };
+        } & AttributeGroup.PrintStyleAlign & AttributeGroup.Placement & AttributeGroup.Printout & AttributeGroup.OptionalUniqueId;
     };
     export type Forward = Group.Duration & Group.EditorialVoice & Group.Staff;
     export type Glissando = {
         xsString: string;
     } & {
         $: {
-            lineType?: Type.LineType;
-            dashLength?: Type.Tenths;
-            spaceLength?: Type.Tenths;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            id?: ID;
             type_: Type.StartStop;
+        } & {
             number_: Type.NumberLevel;
-        };
+        } & AttributeGroup.LineType & AttributeGroup.DashedFormatting & AttributeGroup.PrintStyle & AttributeGroup.OptionalUniqueId;
     };
     export type Grace = {
         $: {
             stealTimePrevious?: Type.Percent;
+        } & {
             stealTimeFollowing?: Type.Percent;
+        } & {
             makeTime?: Type.Divisions;
+        } & {
             slash?: Type.YesNo;
         };
     };
@@ -2405,35 +1625,15 @@ export module Type {
         xsString: string;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
             type_: Type.StartStop;
+        } & {
             number_: Type.NumberLevel;
-        };
+        } & AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type Handbell = {
         handbellValue: Type.HandbellValue;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type HarmonClosed = {
         harmonClosedValue: Type.HarmonClosedValue;
@@ -2445,18 +1645,7 @@ export module Type {
     export type HarmonMute = {
         harmonClosed: Type.HarmonClosed;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type Harmonic = ({
         natural: Type.Empty;
@@ -2469,19 +1658,7 @@ export module Type {
     } | {
         soundingPitch: Type.Empty;
     }) & {
-        $: {
-            printObject?: Type.YesNo;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-        };
+        $: AttributeGroup.PrintObject & AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type HeelToe = null;
     export type Hole = {
@@ -2491,18 +1668,7 @@ export module Type {
     } & {
         holeShape: string;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type HoleClosed = {
         holeClosedValue: Type.HoleClosedValue;
@@ -2547,33 +1713,20 @@ export module Type {
         humming: Type.Empty;
     }) & Group.Editorial & {
         $: {
-            justify?: Type.LeftCenterRight;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            placement?: Type.AboveBelow;
-            color?: Type.Color;
-            printObject?: Type.YesNo;
-            id?: ID;
             number_?: NMTOKEN;
+        } & {
             name?: token;
+        } & {
             timeOnly?: Type.TimeOnly;
-        };
+        } & AttributeGroup.Justify & AttributeGroup.Position & AttributeGroup.Placement & AttributeGroup.Color & AttributeGroup.PrintObject & AttributeGroup.OptionalUniqueId;
     };
     export type Mordent = null;
     export type NonArpeggiate = {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            placement?: Type.AboveBelow;
-            color?: Type.Color;
-            id?: ID;
             type_: Type.TopBottom;
+        } & {
             number_?: Type.NumberLevel;
-        };
+        } & AttributeGroup.Position & AttributeGroup.Placement & AttributeGroup.Color & AttributeGroup.OptionalUniqueId;
     };
     export type Notations = ({
         tied: Type.Tied[];
@@ -2604,10 +1757,7 @@ export module Type {
     } | {
         otherNotation: Type.OtherNotation[];
     }) & Group.Editorial & {
-        $: {
-            printObject?: Type.YesNo;
-            id?: ID;
-        };
+        $: AttributeGroup.PrintObject & AttributeGroup.OptionalUniqueId;
     };
     export type Note = {
         instrument: Type.Instrument[];
@@ -2647,28 +1797,20 @@ export module Type {
         tie: Type.Tie[];
     } | Group.FullNote | Group.Duration) & Group.EditorialVoice & Group.Staff & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            printObject?: Type.YesNo;
-            printSpacing?: Type.YesNo;
-            printDot?: Type.YesNo;
-            printLyric?: Type.YesNo;
-            id?: ID;
             printLeger?: Type.YesNo;
+        } & {
             dynamics?: Type.NonNegativeDecimal;
+        } & {
             endDynamics?: Type.NonNegativeDecimal;
+        } & {
             attack?: Type.Divisions;
+        } & {
             release?: Type.Divisions;
+        } & {
             timeOnly?: Type.TimeOnly;
+        } & {
             pizzicato?: Type.YesNo;
-        };
+        } & AttributeGroup.XPosition & AttributeGroup.Font & AttributeGroup.Color & AttributeGroup.Printout & AttributeGroup.OptionalUniqueId;
     };
     export type NoteType = {
         noteTypeValue: Type.NoteTypeValue;
@@ -2681,15 +1823,10 @@ export module Type {
         noteheadValue: Type.NoteheadValue;
     } & {
         $: {
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            smufl?: Type.SmuflGlyphName;
             filled?: Type.YesNo;
+        } & {
             parentheses?: Type.YesNo;
-        };
+        } & AttributeGroup.Font & AttributeGroup.Color & AttributeGroup.Smufl;
     };
     export type NoteheadText = ({
         displayText: Type.FormattedText[];
@@ -2729,54 +1866,26 @@ export module Type {
     } | {
         otherOrnament: Type.OtherPlacementText;
     }) & {
-        $: {
-            id?: ID;
-        };
+        $: AttributeGroup.OptionalUniqueId;
     };
     export type OtherNotation = {
         xsString: string;
     } & {
         $: {
-            printObject?: Type.YesNo;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-            smufl?: Type.SmuflGlyphName;
-            id?: ID;
             type_: Type.StartStopSingle;
+        } & {
             number_: Type.NumberLevel;
-        };
+        } & AttributeGroup.PrintObject & AttributeGroup.PrintStyle & AttributeGroup.Placement & AttributeGroup.Smufl & AttributeGroup.OptionalUniqueId;
     };
     export type OtherPlacementText = {
         xsString: string;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-            smufl?: Type.SmuflGlyphName;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement & AttributeGroup.Smufl;
     };
     export type OtherText = {
         xsString: string;
     } & {
-        $: {
-            smufl?: Type.SmuflGlyphName;
-        };
+        $: AttributeGroup.Smufl;
     };
     export type Pitch = {
         step: Type.Step;
@@ -2788,18 +1897,7 @@ export module Type {
     export type PlacementText = {
         xsString: string;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-        };
+        $: AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type Release = null;
     export type Rest = Group.DisplayStepOctave & {
@@ -2811,93 +1909,35 @@ export module Type {
         xsString: string;
     } & {
         $: {
-            lineType?: Type.LineType;
-            dashLength?: Type.Tenths;
-            spaceLength?: Type.Tenths;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            accelerate?: Type.YesNo;
-            beats?: Type.TrillBeats;
-            firstBeat?: Type.Percent;
-            lastBeat?: Type.Percent;
-            id?: ID;
             type_: Type.StartStop;
+        } & {
             number_: Type.NumberLevel;
-        };
+        } & AttributeGroup.LineType & AttributeGroup.DashedFormatting & AttributeGroup.PrintStyle & AttributeGroup.BendSound & AttributeGroup.OptionalUniqueId;
     };
     export type Slur = {
         $: {
-            lineType?: Type.LineType;
-            dashLength?: Type.Tenths;
-            spaceLength?: Type.Tenths;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            placement?: Type.AboveBelow;
-            orientation?: Type.OverUnder;
-            bezierX?: Type.Tenths;
-            bezierY?: Type.Tenths;
-            bezierX2?: Type.Tenths;
-            bezierY2?: Type.Tenths;
-            bezierOffset?: Type.Divisions;
-            bezierOffset2?: Type.Divisions;
-            color?: Type.Color;
-            id?: ID;
             type_: Type.StartStopContinue;
+        } & {
             number_: Type.NumberLevel;
-        };
+        } & AttributeGroup.LineType & AttributeGroup.DashedFormatting & AttributeGroup.Position & AttributeGroup.Placement & AttributeGroup.Orientation & AttributeGroup.Bezier & AttributeGroup.Color & AttributeGroup.OptionalUniqueId;
     };
     export type Stem = {
         stemValue: Type.StemValue;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            color?: Type.Color;
-        };
+        $: AttributeGroup.YPosition & AttributeGroup.Color;
     };
     export type StrongAccent = null;
     export type StyleText = {
         xsString: string;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-        };
+        $: AttributeGroup.PrintStyle;
     };
     export type Tap = {
         xsString: string;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
             hand?: Type.TapHand;
-        };
+        } & AttributeGroup.PrintStyle & AttributeGroup.Placement;
     };
     export type Technical = ({
         upBow: Type.EmptyPlacement[];
@@ -2962,56 +2002,28 @@ export module Type {
     } | {
         otherTechnical: Type.OtherPlacementText[];
     }) & {
-        $: {
-            id?: ID;
-        };
+        $: AttributeGroup.OptionalUniqueId;
     };
     export type TextElementData = {
         xsString: string;
     } & {
         $: {
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            underline?: Type.NumberOfLines;
-            overline?: Type.NumberOfLines;
-            lineThrough?: Type.NumberOfLines;
-            rotation?: Type.RotationDegrees;
-            letterSpacing?: Type.NumberOrNormal;
-            dir?: Type.TextDirection;
             xmlLang?: XML.lang;
-        };
+        } & AttributeGroup.Font & AttributeGroup.Color & AttributeGroup.TextDecoration & AttributeGroup.TextRotation & AttributeGroup.LetterSpacing & AttributeGroup.TextDirection;
     };
     export type Tie = {
         $: {
             type_: Type.StartStop;
+        } & {
             timeOnly?: Type.TimeOnly;
         };
     };
     export type Tied = {
         $: {
-            lineType?: Type.LineType;
-            dashLength?: Type.Tenths;
-            spaceLength?: Type.Tenths;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            placement?: Type.AboveBelow;
-            orientation?: Type.OverUnder;
-            bezierX?: Type.Tenths;
-            bezierY?: Type.Tenths;
-            bezierX2?: Type.Tenths;
-            bezierY2?: Type.Tenths;
-            bezierOffset?: Type.Divisions;
-            bezierOffset2?: Type.Divisions;
-            color?: Type.Color;
-            id?: ID;
             type_: Type.TiedType;
+        } & {
             number_?: Type.NumberLevel;
-        };
+        } & AttributeGroup.LineType & AttributeGroup.DashedFormatting & AttributeGroup.Position & AttributeGroup.Placement & AttributeGroup.Orientation & AttributeGroup.Bezier & AttributeGroup.Color & AttributeGroup.OptionalUniqueId;
     };
     export type TimeModification = {
         actualNotes: nonNegativeInteger;
@@ -3026,19 +2038,8 @@ export module Type {
         tremoloMarks: Type.TremoloMarks;
     } & {
         $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            placement?: Type.AboveBelow;
-            smufl?: Type.SmuflGlyphName;
             type_: Type.TremoloType;
-        };
+        } & AttributeGroup.PrintStyle & AttributeGroup.Placement & AttributeGroup.Smufl;
     };
     export type Tuplet = {
         tupletActual: Type.TupletPortion;
@@ -3046,39 +2047,24 @@ export module Type {
         tupletNormal: Type.TupletPortion;
     } & {
         $: {
-            lineShape?: Type.LineShape;
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            placement?: Type.AboveBelow;
-            id?: ID;
             type_: Type.StartStop;
+        } & {
             number_?: Type.NumberLevel;
+        } & {
             bracket?: Type.YesNo;
+        } & {
             showNumber?: Type.ShowTuplet;
+        } & {
             showType?: Type.ShowTuplet;
-        };
+        } & AttributeGroup.LineShape & AttributeGroup.Position & AttributeGroup.Placement & AttributeGroup.OptionalUniqueId;
     };
     export type TupletDot = {
-        $: {
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-        };
+        $: AttributeGroup.Font & AttributeGroup.Color;
     };
     export type TupletNumber = {
         xsNonNegativeInteger: nonNegativeInteger;
     } & {
-        $: {
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-        };
+        $: AttributeGroup.Font & AttributeGroup.Color;
     };
     export type TupletPortion = {
         tupletNumber: Type.TupletNumber;
@@ -3090,18 +2076,13 @@ export module Type {
     export type TupletType = {
         noteTypeValue: Type.NoteTypeValue;
     } & {
-        $: {
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-        };
+        $: AttributeGroup.Font & AttributeGroup.Color;
     };
     export type Unpitched = Group.DisplayStepOctave;
     export type Wait = {
         $: {
             player?: IDREF;
+        } & {
             timeOnly?: Type.TimeOnly;
         };
     };
@@ -3127,9 +2108,8 @@ export module Type {
         creditSymbol: Type.FormattedSymbolId;
     })) & {
         $: {
-            id?: ID;
             page?: positiveInteger;
-        };
+        } & AttributeGroup.OptionalUniqueId;
     };
     export type Defaults = {
         scaling: Type.Scaling;
@@ -3147,46 +2127,22 @@ export module Type {
         lyricLanguage: Type.LyricLanguage[];
     } & Group.Layout;
     export type EmptyFont = {
-        $: {
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-        };
+        $: AttributeGroup.Font;
     };
     export type GroupBarline = {
         groupBarlineValue: Type.GroupBarlineValue;
     } & {
-        $: {
-            color?: Type.Color;
-        };
+        $: AttributeGroup.Color;
     };
     export type GroupName = {
         xsString: string;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            justify?: Type.LeftCenterRight;
-        };
+        $: AttributeGroup.GroupNameText;
     };
     export type GroupSymbol = {
         groupSymbolValue: Type.GroupSymbolValue;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            color?: Type.Color;
-        };
+        $: AttributeGroup.Position & AttributeGroup.Color;
     };
     export type InstrumentLink = {
         $: {
@@ -3195,30 +2151,22 @@ export module Type {
     };
     export type LyricFont = {
         $: {
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
             number_?: NMTOKEN;
+        } & {
             name?: token;
-        };
+        } & AttributeGroup.Font;
     };
     export type LyricLanguage = {
         $: {
             number_?: NMTOKEN;
+        } & {
             name?: token;
+        } & {
             xmlLang: XML.lang;
         };
     };
     export type Opus = {
-        $: {
-            xlinkHref: XLink.href;
-            xlinkType?: XLink.type;
-            xlinkRole?: XLink.role;
-            xlinkTitle?: XLink.title;
-            xlinkShow: XLink.show;
-            xlinkActuate: XLink.actuate;
-        };
+        $: AttributeGroup.LinkAttributes;
     };
     export type PartGroup = {
         groupName: Type.GroupName;
@@ -3237,6 +2185,7 @@ export module Type {
     } & Group.Editorial & {
         $: {
             type_: Type.StartStop;
+        } & {
             number_: token;
         };
     };
@@ -3245,32 +2194,13 @@ export module Type {
     } & {
         groupLink: string[];
     } & {
-        $: {
-            xlinkHref: XLink.href;
-            xlinkType?: XLink.type;
-            xlinkRole?: XLink.role;
-            xlinkTitle?: XLink.title;
-            xlinkShow: XLink.show;
-            xlinkActuate: XLink.actuate;
-        };
+        $: AttributeGroup.LinkAttributes;
     };
     export type PartList = (Group.PartGroup[] | Group.ScorePart[]) & Group.PartGroup[] & Group.ScorePart;
     export type PartName = {
         xsString: string;
     } & {
-        $: {
-            defaultX?: Type.Tenths;
-            defaultY?: Type.Tenths;
-            relativeX?: Type.Tenths;
-            relativeY?: Type.Tenths;
-            fontFamily?: Type.FontFamily;
-            fontStyle?: Type.FontStyle;
-            fontSize?: Type.FontSize;
-            fontWeight?: Type.FontWeight;
-            color?: Type.Color;
-            printObject?: Type.YesNo;
-            justify?: Type.LeftCenterRight;
-        };
+        $: AttributeGroup.PartNameText;
     };
     export type Player = {
         playerName: string;
@@ -3506,4 +2436,231 @@ export module Group {
     export type ScorePart = {
         scorePart: Type.ScorePart;
     };
+}
+export module AttributeGroup {
+    export type BendSound = {
+        accelerate?: Type.YesNo;
+    } & {
+        beats?: Type.TrillBeats;
+    } & {
+        firstBeat?: Type.Percent;
+    } & {
+        lastBeat?: Type.Percent;
+    };
+    export type Bezier = {
+        bezierX?: Type.Tenths;
+    } & {
+        bezierY?: Type.Tenths;
+    } & {
+        bezierX2?: Type.Tenths;
+    } & {
+        bezierY2?: Type.Tenths;
+    } & {
+        bezierOffset?: Type.Divisions;
+    } & {
+        bezierOffset2?: Type.Divisions;
+    };
+    export type Color = {
+        color?: Type.Color;
+    };
+    export type DashedFormatting = {
+        dashLength?: Type.Tenths;
+    } & {
+        spaceLength?: Type.Tenths;
+    };
+    export type Directive = {
+        directive?: Type.YesNo;
+    };
+    export type DocumentAttributes = {
+        version: token;
+    };
+    export type Enclosure = {
+        enclosure?: Type.EnclosureShape;
+    };
+    export type Font = {
+        fontFamily?: Type.FontFamily;
+    } & {
+        fontStyle?: Type.FontStyle;
+    } & {
+        fontSize?: Type.FontSize;
+    } & {
+        fontWeight?: Type.FontWeight;
+    };
+    export type Halign = {
+        halign?: Type.LeftCenterRight;
+    };
+    export type Justify = {
+        justify?: Type.LeftCenterRight;
+    };
+    export type LetterSpacing = {
+        letterSpacing?: Type.NumberOrNormal;
+    };
+    export type LevelDisplay = {
+        parentheses?: Type.YesNo;
+    } & {
+        bracket?: Type.YesNo;
+    } & {
+        size?: Type.SymbolSize;
+    };
+    export type LineHeight = {
+        lineHeight?: Type.NumberOrNormal;
+    };
+    export type LineLength = {
+        lineLength?: Type.LineLength;
+    };
+    export type LineShape = {
+        lineShape?: Type.LineShape;
+    };
+    export type LineType = {
+        lineType?: Type.LineType;
+    };
+    export type OptionalUniqueId = {
+        id?: ID;
+    };
+    export type Orientation = {
+        orientation?: Type.OverUnder;
+    };
+    export type Placement = {
+        placement?: Type.AboveBelow;
+    };
+    export type Position = {
+        defaultX?: Type.Tenths;
+    } & {
+        defaultY?: Type.Tenths;
+    } & {
+        relativeX?: Type.Tenths;
+    } & {
+        relativeY?: Type.Tenths;
+    };
+    export type PrintObject = {
+        printObject?: Type.YesNo;
+    };
+    export type PrintSpacing = {
+        printSpacing?: Type.YesNo;
+    };
+    export type PrintStyle = AttributeGroup.Position & AttributeGroup.Font & AttributeGroup.Color;
+    export type PrintStyleAlign = AttributeGroup.PrintStyle & AttributeGroup.Halign & AttributeGroup.Valign;
+    export type Printout = {
+        printDot?: Type.YesNo;
+    } & {
+        printLyric?: Type.YesNo;
+    } & AttributeGroup.PrintObject & AttributeGroup.PrintSpacing;
+    export type Smufl = {
+        smufl?: Type.SmuflGlyphName;
+    };
+    export type SystemRelation = {
+        system?: Type.SystemRelation;
+    };
+    export type SymbolFormatting = AttributeGroup.Justify & AttributeGroup.PrintStyleAlign & AttributeGroup.TextDecoration & AttributeGroup.TextRotation & AttributeGroup.LetterSpacing & AttributeGroup.LineHeight & AttributeGroup.TextDirection & AttributeGroup.Enclosure;
+    export type TextDecoration = {
+        underline?: Type.NumberOfLines;
+    } & {
+        overline?: Type.NumberOfLines;
+    } & {
+        lineThrough?: Type.NumberOfLines;
+    };
+    export type TextDirection = {
+        dir?: Type.TextDirection;
+    };
+    export type TextFormatting = {
+        xmlLang?: XML.lang;
+    } & {
+        xmlSpace?: XML.space;
+    } & AttributeGroup.Justify & AttributeGroup.PrintStyleAlign & AttributeGroup.TextDecoration & AttributeGroup.TextRotation & AttributeGroup.LetterSpacing & AttributeGroup.LineHeight & AttributeGroup.TextDirection & AttributeGroup.Enclosure;
+    export type TextRotation = {
+        rotation?: Type.RotationDegrees;
+    };
+    export type TrillSound = {
+        startNote?: Type.StartNote;
+    } & {
+        trillStep?: Type.TrillStep;
+    } & {
+        twoNoteTurn?: Type.TwoNoteTurn;
+    } & {
+        accelerate?: Type.YesNo;
+    } & {
+        beats?: Type.TrillBeats;
+    } & {
+        secondBeat?: Type.Percent;
+    } & {
+        lastBeat?: Type.Percent;
+    };
+    export type Valign = {
+        valign?: Type.Valign;
+    };
+    export type ValignImage = {
+        valign?: Type.ValignImage;
+    };
+    export type XPosition = {
+        defaultX?: Type.Tenths;
+    } & {
+        defaultY?: Type.Tenths;
+    } & {
+        relativeX?: Type.Tenths;
+    } & {
+        relativeY?: Type.Tenths;
+    };
+    export type YPosition = {
+        defaultX?: Type.Tenths;
+    } & {
+        defaultY?: Type.Tenths;
+    } & {
+        relativeX?: Type.Tenths;
+    } & {
+        relativeY?: Type.Tenths;
+    };
+    export type ImageAttributes = {
+        source: anyURI;
+    } & {
+        type_: token;
+    } & {
+        height?: Type.Tenths;
+    } & {
+        width?: Type.Tenths;
+    } & AttributeGroup.Position & AttributeGroup.Halign & AttributeGroup.ValignImage;
+    export type PrintAttributes = {
+        staffSpacing?: Type.Tenths;
+    } & {
+        newSystem?: Type.YesNo;
+    } & {
+        newPage?: Type.YesNo;
+    } & {
+        blankPage?: positiveInteger;
+    } & {
+        pageNumber?: token;
+    };
+    export type ElementPosition = {
+        element?: NMTOKEN;
+    } & {
+        position?: positiveInteger;
+    };
+    export type LinkAttributes = {
+        xlinkHref: XLink.href;
+    } & {
+        xlinkType?: XLink.type;
+    } & {
+        xlinkRole?: XLink.role;
+    } & {
+        xlinkTitle?: XLink.title;
+    } & {
+        xlinkShow: XLink.show;
+    } & {
+        xlinkActuate: XLink.actuate;
+    };
+    export type GroupNameText = AttributeGroup.PrintStyle & AttributeGroup.Justify;
+    export type MeasureAttributes = {
+        number_: token;
+    } & {
+        text?: Type.MeasureText;
+    } & {
+        implicit?: Type.YesNo;
+    } & {
+        nonControlling?: Type.YesNo;
+    } & {
+        width?: Type.Tenths;
+    } & AttributeGroup.OptionalUniqueId;
+    export type PartAttributes = {
+        id: IDREF;
+    };
+    export type PartNameText = AttributeGroup.PrintStyle & AttributeGroup.PrintObject & AttributeGroup.Justify;
 }

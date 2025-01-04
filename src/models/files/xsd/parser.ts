@@ -4,9 +4,7 @@ import * as xml2js from "xml2js";
 import fs from "fs";
 import * as R from "remeda";
 import * as ts from "typescript";
-// TODO: groupの定義
-// TODO: attributeGroupの定義
-// TODO: choiceのプロパティ名
+
 // TODO: default値はobjectmapperで変換する
 const data = fs.readFileSync("src/musicxml/schema/musicxml.xsd");
 const tsNodes: ts.Statement[] = [];
@@ -95,6 +93,7 @@ new xml2js.Parser({
   const XML = ts.factory.createIdentifier("XML");
   const XLink = ts.factory.createIdentifier("XLink");
   const Type = ts.factory.createIdentifier("Type");
+  const AttributeGroup = ts.factory.createIdentifier("AttributeGroup");
   const Group = ts.factory.createIdentifier("Group");
 
   const complexTypes = [];
@@ -165,6 +164,9 @@ new xml2js.Parser({
   });
 
   const tsGroup = result["xs:schema"]["xs:group"].map(createTsGroup);
+  const tsAttributeGroup = result["xs:schema"]["xs:attributeGroup"].map(
+    createTsAttributeGroup
+  );
   complexTypes.push(
     ...result["xs:schema"]["xs:complexType"].map(createComplexType())
   );
@@ -198,6 +200,13 @@ new xml2js.Parser({
       ts.factory.createModuleBlock(tsGroup)
     )
   );
+  tsNodes.push(
+    ts.factory.createModuleDeclaration(
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+      AttributeGroup,
+      ts.factory.createModuleBlock(tsAttributeGroup)
+    )
+  );
 
   function createTsTypeAilias(v: { name: string; value: ts.SyntaxKind }) {
     return ts.factory.createTypeAliasDeclaration(
@@ -215,24 +224,33 @@ new xml2js.Parser({
       ts.factory.createIntersectionTypeNode(createIndicator()(v))
     );
   }
-  function createAttribute(v: any) {
-    return {
-      name: createPropertyName(v),
-      use: createUse(v),
-      type: createType(Type)(v),
-      default_: createDefault(v),
-    };
-  }
-  function createAttributeGroup(v: any): ReturnType<typeof createAttribute>[] {
-    const group = result["xs:schema"]["xs:attributeGroup"].find(
-      (group: any) => group.$.name === v.$.ref
+  function createTsAttributeGroup(v: any) {
+    return ts.factory.createTypeAliasDeclaration(
+      [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
+      createClassName(v),
+      undefined,
+      ts.factory.createIntersectionTypeNode([
+        ...(v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attribute"] ?? [])
+          .concat(v["xs:attribute"] ?? [])
+          .map((v: any) =>
+            ts.factory.createTypeLiteralNode([
+              ts.factory.createPropertySignature(
+                undefined,
+                createPropertyName(v),
+                createUse(v),
+                createType(Type)(v)
+              ),
+            ])
+          ),
+        ...(
+          v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attributeGroup"] ??
+          []
+        )
+          .concat(v["xs:attributeGroup"] ?? [])
+          .map(createType(AttributeGroup)),
+      ])
     );
-    return [
-      ...(group["xs:attributeGroup"] ?? []).flatMap(createAttributeGroup),
-      ...(group["xs:attribute"] ?? []),
-    ];
   }
-
   function createIndicator(parentClassName?: string) {
     return (v: any) => {
       return [
@@ -256,7 +274,7 @@ new xml2js.Parser({
   function createElement(parentClassName?: string) {
     return (v: any) => {
       return ts.factory.createTypeLiteralNode([
-        ts.factory.createPropertyDeclaration(
+        ts.factory.createPropertySignature(
           undefined,
           createPropertyName(v),
           undefined,
@@ -278,8 +296,7 @@ new xml2js.Parser({
                   )
                 );
               })()
-            : createType(Type)(v),
-          undefined
+            : createType(Type)(v)
         ),
       ]);
     };
@@ -306,25 +323,13 @@ new xml2js.Parser({
   function createComplexType(parentClassName?: string) {
     //TODO: complexContent
     return (v: any) => {
-      const attributes = [
-        ...(
-          v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attributeGroup"] ??
-          []
-        )
-          .concat(v["xs:attributeGroup"] ?? [])
-          .flatMap(createAttributeGroup),
-        ...(
-          v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attribute"] ?? []
-        ).concat(v["xs:attribute"] ?? []),
-      ];
       const a = R.filter(
         [
           ...createIndicator(createClassName(v))(v),
-          createAttributeParameter(attributes),
+          createAttributeParameter(v),
         ],
         R.isTruthy
       );
-
       return ts.factory.createTypeAliasDeclaration(
         [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
         ts.factory.createIdentifier(
@@ -338,24 +343,33 @@ new xml2js.Parser({
     };
   }
 
-  function createAttributeParameter(attributes: any[]) {
-    if (attributes.length === 0) return undefined;
-    return ts.factory.createTypeLiteralNode([
-      ts.factory.createPropertyDeclaration(
-        undefined,
-        xml2js.defaults["0.2"].attrkey ?? "",
-        undefined,
-        ts.factory.createTypeLiteralNode(
-          attributes.map((v) =>
+  function createAttributeParameter(v: any) {
+    const attributes = [
+      ...(v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attribute"] ?? [])
+        .concat(v["xs:attribute"] ?? [])
+        .map((v: any) =>
+          ts.factory.createTypeLiteralNode([
             ts.factory.createPropertySignature(
               undefined,
               createPropertyName(v),
               createUse(v),
               createType(Type)(v)
-            )
-          )
+            ),
+          ])
         ),
-        undefined
+      ...(
+        v["xs:simpleContent"]?.[0]["xs:extension"][0]["xs:attributeGroup"] ?? []
+      )
+        .concat(v["xs:attributeGroup"] ?? [])
+        .map(createType(AttributeGroup)),
+    ];
+    if (R.isEmpty(attributes)) return undefined;
+    return ts.factory.createTypeLiteralNode([
+      ts.factory.createPropertySignature(
+        undefined,
+        xml2js.defaults["0.2"].attrkey ?? "",
+        undefined,
+        ts.factory.createIntersectionTypeNode(attributes)
       ),
     ]);
   }
@@ -400,48 +414,6 @@ new xml2js.Parser({
   function createClassName(v: any) {
     const name = v.$?.name ?? v.$.ref;
     return R.pipe(name, R.toCamelCase(), R.capitalize());
-  }
-  // TODO: Refactor
-  function createDefault(v: any) {
-    if (!v.$.default) return undefined;
-    if (v.$.ref?.includes("xlink:")) {
-      const xlinkType = tsXlinkTypes.find(
-        (xsLink: any) =>
-          xsLink.name.escapedText === v.$.ref.replace("xlink:", "")
-      );
-      return convertDefaultType(v, xlinkType!.type);
-    }
-
-    if (v.$.type?.includes("xs:")) {
-      const xsType = tsXsTypes.find(
-        (xsType: any) => xsType.name.escapedText === v.$.type.replace("xs:", "")
-      );
-      return convertDefaultType(v, xsType!.type);
-    }
-    const simpleType = simpleTypes.find(
-      (simpleType: any) =>
-        simpleType.name.escapedText ===
-        R.pipe(v.$.type.replace("xs:", ""), R.toCamelCase(), R.capitalize())
-    );
-    if (simpleType) {
-      const xsType = tsXsTypes.find(
-        (xsType: any) =>
-          xsType.name.escapedText === simpleType.type.typeName.escapedText
-      );
-      return convertDefaultType(v, xsType!.type);
-    }
-
-    return ts.factory.createStringLiteral(v.$.default);
-  }
-  function convertDefaultType(v: any, type: ts.TypeNode) {
-    switch (type.kind) {
-      case ts.SyntaxKind.StringKeyword:
-        return ts.factory.createStringLiteral(v.$.default);
-      case ts.SyntaxKind.NumberKeyword:
-        return ts.factory.createNumericLiteral(v.$.default);
-      default:
-        return ts.factory.createStringLiteral(v.$.default);
-    }
   }
   function isRequired(v: any) {
     return v.$.use === "required" || v.$.default !== undefined;
