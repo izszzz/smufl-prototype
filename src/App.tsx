@@ -11,12 +11,9 @@ import "./models/sheet/extensions/svg";
 function App() {
   const [fontSize, setFontSize] = useState(30);
 
-  const [volume, setVolume] = useState(50);
-
-  const [audioPlayer, setAudioPlayer] = useState<Audio.Player>();
   const [soundfont2, setSoundfont2] = useState<Soundfont2>();
 
-  const ref = useRef(null);
+  const ref = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     (async () => {
@@ -34,7 +31,11 @@ function App() {
       const importer = new Browser.Importer();
       await importer.import(file);
       if (ref.current) {
-        ref.current.appendChild(importer.core.toSVG());
+        while (ref.current.firstChild) {
+          ref.current.removeChild(ref.current.firstChild);
+        }
+        ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
+
         // setAudioPlayer(new Audio.Player(core, soundfont2));
         // setFontSize(svgRenderer.options.fontSize);
       }
@@ -45,23 +46,13 @@ function App() {
     <div>
       <div
         ref={ref}
-        className="App bravura"
+        className="bravura"
         style={{ padding: "30px", height: "70vh" }}
       />
-      <button
-        type="button"
-        onClick={() => {
-          audioPlayer?.play();
-        }}
-      >
+      <button type="button" onClick={() => {}}>
         play
       </button>
-      <button
-        type="button"
-        onClick={() => {
-          audioPlayer?.pause();
-        }}
-      >
+      <button type="button" onClick={() => {}}>
         pause
       </button>
       <input
@@ -71,7 +62,7 @@ function App() {
       />
       <input
         type="range"
-        value={volume}
+        value={0}
         min={0}
         max={100}
         onChange={(e) => {

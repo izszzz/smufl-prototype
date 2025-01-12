@@ -5,13 +5,7 @@ import Ranges from "./ranges.json";
 
 export * from "./bbox";
 export * from "./glyph";
-
 export { Metadatas, Ranges, Glyphnames, BravuraMetadata };
-export const getGlyphname = (
-  type: keyof Ranges,
-  predicate: (glyph: Ranges[typeof type]["glyphs"][number]) => boolean
-): Ranges[typeof type]["glyphs"][number] =>
-  Ranges[type].glyphs.find(predicate)!;
 
 export const getBBox = (glyphName: keyof Glyphnames) =>
   BravuraMetadata.glyphBBoxes[

@@ -3,11 +3,14 @@ import { MusicXml } from "../";
 
 declare module "../" {
   interface MusicXml {
-    toSheet: () => Sheet.Score;
+    toSheet: (options: { ratio: number }) => Sheet.Score;
   }
 }
 
 MusicXml.prototype.toSheet = function (this: MusicXml) {
+  const steps = ["C", "D", "E", "F", "G", "A", "B"];
+  const pitchToNumber = ({ step, octave }: { step: string; octave: number }) =>
+    (steps.indexOf(step) + 1) * 12 * (octave + 1);
   const score = new Sheet.Score({
     name: this.scorePartwise.work.workTitle,
     timesignatures: [],
@@ -21,9 +24,24 @@ MusicXml.prototype.toSheet = function (this: MusicXml) {
                 (note, id) =>
                   new Sheet.Note({
                     id,
-                    rest: "rest" in note,
+                    rest:
+                      "rest" in note
+                        ? note.rest[0] && "measure" in note.rest[0].$
+                          ? "measure"
+                          : true
+                        : false,
                     chord: "chord" in note,
-                    pitch: 0,
+                    type: "type" in note ? note.type[0] : null,
+                    stem: "stem" in note ? note.stem[0] : null,
+                    x: Number(note.$.defaultX ?? 0),
+                    y: Number(note.$.defaultY ?? 0),
+                    pitch:
+                      "pitch" in note
+                        ? pitchToNumber({
+                            step: note.pitch[0].step[0],
+                            octave: Number(note.pitch[0].octave[0]),
+                          })
+                        : 0,
                     start: 0,
                     duration: "duration" in note ? Number(note.duration[0]) : 0,
                     end: 0,
@@ -41,6 +59,14 @@ MusicXml.prototype.toSheet = function (this: MusicXml) {
           id: i,
           notes,
           timesignature,
+          staffLines: 5,
+          clefs: measure.attributes[0].clef.map((clef) => ({
+            sign: clef.sign[0],
+            line: clef.line[0],
+            number: clef.$?.number[0],
+          })),
+          barlines: measure.barline,
+          width: Number(measure.$.width ?? 0),
           start: 0,
           duration: 0,
           end: 0,
@@ -71,5 +97,6 @@ MusicXml.prototype.toSheet = function (this: MusicXml) {
       }
     }
   }
+  console.log({ sheet: score });
   return score;
 };
