@@ -1,10 +1,10 @@
-import * as Core from "../../core";
+import * as Core from "core";
 import * as Audio from ".";
-import Sample from "../../files/soundfont2/sample";
+import * as Soundfont2 from "soundfont2";
 
 export class Note extends Core.Note {
   track!: Audio.Track;
-  calcBaseDetune(sample: Sample) {
+  calcBaseDetune(sample: Soundfont2.Sample) {
     return (
       (Audio.calcKey(
         sample.generators.overridingRootKey,

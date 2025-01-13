@@ -1,24 +1,22 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import Soundfont2 from "./models/files/soundfont2";
-
-import * as Audio from "./models/browser/audio";
+import * as Soundfont2 from "soundfont2";
 
 import * as Browser from "./models/browser";
 
 import "./models/files/mxl/extensions/sheet";
-import "./models/sheet/extensions/svg";
+import "./models/sheet/extensions/to_svg";
 
 function App() {
   const [fontSize, setFontSize] = useState(30);
 
-  const [soundfont2, setSoundfont2] = useState<Soundfont2>();
+  const [soundfont2, setSoundfont2] = useState<Soundfont2.Sf2>();
 
   const ref = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     (async () => {
       const buffer = await fetch("/A320U.sf2").then((res) => res.arrayBuffer());
-      setSoundfont2(new Soundfont2(new Uint8Array(buffer)));
+      setSoundfont2(new Soundfont2.Sf2(new Uint8Array(buffer)));
     })();
   }, []);
 

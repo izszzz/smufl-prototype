@@ -1,5 +1,5 @@
 import * as Audio from ".";
-import Sample from "../../files/soundfont2/sample";
+import * as Soundfont2 from "soundfont2";
 import Envelope, { IEnvelope } from "./envelope";
 export class Synth {
   sample;
@@ -13,7 +13,7 @@ export class Synth {
   constructor(
     audioContext: AudioContext,
     buffer: AudioBuffer,
-    sample: Sample,
+    sample: Soundfont2.Sample,
     volume: { envelope: Omit<IEnvelope<number, number>, "init"> },
     modulator: {
       envelope: Omit<IEnvelope<number, number>, "init">;
@@ -84,7 +84,7 @@ export class Synth {
     this.gainEnvelope.noteOff(time);
     this.filterEnvelope.noteOff(time);
   }
-  createBufferSource(sample: Sample) {
+  createBufferSource(sample: Soundfont2.Sample) {
     const bufferSource = this.track.score.audioContext.createBufferSource();
     bufferSource.buffer = this.buffer;
     if (sample.generators.sampleModes !== 0) {
@@ -96,7 +96,7 @@ export class Synth {
     }
     return bufferSource;
   }
-  calcBaseDetune(sample: Sample) {
+  calcBaseDetune(sample: Soundfont2.Sample) {
     return (
       (Audio.calcKey(
         sample.generators.overridingRootKey,

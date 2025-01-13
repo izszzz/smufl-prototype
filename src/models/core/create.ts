@@ -1,5 +1,5 @@
 import * as R from "remeda";
-import * as Core from ".";
+import * as Core from "core";
 import { LiteralToPrimitiveDeep, PartialDeep, SetOptional } from "type-fest";
 
 type JSONParams = SetOptional<
@@ -152,6 +152,6 @@ export const create = (
     duration: cparams.duration ?? 0,
     end: cparams.end ?? 0,
   });
-  console.log(core);
+  if (process.env.NODE_ENV === "development") console.log(core);
   return core;
 };

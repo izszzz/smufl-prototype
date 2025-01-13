@@ -3,7 +3,7 @@ import { Generator } from "../generator";
 import Metadata from "../metadata.json";
 import { Modulator } from "../modulator";
 import Preset from "../preset";
-import Sample from "../sample";
+import { Sample } from "../sample";
 import { Header } from "./header";
 
 export default class Instrument {

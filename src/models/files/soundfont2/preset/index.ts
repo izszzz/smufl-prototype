@@ -2,7 +2,7 @@ import { Bag } from "../bag";
 import { Generator } from "../generator";
 import { Header } from "./header";
 import { Modulator } from "../modulator";
-import Soundfont2 from "..";
+import * as Soundfont2 from "soundfont2";
 import Instrument from "../instrument";
 import Metadata from "../metadata.json";
 
@@ -12,14 +12,8 @@ export default class Preset {
   bags;
   globalGenerators: Generator[] = [];
   instruments: Instrument[] = [];
-  constructor({
-    preset,
-    soundfont2,
-  }: {
-    preset: number;
-    soundfont2: Soundfont2;
-  }) {
-    this.soundfont2 = soundfont2;
+  constructor({ preset, sf2 }: { preset: number; sf2: Soundfont2.Sf2 }) {
+    this.soundfont2 = sf2;
     this.header = this.getHeader(preset);
     this.bags = this.getBags(this.header);
     for (const bag of this.bags) {

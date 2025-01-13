@@ -29,7 +29,8 @@
       "smufl": ["src/models/smufl/"],
       "sheet": ["src/models/sheet/"],
       "core": ["src/models/core/"],
-      "mxl": ["src/models/files/mxl/"]
+      "musicxml": ["src/models/files/musicxml/"],
+      "soundfont2": ["src/models/files/soundfont2/"]
     }
   },
   "include": ["src"],

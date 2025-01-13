@@ -1,9 +1,9 @@
 import * as R from "remeda";
-import * as Midi from ".";
+import * as Midi from "../";
 import * as Core from "core";
 
 export const toCore = (data: Midi.IMidi) => {
-  console.log({ midi: data });
+  if (process.env.NODE_ENV === "development") console.log({ midi: data });
   const params = data.mtrks.reduce(
     (trackAcc, trackCur) => {
       const { notes, time, name } = trackCur.events.reduce(
@@ -64,6 +64,6 @@ export const toCore = (data: Midi.IMidi) => {
     } as Parameters<typeof Core.create>[0]
   );
 
-  console.log(params);
+  if (process.env.NODE_ENV === "development") console.log(params);
   return Core.create(params);
 };

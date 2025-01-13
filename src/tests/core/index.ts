@@ -1,5 +1,5 @@
 import path from "path";
-import * as Core from "../../models/core";
+import * as Core from "core";
 
 export const importCore = async (fileName: string) =>
   Core.create(

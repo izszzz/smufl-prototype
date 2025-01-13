@@ -1,11 +1,11 @@
 import * as Audio from "..";
-import * as Core from "../../../core";
-import Soundfont2 from "../../../files/soundfont2";
+import * as Core from "core";
+import * as Soundfont2 from "soundfont2";
 
-declare module "../../../core" {
+declare module "core" {
   interface Score {
     toAudio: (
-      soundfont2: Soundfont2,
+      soundfont2: Soundfont2.Sf2,
       audioContext: AudioContext
     ) => Audio.Score;
   }
@@ -13,7 +13,7 @@ declare module "../../../core" {
 // TODO: chord rest part
 Core.Score.prototype.toAudio = function (
   this: Core.Score,
-  soundfont2: Soundfont2,
+  sf2: Soundfont2.Sf2,
   audioContext: AudioContext
 ) {
   const score = new Audio.Score({
@@ -23,7 +23,7 @@ Core.Score.prototype.toAudio = function (
         new Audio.Track({
           ...track,
           notes: track.notes.map((note) => new Audio.Note(note)),
-          soundfont2,
+          soundfont2: sf2,
           audioContext,
         })
     ),
