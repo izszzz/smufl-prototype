@@ -1,5 +1,6 @@
 import { Type } from "./schema";
 export * as Unit from "./unit";
-export class MusicXml {
+export * as Type from "./schema";
+export class MXL {
   constructor(public scorePartwise: Type.ScorePartwise) {}
 }

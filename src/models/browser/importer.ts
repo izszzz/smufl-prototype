@@ -1,10 +1,9 @@
-import * as Core from "../core";
-import * as Midi from "../files/midi";
-import { Type } from "../files/mxl/schema";
+import * as Core from "core";
+import * as Midi from "../files/standard midi file";
 import { Zip } from "../files/zip";
 import * as xml2js from "xml2js";
 import * as R from "remeda";
-import { MusicXml } from "../files/mxl";
+import * as MusicXml from "musicxml";
 export class Importer {
   core;
   async import(file: File) {
@@ -28,13 +27,13 @@ export class Importer {
         if (!pathName) return;
         const data = await zip.files[pathName]?.async("text");
         if (!data) return;
-        this.core = new MusicXml(
+        this.core = new MusicXml.MXL(
           (
             (await new xml2js.Parser({
               tagNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
               attrNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
             }).parseStringPromise(data)) as {
-              scorePartwise: Type.ScorePartwise;
+              scorePartwise: MusicXml.Type.ScorePartwise;
             }
           ).scorePartwise
         ).toSheet();

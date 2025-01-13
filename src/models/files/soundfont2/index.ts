@@ -10,10 +10,13 @@ import {
   sampleHeaderParser,
 } from "./parser";
 import Preset from "./preset";
-import Sample from "./sample";
+import { Sample } from "./sample";
 // Reference: https://github.com/gree/sf2synth.js/blob/master/src/sf2.js
-
-export default class Soundfont2 extends Riff {
+export * from "./preset";
+export * from "./sample";
+export * from "./instrument";
+export * as Unit from "./unit";
+export class Sf2 extends Riff {
   phdr;
   pbag;
   pmod;
@@ -53,7 +56,7 @@ export default class Soundfont2 extends Riff {
     this.smpl = this.getChunk(Metadata.id[9]).data;
   }
   getPreset(presetNumber: number) {
-    return new Preset({ preset: presetNumber, soundfont2: this });
+    return new Preset({ preset: presetNumber, sf2: this });
   }
   private parseBag(id: Metadata["bag"][number]) {
     const chunk = this.getChunk(id);

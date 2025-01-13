@@ -10,7 +10,7 @@ export * from "./timesignature";
 export * from "./keysignature";
 export * from "./bpm";
 export * from "./create";
-export * as Unit from "./units";
+export * as Unit from "./unit";
 
 export const convertTimeToSeconds = (time: number, bpm: number) =>
   (60 * time) / bpm;

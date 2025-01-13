@@ -1,7 +1,7 @@
 import * as Audio from ".";
-import * as Core from "../../core";
-import * as Unit2X from "../../unit2x";
-import Soundfont2 from "../../files/soundfont2";
+import * as Core from "core";
+
+import * as Soundfont2 from "soundfont2";
 
 export class Track extends Core.Track<Audio.Note> {
   volume;
@@ -13,7 +13,7 @@ export class Track extends Core.Track<Audio.Note> {
     audioContext,
     ...core
   }: {
-    soundfont2: Soundfont2;
+    soundfont2: Soundfont2.Sf2;
     audioContext: AudioContext;
   } & Core.Track<Audio.Note>) {
     super(core);
@@ -46,8 +46,9 @@ export class Track extends Core.Track<Audio.Note> {
                 sample.generators.delayVolEnv +
                 sample.generators.attackVolEnv +
                 sample.generators.holdVolEnv,
-              sustain: new Unit2X.Decibel(sample.generators.sustainVolEnv)
-                .linearVolume, // TODO: 将来的にこうしたいsample.generators.sustainVolEnv.linearVolume.value
+              sustain: new Soundfont2.Unit.Decibel(
+                sample.generators.sustainVolEnv
+              ).linearVolume, // TODO: 将来的にこうしたいsample.generators.sustainVolEnv.linearVolume.value
               decay:
                 sample.generators.delayVolEnv +
                 sample.generators.attackVolEnv +

@@ -1,4 +1,4 @@
-import * as Core from ".";
+import * as Core from "core";
 export class Keysignature extends Core.Event {
   /**
    * - `true`: minor

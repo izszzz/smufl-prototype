@@ -1,4 +1,4 @@
-import * as Core from ".";
+import * as Core from "core";
 
 export class Track<Note extends Core.Note = Core.Note>
   extends Core.Event

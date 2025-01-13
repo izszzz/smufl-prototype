@@ -1,13 +1,13 @@
 import * as Sheet from "sheet";
-import { MusicXml, Unit } from "../";
+import * as MusicXML from "musicxml";
 
-declare module "../" {
-  interface MusicXml {
+declare module "musicxml" {
+  interface MXL {
     toSheet: (options: { ratio: number }) => Sheet.Score;
   }
 }
 
-MusicXml.prototype.toSheet = function (this: MusicXml) {
+MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
   const score = new Sheet.Score({
     name: this.scorePartwise.work.workTitle,
     timesignatures: [],
@@ -32,7 +32,7 @@ MusicXml.prototype.toSheet = function (this: MusicXml) {
                     stem: "stem" in note ? note.stem[0] : null,
                     x: Number(note.$.defaultX ?? 0),
                     y: Number(note.$.defaultY ?? 0),
-                    pitch: new Unit.Pitch(
+                    pitch: new MusicXML.Unit.Pitch(
                       "pitch" in note
                         ? {
                             step: note.pitch[0].step[0],
@@ -95,6 +95,6 @@ MusicXml.prototype.toSheet = function (this: MusicXml) {
       }
     }
   }
-  console.log({ sheet: score });
+  if (process.env.NODE_ENV === "development") console.log({ sheet: score });
   return score;
 };

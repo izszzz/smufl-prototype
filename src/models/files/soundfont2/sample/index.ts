@@ -1,6 +1,6 @@
 import { IntRange, LiteralToPrimitive, UnionToIntersection } from "type-fest";
 import * as R from "remeda";
-import * as Unit2X from "../../../unit2x";
+import * as Soundfont2 from "soundfont2";
 import { Generator } from "../generator";
 import Instrument from "../instrument";
 import Metadata from "../metadata.json";
@@ -8,7 +8,7 @@ import { Modulator } from "../modulator";
 import { Header } from "./header";
 import { P, match } from "ts-pattern";
 
-export default class Sample {
+export class Sample {
   header;
   instrument;
   generators;
@@ -143,7 +143,8 @@ export default class Sample {
               Metadata.generators[39].name,
               Metadata.generators[40].name
             ),
-            (name) => (acc[name] = new Unit2X.TCent(acc[name]).semitone)
+            (name) =>
+              (acc[name] = new Soundfont2.Unit.TCent(acc[name]).semitone)
           )
           .with(
             P.union(
@@ -153,7 +154,8 @@ export default class Sample {
               Metadata.generators[10].name,
               Metadata.generators[11].name
             ),
-            (name) => (acc[name] = new Unit2X.Centfs(acc[name]).semitone)
+            (name) =>
+              (acc[name] = new Soundfont2.Unit.Centfs(acc[name]).semitone)
           )
           .with(
             P.union(
@@ -172,7 +174,10 @@ export default class Sample {
               Metadata.generators[37].name,
               Metadata.generators[48].name
             ),
-            (name) => (acc[name] = new Unit2X.Centibel(acc[name]).decibel.value)
+            (name) =>
+              (acc[name] = new Soundfont2.Unit.Centibel(
+                acc[name]
+              ).decibel.value)
           )
           .with(
             P.union(
@@ -189,7 +194,10 @@ export default class Sample {
               Metadata.generators[36].name,
               Metadata.generators[38].name
             ),
-            (name) => (acc[name] = new Unit2X.Timecent(acc[name]).seconds.value)
+            (name) =>
+              (acc[name] = new Soundfont2.Unit.Timecent(
+                acc[name]
+              ).seconds.value)
           )
           .with(
             P.union(
@@ -197,7 +205,7 @@ export default class Sample {
               Metadata.generators[22].name,
               Metadata.generators[24].name
             ),
-            (name) => (acc[name] = new Unit2X.Cent(acc[name]).hertz)
+            (name) => (acc[name] = new Soundfont2.Unit.Cent(acc[name]).hertz)
           )
           .exhaustive();
 

@@ -8,8 +8,9 @@ export default defineConfig({
     alias: {
       core: "/src/models/core",
       smufl: "/src/models/smufl",
-      mxl: "/src/models/files/mxl",
       sheet: "/src/models/sheet",
+      musicxml: "/src/models/files/musicxml",
+      soundfont2: "src/models/files/soundfont2",
     },
   },
 });
