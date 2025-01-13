@@ -3,7 +3,7 @@ import * as MusicXML from "musicxml";
 
 declare module "musicxml" {
   interface MXL {
-    toSheet: (options: { ratio: number }) => Sheet.Score;
+    toSheet: () => Sheet.Score;
   }
 }
 

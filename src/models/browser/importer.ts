@@ -1,5 +1,5 @@
 import * as Core from "core";
-import * as Midi from "../files/standard midi file";
+import * as Midi from "../files/standard-midi-file";
 import { Zip } from "../files/zip";
 import * as xml2js from "xml2js";
 import * as R from "remeda";

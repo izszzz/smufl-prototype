@@ -3,7 +3,7 @@ import * as Soundfont2 from "soundfont2";
 
 import * as Browser from "./models/browser";
 
-import "./models/files/mxl/extensions/sheet";
+import "./models/files/musicxml/extensions/to_sheet";
 import "./models/sheet/extensions/to_svg";
 
 function App() {
