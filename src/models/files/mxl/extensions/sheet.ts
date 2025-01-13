@@ -1,5 +1,5 @@
 import * as Sheet from "sheet";
-import { MusicXml } from "../";
+import { MusicXml, Unit } from "../";
 
 declare module "../" {
   interface MusicXml {
@@ -8,9 +8,6 @@ declare module "../" {
 }
 
 MusicXml.prototype.toSheet = function (this: MusicXml) {
-  const steps = ["C", "D", "E", "F", "G", "A", "B"];
-  const pitchToNumber = ({ step, octave }: { step: string; octave: number }) =>
-    (steps.indexOf(step) + 1) * 12 * (octave + 1);
   const score = new Sheet.Score({
     name: this.scorePartwise.work.workTitle,
     timesignatures: [],
@@ -35,13 +32,14 @@ MusicXml.prototype.toSheet = function (this: MusicXml) {
                     stem: "stem" in note ? note.stem[0] : null,
                     x: Number(note.$.defaultX ?? 0),
                     y: Number(note.$.defaultY ?? 0),
-                    pitch:
+                    pitch: new Unit.Pitch(
                       "pitch" in note
-                        ? pitchToNumber({
+                        ? {
                             step: note.pitch[0].step[0],
                             octave: Number(note.pitch[0].octave[0]),
-                          })
-                        : 0,
+                          }
+                        : { step: "C", octave: 0 }
+                    ).toCore(),
                     start: 0,
                     duration: "duration" in note ? Number(note.duration[0]) : 0,
                     end: 0,

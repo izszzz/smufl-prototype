@@ -1,7 +1,6 @@
-import * as Unit2X from "../../unit2x";
 import * as R from "remeda";
 import * as Midi from ".";
-import * as Core from "../../core";
+import * as Core from "core";
 
 export const toCore = (data: Midi.IMidi) => {
   console.log({ midi: data });
@@ -18,7 +17,7 @@ export const toCore = (data: Midi.IMidi) => {
               });
             if (R.isNonNullish(cur.event.tempo))
               trackAcc.bpms?.push({
-                ...{ value: new Unit2X.Tempo(cur.event.tempo).bpm },
+                ...{ value: new Midi.Unit.Tempo(cur.event.tempo).toBpm() },
                 start: acc.time,
               });
             if (R.isNonNullish(cur.event.keySignature))
@@ -36,7 +35,10 @@ export const toCore = (data: Midi.IMidi) => {
             );
             if (note) note.end = acc.time;
           } else if (Midi.isNoteOnEvent(cur))
-            acc.notes.push({ pitch: cur.event.pitch, start: acc.time });
+            acc.notes.push({
+              pitch: cur.event.pitch,
+              start: acc.time,
+            });
           return acc;
         },
         { notes: [], time: 0 } as {

@@ -13,8 +13,8 @@ export class Note extends Core.Note {
   x;
   y;
   get legerLine() {
-    return this.pitch > 80 || this.pitch <= 60
-      ? Math.ceil((this.pitch - 59) / 2)
+    return this.pitch.value > 80 || this.pitch.value <= 60
+      ? Math.ceil((this.pitch.value - 59) / 2)
       : 0;
   }
   constructor({

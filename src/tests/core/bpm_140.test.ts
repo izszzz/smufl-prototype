@@ -24,7 +24,7 @@ describe("bpm_140", async () => {
     test(".bpms", () =>
       expect(core.bpms).toEqual([
         new Core.Bpm({
-          value: 140,
+          value: new Core.Unit.Bpm(140),
           start: 0,
           duration: 0,
           end: 0,

@@ -24,7 +24,7 @@ describe("quarter_dot_middle_c", async () => {
     test(".bpms", () =>
       expect(core.bpms).toEqual([
         new Core.Bpm({
-          value: 120,
+          value: new Core.Unit.Bpm(120),
           start: 0,
           duration: 1.5,
           end: 1.5,
@@ -50,7 +50,8 @@ describe("quarter_dot_middle_c", async () => {
           describe("[0]", () => {
             const note0 = track0?.notes[0];
             test(".id", () => expect(note0?.id).toBeTypeOf("number"));
-            test(".pitch", () => expect(note0?.pitch).toEqual(60));
+            test(".pitch", () =>
+              expect(note0?.pitch).toEqual(new Core.Unit.Pitch(60)));
           });
         });
         test("extends Event", () =>

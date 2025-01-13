@@ -6,21 +6,6 @@ export class Keysignature extends Core.Event {
    */
   tonality;
   accidental;
-  // get accidentalKeys() {
-  //   return Core.Metadata[
-  //     this.tonality ? "minorTonicsByAccidentals" : "majorTonicsByAccidentals"
-  //   ].slice(0, Math.abs(this.accidental));
-  // }
-  // get whiteKeys() {
-  //   return Core.Metadata[
-  //     this.tonality ? "minorWhiteNotes" : "majorWhiteNotes"
-  //   ].map((i) => Core.Metadata.pitchClasses[i]);
-  // }
-  // get blackKeys() {
-  //   return Core.Metadata.pitchClasses.filter(
-  //     (pitchClassNote) => !(this.whiteKeys as number[]).includes(pitchClassNote)
-  //   );
-  // }
   constructor({
     tonality,
     accidental,

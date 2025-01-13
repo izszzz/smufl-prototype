@@ -12,7 +12,9 @@ describe("timesignature_3_4", async () => {
         new Core.Timesignature({ denominator: 4, numerator: 3, ...event }),
       ]));
     test(".bpms", () =>
-      expect(core.bpms).toEqual([new Core.Bpm({ value: 120, ...event })]));
+      expect(core.bpms).toEqual([
+        new Core.Bpm({ value: new Core.Unit.Bpm(120), ...event }),
+      ]));
     test(".keysignatures", () =>
       expect(core.keysignatures).toEqual([
         new Core.Keysignature({ tonality: false, accidental: 0, ...event }),

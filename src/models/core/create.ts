@@ -2,7 +2,7 @@ import * as R from "remeda";
 import * as Core from ".";
 import { LiteralToPrimitiveDeep, PartialDeep, SetOptional } from "type-fest";
 
-type Params = SetOptional<
+type JSONParams = SetOptional<
   Pick<Core.Score, "start" | "duration" | "end">,
   "start" | "duration" | "end"
 > & {
@@ -10,10 +10,10 @@ type Params = SetOptional<
     Omit<Core.Track, "score" | "id" | "notes">,
     "preset" | "start" | "duration" | "end"
   > & {
-    notes: SetOptional<
-      Omit<Core.Track["notes"][number], "id">,
+    notes: (SetOptional<
+      Omit<Core.Track["notes"][number], "id" | "pitch">,
       "duration" | "end" | "start"
-    >[];
+    > & { pitch: number | Core.Unit.Pitch })[];
   })[];
   keysignatures?: SetOptional<
     Core.Keysignature,
@@ -23,10 +23,13 @@ type Params = SetOptional<
     Core.Timesignature,
     "duration" | "end" | "start"
   >[];
-  bpms?: SetOptional<Core.Bpm, "duration" | "end" | "start">[];
+  bpms?: (Omit<SetOptional<Core.Bpm, "duration" | "end" | "start">, "value"> & {
+    value: number | Core.Unit.Bpm;
+  })[];
 };
+
 export const create = (
-  params: Params,
+  params: JSONParams,
   options: {
     defaultValue: PartialDeep<
       LiteralToPrimitiveDeep<typeof Core.Metadata.defaultValue>
@@ -85,24 +88,69 @@ export const create = (
     }
   }
 
-  const cparams = params as ConstructorParameters<typeof Core.Score>[0];
+  const cparams = params as JSONParams;
   const core = new Core.Score({
     ...cparams,
-    timesignatures: cparams.timesignatures.map(
-      (timesignature) => new Core.Timesignature(timesignature)
-    ),
-    keysignatures: cparams.keysignatures.map(
-      (keysignature) => new Core.Keysignature(keysignature)
-    ),
-    bpms: cparams.bpms.map((bpm) => new Core.Bpm(bpm)),
+    timesignatures:
+      cparams.timesignatures?.map(
+        (timesignature) =>
+          new Core.Timesignature({
+            ...timesignature,
+            start: timesignature.start ?? 0,
+            duration: timesignature.duration ?? 0,
+            end: timesignature.end ?? 0,
+          })
+      ) ?? [],
+    keysignatures:
+      cparams.keysignatures?.map(
+        (keysignature) =>
+          new Core.Keysignature({
+            ...keysignature,
+            start: keysignature.start ?? 0,
+            duration: keysignature.duration ?? 0,
+            end: keysignature.end ?? 0,
+          })
+      ) ?? [],
+    bpms:
+      cparams.bpms?.map(
+        (bpm) =>
+          new Core.Bpm({
+            ...bpm,
+            value: R.isNumber(bpm.value)
+              ? new Core.Unit.Bpm(bpm.value)
+              : bpm.value,
+            start: bpm.start ?? 0,
+            duration: bpm.duration ?? 0,
+            end: bpm.end ?? 0,
+          })
+      ) ?? [],
     tracks: cparams.tracks.map(
       (track, id) =>
         new Core.Track({
           ...track,
           id,
-          notes: track.notes.map((note, id) => new Core.Note({ ...note, id })),
+          notes: track.notes.map(
+            (note, id) =>
+              new Core.Note({
+                ...note,
+                pitch: R.isNumber(note.pitch)
+                  ? new Core.Unit.Pitch(note.pitch)
+                  : note.pitch,
+                id,
+                start: track.start ?? 0,
+                duration: track.duration ?? 0,
+                end: track.end ?? 0,
+              })
+          ),
+          start: track.start ?? 0,
+          duration: track.duration ?? 0,
+          end: track.end ?? 0,
+          preset: track.preset ?? 0,
         })
     ),
+    start: cparams.start ?? 0,
+    duration: cparams.duration ?? 0,
+    end: cparams.end ?? 0,
   });
   console.log(core);
   return core;

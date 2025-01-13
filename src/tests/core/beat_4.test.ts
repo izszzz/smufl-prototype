@@ -11,7 +11,9 @@ describe("beat_4", async () => {
         new Core.Timesignature({ denominator: 4, numerator: 4, ...event }),
       ]));
     test(".bpms", () =>
-      expect(core.bpms).toEqual([new Core.Bpm({ value: 120, ...event })]));
+      expect(core.bpms).toEqual([
+        new Core.Bpm({ value: new Core.Unit.Bpm(120), ...event }),
+      ]));
     test(".keysignatures", () =>
       expect(core.keysignatures).toEqual([
         new Core.Keysignature({ tonality: false, accidental: 0, ...event }),
@@ -26,7 +28,8 @@ describe("beat_4", async () => {
           describe("[0]", () => {
             const note0 = track0?.notes[0];
             test(".id", () => expect(note0?.id).toBeTypeOf("number"));
-            test(".pitch", () => expect(note0?.pitch).toEqual(60));
+            test(".pitch", () =>
+              expect(note0?.pitch).toEqual(new Core.Unit.Pitch(60)));
           });
         });
         test("extends Event", () => expect(track0).toMatchObject(event));

@@ -2,6 +2,7 @@ import Metadata from "./metadata.json";
 export * from "./core";
 export * from "./parser";
 export * from "./parse";
+export * as Unit from "./units";
 export interface IMidi {
   mthd: {
     type: string;

@@ -7,7 +7,7 @@ export class Note extends Core.Event implements Core.Identifier {
     id,
     pitch,
     ...element
-  }: { id: number; pitch: number } & Core.Event) {
+  }: { id: number; pitch: Core.Unit.Pitch } & Core.Event) {
     super(element);
     this.id = id;
     this.pitch = pitch;

@@ -26,7 +26,9 @@ describe("quarter_middle_c", async () => {
         }),
       ]));
     test(".bpms", () =>
-      expect(core.bpms).toEqual([new Core.Bpm({ value: 120, ...event })]));
+      expect(core.bpms).toEqual([
+        new Core.Bpm({ value: new Core.Unit.Bpm(120), ...event }),
+      ]));
     test(".keysignatures", () =>
       expect(core.keysignatures).toEqual([
         new Core.Keysignature({ tonality: false, accidental: 0, ...event }),
