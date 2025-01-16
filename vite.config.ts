@@ -10,7 +10,7 @@ export default defineConfig({
       smufl: "/src/models/smufl",
       sheet: "/src/models/sheet",
       musicxml: "/src/models/files/musicxml",
-      soundfont2: "src/models/files/soundfont2",
+      soundfont2: "/src/models/files/soundfont2",
     },
   },
 });

@@ -1,41 +1,36 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
-import { Type } from "../files/mxl/schema";
 
 export class Bar extends Core.Event implements Core.Identifier {
   id;
   width;
   staffLines;
   notes;
-  track!: Sheet.Track;
+  staves;
   timesignature;
-  clefs;
-  barlines;
+  track!: Sheet.Track;
   constructor({
     id,
     width,
     staffLines,
-    clefs,
     notes,
+    staves,
     timesignature,
-    barlines,
     ...event
   }: {
     id: number;
     width: number;
     staffLines: number;
-    clefs: Type.Clef[];
-    barlines: Type.Barline[];
     notes: Sheet.Note[];
+    staves: Sheet.Stave[];
     timesignature: Sheet.Timesignature;
   } & Core.Event) {
     super(event);
     this.id = id;
     this.width = width;
     this.staffLines = staffLines;
-    this.clefs = clefs;
+    this.staves = staves;
     this.notes = notes;
     this.timesignature = timesignature;
-    this.barlines = barlines;
   }
 }
