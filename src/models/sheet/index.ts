@@ -5,3 +5,4 @@ export * from "./keysignature";
 export * from "./timesignature";
 export * from "./note";
 export * from "./bar";
+export * from "./stave";

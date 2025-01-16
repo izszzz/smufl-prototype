@@ -1,3 +1,4 @@
+import * as R from "remeda";
 import * as Sheet from "sheet";
 import * as MusicXML from "musicxml";
 
@@ -53,17 +54,26 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
           duration: 0,
           end: 0,
         });
+        console.log(measure);
         return new Sheet.Bar({
           id: i,
           notes,
           timesignature,
           staffLines: 5,
-          clefs: measure.attributes[0].clef.map((clef) => ({
-            sign: clef.sign[0],
-            line: clef.line[0],
-            number: clef.$?.number[0],
-          })),
-          barlines: measure.barline,
+          staves: R.times(measure.attributes[0].staves[0], (i) => {
+            const clef = measure.attributes[0].clef.find(
+              (clef) => Number(clef.$.number) === i + 1
+            );
+            return new Sheet.Stave({
+              id: i,
+              clef: {
+                sign: clef.sign[0],
+                line: clef.line[0],
+                number: clef.$?.number[0],
+              },
+              barline: measure.barline[0],
+            });
+          }),
           width: Number(measure.$.width ?? 0),
           start: 0,
           duration: 0,
