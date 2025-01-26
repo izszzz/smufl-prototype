@@ -14,7 +14,10 @@ export class Track extends Core.Track<Sheet.Note> {
     bars,
     staffLines,
     ...track
-  }: { bars: Sheet.Bar[]; staffLines: number } & Core.Track<Sheet.Note>) {
+  }: {
+    bars: Sheet.Bar[];
+    staffLines: number;
+  } & Core.Track<Sheet.Note>) {
     super(track);
     this.bars = bars;
     this.staffLines = staffLines;

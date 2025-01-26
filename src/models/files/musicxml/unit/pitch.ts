@@ -1,6 +1,6 @@
 import * as Core from "core";
 export class Pitch {
-  _pitchBrand!: never;
+  protected _pitchBrand!: never;
   constructor(public value: { step: string; octave: number }) {}
   toCore() {
     const steps = ["C", "D", "E", "F", "G", "A", "B"];
