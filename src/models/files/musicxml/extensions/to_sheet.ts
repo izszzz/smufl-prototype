@@ -9,13 +9,21 @@ declare module "musicxml" {
 }
 
 MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
+  console.log(this);
   const score = new Sheet.Score({
     name: this.scorePartwise.work.workTitle,
     timesignatures: [],
     keysignatures: [],
     bpms: [],
-    tracks: this.scorePartwise.part.map((part, id) => {
+    tracks: this.scorePartwise.part.map((part, trackIndex) => {
       const bars = part.measure.map((measure, i) => {
+        const staffDistance =
+          Number(
+            measure.print[0].staffLayout?.find((s) => s.$.number[0] === "1")
+              ?.staffDistance?.[0] ?? 0
+          ) /
+            10 +
+          trackIndex * 4;
         const notes =
           "note" in measure
             ? measure.note.map(
@@ -31,8 +39,10 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                     chord: "chord" in note,
                     type: "type" in note ? note.type[0] : null,
                     stem: "stem" in note ? note.stem[0] : null,
-                    x: Number(note.$.defaultX ?? 0),
-                    y: Number(note.$.defaultY ?? 0),
+                    x: note.$.defaultX ? Number(note.$.defaultX) / 10 : 0,
+                    y: note.$.defaultY
+                      ? Number(note.$.defaultY) / 10 + staffDistance
+                      : 0,
                     pitch: new MusicXML.Unit.Pitch(
                       "pitch" in note
                         ? {
@@ -54,34 +64,34 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
           duration: 0,
           end: 0,
         });
-        console.log(measure);
+
         return new Sheet.Bar({
           id: i,
           notes,
           timesignature,
           staffLines: 5,
-          staves: R.times(measure.attributes[0].staves[0], (i) => {
+          staves: R.times(measure.attributes[0].staves?.[0] ?? 1, (i) => {
             const clef = measure.attributes[0].clef.find(
-              (clef) => Number(clef.$.number) === i + 1
+              (clef) => Number(clef?.$?.number ?? 1) === i + 1
             );
             return new Sheet.Stave({
               id: i,
               clef: {
                 sign: clef.sign[0],
                 line: clef.line[0],
-                number: clef.$?.number[0],
+                number: clef.$?.number[0] ?? 1,
               },
               barline: measure.barline[0],
             });
           }),
-          width: Number(measure.$.width ?? 0),
+          width: Number(measure.$.width ?? 0) / 10,
           start: 0,
           duration: 0,
           end: 0,
         });
       });
       return new Sheet.Track({
-        id,
+        id: trackIndex,
         name: part.$.id,
         notes: bars.flatMap((bar) => bar.notes),
         bars,
@@ -99,6 +109,9 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
   for (const track of score.tracks) {
     for (const bar of track.bars) {
       bar.track = track;
+      for (const stave of bar.staves) {
+        stave.bar = bar;
+      }
       for (const note of bar.notes) {
         note.track = track;
         note.bar = bar;
