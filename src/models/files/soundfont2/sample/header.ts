@@ -1,14 +1,17 @@
+import { Cent } from "../unit/cent";
+import { Hertz } from "../unit/hertz";
+
 export class Header {
-  name: string;
-  start: number;
-  end: number;
-  startLoop: number;
-  endLoop: number;
-  sampleRate: number;
-  originalKey: number;
-  correction: number;
-  sampleLink: number;
-  type: number;
+  name;
+  start;
+  end;
+  startLoop;
+  endLoop;
+  sampleRate;
+  originalKey;
+  correction;
+  sampleLink;
+  type;
   constructor({
     name,
     start,
@@ -37,9 +40,9 @@ export class Header {
     this.end = end;
     this.endLoop = endLoop;
     this.startLoop = startLoop;
-    this.sampleRate = sampleRate;
+    this.sampleRate = new Hertz(sampleRate);
     this.originalKey = originalKey;
-    this.correction = correction;
+    this.correction = new Cent(correction);
     this.sampleLink = sampleLink;
     this.type = type;
   }

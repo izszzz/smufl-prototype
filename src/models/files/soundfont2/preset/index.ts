@@ -1,10 +1,7 @@
-import { Bag } from "../bag";
 import { Generator } from "../generator";
-import { Header } from "./header";
-import { Modulator } from "../modulator";
-import * as Soundfont2 from "soundfont2";
 import Instrument from "../instrument";
 import Metadata from "../metadata.json";
+import { Sf2 } from "../sf2";
 
 export default class Preset {
   soundfont2;
@@ -12,7 +9,7 @@ export default class Preset {
   bags;
   globalGenerators: Generator[] = [];
   instruments: Instrument[] = [];
-  constructor({ preset, sf2 }: { preset: number; sf2: Soundfont2.Sf2 }) {
+  constructor({ preset, sf2 }: { preset: number; sf2: Sf2 }) {
     this.soundfont2 = sf2;
     this.header = this.getHeader(preset);
     this.bags = this.getBags(this.header);
@@ -42,7 +39,7 @@ export default class Preset {
     return this.soundfont2.pbag
       .slice(data.bagIndex, nextHeader?.bagIndex)
       .map((bag, i) => ({
-        data: new Preset.Bag(bag),
+        data: bag,
         index: data.bagIndex + i,
       }));
   };
@@ -51,21 +48,13 @@ export default class Preset {
     index,
   }: ReturnType<typeof this.getBags>[number]) => {
     const nextBag = this.soundfont2.pbag[index + 1];
-    return this.soundfont2.pgen
-      .slice(data.genIndex, nextBag?.genIndex)
-      .map((pgen) => new Preset.Generator(pgen));
+    return this.soundfont2.pgen.slice(data.genIndex, nextBag?.genIndex);
   };
   private getModulators = ({
     data,
     index,
   }: ReturnType<typeof this.getBags>[number]) => {
     const nextBag = this.soundfont2.pbag[index + 1];
-    return this.soundfont2.pmod
-      .slice(data.modIndex, nextBag?.modIndex)
-      .map((pmod) => new Preset.Modulator(pmod));
+    return this.soundfont2.pmod.slice(data.modIndex, nextBag?.modIndex);
   };
-  static Header = Header;
-  static Bag = Bag;
-  static Generator = Generator;
-  static Modulator = Modulator;
 }

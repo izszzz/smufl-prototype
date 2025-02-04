@@ -1,8 +1,9 @@
 import { Seconds } from "./seconds";
-import { Unit } from "./unit";
 
-export class Timecent extends Unit {
-  get seconds() {
+export class Timecent {
+  _timecentBrand!: never;
+  constructor(public value: number) {}
+  toSeconds() {
     return new Seconds(Math.pow(2, this.value / 1200));
   }
 }

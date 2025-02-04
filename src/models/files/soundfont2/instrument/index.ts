@@ -1,10 +1,8 @@
-import { Bag } from "../bag";
 import { Generator } from "../generator";
 import Metadata from "../metadata.json";
 import { Modulator } from "../modulator";
 import Preset from "../preset";
 import { Sample } from "../sample";
-import { Header } from "./header";
 
 export default class Instrument {
   preset;
@@ -14,7 +12,6 @@ export default class Instrument {
   presetModulators;
   globalGenerators: Generator[] = [];
   samples: Sample[] = [];
-
   constructor(
     preset: Preset,
     presetGenerators: Generator[],
@@ -47,14 +44,14 @@ export default class Instrument {
   private getHeader(amount: number) {
     const data = this.preset.soundfont2.inst[amount];
     if (!data) throw new Error();
-    return { data: new Instrument.Header(data), index: amount };
+    return { data, index: amount };
   }
   private getBags = ({ data, index }: ReturnType<typeof this.getHeader>) => {
     const nextHeader = this.preset.soundfont2.inst[index + 1];
     return this.preset.soundfont2.ibag
       .slice(data.bagIndex, nextHeader?.bagIndex)
       .map((bag, i) => ({
-        data: new Instrument.Bag(bag),
+        data: bag,
         index: data.bagIndex + i,
       }));
   };
@@ -63,22 +60,13 @@ export default class Instrument {
     index,
   }: ReturnType<typeof this.getBags>[number]) => {
     const nextBag = this.preset.soundfont2.ibag[index + 1];
-    return this.preset.soundfont2.igen
-      .slice(data.genIndex, nextBag?.genIndex)
-      .map((gen) => new Instrument.Generator(gen));
+    return this.preset.soundfont2.igen.slice(data.genIndex, nextBag?.genIndex);
   };
   private getModulators = ({
     data,
     index,
   }: ReturnType<typeof this.getBags>[number]) => {
     const nextBag = this.preset.soundfont2.ibag[index + 1];
-    return this.preset.soundfont2.imod
-      .slice(data.modIndex, nextBag?.modIndex)
-      .map((mod) => new Instrument.Modulator(mod));
+    return this.preset.soundfont2.imod.slice(data.modIndex, nextBag?.modIndex);
   };
-
-  static Header = Header;
-  static Bag = Bag;
-  static Generator = Generator;
-  static Modulator = Modulator;
 }

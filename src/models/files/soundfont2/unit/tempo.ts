@@ -1,7 +1,7 @@
-import { Unit } from "./unit";
-
-export class Tempo extends Unit {
-  get bpm() {
+export class Tempo {
+  _tempoBrand!: never;
+  constructor(public value: number) {}
+  toBpm() {
     return Math.floor(60000000 / this.value);
   }
 }

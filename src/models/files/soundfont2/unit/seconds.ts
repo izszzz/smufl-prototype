@@ -1,3 +1,4 @@
-import { Unit } from "./unit";
-
-export class Seconds extends Unit {}
+export class Seconds {
+  _secondsBrand!: never;
+  constructor(public value: number) {}
+}

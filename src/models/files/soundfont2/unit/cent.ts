@@ -1,8 +1,9 @@
-import { Timecent } from "./timecent";
-import { Unit } from "./unit";
+import { Hertz } from "./hertz";
 
-export class Cent extends Unit {
-  get hertz() {
-    return 8.176 * new Timecent(this.value).seconds.value;
+export class Cent {
+  _centBrand!: never;
+  constructor(public value: number) {}
+  toHertz() {
+    return new Hertz(8.176 * 2 ** (this.value / 1200));
   }
 }

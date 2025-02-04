@@ -5,7 +5,6 @@ import fs from "fs";
 import * as R from "remeda";
 import * as ts from "typescript";
 
-// TODO: default値はobjectmapperで変換する
 const data = fs.readFileSync("src/musicxml/schema/musicxml.xsd");
 const tsNodes: ts.Statement[] = [];
 const xsTypes = [
@@ -130,22 +129,23 @@ new xml2js.Parser({
                   union.$.memberTypes,
                   R.split(" "),
                   R.map((v: any) =>
-                    v.includes("xs:")
-                      ? ts.factory.createTypeReferenceNode(v.replace("xs:", ""))
-                      : ts.factory.createTypeReferenceNode(
-                          R.pipe(v, R.toCamelCase(), R.capitalize())
-                        )
+                    ts.factory.createTypeReferenceNode(
+                      v.includes("xs:")
+                        ? v.replace("xs:", "")
+                        : R.pipe(v, R.toCamelCase(), R.capitalize())
+                    )
                   )
                 )
               )
             : ts.factory.createTypeReferenceNode(
                 union.$.memberTypes.replace("xs:", "")
               )
-          : base.includes("xs:")
-            ? ts.factory.createTypeReferenceNode(base.replace("xs:", ""))
-            : ts.factory.createTypeReferenceNode(
-                R.pipe(base, R.toCamelCase(), R.capitalize())
-              );
+          : ts.factory.createTypeReferenceNode(
+              base.includes("xs:")
+                ? base.replace("xs:", "")
+                : R.pipe(base, R.toCamelCase(), R.capitalize())
+            );
+
       return ts.factory.createTypeAliasDeclaration(
         [ts.factory.createModifier(ts.SyntaxKind.ExportKeyword)],
         createClassName(simpleType),

@@ -1,14 +1,16 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import * as Soundfont2 from "soundfont2";
+import { create as createSf2 } from "soundfont2";
 
 import * as Browser from "./models/browser";
 
 import "./models/files/musicxml/extensions/to_sheet";
 import "./models/sheet/extensions/to_svg";
+import { Player } from "./models/browser/audio/player";
 
 function App() {
   const [fontSize, setFontSize] = useState(30);
-
+  const [audioPlayer, setAudioPlayer] = useState<Player>();
   const [soundfont2, setSoundfont2] = useState<Soundfont2.Sf2>();
 
   const ref = useRef<SVGSVGElement>(null);
@@ -16,7 +18,7 @@ function App() {
   useEffect(() => {
     (async () => {
       const buffer = await fetch("/A320U.sf2").then((res) => res.arrayBuffer());
-      setSoundfont2(new Soundfont2.Sf2(new Uint8Array(buffer)));
+      setSoundfont2(createSf2(new Uint8Array(buffer)));
     })();
   }, []);
 
@@ -34,7 +36,7 @@ function App() {
         }
         ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
 
-        // setAudioPlayer(new Audio.Player(core, soundfont2));
+        setAudioPlayer(new Player(importer.core, soundfont2));
         // setFontSize(svgRenderer.options.fontSize);
       }
     }
@@ -47,7 +49,12 @@ function App() {
         className="bravura"
         style={{ padding: "30px", height: "70vh" }}
       />
-      <button type="button" onClick={() => {}}>
+      <button
+        type="button"
+        onClick={() => {
+          audioPlayer?.play();
+        }}
+      >
         play
       </button>
       <button type="button" onClick={() => {}}>
