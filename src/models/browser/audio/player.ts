@@ -1,6 +1,6 @@
 import * as Audio from ".";
 import * as Core from "core";
-import * as Soundfont2 from "soundfont2";
+import Soundfont2 from "soundfont2";
 import "../../core/extensions/to_audio";
 
 export class Player {
@@ -10,7 +10,7 @@ export class Player {
   volume;
   sf2;
   isPlaying = false;
-  constructor(core: Core.Score, sf2: Soundfont2.Sf2) {
+  constructor(core: Core.Score, sf2: Soundfont2) {
     this.core = core;
     this.ctx = new AudioContext();
     this.volume = this.ctx.createGain();
@@ -42,7 +42,7 @@ export class Player {
         const buffer = track.audioContext.createBuffer(
           1,
           float32.length,
-          sample.header.data.sampleRate.value
+          sample.header.sampleRate.value
         );
         buffer.getChannelData(0).set(float32);
 
@@ -52,10 +52,9 @@ export class Player {
         if (sample.generators.sampleModes.value !== 0) {
           bufferSource.loop = true;
           bufferSource.loopStart =
-            (sample.startLoop - sample.start) /
-            sample.header.data.sampleRate.value;
+            (sample.startLoop - sample.start) / sample.header.sampleRate.value;
           bufferSource.loopEnd =
-            (sample.endLoop - sample.end) / sample.header.data.sampleRate.value;
+            (sample.endLoop - sample.end) / sample.header.sampleRate.value;
         }
         bufferSource.playbackRate.value = sample.playBackRate(note.pitch.value);
 

@@ -1,4 +1,4 @@
-import { Sf2 } from "./sf2";
+import Soundfont2 from ".";
 import {
   bagParser,
   generatorParser,
@@ -14,14 +14,14 @@ import { Header as SampleHeader } from "./sample/header";
 import { Bag } from "./bag";
 import { Modulator } from "./modulator";
 import { Generator } from "./generator";
-import { create as createRiff } from "../riff/create";
+import Riff from "../riff";
 
 export function create(arrayBuffer: ArrayBuffer) {
-  const riff = createRiff(arrayBuffer);
+  const riff = Riff.create(arrayBuffer);
   const presetHeaderChunk = riff.getChunk(Metadata.id[0])!;
   const instrumentHeaderChunk = riff.getChunk(Metadata.id[4])!;
   const sampleHeaderChunk = riff.getChunk(Metadata.id[8])!;
-  return new Sf2(
+  return new Soundfont2(
     headerParser(presetHeaderChunk.length)
       .parse(presetHeaderChunk.data)
       .data.map(

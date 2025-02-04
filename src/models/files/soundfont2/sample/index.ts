@@ -1,67 +1,44 @@
-import * as R from "remeda";
-
 import { Generator } from "../generator";
 import Instrument from "../instrument";
-import Metadata from "../metadata.json";
+
 import { Modulator } from "../modulator";
 import { Header } from "./header";
-import { match } from "ts-pattern";
-import { Smpls32k } from "../unit/32ksmpls";
-import { Smpls } from "../unit/smpls";
-import { TCentKey } from "../unit/tcentkey";
-import { Centfs } from "../unit/centfs";
-import { Centibel } from "../unit/centibel";
-import { Centibelfs } from "../unit/centibelfs";
-import { Centibelattan } from "../unit/centibelattan";
-import { Timecent } from "../unit/timecent";
-import { Cent } from "../unit/cent";
-import { CentKey } from "../unit/centkey";
-import { MidiKey } from "../unit/midikey";
-import { MidiVel } from "../unit/midivel";
-import { BitFlag } from "../unit/bitflag";
-import { Semitone } from "../unit/semitone";
-import { Arbitrary } from "../unit/arbitrary";
-import { Promille } from "../unit/promille";
+
+import { Generators, create } from "./create";
 
 export class Sample {
-  header;
-  instrument;
-  generators;
-  instrumentGenerators;
-  instrumentModulators;
-  data;
   get start() {
     return (
       32768 * this.generators.startAddrsCoarseOffset.value +
-      this.header.data.start +
+      this.header.start +
       this.generators.startAddrsOffset.value
     );
   }
   get end() {
     return (
       32768 * this.generators.endAddrsCoarseOffset.value +
-      this.header.data.end +
+      this.header.end +
       this.generators.endAddrsOffset.value
     );
   }
   get startLoop() {
     return (
       32768 * this.generators.startloopAddrsCoarseOffset.value +
-      this.header.data.startLoop +
+      this.header.startLoop +
       this.generators.startloopAddrsOffset.value
     );
   }
   get endLoop() {
     return (
       32768 * this.generators.endloopAddrsCoarseOffset.value +
-      this.header.data.endLoop +
+      this.header.endLoop +
       this.generators.endloopAddrsOffset.value
     );
   }
   get baseDetune() {
     return (
-      this.header.data.originalKey -
-      this.header.data.correction.value -
+      this.header.originalKey -
+      this.header.correction.value -
       this.generators.fineTune.value
     );
   }
@@ -69,150 +46,12 @@ export class Sample {
     return 1.0 * Math.pow(2, (pitch * 100 - this.baseDetune) / 1200);
   }
   constructor(
-    instrument: Instrument,
-    instrumentGenerators: Generator[],
-    instrumentModulators: Modulator[]
-  ) {
-    this.instrument = instrument;
-    this.instrumentGenerators = instrumentGenerators;
-    this.instrumentModulators = instrumentModulators;
-    this.header = this.getHeader(
-      instrumentGenerators.find(
-        (generator) => generator.genOper === Metadata.generators[53].name
-      )!.genAmount as number
-    );
-    this.generators = this.setGenerators();
-    this.data = this.getData();
-  }
-  private getHeader(genAmount: number) {
-    const data = this.instrument.preset.soundfont2.shdr[genAmount];
-    if (!data) throw new Error();
-    return { data, index: genAmount };
-  }
-  private getData() {
-    return new Int16Array(
-      new Uint8Array(
-        this.instrument.preset.soundfont2.smpl.subarray(
-          this.header.data.start * 2,
-          this.header.data.end * 2
-        )
-      ).buffer
-    );
-  }
-  private setGenerators() {
-    return R.pipe(
-      Metadata.generators,
-      R.filter(R.isNot(R.isDeepEqual(Metadata.generators[41]))),
-      R.filter(R.isNot(R.isDeepEqual(Metadata.generators[53]))),
-      R.filter(R.isNot(R.isDeepEqual(Metadata.generators[60]))),
-      R.filter(R.isNonNullish),
-      R.reduce(
-        (acc, cur) => {
-          const zone = () => {
-            const isGenOper = ({ genOper }: Generator) => genOper === cur.name;
-            let value;
-            // inst globalZone
-            const globalInstrumentGenerator =
-              this.instrument.globalGenerators.find(isGenOper);
-            if (globalInstrumentGenerator)
-              value = globalInstrumentGenerator.genAmount;
-
-            // inst localZone
-            const localInstrumentGenerator =
-              this.instrumentGenerators.find(isGenOper);
-            if (localInstrumentGenerator)
-              value = localInstrumentGenerator.genAmount;
-            // preset localZone
-            const localPresetGenerator =
-              this.instrument.presetGenerators.find(isGenOper);
-            if (
-              localPresetGenerator &&
-              R.isNumber(localPresetGenerator.genAmount) &&
-              R.isNumber(value)
-            )
-              value += localPresetGenerator.genAmount;
-            else {
-              const globalPresetGenerator =
-                this.instrument.preset.globalGenerators.find(isGenOper);
-              if (
-                globalPresetGenerator &&
-                R.isNumber(globalPresetGenerator.genAmount) &&
-                R.isNumber(value)
-              )
-                value += globalPresetGenerator.genAmount;
-            }
-            return value ?? cur.default;
-          };
-
-          // TODO: Metadata.generatorsに対してvalueを追加するだけでいいかも
-          acc[cur.name] = match(cur.uint)
-            .with("smpls", () => new Smpls(zone() as number))
-            .with("32k smpls", () => new Smpls32k(zone() as number))
-            .with("MIDI ky#", () => new MidiKey(zone() as number))
-            .with("MIDI vel", () => new MidiVel(zone() as number))
-            .with("MIDI ky# range", () => zone() as { lo: number; hi: number })
-            .with("MIDI vel range", () => zone() as { lo: number; hi: number })
-            .with("cent", () => new Cent(zone() as number))
-            .with("cent fs", () => new Centfs(zone() as number))
-            .with("tcent/key", () => new TCentKey(zone() as number))
-            .with("cent/key", () => new CentKey(zone() as number))
-            .with("BitFlags", () => new BitFlag(zone() as number))
-            .with("arbitary#", () => new Arbitrary(zone() as number))
-            .with("0.1%", () => new Promille(zone() as number))
-            .with("-0.1%", () => new Promille(-zone() as number))
-            .with("semitone", () => new Semitone(zone() as number))
-            .with("cB", () => new Centibel(zone() as number))
-            .with("cB fs", () => new Centibelfs(zone() as number))
-            .with("cB attan", () => new Centibelattan(zone() as number))
-            .with("timecent", () => new Timecent(zone() as number))
-            .exhaustive();
-          return acc;
-        },
-        {} as {
-          [K in Metadata["generators"][0 | 1 | 2 | 3 | 45 | 50]["name"]]: Smpls;
-        } & {
-          [K in Metadata["generators"][4 | 12]["name"]]: Smpls32k;
-        } & {
-          [K in Metadata["generators"][43 | 46 | 58]["name"]]: MidiKey;
-        } & {
-          [K in Metadata["generators"][44 | 47]["name"]]: MidiVel;
-        } & {
-          [K in Metadata["generators"][8 | 22 | 24 | 52]["name"]]: Cent;
-        } & {
-          [K in Metadata["generators"][5 | 6 | 7 | 10 | 11]["name"]]: Centfs;
-        } & {
-          [K in Metadata["generators"][31 | 32 | 39 | 40]["name"]]: TCentKey;
-        } & {
-          [K in Metadata["generators"][56]["name"]]: CentKey;
-        } & {
-          [K in Metadata["generators"][54]["name"]]: BitFlag;
-        } & {
-          [K in Metadata["generators"][57]["name"]]: Arbitrary;
-        } & {
-          [K in Metadata["generators"][15 | 16 | 17 | 29]["name"]]: Promille;
-        } & {
-          [K in Metadata["generators"][51]["name"]]: Semitone;
-        } & {
-          [K in Metadata["generators"][9 | 13 | 48]["name"]]: Centibel;
-        } & {
-          [K in Metadata["generators"][37]["name"]]: Centibelattan;
-        } & {
-          [K in Metadata["generators"][
-            | 21
-            | 23
-            | 25
-            | 26
-            | 27
-            | 28
-            | 30
-            | 33
-            | 34
-            | 35
-            | 36
-            | 38]["name"]]: Timecent;
-        }
-      )
-    );
-  }
-  static Header = Header;
+    public instrument: Instrument,
+    public instrumentGenerators: Generator[],
+    public instrumentModulators: Modulator[],
+    public header: Header,
+    public generators: Generators,
+    public data: Int16Array
+  ) {}
+  static create = create;
 }
