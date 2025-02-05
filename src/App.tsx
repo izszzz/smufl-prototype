@@ -32,7 +32,8 @@ function App() {
         while (ref.current.firstChild) {
           ref.current.removeChild(ref.current.firstChild);
         }
-        ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
+        if ("toSVG" in importer.core)
+          ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
 
         setAudioPlayer(new Player(importer.core, soundfont2));
         // setFontSize(svgRenderer.options.fontSize);

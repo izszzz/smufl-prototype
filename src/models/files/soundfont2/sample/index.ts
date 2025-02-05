@@ -37,7 +37,7 @@ export class Sample {
   }
   get baseDetune() {
     return (
-      this.header.originalKey -
+      100 * this.header.originalKey +
       this.header.correction.value -
       this.generators.fineTune.value
     );
