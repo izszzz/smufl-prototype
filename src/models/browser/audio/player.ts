@@ -19,14 +19,13 @@ export class Player {
     this.volume.connect(this.ctx.destination);
   }
   play() {
+    console.log("play");
     this.isPlaying = true;
     for (const track of this.score.tracks) {
       const soundfont2Preset = this.sf2.getPreset(track.preset);
       track.volume.connect(this.volume);
 
       for (const note of track.notes) {
-        console.log(note);
-        if ("rest" in note && note.rest === true) continue;
         const sample = soundfont2Preset.instruments
           .flatMap((instrument) => instrument.samples)
           .find(
@@ -34,8 +33,6 @@ export class Player {
               sample.generators.keyRange.lo <= note.pitch.value &&
               sample.generators.keyRange.hi >= note.pitch.value
           )!;
-
-        console.log(sample);
 
         // create buffer
         const float32 = sample.data.toFloat32Array();

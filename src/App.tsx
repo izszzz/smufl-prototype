@@ -36,7 +36,6 @@ function App() {
           ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
 
         setAudioPlayer(new Player(importer.core, soundfont2));
-        // setFontSize(svgRenderer.options.fontSize);
       }
     }
   };

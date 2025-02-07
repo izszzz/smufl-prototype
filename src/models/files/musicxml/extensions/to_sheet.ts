@@ -24,6 +24,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
           ) /
             10 +
           trackIndex * 4;
+        let time = 0;
         const notes =
           "note" in measure
             ? measure.note.map(
@@ -51,9 +52,16 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                           }
                         : { step: "C", octave: 0 }
                     ).toCore(),
-                    start: 0,
-                    duration: "duration" in note ? Number(note.duration[0]) : 0,
-                    end: 0,
+                    start: time,
+                    duration:
+                      "duration" in note
+                        ? (() => {
+                            const duration = Number(note.duration[0]);
+                            time += duration;
+                            return duration;
+                          })()
+                        : 0,
+                    end: time,
                   })
               )
             : [];

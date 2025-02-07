@@ -67,10 +67,11 @@ export class Synth {
   }
   noteOff(time: number, bufferSource: AudioBufferSourceNode) {
     bufferSource.stop(
-      Math.max(
-        this.filterEnvelope.release.time,
-        this.gainEnvelope.release.time
-      ) + time
+      // Math.max(
+      //   this.filterEnvelope.release.time,
+      //   this.gainEnvelope.release.time
+      // ) +
+      time
     );
     this.gainEnvelope.noteOff(time);
     this.filterEnvelope.noteOff(time);
