@@ -1,19 +1,15 @@
-import * as Audio from "..";
+import * as Audio from "../../browser/audio";
 import * as Core from "core";
-import * as Soundfont2 from "soundfont2";
+import "../../../extensions/int16array/to_float32array.extensions";
 
 declare module "core" {
   interface Score {
-    toAudio: (
-      soundfont2: Soundfont2.Sf2,
-      audioContext: AudioContext
-    ) => Audio.Score;
+    toAudio: (audioContext: AudioContext) => Audio.Score;
   }
 }
-// TODO: chord rest part
+
 Core.Score.prototype.toAudio = function (
   this: Core.Score,
-  sf2: Soundfont2.Sf2,
   audioContext: AudioContext
 ) {
   const score = new Audio.Score({
@@ -23,12 +19,13 @@ Core.Score.prototype.toAudio = function (
         new Audio.Track({
           ...track,
           notes: track.notes.map((note) => new Audio.Note(note)),
-          soundfont2: sf2,
           audioContext,
         })
     ),
   });
-  for (const track of score.tracks)
+  for (const track of score.tracks) {
+    track.score = score;
     for (const note of track.notes) note.track = track;
+  }
   return score;
 };

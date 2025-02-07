@@ -1,4 +1,4 @@
 export class Bpm {
-  _pitchBpm!: never;
+  _bpmBrand!: never;
   constructor(public value: number) {}
 }

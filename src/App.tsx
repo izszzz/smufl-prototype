@@ -1,22 +1,22 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
-import * as Soundfont2 from "soundfont2";
-
+import Soundfont2 from "soundfont2";
 import * as Browser from "./models/browser";
 
 import "./models/files/musicxml/extensions/to_sheet";
 import "./models/sheet/extensions/to_svg";
+import { Player } from "./models/browser/audio/player";
 
 function App() {
   const [fontSize, setFontSize] = useState(30);
-
-  const [soundfont2, setSoundfont2] = useState<Soundfont2.Sf2>();
+  const [audioPlayer, setAudioPlayer] = useState<Player>();
+  const [soundfont2, setSoundfont2] = useState<Soundfont2>();
 
   const ref = useRef<SVGSVGElement>(null);
 
   useEffect(() => {
     (async () => {
       const buffer = await fetch("/A320U.sf2").then((res) => res.arrayBuffer());
-      setSoundfont2(new Soundfont2.Sf2(new Uint8Array(buffer)));
+      setSoundfont2(Soundfont2.create(new Uint8Array(buffer)));
     })();
   }, []);
 
@@ -32,10 +32,10 @@ function App() {
         while (ref.current.firstChild) {
           ref.current.removeChild(ref.current.firstChild);
         }
-        ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
+        if ("toSVG" in importer.core)
+          ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
 
-        // setAudioPlayer(new Audio.Player(core, soundfont2));
-        // setFontSize(svgRenderer.options.fontSize);
+        setAudioPlayer(new Player(importer.core, soundfont2));
       }
     }
   };
@@ -47,7 +47,12 @@ function App() {
         className="bravura"
         style={{ padding: "30px", height: "70vh" }}
       />
-      <button type="button" onClick={() => {}}>
+      <button
+        type="button"
+        onClick={() => {
+          audioPlayer?.play();
+        }}
+      >
         play
       </button>
       <button type="button" onClick={() => {}}>

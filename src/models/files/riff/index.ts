@@ -8,16 +8,14 @@ interface Chunk {
 }
 
 export default class Riff {
-  data;
-  constructor(arrayBuffer: ArrayBuffer) {
-    this.data = Parser.parse(new Uint8Array(arrayBuffer)) as {
-      chunks: Chunk[];
-    };
-  }
+  constructor(public chunks: Chunk[]) {}
   getChunk(id: string) {
-    const chunk = this.data.chunks.find((chunk) => chunk.id === id);
-    if (!chunk) throw new Error();
-    return chunk;
+    return this.chunks.find((chunk) => chunk.id === id);
   }
   static ID = Metadata["id"];
+  static create(arrayBuffer: ArrayBuffer) {
+    return new Riff(
+      (Parser.parse(new Uint8Array(arrayBuffer)) as { chunks: Chunk[] }).chunks
+    );
+  }
 }

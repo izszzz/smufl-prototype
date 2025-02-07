@@ -3,9 +3,22 @@ export class Pitch {
   protected _pitchBrand!: never;
   constructor(public value: { step: string; octave: number }) {}
   toCore() {
-    const steps = ["C", "D", "E", "F", "G", "A", "B"];
+    const steps = [
+      "C",
+      null,
+      "D",
+      null,
+      "E",
+      "F",
+      null,
+      "G",
+      null,
+      "A",
+      null,
+      "B",
+    ];
     return new Core.Unit.Pitch(
-      (steps.indexOf(this.value.step) + 1) * 12 * (this.value.octave + 1)
+      (this.value.octave + 1) * 12 + steps.indexOf(this.value.step)
     );
   }
 }

@@ -41,9 +41,9 @@
     { "name": "endAddrsCoarseOffset", "default": 0, "uint": "32k smpls" },
     { "name": "modLfoToVolume", "default": 0, "uint": "cB fs" },
     null,
-    { "name": "chorusEffectsSend", "default": 0, "uint": 0.1 },
-    { "name": "reverbEffectsSend", "default": 0, "uint": 0.1 },
-    { "name": "pan", "default": 0, "uint": 0.1 },
+    { "name": "chorusEffectsSend", "default": 0, "uint": "0.1%" },
+    { "name": "reverbEffectsSend", "default": 0, "uint": "0.1%" },
+    { "name": "pan", "default": 0, "uint": "0.1%" },
     null,
     null,
     null,
@@ -55,7 +55,7 @@
     { "name": "attackModEnv", "default": -12000, "uint": "timecent" },
     { "name": "holdModEnv", "default": -12000, "uint": "timecent" },
     { "name": "decayModEnv", "default": -12000, "uint": "timecent" },
-    { "name": "sustainModEnv", "default": 0, "uint": -0.1 },
+    { "name": "sustainModEnv", "default": 0, "uint": "-0.1%" },
     { "name": "releaseModEnv", "default": -12000, "uint": "timecent" },
     { "name": "keynumToModEnvHold", "default": 0, "uint": "tcent/key" },
     { "name": "keynumToModEnvDecay", "default": 0, "uint": "tcent/key" },
@@ -72,12 +72,12 @@
     {
       "name": "keyRange",
       "default": { "lo": 0, "hi": 127 },
-      "uint": "MIDI ky#"
+      "uint": "MIDI ky# range"
     },
     {
       "name": "velRange",
       "default": { "lo": 0, "hi": 127 },
-      "uint": "MIDI vel"
+      "uint": "MIDI vel range"
     },
     { "name": "startloopAddrsCoarseOffset", "default": 0, "uint": "smpls" },
     { "name": "keynum", "default": -1, "uint": "MIDI ky#" },

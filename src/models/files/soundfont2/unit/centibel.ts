@@ -1,8 +1,9 @@
 import { Decibel } from "./decibel";
-import { Unit } from "./unit";
 
-export class Centibel extends Unit {
-  get decibel() {
-    return new Decibel(this.value * 10);
+export class Centibel {
+  _centibelBrand!: never;
+  constructor(public value: number) {}
+  toDecibel() {
+    return new Decibel(this.value / 100);
   }
 }

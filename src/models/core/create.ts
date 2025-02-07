@@ -137,9 +137,9 @@ export const create = (
                   ? new Core.Unit.Pitch(note.pitch)
                   : note.pitch,
                 id,
-                start: track.start ?? 0,
-                duration: track.duration ?? 0,
-                end: track.end ?? 0,
+                start: note.start ?? 0,
+                duration: note.duration ?? 0,
+                end: note.end ?? 0,
               })
           ),
           start: track.start ?? 0,
