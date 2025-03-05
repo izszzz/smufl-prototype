@@ -6,9 +6,10 @@ export class Note extends Core.Event implements Core.Identifier {
   constructor({
     id,
     pitch,
-    ...element
-  }: { id: number; pitch: Core.Unit.Pitch } & Core.Event) {
-    super(element);
+    ...event
+  }: { id: number; pitch: Core.Unit.Pitch } & Core.EventConstructorParameter) {
+    if ("end" in event) super(event);
+    else super(event);
     this.id = id;
     this.pitch = pitch;
   }

@@ -19,8 +19,9 @@ export class Track<Note extends Core.Note = Core.Note>
     name?: string;
     preset: number;
     notes: Note[];
-  } & Core.Event) {
-    super(event);
+  } & Core.EventConstructorParameter) {
+    if ("end" in event) super(event);
+    else super(event);
     this.id = id;
     this.name = name;
     this.preset = preset;

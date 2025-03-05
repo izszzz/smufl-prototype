@@ -25,8 +25,9 @@ export class Score<
     keysignatures: Keysignature[];
     bpms: Bpm[];
     name?: string;
-  } & Core.Event) {
-    super(event);
+  } & Core.EventConstructorParameter) {
+    if ("end" in event) super(event);
+    else super(event);
     this.name = name;
     this.timesignatures = timesignatures;
     this.keysignatures = keysignatures;

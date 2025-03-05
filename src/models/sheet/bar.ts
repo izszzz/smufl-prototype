@@ -24,8 +24,9 @@ export class Bar extends Core.Event implements Core.Identifier {
     notes: Sheet.Note[];
     staves: Sheet.Stave[];
     timesignature: Sheet.Timesignature;
-  } & Core.Event) {
-    super(event);
+  } & Core.EventConstructorParameter) {
+    if ("end" in event) super(event);
+    else super(event);
     this.id = id;
     this.width = width;
     this.staffLines = staffLines;
