@@ -97,19 +97,16 @@ Sheet.Score.prototype.toSVG = function (this: Sheet.Score) {
                       attributes.push(g);
                     }
                     if (bar.timesignature) {
-                      const numerator = SMUFL.Glyph.find(
-                        "timeSignatures",
-                        (v) =>
-                          v
-                            .toLocaleLowerCase()
-                            .includes(bar.timesignature.numerator.toString())
-                      );
-                      const denominator = SMUFL.Glyph.find(
-                        "timeSignatures",
-                        (v) =>
-                          v
-                            .toLocaleLowerCase()
-                            .includes(bar.timesignature.denominator.toString())
+                      const [numerator, denominator] = R.pipe(
+                        [
+                          bar.timesignature.numerator,
+                          bar.timesignature.denominator,
+                        ] as const,
+                        R.map((number) =>
+                          SMUFL.Glyph.find("timeSignatures", (v) =>
+                            v.toLocaleLowerCase().includes(number.toString())
+                          )
+                        )
                       );
                       const g = d3
                         .create("svg:g")

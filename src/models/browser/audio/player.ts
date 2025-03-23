@@ -19,7 +19,6 @@ export class Player {
     this.volume.connect(this.ctx.destination);
   }
   play() {
-    console.log("play");
     this.isPlaying = true;
     for (const track of this.score.tracks) {
       const soundfont2Preset = this.sf2.getPreset(track.preset);
