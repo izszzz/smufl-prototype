@@ -145,7 +145,7 @@ export const create = (
           start: track.start ?? 0,
           duration: track.duration ?? 0,
           end: track.end ?? 0,
-          preset: track.preset ?? 0,
+          preset: new Core.Unit.Preset(track.preset ?? 0),
         })
     ),
     start: cparams.start ?? 0,
