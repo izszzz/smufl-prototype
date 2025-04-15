@@ -8,6 +8,8 @@ declare module "sheet" {
     toSVG: (options: { ratio: number }) => SVGSVGElement | null;
   }
 }
+// それぞれの要素の幅は動的に決定されるようにしたいので、SVG描画前に幅情報を揃える必要がある
+// 例えば、Sheet.Scoreの情報をOrderクラスに渡して、グリフと幅情報を整理した後、OrderインスタンスをLayoutクラスに渡したあとに、SVG描画を行う
 
 Sheet.Score.prototype.toSVG = function (this: Sheet.Score) {
   const svg = d3

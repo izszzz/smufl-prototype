@@ -1,9 +1,8 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "soundfont2";
 import * as Browser from "./models/browser";
+import * as Sheet from "./models/sheet";
 
-import "./models/files/musicxml/extensions/to_sheet";
-import "./models/sheet/extensions/to_svg";
 import { Player } from "./models/browser/audio/player";
 
 function App() {
@@ -29,11 +28,13 @@ function App() {
       const importer = new Browser.Importer();
       await importer.import(file);
       if (ref.current) {
-        while (ref.current.firstChild) {
+        while (ref.current.firstChild)
           ref.current.removeChild(ref.current.firstChild);
+        console.log(importer.core);
+        if (!(importer.core instanceof Sheet.Score)) {
+          importer.core = importer.core.toSheet();
         }
-        if ("toSVG" in importer.core)
-          ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
+        ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
 
         setAudioPlayer(new Player(importer.core, soundfont2));
       }

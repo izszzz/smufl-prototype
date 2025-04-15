@@ -4,6 +4,9 @@ import { Zip } from "../files/zip";
 import * as xml2js from "xml2js";
 import * as R from "remeda";
 import * as MusicXml from "musicxml";
+import "core/extensions/to_sheet";
+import "musicxml/extensions/to_sheet";
+import "sheet/extensions/to_svg";
 export class Importer {
   core;
   async import(file: File) {
@@ -41,7 +44,7 @@ export class Importer {
     }
     if (typeof reader.result === "string") {
       if (extname === ".json") {
-        this.core = Core.create(JSON.parse(reader.result));
+        this.core = Core.create(JSON.parse(reader.result)).toSheet();
       }
     }
   }
