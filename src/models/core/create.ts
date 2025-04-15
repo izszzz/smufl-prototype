@@ -7,9 +7,10 @@ type JSONParams = SetOptional<
   "start" | "duration" | "end"
 > & {
   tracks: (SetOptional<
-    Omit<Core.Track, "score" | "id" | "notes">,
-    "preset" | "start" | "duration" | "end"
+    Omit<Core.Track, "score" | "id" | "notes" | "preset">,
+    "start" | "duration" | "end"
   > & {
+    preset: number;
     notes: (SetOptional<
       Omit<Core.Track["notes"][number], "id" | "pitch">,
       "duration" | "end" | "start"

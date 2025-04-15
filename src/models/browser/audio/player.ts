@@ -21,7 +21,7 @@ export class Player {
   play() {
     this.isPlaying = true;
     for (const track of this.score.tracks) {
-      const soundfont2Preset = this.sf2.getPreset(track.preset);
+      const soundfont2Preset = this.sf2.getPreset(track.preset.value);
       track.volume.connect(this.volume);
 
       for (const note of track.notes) {
