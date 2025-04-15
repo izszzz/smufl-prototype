@@ -12,7 +12,6 @@ export class Glyph<T extends keyof SMUFL.Glyphnames> {
     );
   }
   constructor(glyphName: T) {
-    //TODO: Fix
     this.bBox = new SMUFL.BBox(SMUFL.getBBox(glyphName));
     this.advancedWidth = SMUFL.getAdvanceWidth(glyphName);
     this.anchor = SMUFL.getAnchor(glyphName);

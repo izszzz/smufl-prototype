@@ -9,8 +9,9 @@ export class Timesignature extends Core.Event {
   }: {
     denominator: number;
     numerator: number;
-  } & Core.Event) {
-    super(event);
+  } & Core.EventConstructorParameter) {
+    if ("end" in event) super(event);
+    else super(event);
     this.denominator = denominator;
     this.numerator = numerator;
   }

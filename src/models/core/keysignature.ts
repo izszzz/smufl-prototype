@@ -13,8 +13,9 @@ export class Keysignature extends Core.Event {
   }: {
     accidental: number;
     tonality: boolean;
-  } & Core.Event) {
-    super(event);
+  } & Core.EventConstructorParameter) {
+    if ("end" in event) super(event);
+    else super(event);
     this.tonality = tonality;
     this.accidental = accidental;
   }
