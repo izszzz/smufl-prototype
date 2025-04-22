@@ -5,6 +5,12 @@ import Ranges from "./ranges.json";
 
 export * from "./bbox";
 export * from "./glyph";
+export * from "./score";
+export * from "./masterbar";
+export * from "./bar";
+export * from "./group";
+export * from "./text";
+
 export { Metadatas, Ranges, Glyphnames, BravuraMetadata };
 
 export const getBBox = (glyphName: keyof Glyphnames) =>

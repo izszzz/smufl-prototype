@@ -6,7 +6,9 @@ import * as R from "remeda";
 import * as MusicXml from "musicxml";
 import "core/extensions/to_sheet";
 import "musicxml/extensions/to_sheet";
-import "sheet/extensions/to_svg";
+import "sheet/extensions/to_smufl";
+import "smufl/extensions/to_svg";
+
 export class Importer {
   core;
   async import(file: File) {

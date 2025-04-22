@@ -1,4 +1,5 @@
 import * as R from "remeda";
+import * as Core from "core";
 import * as Sheet from "sheet";
 import * as MusicXML from "musicxml";
 
@@ -103,7 +104,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
         name: part.$.id,
         notes: bars.flatMap((bar) => bar.notes),
         bars,
-        preset: 0,
+        preset: new Core.Unit.Preset(0),
         staffLines: 5,
         start: 0,
         duration: 0,

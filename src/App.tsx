@@ -32,9 +32,10 @@ function App() {
           ref.current.removeChild(ref.current.firstChild);
         console.log(importer.core);
         if (!(importer.core instanceof Sheet.Score)) {
+          console.log("sheet");
           importer.core = importer.core.toSheet();
         }
-        ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
+        ref.current.appendChild(importer.core.toSMUFL().toSVG({ ratio: 4 }));
 
         setAudioPlayer(new Player(importer.core, soundfont2));
       }

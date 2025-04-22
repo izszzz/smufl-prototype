@@ -1,6 +1,11 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
 import { Type } from "../files/mxl/schema";
+// y軸を指定しない場合にノートが描画される位置E4（64）
+const BASE_PITCH_Y = () => {
+  const pitch = new Core.Unit.Pitch(64);
+  return pitch.octave * Core.Metadata.majorWhiteNotes.length + pitch.whiteKey;
+};
 
 export class Note extends Core.Note {
   track!: Sheet.Track;
@@ -11,19 +16,29 @@ export class Note extends Core.Note {
   rest;
   flag: null = null;
   x;
-  y;
+
+  get y() {
+    if (this.rest) {
+      return 0;
+    }
+    return (
+      BASE_PITCH_Y() -
+      (this.pitch.octave * Core.Metadata.majorWhiteNotes.length +
+        this.pitch.whiteKey)
+    );
+  }
   get legerLine() {
     return this.pitch.value > 80 || this.pitch.value <= 60
       ? Math.ceil((this.pitch.value - 59) / 2)
       : 0;
   }
+
   constructor({
     rest,
     chord,
     type,
     stem,
     x,
-    y,
     ...note
   }: {
     type: Type.NoteTypeValue | null;
@@ -31,7 +46,6 @@ export class Note extends Core.Note {
     rest: boolean | "measure";
     chord: boolean;
     x: number;
-    y: number;
   } & Core.Note) {
     super(note);
     this.chord = chord;
@@ -39,6 +53,5 @@ export class Note extends Core.Note {
     this.type = type;
     this.rest = rest;
     this.x = x;
-    this.y = y;
   }
 }
