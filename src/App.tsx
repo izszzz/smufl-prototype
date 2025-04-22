@@ -30,9 +30,7 @@ function App() {
       if (ref.current) {
         while (ref.current.firstChild)
           ref.current.removeChild(ref.current.firstChild);
-        console.log(importer.core);
         if (!(importer.core instanceof Sheet.Score)) {
-          console.log("sheet");
           importer.core = importer.core.toSheet();
         }
         ref.current.appendChild(importer.core.toSMUFL().toSVG({ ratio: 4 }));

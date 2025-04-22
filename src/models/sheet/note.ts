@@ -14,8 +14,9 @@ export class Note extends Core.Note {
   stem;
   type;
   rest;
+  voice;
+  staff;
   flag: null = null;
-  x;
 
   get y() {
     if (this.rest) {
@@ -38,20 +39,23 @@ export class Note extends Core.Note {
     chord,
     type,
     stem,
-    x,
+    voice,
+    staff,
     ...note
   }: {
     type: Type.NoteTypeValue | null;
     stem: Type.StemValue | null;
     rest: boolean | "measure";
     chord: boolean;
-    x: number;
+    staff: number;
+    voice: number;
   } & Core.Note) {
     super(note);
     this.chord = chord;
     this.stem = stem;
     this.type = type;
     this.rest = rest;
-    this.x = x;
+    this.staff = staff;
+    this.voice = voice;
   }
 }

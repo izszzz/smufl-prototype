@@ -6,7 +6,6 @@ export class Group {
   index;
   y;
   x;
-
   get width(): number {
     return (
       R.firstBy(

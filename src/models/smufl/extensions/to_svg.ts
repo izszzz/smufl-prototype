@@ -30,6 +30,7 @@ SMUFL.Score.prototype.toSVG = function (this: SMUFL.Score) {
             .data(masterbar.bars)
             .join("g")
             .attr("type", "bar")
+
             .each(function (bar) {
               renderGroup(this, bar.group);
               const g = d3.select(this);
@@ -37,11 +38,7 @@ SMUFL.Score.prototype.toSVG = function (this: SMUFL.Score) {
                 .data(bar.staves)
                 .join("g")
                 .attr("type", "stave")
-                .attr(
-                  "transform",
-                  (_, i) => `translate(0, ${4 * i})`
-                  // (_, i) => `translate(0, ${(4 + 6.5) * i + 4})`
-                )
+                .attr("transform", (_, i) => `translate(0, ${(4 + 6.5) * i})`)
                 .each(function () {
                   const g = d3.select(this);
                   g.append("g").call((g) => {

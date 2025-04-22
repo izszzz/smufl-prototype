@@ -18,54 +18,50 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
     bpms: [],
     tracks: this.scorePartwise.part.map((part, trackIndex) => {
       const bars = part.measure.map((measure, i) => {
-        const staffDistance =
-          Number(
-            measure.print[0].staffLayout?.find((s) => s.$.number[0] === "1")
-              ?.staffDistance?.[0] ?? 0
-          ) /
-            10 +
-          trackIndex * 4;
-        let time = 0;
-        const notes =
-          "note" in measure
-            ? measure.note.map(
-                (note, id) =>
-                  new Sheet.Note({
-                    id,
-                    rest:
-                      "rest" in note
-                        ? note.rest[0] && "measure" in note.rest[0].$
-                          ? "measure"
-                          : true
-                        : false,
-                    chord: "chord" in note,
-                    type: "type" in note ? note.type[0] : null,
-                    stem: "stem" in note ? note.stem[0] : null,
-                    x: note.$.defaultX ? Number(note.$.defaultX) / 10 : 0,
-                    y: note.$.defaultY
-                      ? Number(note.$.defaultY) / 10 + staffDistance
+        const notes = R.pipe(
+          "note" in measure ? measure.note : [],
+          R.groupBy(R.prop("staff")),
+          R.entries(),
+          R.flatMap(([voice, notes]) => {
+            let time = 0;
+            return notes.map(
+              (note, id) =>
+                new Sheet.Note({
+                  voice: Number(voice),
+                  id,
+                  rest:
+                    "rest" in note
+                      ? note.rest[0] && "measure" in note.rest[0].$
+                        ? "measure"
+                        : true
+                      : false,
+                  chord: "chord" in note,
+                  type: "type" in note ? note.type[0] : null,
+                  stem: "stem" in note ? note.stem[0] : null,
+                  staff: note.staff,
+                  pitch: new MusicXML.Unit.Pitch(
+                    "pitch" in note
+                      ? {
+                          step: note.pitch[0].step[0],
+                          octave: Number(note.pitch[0].octave[0]),
+                        }
+                      : { step: "C", octave: 0 }
+                  ).toCore(),
+                  start: time,
+                  duration:
+                    "duration" in note
+                      ? (() => {
+                          const duration = Number(note.duration[0]);
+                          time += duration;
+                          return duration;
+                        })()
                       : 0,
-                    pitch: new MusicXML.Unit.Pitch(
-                      "pitch" in note
-                        ? {
-                            step: note.pitch[0].step[0],
-                            octave: Number(note.pitch[0].octave[0]),
-                          }
-                        : { step: "C", octave: 0 }
-                    ).toCore(),
-                    start: time,
-                    duration:
-                      "duration" in note
-                        ? (() => {
-                            const duration = Number(note.duration[0]);
-                            time += duration;
-                            return duration;
-                          })()
-                        : 0,
-                    end: time,
-                  })
-              )
-            : [];
+                  end: time,
+                })
+            );
+          })
+        );
+
         const timesignature = new Sheet.Timesignature({
           denominator: 4,
           numerator: 4,
