@@ -9,7 +9,29 @@ declare module "sheet" {
 }
 
 Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
-  const score = new SMUFL.Score(this);
+  const score = new SMUFL.Score({
+    ...this,
+    tracks: this.tracks.map(
+      (track) =>
+        new Sheet.Track({
+          ...track,
+          bars: track.bars.map(
+            (bar) =>
+              new Sheet.Bar({
+                ...bar,
+                staves: bar.staves.map(
+                  (stave) =>
+                    new SMUFL.Stave({
+                      group: createStaveGroup(stave),
+                      ...stave,
+                    })
+                ),
+              })
+          ),
+        })
+    ),
+  });
+
   const maxLengthBarsTrack =
     R.firstBy(this.tracks, [(track) => track.bars.length, "desc"])?.bars
       .length ?? 0;
@@ -18,155 +40,143 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
     score.masterbars.push(
       new SMUFL.Masterbar({
         id: i,
-        bars: R.times(
-          this.tracks.length,
-          (j) =>
-            new SMUFL.Bar({
-              group: createBarGroup(this.tracks[j]!.bars[i]!),
-              ...this.tracks[j]!.bars[i]!,
-            })
-        ),
+        bars: R.times(score.tracks.length, (j) => score.tracks[j]!.bars[i]!),
       })
     );
   });
 
   for (const masterbar of score.masterbars) {
     for (const bar of masterbar.bars) {
-      bar.group.order();
+      for (const stave of bar.staves) {
+        stave.group.order();
+      }
     }
   }
-  console.log({ smufl: score });
   return score;
 };
 
-function createBarGroup(bar: Sheet.Bar) {
-  const barGroup = new SMUFL.Group({ children: [] });
-  for (const [i, stave] of bar.staves.entries()) {
-    const staveGroup = new SMUFL.Group({
-      y: (4 + 6.5) * i,
-      index: i,
-      children: [],
-    });
-    if (stave.clef)
-      staveGroup.children.push(
-        new SMUFL.Text({
-          glyph: SMUFL.Glyph.find(
-            "clefs",
-            (v) => v.charAt(0) === stave.clef.sign.toLowerCase()
-          ),
-          y: -stave.clef.line + 1,
-        })
-      );
-
-    if (bar.timesignature) {
-      const [numerator, denominator] = R.pipe(
-        [bar.timesignature.numerator, bar.timesignature.denominator] as const,
-        R.map((number) =>
-          SMUFL.Glyph.find("timeSignatures", (v) =>
-            v.toLocaleLowerCase().includes(number.toString())
-          )
-        )
-      );
-      staveGroup.children.push(
-        new SMUFL.Group({
-          children: [
-            new SMUFL.Text({ glyph: numerator, y: -3 }),
-            new SMUFL.Text({ glyph: denominator, y: -1, index: 1 }),
-          ],
-        })
-      );
-    }
-
+function createStaveGroup(stave: Sheet.Stave) {
+  const staveGroup = new SMUFL.Group({
+    children: [],
+  });
+  if (stave.clef) {
+    console.log(stave.clef);
     staveGroup.children.push(
       new SMUFL.Text({
-        glyph: SMUFL.Glyph.find("barlines", (v) => v.includes("Single")),
+        glyph: SMUFL.Glyph.find(
+          "clefs",
+          (v) => v.charAt(0) === stave.clef.sign.toLowerCase()
+        ),
+        y: stave.clef.line - 1,
       })
     );
-    barGroup.children.push(staveGroup);
   }
-  R.pipe(
-    bar.notes,
-    R.groupBy(R.prop("staff")),
-    R.entries(),
-    R.forEach(([staff, notes]) => {
-      for (const note of notes) {
-        const noteGroup = new SMUFL.Group({
-          children: [],
-          y:
-            note.y *
-              SMUFL.BravuraMetadata.engravingDefaults.thickBarlineThickness +
-            (4 + 6.5) * (Number(staff) - 1),
-          index: Number(staff) - 1,
-        });
 
-        if (note.legerLine > 0) {
-          R.times(note.legerLine, (i) => {
+  if (stave.bar.timesignature) {
+    const [numerator, denominator] = R.pipe(
+      [
+        stave.bar.timesignature.numerator,
+        stave.bar.timesignature.denominator,
+      ] as const,
+      R.map((number) =>
+        SMUFL.Glyph.find("timeSignatures", (v) =>
+          v.toLocaleLowerCase().includes(number.toString())
+        )
+      )
+    );
+    staveGroup.children.push(
+      new SMUFL.Group({
+        children: [
+          new SMUFL.Text({ glyph: numerator, y: 3 }),
+          new SMUFL.Text({ glyph: denominator, y: 1, index: 1 }),
+        ],
+      })
+    );
+  }
+
+  for (const note of stave.notes) {
+    const noteGroup = new SMUFL.Group({
+      children: [],
+      y:
+        note.line *
+        2 *
+        SMUFL.BravuraMetadata.engravingDefaults.thickBarlineThickness,
+    });
+
+    if (note.legerLine > 0) {
+      R.times(note.legerLine, (i) => {
+        noteGroup.children.push(
+          new SMUFL.Text({
+            index: i + 1,
+            glyph: SMUFL.Glyph.find("staves", (v) => v === "legerLine"),
+          })
+        );
+      });
+    }
+
+    if (note.rest) {
+      noteGroup.children.push(
+        new SMUFL.Text({
+          glyph: SMUFL.Glyph.find("rests", (v) =>
+            v
+              .toLocaleLowerCase()
+              .includes(
+                note.rest === "measure"
+                  ? "restwhole"
+                  : note.rest
+                    ? note.type ?? ""
+                    : ""
+              )
+          ),
+        })
+      );
+    } else {
+      const type = note.type;
+      const stem = note.stem;
+      const noteHeadsGlyph = SMUFL.Glyph.find("noteheads", (v) =>
+        v.toLocaleLowerCase().includes(type === "quarter" ? "black" : type)
+      );
+      noteGroup.children.push(
+        new SMUFL.Text({
+          glyph: noteHeadsGlyph,
+        })
+      );
+      if (stem) {
+        if (stem.direction === "up" || stem === "up") {
+          noteGroup.children.push(
+            new SMUFL.Text({
+              glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
+            })
+          );
+
+          const flag = note.flag;
+          if (flag) {
             noteGroup.children.push(
               new SMUFL.Text({
-                index: i + 1,
-                glyph: SMUFL.Glyph.find("staves", (v) => v === "legerLine"),
+                glyph: SMUFL.Glyph.find("flags", (v) => v.includes("stem")),
               })
             );
-          });
-        }
-
-        if (note.rest) {
-          noteGroup.children.push(
-            new SMUFL.Text({
-              glyph: SMUFL.Glyph.find("rests", (v) =>
-                v
-                  .toLocaleLowerCase()
-                  .includes(
-                    note.rest === "measure"
-                      ? "restwhole"
-                      : note.rest
-                        ? note.type ?? ""
-                        : ""
-                  )
-              ),
-            })
-          );
-        } else {
-          const type = note.type;
-          noteGroup.children.push(
-            new SMUFL.Text({
-              glyph: SMUFL.Glyph.find("noteheads", (v) =>
-                v
-                  .toLocaleLowerCase()
-                  .includes(type === "quarter" ? "black" : type)
-              ),
-            })
-          );
-          const stem = note.stem;
-          if (stem) {
-            if (stem.direction === "up" || stem === "up") {
-              noteGroup.children.push(
-                new SMUFL.Text({
-                  glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
-                })
-              );
-              const flag = note.flag;
-              if (flag) {
-                noteGroup.children.push(
-                  new SMUFL.Text({
-                    glyph: SMUFL.Glyph.find("flags", (v) => v.includes("stem")),
-                  })
-                );
-              }
-              if (stem.direction === "down" || stem === "down") {
-                noteGroup.children.push(
-                  new SMUFL.Text({
-                    glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
-                  })
-                );
-              }
-            }
           }
         }
-        barGroup.children.push(noteGroup);
+        if (stem.direction === "down" || stem === "down") {
+          noteGroup.children.push(
+            new SMUFL.Text({
+              glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
+              rotate: 180,
+            })
+          );
+        }
       }
+    }
+    staveGroup.children.push(noteGroup);
+  }
+
+  staveGroup.children.push(
+    new SMUFL.Text({
+      glyph: SMUFL.Glyph.find("barlines", (v) => v.includes("Single")),
     })
   );
+  console.log(SMUFL.Glyph.find("barlines", (v) => v.includes("Single")));
 
-  return barGroup;
+  return staveGroup;
 }

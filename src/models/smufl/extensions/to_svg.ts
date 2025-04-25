@@ -32,18 +32,19 @@ SMUFL.Score.prototype.toSVG = function (this: SMUFL.Score) {
             .attr("type", "bar")
 
             .each(function (bar) {
-              renderGroup(this, bar.group);
               const g = d3.select(this);
               g.selectAll("g[type=stave]")
                 .data(bar.staves)
                 .join("g")
                 .attr("type", "stave")
                 .attr("transform", (_, i) => `translate(0, ${(4 + 6.5) * i})`)
-                .each(function () {
+                .each(function (stave) {
+                  renderGroup(this, stave.group);
                   const g = d3.select(this);
                   g.append("g").call((g) => {
                     g.append("g")
                       .attr("type", "staff")
+                      .attr("transform", `translate(0, 0)`)
                       .call((g) => {
                         R.times(bar.staffLines, (i) => {
                           g.append("path")
@@ -53,11 +54,12 @@ SMUFL.Score.prototype.toSVG = function (this: SMUFL.Score) {
                               SMUFL.BravuraMetadata.engravingDefaults
                                 .staffLineThickness
                             )
+
                             .attr(
                               "d",
                               d3.line()([
                                 [0, -i],
-                                [bar.group.width, -i],
+                                [stave.group.width, -i],
                               ])
                             );
                         });
@@ -74,15 +76,16 @@ SMUFL.Score.prototype.toSVG = function (this: SMUFL.Score) {
       .data(group.children)
       .join("g")
       .attr("type", "group")
-      .attr("transform", `translate(${group.x}, ${group.y})`)
+      .attr("transform", `translate(${group.x}, ${-group.y})`)
       .each(function (child) {
         const g = d3.select(this);
         if (child instanceof SMUFL.Group) renderGroup(this, child);
         if (child instanceof SMUFL.Text) {
           g.append("text")
-            .attr("y", child.y)
+            .attr("y", -child.y)
             .attr("x", child.x)
             .attr("dx", child.dx)
+            .attr("rotate", child.rotate)
             .text(String.fromCodePoint(child.glyph.codepoint));
         }
       });

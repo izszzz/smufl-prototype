@@ -5,18 +5,22 @@ export class Stave {
   id;
   clef;
   barlines;
+  notes;
   bar!: Sheet.Bar;
   constructor({
     id,
     clef,
-    barline,
+    barlines: barline,
+    notes,
   }: {
     id: number;
     clef: Type.Clef;
-    barline: Type.Barline;
+    barlines: Type.Barline;
+    notes: Sheet.Note[];
   }) {
     this.id = id;
     this.clef = clef;
     this.barlines = barline;
+    this.notes = notes;
   }
 }

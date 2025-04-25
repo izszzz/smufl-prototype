@@ -1,7 +1,13 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
 
-export class Bar extends Core.Event implements Core.Identifier {
+export class Bar<
+    Note extends Sheet.Note = Sheet.Note,
+    Stave extends Sheet.Stave = Sheet.Stave,
+  >
+  extends Core.Event
+  implements Core.Identifier
+{
   id;
   width;
   staffLines;
@@ -21,8 +27,8 @@ export class Bar extends Core.Event implements Core.Identifier {
     id: number;
     width: number;
     staffLines: number;
-    notes: Sheet.Note[];
-    staves: Sheet.Stave[];
+    notes: Note[];
+    staves: Stave[];
     timesignature: Sheet.Timesignature;
   } & Core.EventConstructorParameter) {
     if ("end" in event) super(event);

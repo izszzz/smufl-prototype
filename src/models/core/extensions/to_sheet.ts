@@ -20,15 +20,16 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
             stem: null,
             rest: false,
             chord: false,
-            x: 0,
-            y: 0,
+            //仮置き
+            staff: 0,
+            voice: 0,
           })
       );
       return new Sheet.Track({
         ...track,
         staffLines: 5,
         notes: trackNotes,
-        bars: [],
+        bars: [] as Sheet.Bar[],
       });
     }),
   });
@@ -77,12 +78,12 @@ function generateStaves({ preset }: Core.Track): Sheet.Stave[] {
         new Sheet.Stave({
           id: 0,
           clef: { sign: "G", line: 2, clefOctaveChange: 0, $: {} },
-          barline: { $: { location: "left" } },
+          barlines: { $: { location: "left" } },
         }),
         new Sheet.Stave({
           id: 0,
           clef: { sign: "F", line: 4, clefOctaveChange: 0, $: {} },
-          barline: { $: { location: "left" } },
+          barlines: { $: { location: "left" } },
         }),
       ];
 
@@ -91,7 +92,7 @@ function generateStaves({ preset }: Core.Track): Sheet.Stave[] {
         new Sheet.Stave({
           id: 0,
           clef: { sign: "G", line: 4, clefOctaveChange: 0, $: {} },
-          barline: { $: { location: "left" } },
+          barlines: { $: { location: "left" } },
         }),
       ];
   }

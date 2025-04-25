@@ -1,7 +1,8 @@
+import * as Sheet from "sheet";
 import { firstBy, prop } from "remeda";
-import { Bar } from "./bar";
+import { Stave } from "./stave";
 
-export class Masterbar {
+export class Masterbar<Bar extends Sheet.Bar<Sheet.Note, Stave>> {
   id;
   bars;
   get width() {

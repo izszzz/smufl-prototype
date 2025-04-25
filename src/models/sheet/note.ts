@@ -10,6 +10,7 @@ const BASE_PITCH_Y = () => {
 export class Note extends Core.Note {
   track!: Sheet.Track;
   bar!: Sheet.Bar;
+  stave!: Sheet.Stave;
   chord;
   stem;
   type;
@@ -17,17 +18,39 @@ export class Note extends Core.Note {
   voice;
   staff;
   flag: null = null;
-
-  get y() {
-    if (this.rest) {
-      return 0;
+  get line() {
+    if (this.rest) return 0;
+    if (this.stave.clef.sign === "G") {
+      return (
+        ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +
+          this.pitch.whiteKey -
+          2) /
+        2
+      );
     }
-    return (
-      BASE_PITCH_Y() -
-      (this.pitch.octave * Core.Metadata.majorWhiteNotes.length +
-        this.pitch.whiteKey)
-    );
+    if (this.stave.clef.sign === "F") {
+      return (
+        ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +
+          this.pitch.whiteKey -
+          2 +
+          12) /
+        2
+      );
+    }
+    return 0;
   }
+  // y軸の情報はレンダーエンジン側によって解釈が変わるのでｓｖｇ化する際にyを求める
+  // get y() {
+  //   if (this.rest) {
+  //     return 0;
+  //   }
+  //   console.log(this.pitch);
+  //   return (
+  //     BASE_PITCH_Y() -
+  //     (this.pitch.octave * Core.Metadata.majorWhiteNotes.length +
+  //       this.pitch.whiteKey)
+  //   );
+  // }
   get legerLine() {
     return this.pitch.value > 80 || this.pitch.value <= 60
       ? Math.ceil((this.pitch.value - 59) / 2)

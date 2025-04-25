@@ -20,7 +20,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
       const bars = part.measure.map((measure, i) => {
         const notes = R.pipe(
           "note" in measure ? measure.note : [],
-          R.groupBy(R.prop("staff")),
+          R.groupBy((note) => note.staff ?? 1),
           R.entries(),
           R.flatMap(([voice, notes]) => {
             let time = 0;
@@ -83,10 +83,11 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
               id: i,
               clef: {
                 sign: clef.sign[0],
-                line: clef.line[0],
+                line: Number(clef.line[0]),
                 number: clef.$?.number[0] ?? 1,
               },
-              barline: measure.barline[0],
+              barlines: measure.barline[0],
+              notes: notes.filter((note) => (note.staff ?? 1) - 1 === i),
             });
           }),
           width: Number(measure.$.width ?? 0) / 10,
@@ -116,6 +117,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
       bar.track = track;
       for (const stave of bar.staves) {
         stave.bar = bar;
+        for (const note of stave.notes) note.stave = stave;
       }
       for (const note of bar.notes) {
         note.track = track;

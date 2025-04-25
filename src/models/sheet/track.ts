@@ -2,8 +2,11 @@ import * as Core from "core";
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
 
-export class Track extends Core.Track<Sheet.Note> {
-  bars: Sheet.Bar[] = [];
+export class Track<
+  Note extends Sheet.Note = Sheet.Note,
+  Bar extends Sheet.Bar = Sheet.Bar,
+> extends Core.Track<Note> {
+  bars: Bar[] = [];
   staffLines;
   get staff() {
     return SMUFL.Glyph.find("staves", (v) =>
@@ -15,9 +18,9 @@ export class Track extends Core.Track<Sheet.Note> {
     staffLines,
     ...track
   }: {
-    bars: Sheet.Bar[];
+    bars: Bar[];
     staffLines: number;
-  } & Core.Track<Sheet.Note>) {
+  } & Core.Track<Note>) {
     super(track);
     this.bars = bars;
     this.staffLines = staffLines;
