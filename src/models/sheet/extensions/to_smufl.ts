@@ -60,7 +60,6 @@ function createStaveGroup(stave: Sheet.Stave) {
     children: [],
   });
   if (stave.clef) {
-    console.log(stave.clef);
     staveGroup.children.push(
       new SMUFL.Text({
         glyph: SMUFL.Glyph.find(
@@ -176,7 +175,6 @@ function createStaveGroup(stave: Sheet.Stave) {
       glyph: SMUFL.Glyph.find("barlines", (v) => v.includes("Single")),
     })
   );
-  console.log(SMUFL.Glyph.find("barlines", (v) => v.includes("Single")));
 
   return staveGroup;
 }
