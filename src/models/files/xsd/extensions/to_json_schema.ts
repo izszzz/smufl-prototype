@@ -55,12 +55,18 @@ export const xsdToJsonSchema = async () => {
           type: R.mergeAll([
             R.pipe(
               musicxml["xs:schema"].$$["xs:simpleType"],
-              R.map(handleSimpleType),
+              R.map(
+                (data) =>
+                  handleSimpleType(data) as SetRequired<JSONSchema, "title">
+              ),
               R.mapToObj(({ title, ...other }) => [title, other])
             ),
             R.pipe(
               musicxml["xs:schema"].$$["xs:complexType"],
-              R.map(handleComplexType),
+              R.map(
+                (data) =>
+                  handleComplexType(data) as SetRequired<JSONSchema, "title">
+              ),
               R.mapToObj(({ title, ...other }) => [title, other])
             ),
           ]),
@@ -215,15 +221,23 @@ function handleXsType(base: XsType): JSONSchema {
     case "xs:anyURI":
     case "xs:NMTOKEN":
     case "xs:language":
-      return { type: "string" };
+      return generateArray({ type: "string" });
     case "xs:integer":
-      return { type: "integer" };
+      return generateArray({ type: "integer" });
     case "xs:nonNegativeInteger":
-      return { type: "integer", minimum: 0 };
+      return generateArray({ type: "integer", minimum: 0 });
     case "xs:positiveInteger":
-      return { type: "integer", minimum: 1 };
+      return generateArray({ type: "integer", minimum: 1 });
     case "xs:decimal":
-      return { type: "number" };
+      return generateArray({ type: "number" });
+  }
+  function generateArray(obj: JSONSchema) {
+    return {
+      type: "array" as const,
+      items: obj,
+      minItems: 1,
+      maxItems: 1,
+    };
   }
 }
 function handleType(type: string) {
@@ -343,10 +357,14 @@ function handleSequence({ $$ }: Sequence): JSONSchema {
                       R.map(handleElement),
                       R.mapToObj(({ title, ...other }) => [title, other])
                     ),
+                    required: R.pipe(
+                      elements ?? [],
+                      R.filter((element) => element.$.minOccurs !== "0"),
+                      R.map((element) => element.$.name)
+                    ),
                   },
                 ]
               : []),
-
             ...R.pipe(groups ?? [], R.map(handleGroup)),
             ...R.pipe(choices ?? [], R.map(handleChoice)),
           ],
@@ -473,7 +491,20 @@ function handleComplexType({ $, $$ }: ComplexType): JSONSchema {
                         attributeGroups ?? [],
                         R.map(handleAttributeGroup)
                       ),
-                      ...R.pipe(attributes ?? [], R.map(handleAttribute)),
+                      ...(attributes
+                        ? [
+                            {
+                              properties: R.pipe(
+                                attributes,
+                                R.map(handleAttribute),
+                                R.mapToObj(({ title, ...other }) => [
+                                  title,
+                                  other,
+                                ])
+                              ),
+                            },
+                          ]
+                        : []),
                     ],
                   },
                 }
@@ -496,6 +527,12 @@ function handleComplexType({ $, $$ }: ComplexType): JSONSchema {
                 }
               : {}),
           },
+          required: [
+            ...(attributes || attributeGroups ? ["$"] : []),
+            ...(choice || sequence || group || simpleContent || complexContent
+              ? ["$$"]
+              : []),
+          ],
         }
       : {}),
   };
