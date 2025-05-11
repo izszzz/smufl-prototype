@@ -15,7 +15,7 @@ export class Note extends Core.Note {
   flag: null = null;
   get line() {
     if (this.rest) return 0;
-    if (this.stave.clef?.$$.sign[0] === "G") {
+    if (this.stave.clef?.$$.sign[0]._ === "G") {
       return (
         ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +
           this.pitch.whiteKey -
@@ -23,7 +23,7 @@ export class Note extends Core.Note {
         2
       );
     }
-    if (this.stave.clef?.$$.sign[0] === "F") {
+    if (this.stave.clef?.$$.sign[0]._ === "F") {
       return (
         ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +
           this.pitch.whiteKey -

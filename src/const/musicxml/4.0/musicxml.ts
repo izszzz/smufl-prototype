@@ -34,7 +34,7 @@ export type ScorePartwise = [
  */
 export type DocumentAttributes = {
   version?: {
-    _?: string;
+    _: string;
   };
 };
 /**
@@ -42,7 +42,7 @@ export type DocumentAttributes = {
  */
 export type PartAttributes = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
@@ -60,23 +60,98 @@ export type PartAttributes = {
  */
 export type MeasureAttributes = {
   number?: {
-    _?: string;
+    _: string;
   };
   text?: MeasureText;
   implicit?: YesNo;
-  "non-controlling"?: YesNo1;
+  "non-controlling"?: YesNo;
   width?: Tenths;
 } & {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type YesNo = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo1 = {
-  _?: string;
-} & ("yes" | "no");
+  _: string;
+} & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no") & {
+    _: string;
+  } & ("yes" | "no");
 /**
  * The music-data group contains the basic musical data that is either associated with a part or a measure, depending on whether the partwise or timewise hierarchy is used.
  */
@@ -169,18 +244,16 @@ export type MusicData =
  * The x-position attribute group is used for elements like notes where specifying x position is common, but specifying y position is rare.
  */
 export type XPosition = {
-  "default-x"?: Tenths1;
-  "default-y"?: Tenths2;
-  "relative-x"?: Tenths3;
-  "relative-y"?: Tenths4;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The font attribute group gathers together attributes for determining the font within a credit or direction. They are based on the text styles for Cascading Style Sheets. The font-family is a comma-separated list of font names.The font-style can be normal or italic. The font-size can be one of the CSS sizes or a numeric point size. The font-weight can be normal or bold. The default is application-dependent, but is a text font vs. a music font.
  */
 export type Font = {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -190,13 +263,13 @@ export type Font = {
   "font-weight"?: FontWeight;
 };
 export type FontStyle = {
-  _?: string;
+  _: string;
 } & ("normal" | "italic");
 export type CssFontSize = {
   _: string;
 } & ("xx-small" | "x-small" | "small" | "medium" | "large" | "x-large" | "xx-large");
 export type FontWeight = {
-  _?: string;
+  _: string;
 } & ("normal" | "bold");
 /**
  * The color attribute group indicates the color of an element.
@@ -210,123 +283,31 @@ export type Color = {
  * By default, all these attributes are set to yes. If print-object is set to no, the print-dot and print-lyric attributes are interpreted to also be set to no if they are not present.
  */
 export type Printout = {
-  "print-dot"?: YesNo2;
-  "print-lyric"?: YesNo3;
+  "print-dot"?: YesNo;
+  "print-lyric"?: YesNo;
 } & {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 } & {
-  "print-spacing"?: YesNo5;
+  "print-spacing"?: YesNo;
 };
-export type YesNo2 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo3 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo4 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo5 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type YesNo6 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo7 = {
-  _?: string;
-} & ("yes" | "no");
-export type NoteTypeValue = {
-  _: string;
-} & (
-  | "1024th"
-  | "512th"
-  | "256th"
-  | "128th"
-  | "64th"
-  | "32nd"
-  | "16th"
-  | "eighth"
-  | "quarter"
-  | "half"
-  | "whole"
-  | "breve"
-  | "long"
-  | "maxima"
-) & {
-    _: string;
-  } & (
-    | "1024th"
-    | "512th"
-    | "256th"
-    | "128th"
-    | "64th"
-    | "32nd"
-    | "16th"
-    | "eighth"
-    | "quarter"
-    | "half"
-    | "whole"
-    | "breve"
-    | "long"
-    | "maxima"
-  ) & {
-    _: string;
-  } & (
-    | "1024th"
-    | "512th"
-    | "256th"
-    | "128th"
-    | "64th"
-    | "32nd"
-    | "16th"
-    | "eighth"
-    | "quarter"
-    | "half"
-    | "whole"
-    | "breve"
-    | "long"
-    | "maxima"
-  ) & {
-    _: string;
-  } & (
-    | "1024th"
-    | "512th"
-    | "256th"
-    | "128th"
-    | "64th"
-    | "32nd"
-    | "16th"
-    | "eighth"
-    | "quarter"
-    | "half"
-    | "whole"
-    | "breve"
-    | "long"
-    | "maxima"
-  );
-export type SymbolSize = {
-  _?: string;
-} & ("full" | "cue" | "grace-cue" | "large");
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -344,295 +325,20 @@ export type Placement = {
   placement?: AboveBelow;
 };
 export type AboveBelow = {
-  _?: string;
+  _: string;
 } & ("above" | "below");
-export type AccidentalValue = {
-  _: string;
-} & (
-  | "sharp"
-  | "natural"
-  | "flat"
-  | "double-sharp"
-  | "sharp-sharp"
-  | "flat-flat"
-  | "natural-sharp"
-  | "natural-flat"
-  | "quarter-flat"
-  | "quarter-sharp"
-  | "three-quarters-flat"
-  | "three-quarters-sharp"
-  | "sharp-down"
-  | "sharp-up"
-  | "natural-down"
-  | "natural-up"
-  | "flat-down"
-  | "flat-up"
-  | "double-sharp-down"
-  | "double-sharp-up"
-  | "flat-flat-down"
-  | "flat-flat-up"
-  | "arrow-down"
-  | "arrow-up"
-  | "triple-sharp"
-  | "triple-flat"
-  | "slash-quarter-sharp"
-  | "slash-sharp"
-  | "slash-flat"
-  | "double-slash-flat"
-  | "sharp-1"
-  | "sharp-2"
-  | "sharp-3"
-  | "sharp-5"
-  | "flat-1"
-  | "flat-2"
-  | "flat-3"
-  | "flat-4"
-  | "sori"
-  | "koron"
-  | "other"
-) & {
-    _: string;
-  } & (
-    | "sharp"
-    | "natural"
-    | "flat"
-    | "double-sharp"
-    | "sharp-sharp"
-    | "flat-flat"
-    | "natural-sharp"
-    | "natural-flat"
-    | "quarter-flat"
-    | "quarter-sharp"
-    | "three-quarters-flat"
-    | "three-quarters-sharp"
-    | "sharp-down"
-    | "sharp-up"
-    | "natural-down"
-    | "natural-up"
-    | "flat-down"
-    | "flat-up"
-    | "double-sharp-down"
-    | "double-sharp-up"
-    | "flat-flat-down"
-    | "flat-flat-up"
-    | "arrow-down"
-    | "arrow-up"
-    | "triple-sharp"
-    | "triple-flat"
-    | "slash-quarter-sharp"
-    | "slash-sharp"
-    | "slash-flat"
-    | "double-slash-flat"
-    | "sharp-1"
-    | "sharp-2"
-    | "sharp-3"
-    | "sharp-5"
-    | "flat-1"
-    | "flat-2"
-    | "flat-3"
-    | "flat-4"
-    | "sori"
-    | "koron"
-    | "other"
-  ) & {
-    _: string;
-  } & (
-    | "sharp"
-    | "natural"
-    | "flat"
-    | "double-sharp"
-    | "sharp-sharp"
-    | "flat-flat"
-    | "natural-sharp"
-    | "natural-flat"
-    | "quarter-flat"
-    | "quarter-sharp"
-    | "three-quarters-flat"
-    | "three-quarters-sharp"
-    | "sharp-down"
-    | "sharp-up"
-    | "natural-down"
-    | "natural-up"
-    | "flat-down"
-    | "flat-up"
-    | "double-sharp-down"
-    | "double-sharp-up"
-    | "flat-flat-down"
-    | "flat-flat-up"
-    | "arrow-down"
-    | "arrow-up"
-    | "triple-sharp"
-    | "triple-flat"
-    | "slash-quarter-sharp"
-    | "slash-sharp"
-    | "slash-flat"
-    | "double-slash-flat"
-    | "sharp-1"
-    | "sharp-2"
-    | "sharp-3"
-    | "sharp-5"
-    | "flat-1"
-    | "flat-2"
-    | "flat-3"
-    | "flat-4"
-    | "sori"
-    | "koron"
-    | "other"
-  ) & {
-    _: string;
-  } & (
-    | "sharp"
-    | "natural"
-    | "flat"
-    | "double-sharp"
-    | "sharp-sharp"
-    | "flat-flat"
-    | "natural-sharp"
-    | "natural-flat"
-    | "quarter-flat"
-    | "quarter-sharp"
-    | "three-quarters-flat"
-    | "three-quarters-sharp"
-    | "sharp-down"
-    | "sharp-up"
-    | "natural-down"
-    | "natural-up"
-    | "flat-down"
-    | "flat-up"
-    | "double-sharp-down"
-    | "double-sharp-up"
-    | "flat-flat-down"
-    | "flat-flat-up"
-    | "arrow-down"
-    | "arrow-up"
-    | "triple-sharp"
-    | "triple-flat"
-    | "slash-quarter-sharp"
-    | "slash-sharp"
-    | "slash-flat"
-    | "double-slash-flat"
-    | "sharp-1"
-    | "sharp-2"
-    | "sharp-3"
-    | "sharp-5"
-    | "flat-1"
-    | "flat-2"
-    | "flat-3"
-    | "flat-4"
-    | "sori"
-    | "koron"
-    | "other"
-  );
-export type YesNo8 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo9 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo10 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo11 = {
-  _?: string;
-} & ("yes" | "no");
-export type SymbolSize1 = {
-  _?: string;
-} & ("full" | "cue" | "grace-cue" | "large");
-export type StemValue = {
-  _: string;
-} & ("down" | "up" | "double" | "none");
-export type NoteheadValue = {
-  _: string;
-} & (
-  | "slash"
-  | "triangle"
-  | "diamond"
-  | "square"
-  | "cross"
-  | "x"
-  | "circle-x"
-  | "inverted triangle"
-  | "arrow down"
-  | "arrow up"
-  | "circled"
-  | "slashed"
-  | "back slashed"
-  | "normal"
-  | "cluster"
-  | "circle dot"
-  | "left triangle"
-  | "rectangle"
-  | "none"
-  | "do"
-  | "re"
-  | "mi"
-  | "fa"
-  | "fa up"
-  | "so"
-  | "la"
-  | "ti"
-  | "other"
-);
-export type YesNo12 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo13 = {
-  _?: string;
-} & ("yes" | "no");
-export type LeftCenterRight = {
-  _?: string;
-} & ("left" | "center" | "right");
-export type LeftCenterRight1 = {
-  _?: string;
-} & ("left" | "center" | "right");
-export type Valign = {
-  _?: string;
-} & ("top" | "middle" | "bottom" | "baseline");
-export type TextDirection = {
-  _?: string;
-} & ("ltr" | "rtl" | "lro" | "rlo");
-export type EnclosureShape = {
-  _?: string;
-} & (
-  | "rectangle"
-  | "square"
-  | "oval"
-  | "circle"
-  | "bracket"
-  | "inverted-bracket"
-  | "triangle"
-  | "diamond"
-  | "pentagon"
-  | "hexagon"
-  | "heptagon"
-  | "octagon"
-  | "nonagon"
-  | "decagon"
-  | "none"
-);
-export type BeamValue = {
-  _: string;
-} & ("begin" | "continue" | "end" | "forward hook" | "backward hook") & {
-    _: string;
-  } & ("begin" | "continue" | "end" | "forward hook" | "backward hook");
-export type YesNo14 = {
-  _?: string;
-} & ("yes" | "no");
-export type Fan = {
-  _?: string;
-} & ("accel" | "rit" | "none");
 /**
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId1 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
@@ -659,12 +365,6 @@ export type Level = {
    */
   level: [Level1];
 };
-export type YesNo15 = {
-  _?: string;
-} & ("yes" | "no");
-export type StartStopSingle = {
-  _?: string;
-} & ("start" | "stop" | "single");
 /**
  * The line-type attribute distinguishes between solid, dashed, dotted, and wavy lines.
  */
@@ -672,14 +372,14 @@ export type LineType = {
   "line-type"?: LineType1;
 };
 export type LineType1 = {
-  _?: string;
+  _: string;
 } & ("solid" | "dashed" | "dotted" | "wavy");
 /**
  * The dashed-formatting entity represents the length of dashes and spaces in a dashed line. Both the dash-length and space-length attributes are represented in tenths. These attributes are ignored if the corresponding line-type attribute is not dashed.
  */
 export type DashedFormatting = {
-  "dash-length"?: Tenths13;
-  "space-length"?: Tenths14;
+  "dash-length"?: Tenths;
+  "space-length"?: Tenths;
 };
 /**
  * For most elements, any program will compute a default x and y position. The position attributes let this be changed two ways.
@@ -714,10 +414,10 @@ export type DashedFormatting = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The placement attribute indicates whether something is above or below another element, such as a note or a notation.
@@ -732,7 +432,7 @@ export type Orientation = {
   orientation?: OverUnder;
 };
 export type OverUnder = {
-  _?: string;
+  _: string;
 } & ("over" | "under");
 /**
  * The bezier attribute group is used to indicate the curvature of slurs and ties, representing the control points for a cubic bezier curve. For ties, the bezier attribute group is used with the tied element.
@@ -746,12 +446,12 @@ export type OverUnder = {
  * The bezier-offset and bezier-offset2 attributes are deprecated as of MusicXML 3.1. If both the bezier-x and bezier-offset attributes are present, the bezier-x attribute takes priority. Similarly, the bezier-x2 attribute takes priority over the bezier-offset2 attribute. The two types of bezier attributes are not additive.
  */
 export type Bezier = {
-  "bezier-x"?: Tenths15;
-  "bezier-y"?: Tenths16;
-  "bezier-x2"?: Tenths17;
-  "bezier-y2"?: Tenths18;
-  "bezier-offset"?: Divisions2;
-  "bezier-offset2"?: Divisions3;
+  "bezier-x"?: Tenths;
+  "bezier-y"?: Tenths;
+  "bezier-x2"?: Tenths;
+  "bezier-y2"?: Tenths;
+  "bezier-offset"?: Divisions;
+  "bezier-offset2"?: Divisions;
 };
 /**
  * The color attribute group indicates the color of an element.
@@ -764,11 +464,11 @@ export type Color2 = {
  */
 export type OptionalUniqueId2 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type TiedType = {
-  _?: string;
+  _: string;
 } & ("start" | "stop" | "continue" | "let-ring");
 /**
  * The line-type attribute distinguishes between solid, dashed, dotted, and wavy lines.
@@ -780,8 +480,8 @@ export type LineType2 = {
  * The dashed-formatting entity represents the length of dashes and spaces in a dashed line. Both the dash-length and space-length attributes are represented in tenths. These attributes are ignored if the corresponding line-type attribute is not dashed.
  */
 export type DashedFormatting1 = {
-  "dash-length"?: Tenths13;
-  "space-length"?: Tenths14;
+  "dash-length"?: Tenths;
+  "space-length"?: Tenths;
 };
 /**
  * For most elements, any program will compute a default x and y position. The position attributes let this be changed two ways.
@@ -816,10 +516,10 @@ export type DashedFormatting1 = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position1 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The placement attribute indicates whether something is above or below another element, such as a note or a notation.
@@ -845,12 +545,12 @@ export type Orientation1 = {
  * The bezier-offset and bezier-offset2 attributes are deprecated as of MusicXML 3.1. If both the bezier-x and bezier-offset attributes are present, the bezier-x attribute takes priority. Similarly, the bezier-x2 attribute takes priority over the bezier-offset2 attribute. The two types of bezier attributes are not additive.
  */
 export type Bezier1 = {
-  "bezier-x"?: Tenths15;
-  "bezier-y"?: Tenths16;
-  "bezier-x2"?: Tenths17;
-  "bezier-y2"?: Tenths18;
-  "bezier-offset"?: Divisions2;
-  "bezier-offset2"?: Divisions3;
+  "bezier-x"?: Tenths;
+  "bezier-y"?: Tenths;
+  "bezier-x2"?: Tenths;
+  "bezier-y2"?: Tenths;
+  "bezier-offset"?: Divisions;
+  "bezier-offset2"?: Divisions;
 };
 /**
  * The color attribute group indicates the color of an element.
@@ -863,12 +563,20 @@ export type Color3 = {
  */
 export type OptionalUniqueId3 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type StartStopContinue = {
-  _?: string;
-} & ("start" | "stop" | "continue");
+  _: string;
+} & ("start" | "stop" | "continue") & {
+    _: string;
+  } & ("start" | "stop" | "continue") & {
+    _: string;
+  } & ("start" | "stop" | "continue") & {
+    _: string;
+  } & ("start" | "stop" | "continue") & {
+    _: string;
+  } & ("start" | "stop" | "continue");
 /**
  * The line-shape attribute distinguishes between straight and curved lines.
  */
@@ -876,7 +584,7 @@ export type LineShape = {
   "line-shape"?: LineShape1;
 };
 export type LineShape1 = {
-  _?: string;
+  _: string;
 } & ("straight" | "curved");
 /**
  * For most elements, any program will compute a default x and y position. The position attributes let this be changed two ways.
@@ -911,10 +619,10 @@ export type LineShape1 = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position2 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The placement attribute indicates whether something is above or below another element, such as a note or a notation.
@@ -927,28 +635,34 @@ export type Placement3 = {
  */
 export type OptionalUniqueId4 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type StartStop = {
-  _?: string;
-} & ("start" | "stop");
-export type YesNo16 = {
-  _?: string;
-} & ("yes" | "no");
+  _: string;
+} & ("start" | "stop") & {
+    _: string;
+  } & ("start" | "stop") & {
+    _: string;
+  } & ("start" | "stop") & {
+    _: string;
+  } & ("start" | "stop") & {
+    _: string;
+  } & ("start" | "stop") & {
+    _: string;
+  } & ("start" | "stop") & {
+    _: string;
+  } & ("start" | "stop");
 export type ShowTuplet = {
-  _?: string;
-} & ("actual" | "both" | "none");
-export type ShowTuplet1 = {
-  _?: string;
-} & ("actual" | "both" | "none");
+  _: string;
+} & ("actual" | "both" | "none") & {
+    _: string;
+  } & ("actual" | "both" | "none");
 /**
  * The font attribute group gathers together attributes for determining the font within a credit or direction. They are based on the text styles for Cascading Style Sheets. The font-family is a comma-separated list of font names.The font-style can be normal or italic. The font-size can be one of the CSS sizes or a numeric point size. The font-weight can be normal or bold. The default is application-dependent, but is a text font vs. a music font.
  */
 export type Font1 = {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -963,35 +677,24 @@ export type Font1 = {
 export type Color4 = {
   color?: Color1;
 };
-export type StartStop1 = {
-  _?: string;
-} & ("start" | "stop");
-export type StartStop2 = {
-  _?: string;
-} & ("start" | "stop");
-export type YesNo17 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId5 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle1 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -1030,35 +733,30 @@ export type TrillSound = {
   "start-note"?: StartNote;
   "trill-step"?: TrillStep;
   "two-note-turn"?: TwoNoteTurn;
-  accelerate?: YesNo18;
-  beats?: TrillBeats1;
-  "second-beat"?: Percent2;
-  "last-beat"?: Percent3;
+  accelerate?: YesNo;
+  beats?: TrillBeats;
+  "second-beat"?: Percent;
+  "last-beat"?: Percent;
 };
 export type StartNote = {
-  _?: string;
+  _: string;
 } & ("upper" | "main" | "below");
 export type TrillStep = {
-  _?: string;
+  _: string;
 } & ("whole" | "half" | "unison");
 export type TwoNoteTurn = {
-  _?: string;
+  _: string;
 } & ("whole" | "half" | "none");
-export type YesNo18 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle2 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -1097,14 +795,11 @@ export type TrillSound1 = {
   "start-note"?: StartNote;
   "trill-step"?: TrillStep;
   "two-note-turn"?: TwoNoteTurn;
-  accelerate?: YesNo18;
-  beats?: TrillBeats1;
-  "second-beat"?: Percent2;
-  "last-beat"?: Percent3;
+  accelerate?: YesNo;
+  beats?: TrillBeats;
+  "second-beat"?: Percent;
+  "last-beat"?: Percent;
 };
-export type YesNo19 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * For most elements, any program will compute a default x and y position. The position attributes let this be changed two ways.
  *
@@ -1138,10 +833,10 @@ export type YesNo19 = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position3 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The placement attribute indicates whether something is above or below another element, such as a note or a notation.
@@ -1177,52 +872,35 @@ export type TrillSound2 = {
   "start-note"?: StartNote;
   "trill-step"?: TrillStep;
   "two-note-turn"?: TwoNoteTurn;
-  accelerate?: YesNo18;
-  beats?: TrillBeats1;
-  "second-beat"?: Percent2;
-  "last-beat"?: Percent3;
+  accelerate?: YesNo;
+  beats?: TrillBeats;
+  "second-beat"?: Percent;
+  "last-beat"?: Percent;
 };
-export type StartStopContinue1 = {
-  _?: string;
-} & ("start" | "stop" | "continue");
-export type YesNo20 = {
-  _?: string;
-} & ("yes" | "no");
-export type AboveBelow1 = {
-  _?: string;
-} & ("above" | "below");
-export type AboveBelow2 = {
-  _?: string;
-} & ("above" | "below");
-export type TremoloType = {
-  _?: string;
-} & ("start" | "stop" | "single" | "unmeasured");
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId6 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject1 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle3 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -1239,24 +917,16 @@ export type PrintStyle3 = {
 export type Placement7 = {
   placement?: AboveBelow;
 };
-export type YesNo21 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo22 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle4 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -1279,21 +949,16 @@ export type Placement8 = {
 export type Smufl = {
   smufl?: SmuflGlyphName;
 };
-export type StartStop3 = {
-  _?: string;
-} & ("start" | "stop");
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle5 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -1313,32 +978,24 @@ export type PrintStyle5 = {
  * 	last-beat = "75"
  */
 export type BendSound = {
-  accelerate?: YesNo17;
+  accelerate?: YesNo;
   beats?: TrillBeats;
   "first-beat"?: Percent;
-  "last-beat"?: Percent1;
+  "last-beat"?: Percent;
 };
 export type BendShape = {
-  _?: string;
+  _: string;
 } & ("angled" | "curved");
-export type TapHand = {
-  _?: string;
-} & ("left" | "right");
-export type YesNo23 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle6 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -1355,24 +1012,16 @@ export type PrintStyle6 = {
 export type Placement9 = {
   placement?: AboveBelow;
 };
-export type HoleClosedValue = {
-  _: string;
-} & ("yes" | "no" | "half");
-export type HoleClosedLocation = {
-  _?: string;
-} & ("right" | "bottom" | "left" | "top");
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle7 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -1418,34 +1067,16 @@ export type ArrowDirection = {
 export type ArrowStyle = {
   _: string;
 } & ("single" | "double" | "filled" | "hollow" | "paired" | "combined" | "other");
-export type HandbellValue = {
-  _: string;
-} & (
-  | "belltree"
-  | "damp"
-  | "echo"
-  | "gyro"
-  | "hand martellato"
-  | "mallet lift"
-  | "mallet table"
-  | "martellato"
-  | "martellato lift"
-  | "muted martellato"
-  | "pluck lift"
-  | "swing"
-);
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle8 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -1462,23 +1093,14 @@ export type PrintStyle8 = {
 export type Placement11 = {
   placement?: AboveBelow;
 };
-export type HarmonClosedValue = {
-  _: string;
-} & ("yes" | "no" | "half");
-export type HarmonClosedLocation = {
-  _?: string;
-} & ("right" | "bottom" | "left" | "top");
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId7 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type UpDown = {
-  _?: string;
-} & ("up" | "down");
 /**
  * The line-shape attribute distinguishes between straight and curved lines.
  */
@@ -1498,27 +1120,25 @@ export type LineLength = {
   "line-length"?: LineLength1;
 };
 export type LineLength1 = {
-  _?: string;
+  _: string;
 } & ("short" | "medium" | "long");
 /**
  * The dashed-formatting entity represents the length of dashes and spaces in a dashed line. Both the dash-length and space-length attributes are represented in tenths. These attributes are ignored if the corresponding line-type attribute is not dashed.
  */
 export type DashedFormatting2 = {
-  "dash-length"?: Tenths13;
-  "space-length"?: Tenths14;
+  "dash-length"?: Tenths;
+  "space-length"?: Tenths;
 };
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle9 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -1535,24 +1155,16 @@ export type PrintStyle9 = {
 export type Placement12 = {
   placement?: AboveBelow;
 };
-export type BreathMarkValue = {
-  _: string;
-} & ("" | "comma" | "tick" | "upbow" | "salzedo");
-export type CaesuraValue = {
-  _: string;
-} & ("normal" | "thick" | "short" | "curved" | "single" | "");
 /**
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -1563,10 +1175,18 @@ export type PrintStyleAlign = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
+export type LeftCenterRight = {
+  _: string;
+} & ("left" | "center" | "right") & {
+    _: string;
+  } & ("left" | "center" | "right");
+export type Valign = {
+  _: string;
+} & ("top" | "middle" | "bottom" | "baseline");
 /**
  * The placement attribute indicates whether something is above or below another element, such as a note or a notation.
  */
@@ -1578,8 +1198,8 @@ export type Placement13 = {
  */
 export type TextDecoration = {
   underline?: NumberOfLines;
-  overline?: NumberOfLines1;
-  "line-through"?: NumberOfLines2;
+  overline?: NumberOfLines;
+  "line-through"?: NumberOfLines;
 };
 /**
  * The enclosure attribute group is used to specify the formatting of an enclosure around text or symbols.
@@ -1587,20 +1207,33 @@ export type TextDecoration = {
 export type Enclosure = {
   enclosure?: EnclosureShape;
 };
+export type EnclosureShape = {
+  _: string;
+} & (
+  | "rectangle"
+  | "square"
+  | "oval"
+  | "circle"
+  | "bracket"
+  | "inverted-bracket"
+  | "triangle"
+  | "diamond"
+  | "pentagon"
+  | "hexagon"
+  | "heptagon"
+  | "octagon"
+  | "nonagon"
+  | "decagon"
+  | "none"
+);
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId8 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type FermataShape = {
-  _: string;
-} & ("normal" | "angled" | "square" | "double-angled" | "double-square" | "double-dot" | "half-curve" | "curlew" | "");
-export type UprightInverted = {
-  _?: string;
-} & ("upright" | "inverted");
 /**
  * For most elements, any program will compute a default x and y position. The position attributes let this be changed two ways.
  *
@@ -1634,10 +1267,10 @@ export type UprightInverted = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position4 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The placement attribute indicates whether something is above or below another element, such as a note or a notation.
@@ -1656,15 +1289,12 @@ export type Color6 = {
  */
 export type OptionalUniqueId9 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type UpDown1 = {
-  _?: string;
+export type UpDown = {
+  _: string;
 } & ("up" | "down");
-export type YesNo24 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * For most elements, any program will compute a default x and y position. The position attributes let this be changed two ways.
  *
@@ -1698,10 +1328,10 @@ export type YesNo24 = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position5 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The placement attribute indicates whether something is above or below another element, such as a note or a notation.
@@ -1720,15 +1350,12 @@ export type Color7 = {
  */
 export type OptionalUniqueId10 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type TopBottom = {
-  _?: string;
+  _: string;
 } & ("top" | "bottom");
-export type StartStopSingle1 = {
-  _?: string;
-} & ("start" | "stop" | "single");
 /**
  * The justify attribute is used to indicate left, center, or right justification. The default value varies for different elements. For elements where the justify attribute is present but the halign attribute is not, the justify attribute indicates horizontal alignment as well as justification.
  */
@@ -1768,10 +1395,10 @@ export type Justify = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position6 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The placement attribute indicates whether something is above or below another element, such as a note or a notation.
@@ -1789,14 +1416,14 @@ export type Color8 = {
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject2 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId11 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
@@ -1836,10 +1463,10 @@ export type Editorial1 = Footnote & Level;
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position7 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The color attribute group indicates the color of an element.
@@ -1847,9 +1474,6 @@ export type Position7 = {
 export type Color9 = {
   color?: Color1;
 };
-export type StartStopContinue2 = {
-  _?: string;
-} & ("start" | "stop" | "continue");
 export type Syllabic = {
   _: string;
 } & ("single" | "begin" | "end" | "middle");
@@ -1875,9 +1499,6 @@ export type Mute = {
 export type SemiPitched = {
   _: string;
 } & ("high" | "medium-high" | "medium" | "medium-low" | "low" | "very-low");
-export type YesNo25 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The editorial-voice group supports the common combination of editorial and voice information for a musical element.
  */
@@ -1932,12 +1553,6 @@ export type Staff = {
     }
   ];
 };
-export type YesNo26 = {
-  _?: string;
-} & ("yes" | "no");
-export type StartStop4 = {
-  _?: string;
-} & ("start" | "stop");
 /**
  * The full-note group is a sequence of the common note elements between cue/grace notes and regular (full) notes: pitch, chord, and rest information, but not duration (cue and grace notes do not have duration encoded). Unpitched elements are used for unpitched percussion, speaking voice, and other musical elements lacking determinate pitch.
  */
@@ -1951,9 +1566,7 @@ export type FullNote = {
    *
    * @minItems 0
    */
-  chord?: {
-    [k: string]: unknown;
-  }[];
+  chord?: Empty[];
 } & (
   | {
       /**
@@ -1987,10 +1600,6 @@ export type Step = {
     _: string;
   } & ("A" | "B" | "C" | "D" | "E" | "F" | "G") & {
     _: string;
-  } & ("A" | "B" | "C" | "D" | "E" | "F" | "G") & {
-    _: string;
-  } & ("A" | "B" | "C" | "D" | "E" | "F" | "G") & {
-    _: string;
   } & ("A" | "B" | "C" | "D" | "E" | "F" | "G");
 /**
  * The display-step-octave group contains the sequence of elements used by both the rest and unpitched elements. This group is used to place rests and unpitched elements on the staff without implying that these elements have pitch. Positioning follows the current clef. If percussion clef is used, the display-step and display-octave elements are interpreted as if in treble clef, with a G in octave 4 on line 2.
@@ -2007,9 +1616,6 @@ export type DisplayStepOctave = {
    */
   "display-octave": [Octave];
 };
-export type YesNo27 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The display-step-octave group contains the sequence of elements used by both the rest and unpitched elements. This group is used to place rests and unpitched elements on the staff without implying that these elements have pitch. Positioning follows the current clef. If percussion clef is used, the display-step and display-octave elements are interpreted as if in treble clef, with a G in octave 4 on line 2.
  */
@@ -2038,9 +1644,7 @@ export type FullNote1 = {
    *
    * @minItems 0
    */
-  chord?: {
-    [k: string]: unknown;
-  }[];
+  chord?: Empty[];
 } & (
   | {
       /**
@@ -2077,9 +1681,7 @@ export type FullNote2 = {
    *
    * @minItems 0
    */
-  chord?: {
-    [k: string]: unknown;
-  }[];
+  chord?: Empty[];
 } & (
   | {
       /**
@@ -2130,9 +1732,7 @@ export type FullNote3 = {
    *
    * @minItems 0
    */
-  chord?: {
-    [k: string]: unknown;
-  }[];
+  chord?: Empty[];
 } & (
   | {
       /**
@@ -2232,11 +1832,8 @@ export type Placement17 = {
  * The directive attribute changes the default-x position of a direction. It indicates that the left-hand side of the direction is aligned with the left-hand side of the time signature. If no time signature is present, it is aligned with the left-hand side of the first music notational element in the measure. If a default-x, justify, or halign attribute is present, it overrides the directive attribute.
  */
 export type Directive = {
-  directive?: YesNo28;
+  directive?: YesNo;
 };
-export type YesNo28 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The system-relation attribute group distinguishes elements that are associated with a system rather than the particular part where the element appears.
  */
@@ -2248,7 +1845,7 @@ export type SystemRelation = {
  */
 export type OptionalUniqueId12 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
@@ -2256,21 +1853,19 @@ export type OptionalUniqueId12 = {
  */
 export type OptionalUniqueId13 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign1 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -2281,7 +1876,7 @@ export type PrintStyleAlign1 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -2290,21 +1885,19 @@ export type PrintStyleAlign1 = ({
  */
 export type OptionalUniqueId14 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign2 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -2315,7 +1908,7 @@ export type PrintStyleAlign2 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -2324,7 +1917,7 @@ export type PrintStyleAlign2 = ({
  */
 export type OptionalUniqueId15 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
@@ -2337,8 +1930,8 @@ export type LineType4 = {
  * The dashed-formatting entity represents the length of dashes and spaces in a dashed line. Both the dash-length and space-length attributes are represented in tenths. These attributes are ignored if the corresponding line-type attribute is not dashed.
  */
 export type DashedFormatting3 = {
-  "dash-length"?: Tenths13;
-  "space-length"?: Tenths14;
+  "dash-length"?: Tenths;
+  "space-length"?: Tenths;
 };
 /**
  * For most elements, any program will compute a default x and y position. The position attributes let this be changed two ways.
@@ -2373,10 +1966,10 @@ export type DashedFormatting3 = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position8 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The color attribute group indicates the color of an element.
@@ -2389,21 +1982,18 @@ export type Color10 = {
  */
 export type OptionalUniqueId16 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type WedgeType = {
-  _?: string;
+  _: string;
 } & ("crescendo" | "diminuendo" | "stop" | "continue");
-export type YesNo29 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The dashed-formatting entity represents the length of dashes and spaces in a dashed line. Both the dash-length and space-length attributes are represented in tenths. These attributes are ignored if the corresponding line-type attribute is not dashed.
  */
 export type DashedFormatting4 = {
-  "dash-length"?: Tenths13;
-  "space-length"?: Tenths14;
+  "dash-length"?: Tenths;
+  "space-length"?: Tenths;
 };
 /**
  * For most elements, any program will compute a default x and y position. The position attributes let this be changed two ways.
@@ -2438,10 +2028,10 @@ export type DashedFormatting4 = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position9 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The color attribute group indicates the color of an element.
@@ -2454,12 +2044,9 @@ export type Color11 = {
  */
 export type OptionalUniqueId17 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type StartStopContinue3 = {
-  _?: string;
-} & ("start" | "stop" | "continue");
 /**
  * The line-type attribute distinguishes between solid, dashed, dotted, and wavy lines.
  */
@@ -2470,8 +2057,8 @@ export type LineType5 = {
  * The dashed-formatting entity represents the length of dashes and spaces in a dashed line. Both the dash-length and space-length attributes are represented in tenths. These attributes are ignored if the corresponding line-type attribute is not dashed.
  */
 export type DashedFormatting5 = {
-  "dash-length"?: Tenths13;
-  "space-length"?: Tenths14;
+  "dash-length"?: Tenths;
+  "space-length"?: Tenths;
 };
 /**
  * For most elements, any program will compute a default x and y position. The position attributes let this be changed two ways.
@@ -2506,10 +2093,10 @@ export type DashedFormatting5 = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position10 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The color attribute group indicates the color of an element.
@@ -2522,27 +2109,22 @@ export type Color12 = {
  */
 export type OptionalUniqueId18 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type StartStopContinue4 = {
-  _?: string;
-} & ("start" | "stop" | "continue");
 export type LineEnd = {
-  _?: string;
+  _: string;
 } & ("up" | "down" | "both" | "arrow" | "none");
 /**
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign3 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -2553,7 +2135,7 @@ export type PrintStyleAlign3 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -2562,33 +2144,22 @@ export type PrintStyleAlign3 = ({
  */
 export type OptionalUniqueId19 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type PedalType = {
-  _?: string;
+  _: string;
 } & ("start" | "stop" | "sostenuto" | "change" | "continue" | "discontinue" | "resume");
-export type YesNo30 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo31 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo32 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign4 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -2599,7 +2170,7 @@ export type PrintStyleAlign4 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -2607,7 +2178,7 @@ export type PrintStyleAlign4 = ({
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject3 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 /**
  * The justify attribute is used to indicate left, center, or right justification. The default value varies for different elements. For elements where the justify attribute is present but the halign attribute is not, the justify attribute indicates horizontal alignment as well as justification.
@@ -2620,12 +2191,9 @@ export type Justify1 = {
  */
 export type OptionalUniqueId20 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type YesNo33 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The beat-unit group combines elements used repeatedly in the metronome element to specify a note within a metronome mark.
  */
@@ -2642,10 +2210,43 @@ export type BeatUnit = {
    *
    * @minItems 0
    */
-  "beat-unit-dot"?: {
-    [k: string]: unknown;
-  }[];
+  "beat-unit-dot"?: Empty[];
 };
+export type NoteTypeValue = {
+  _: string;
+} & (
+  | "1024th"
+  | "512th"
+  | "256th"
+  | "128th"
+  | "64th"
+  | "32nd"
+  | "16th"
+  | "eighth"
+  | "quarter"
+  | "half"
+  | "whole"
+  | "breve"
+  | "long"
+  | "maxima"
+) & {
+    _: string;
+  } & (
+    | "1024th"
+    | "512th"
+    | "256th"
+    | "128th"
+    | "64th"
+    | "32nd"
+    | "16th"
+    | "eighth"
+    | "quarter"
+    | "half"
+    | "whole"
+    | "breve"
+    | "long"
+    | "maxima"
+  );
 /**
  * The beat-unit group combines elements used repeatedly in the metronome element to specify a note within a metronome mark.
  */
@@ -2662,9 +2263,7 @@ export type BeatUnit1 = {
    *
    * @minItems 0
    */
-  "beat-unit-dot"?: {
-    [k: string]: unknown;
-  }[];
+  "beat-unit-dot"?: Empty[];
 };
 /**
  * The beat-unit group combines elements used repeatedly in the metronome element to specify a note within a metronome mark.
@@ -2682,41 +2281,25 @@ export type BeatUnit2 = {
    *
    * @minItems 0
    */
-  "beat-unit-dot"?: {
-    [k: string]: unknown;
-  }[];
+  "beat-unit-dot"?: Empty[];
 };
-export type StartStop5 = {
-  _?: string;
-} & ("start" | "stop");
-export type StartStop6 = {
-  _?: string;
-} & ("start" | "stop");
-export type YesNo34 = {
-  _?: string;
-} & ("yes" | "no");
-export type ShowTuplet2 = {
-  _?: string;
-} & ("actual" | "both" | "none");
 /**
  * The dashed-formatting entity represents the length of dashes and spaces in a dashed line. Both the dash-length and space-length attributes are represented in tenths. These attributes are ignored if the corresponding line-type attribute is not dashed.
  */
 export type DashedFormatting6 = {
-  "dash-length"?: Tenths13;
-  "space-length"?: Tenths14;
+  "dash-length"?: Tenths;
+  "space-length"?: Tenths;
 };
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle10 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -2732,24 +2315,22 @@ export type PrintStyle10 = {
  */
 export type OptionalUniqueId21 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type UpDownStopContinue = {
-  _?: string;
+  _: string;
 } & ("up" | "down" | "stop" | "continue");
 /**
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign5 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -2760,7 +2341,7 @@ export type PrintStyleAlign5 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -2769,21 +2350,19 @@ export type PrintStyleAlign5 = ({
  */
 export type OptionalUniqueId22 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign6 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -2794,7 +2373,7 @@ export type PrintStyleAlign6 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -2803,21 +2382,19 @@ export type PrintStyleAlign6 = ({
  */
 export type OptionalUniqueId23 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign7 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -2828,7 +2405,7 @@ export type PrintStyleAlign7 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -2837,18 +2414,18 @@ export type PrintStyleAlign7 = ({
  */
 export type OptionalUniqueId24 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type OnOff = {
-  _?: string;
+  _: string;
 } & ("on" | "off");
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId25 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
@@ -2881,52 +2458,44 @@ export type Tuning = {
  */
 export type ImageAttributes = {
   source?: {
-    _?: string;
+    _: string;
   };
   type?: {
-    _?: string;
+    _: string;
   };
-  height?: Tenths21;
-  width?: Tenths22;
+  height?: Tenths;
+  width?: Tenths;
 } & {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: ValignImage;
 };
 export type ValignImage = {
-  _?: string;
+  _: string;
 } & ("top" | "middle" | "bottom");
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId26 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type StartStop7 = {
-  _?: string;
-} & ("start" | "stop");
-export type PrincipalVoiceSymbol = {
-  _?: string;
-} & ("Hauptstimme" | "Nebenstimme" | "plain" | "none");
 /**
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign8 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -2937,7 +2506,7 @@ export type PrintStyleAlign8 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -2952,165 +2521,12 @@ export type Enclosure1 = {
  */
 export type OptionalUniqueId27 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type GlassValue = {
-  _: string;
-} & ("glass harmonica" | "glass harp" | "wind chimes");
-export type MetalValue = {
-  _: string;
-} & (
-  | "agogo"
-  | "almglocken"
-  | "bell"
-  | "bell plate"
-  | "bell tree"
-  | "brake drum"
-  | "cencerro"
-  | "chain rattle"
-  | "Chinese cymbal"
-  | "cowbell"
-  | "crash cymbals"
-  | "crotale"
-  | "cymbal tongs"
-  | "domed gong"
-  | "finger cymbals"
-  | "flexatone"
-  | "gong"
-  | "hi-hat"
-  | "high-hat cymbals"
-  | "handbell"
-  | "jaw harp"
-  | "jingle bells"
-  | "musical saw"
-  | "shell bells"
-  | "sistrum"
-  | "sizzle cymbal"
-  | "sleigh bells"
-  | "suspended cymbal"
-  | "tam tam"
-  | "tam tam with beater"
-  | "triangle"
-  | "Vietnamese hat"
-);
-export type WoodValue = {
-  _: string;
-} & (
-  | "bamboo scraper"
-  | "board clapper"
-  | "cabasa"
-  | "castanets"
-  | "castanets with handle"
-  | "claves"
-  | "football rattle"
-  | "guiro"
-  | "log drum"
-  | "maraca"
-  | "maracas"
-  | "quijada"
-  | "rainstick"
-  | "ratchet"
-  | "reco-reco"
-  | "sandpaper blocks"
-  | "slit drum"
-  | "temple block"
-  | "vibraslap"
-  | "whip"
-  | "wood block"
-);
-export type PitchedValue = {
-  _: string;
-} & (
-  | "celesta"
-  | "chimes"
-  | "glockenspiel"
-  | "lithophone"
-  | "mallet"
-  | "marimba"
-  | "steel drums"
-  | "tubaphone"
-  | "tubular chimes"
-  | "vibraphone"
-  | "xylophone"
-);
-export type MembraneValue = {
-  _: string;
-} & (
-  | "bass drum"
-  | "bass drum on side"
-  | "bongos"
-  | "Chinese tomtom"
-  | "conga drum"
-  | "cuica"
-  | "goblet drum"
-  | "Indo-American tomtom"
-  | "Japanese tomtom"
-  | "military drum"
-  | "snare drum"
-  | "snare drum snares off"
-  | "tabla"
-  | "tambourine"
-  | "tenor drum"
-  | "timbales"
-  | "tomtom"
-);
-export type EffectValue = {
-  _: string;
-} & (
-  | "anvil"
-  | "auto horn"
-  | "bird whistle"
-  | "cannon"
-  | "duck call"
-  | "gun shot"
-  | "klaxon horn"
-  | "lions roar"
-  | "lotus flute"
-  | "megaphone"
-  | "police whistle"
-  | "siren"
-  | "slide whistle"
-  | "thunder sheet"
-  | "wind machine"
-  | "wind whistle"
-);
-export type BeaterValue = {
-  _: string;
-} & (
-  | "bow"
-  | "chime hammer"
-  | "coin"
-  | "drum stick"
-  | "finger"
-  | "fingernail"
-  | "fist"
-  | "guiro scraper"
-  | "hammer"
-  | "hand"
-  | "jazz stick"
-  | "knitting needle"
-  | "metal hammer"
-  | "slide brush on gong"
-  | "snare stick"
-  | "spoon mallet"
-  | "superball"
-  | "triangle beater"
-  | "triangle beater plain"
-  | "wire brush"
-);
 export type TipDirection = {
-  _?: string;
+  _: string;
 } & ("up" | "down" | "left" | "right" | "northwest" | "northeast" | "southeast" | "southwest");
-export type TipDirection1 = {
-  _?: string;
-} & ("up" | "down" | "left" | "right" | "northwest" | "northeast" | "southeast" | "southwest");
-export type YesNo35 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo36 = {
-  _?: string;
-} & ("yes" | "no");
 export type StickType = {
   _: string;
 } & (
@@ -3135,14 +2551,12 @@ export type StickLocation = {
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign9 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -3153,7 +2567,7 @@ export type PrintStyleAlign9 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -3162,21 +2576,19 @@ export type PrintStyleAlign9 = ({
  */
 export type OptionalUniqueId28 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign10 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -3187,7 +2599,7 @@ export type PrintStyleAlign10 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -3196,41 +2608,22 @@ export type PrintStyleAlign10 = ({
  */
 export type OptionalUniqueId29 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type StaffDivideSymbol = {
-  _?: string;
+  _: string;
 } & ("down" | "up" | "up-down");
-export type YesNo37 = {
-  _?: string;
-} & ("yes" | "no");
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId30 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type YesNo38 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo39 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo40 = {
-  _?: string;
-} & ("yes" | "no");
-export type YesNo41 = {
-  _: string;
-} & ("yes" | "no") & {
-    _: string;
-  } & ("yes" | "no") & {
-    _: string;
-  } & ("yes" | "no");
 export type SyncType = {
-  _?: string;
+  _: string;
 } & ("none" | "tempo" | "mostly-tempo" | "mostly-event" | "event" | "always-event");
 /**
  * The editorial-voice-direction group supports the common combination of editorial and voice information for a direction element. It is separate from the editorial-voice element because extensions and restrictions might be different for directions than for the note and forward elements.
@@ -3290,14 +2683,12 @@ export type Staff2 = {
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle11 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -3312,19 +2703,16 @@ export type PrintStyle11 = {
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject4 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId31 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type YesNo42 = {
-  _: string;
-} & ("yes" | "no");
 /**
  * The traditional-key group represents a traditional key signature using the cycle of fifths.
  */
@@ -3343,9 +2731,6 @@ export type TraditionalKey = {
    */
   mode?: Mode[];
 };
-export type CancelLocation = {
-  _?: string;
-} & ("left" | "right" | "before-barline");
 /**
  * The non-traditional-key group represents a single alteration within a non-traditional key signature. A sequence of these groups makes up a non-traditional key signature
  */
@@ -3375,14 +2760,12 @@ export type NonTraditionalKey = {
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign11 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -3393,7 +2776,7 @@ export type PrintStyleAlign11 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -3401,28 +2784,26 @@ export type PrintStyleAlign11 = ({
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject5 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId32 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type TimeSymbol = {
-  _?: string;
-} & ("common" | "cut" | "single-number" | "note" | "dotted-note" | "normal");
+  _: string;
+} & ("common" | "cut" | "single-number" | "note" | "dotted-note" | "normal") & {
+    _: string;
+  } & ("common" | "cut" | "single-number" | "note" | "dotted-note" | "normal");
 export type TimeSeparator = {
-  _?: string;
-} & ("none" | "horizontal" | "diagonal" | "vertical" | "adjacent");
-export type TimeSymbol1 = {
-  _?: string;
-} & ("common" | "cut" | "single-number" | "note" | "dotted-note" | "normal");
-export type TimeSeparator1 = {
-  _?: string;
-} & ("none" | "horizontal" | "diagonal" | "vertical" | "adjacent");
+  _: string;
+} & ("none" | "horizontal" | "diagonal" | "vertical" | "adjacent") & {
+    _: string;
+  } & ("none" | "horizontal" | "diagonal" | "vertical" | "adjacent");
 export type TimeRelation = {
   _: string;
 } & ("parentheses" | "bracket" | "equals" | "slash" | "space" | "hyphen");
@@ -3480,23 +2861,16 @@ export type TimeSignature1 = {
     }
   ];
 };
-export type GroupSymbolValue = {
-  _: string;
-} & ("none" | "brace" | "line" | "bracket" | "square") & {
-    _: string;
-  } & ("none" | "brace" | "line" | "bracket" | "square");
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle12 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -3511,25 +2885,19 @@ export type PrintStyle12 = {
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject6 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId33 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type YesNo43 = {
+export type SymbolSize = {
   _: string;
-} & ("yes" | "no");
-export type SymbolSize2 = {
-  _?: string;
 } & ("full" | "cue" | "grace-cue" | "large");
-export type YesNo44 = {
-  _: string;
-} & ("yes" | "no");
 /**
  * Clefs are represented by a combination of sign, line, and clef-octave-change elements.
  */
@@ -3563,16 +2931,16 @@ export type ClefSign = {
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject7 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 /**
  * The print-spacing attribute controls whether or not spacing is left for an invisible note or object. It is used only if no note, dot, or lyric is being printed. The value is yes (leave spacing) by default.
  */
 export type PrintSpacing = {
-  "print-spacing"?: YesNo5;
+  "print-spacing"?: YesNo;
 };
 export type ShowFrets = {
-  _?: string;
+  _: string;
 } & ("numbers" | "letters");
 export type StaffType = {
   _: string;
@@ -3606,9 +2974,7 @@ export type Tuning1 = {
  * The font attribute group gathers together attributes for determining the font within a credit or direction. They are based on the text styles for Cascading Style Sheets. The font-family is a comma-separated list of font names.The font-style can be normal or italic. The font-size can be one of the CSS sizes or a numeric point size. The font-weight can be normal or bold. The default is application-dependent, but is a text font vs. a music font.
  */
 export type Font2 = {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -3628,21 +2994,9 @@ export type Color13 = {
  */
 export type OptionalUniqueId34 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type YesNo45 = {
-  _: string;
-} & ("yes" | "no");
-export type StartStop8 = {
-  _?: string;
-} & ("start" | "stop");
-export type StartStop9 = {
-  _?: string;
-} & ("start" | "stop");
-export type YesNo46 = {
-  _: string;
-} & ("yes" | "no");
 /**
  * The slash group combines elements used for more complete specification of the slash and beat-repeat measure-style elements. They have the same values as the type and dot elements, and define what the beat is for the display of repetition marks. If not present, the beat is based on the current time signature.
  */
@@ -3656,15 +3010,6 @@ export type Slash = {
     _: string;
   }[];
 };
-export type StartStop10 = {
-  _?: string;
-} & ("start" | "stop");
-export type YesNo47 = {
-  _: string;
-} & ("yes" | "no");
-export type YesNo48 = {
-  _: string;
-} & ("yes" | "no");
 /**
  * The slash group combines elements used for more complete specification of the slash and beat-repeat measure-style elements. They have the same values as the type and dot elements, and define what the beat is for the display of repetition marks. If not present, the beat is based on the current time signature.
  */
@@ -3687,7 +3032,7 @@ export type Editorial3 = Footnote & Level;
  */
 export type OptionalUniqueId35 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
@@ -3724,15 +3069,12 @@ export type Transpose1 = {
    */
   double?: Double[];
 };
-export type YesNo49 = {
-  _: string;
-} & ("yes" | "no");
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId36 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
@@ -3799,20 +3141,18 @@ export type Transpose2 = {
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject8 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 /**
  * The print-style attribute group collects the most popular combination of printing attributes: position, font, and color.
  */
 export type PrintStyle13 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -3840,18 +3180,17 @@ export type SystemRelation1 = {
  */
 export type OptionalUniqueId37 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type HarmonyType = {
-  _?: string;
-} & ("explicit" | "implied" | "alternate");
-export type YesNo50 = {
   _: string;
-} & ("yes" | "no");
+} & ("explicit" | "implied" | "alternate");
 export type HarmonyArrangement = {
-  _?: string;
-} & ("vertical" | "horizontal" | "diagonal");
+  _: string;
+} & ("vertical" | "horizontal" | "diagonal") & {
+    _: string;
+  } & ("vertical" | "horizontal" | "diagonal");
 /**
  * For most elements, any program will compute a default x and y position. The position attributes let this be changed two ways.
  *
@@ -3885,10 +3224,10 @@ export type HarmonyArrangement = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position11 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The color attribute group indicates the color of an element.
@@ -3907,7 +3246,7 @@ export type Color14 = {
  * The halign attribute is used in these situations. If it is not present, its value is the same as for the justify attribute. For elements where a justify attribute is not allowed, the default is implementation-dependent.
  */
 export type Halign = {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 };
 /**
  * The valign-image attribute is used to indicate vertical alignment for images and graphics, so it removes the baseline value. Defaults are implementation-dependent.
@@ -3920,21 +3259,15 @@ export type ValignImage1 = {
  */
 export type OptionalUniqueId38 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type LeftRight = {
-  _?: string;
-} & ("left" | "right");
 /**
  * The color attribute group indicates the color of an element.
  */
 export type Color15 = {
   color?: Color1;
 };
-export type StartStop11 = {
-  _?: string;
-} & ("start" | "stop");
 /**
  * A harmony element can contain many stacked chords (e.g. V of II). A sequence of harmony-chord groups is used for this type of secondary function, where V of II would be represented by a harmony-chord with a 5 numeral followed by a harmony-chord with a 2 numeral.
  *
@@ -3983,81 +3316,17 @@ export type HarmonyChord = {
       function?: [StyleText];
     }
 );
-export type KindValue = {
-  _: string;
-} & (
-  | "major"
-  | "minor"
-  | "augmented"
-  | "diminished"
-  | "dominant"
-  | "major-seventh"
-  | "minor-seventh"
-  | "diminished-seventh"
-  | "augmented-seventh"
-  | "half-diminished"
-  | "major-minor"
-  | "major-sixth"
-  | "minor-sixth"
-  | "dominant-ninth"
-  | "major-ninth"
-  | "minor-ninth"
-  | "dominant-11th"
-  | "major-11th"
-  | "minor-11th"
-  | "dominant-13th"
-  | "major-13th"
-  | "minor-13th"
-  | "suspended-second"
-  | "suspended-fourth"
-  | "Neapolitan"
-  | "Italian"
-  | "French"
-  | "German"
-  | "pedal"
-  | "power"
-  | "Tristan"
-  | "other"
-  | "none"
-);
-export type YesNo51 = {
-  _: string;
-} & ("yes" | "no");
-export type YesNo52 = {
-  _: string;
-} & ("yes" | "no");
-export type YesNo53 = {
-  _: string;
-} & ("yes" | "no");
-export type YesNo54 = {
-  _: string;
-} & ("yes" | "no");
-export type HarmonyArrangement1 = {
-  _?: string;
-} & ("vertical" | "horizontal" | "diagonal");
-export type LeftRight1 = {
-  _?: string;
-} & ("left" | "right");
 /**
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject9 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
-export type DegreeSymbolValue = {
-  _?: string;
-} & ("major" | "minor" | "augmented" | "diminished" | "half-diminished");
-export type YesNo55 = {
-  _: string;
-} & ("yes" | "no");
-export type DegreeTypeValue = {
-  _: string;
-} & ("add" | "alter" | "subtract");
 /**
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject10 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 export type NumeralMode = {
   _: string;
@@ -4086,14 +3355,12 @@ export type Staff3 = {
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign12 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -4104,7 +3371,7 @@ export type PrintStyleAlign12 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -4120,24 +3387,21 @@ export type Placement19 = {
  * By default, all these attributes are set to yes. If print-object is set to no, the print-dot and print-lyric attributes are interpreted to also be set to no if they are not present.
  */
 export type Printout1 = {
-  "print-dot"?: YesNo2;
-  "print-lyric"?: YesNo3;
+  "print-dot"?: YesNo;
+  "print-lyric"?: YesNo;
 } & {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 } & {
-  "print-spacing"?: YesNo5;
+  "print-spacing"?: YesNo;
 };
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId39 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type YesNo56 = {
-  _: string;
-} & ("yes" | "no");
 /**
  * The editorial group specifies editorial information for a musical element.
  */
@@ -4166,47 +3430,29 @@ export type Editorial6 = Footnote & Level;
  * The staff-spacing attribute specifies spacing between multiple staves in tenths of staff space. This is deprecated as of Version 1.1; the staff-layout element should be used instead. If both are present, the staff-layout values take priority.
  */
 export type PrintAttributes = {
-  "staff-spacing"?: Tenths25;
-  "new-system"?: YesNo57;
-  "new-page"?: YesNo58;
+  "staff-spacing"?: Tenths;
+  "new-system"?: YesNo;
+  "new-page"?: YesNo;
   "blank-page"?: {
-    _?: number;
+    _: number;
   };
   "page-number"?: {
-    _?: string;
+    _: string;
   };
 };
-export type YesNo57 = {
-  _: string;
-} & ("yes" | "no");
-export type YesNo58 = {
-  _: string;
-} & ("yes" | "no");
 /**
  * The optional-unique-id attribute group allows an element to optionally specify an ID that is unique to the entire document. This attribute group is not used for a required id attribute, or for an id attribute that specifies an id reference.
  */
 export type OptionalUniqueId40 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type MeasureNumberingValue = {
-  _: string;
-} & ("none" | "measure" | "system");
-export type SystemRelationNumber = {
-  _?: string;
-} & ("only-top" | "only-bottom" | "also-top" | "also-bottom" | "none");
-export type YesNo59 = {
-  _: string;
-} & ("yes" | "no");
-export type YesNo60 = {
-  _: string;
-} & ("yes" | "no");
 /**
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject11 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 /**
  * The layout group specifies the sequence of page, system, and staff layout elements that is common to both the defaults and print elements.
@@ -4226,7 +3472,7 @@ export type Layout = {
   "staff-layout"?: StaffLayout[];
 };
 export type MarginType = {
-  _?: string;
+  _: string;
 } & ("odd" | "even" | "both");
 /**
  * The all-margins group specifies both horizontal and vertical margins in tenths.
@@ -4236,12 +3482,12 @@ export type AllMargins = {
    * @minItems 1
    * @maxItems 1
    */
-  "top-margin": [Tenths26];
+  "top-margin": [Tenths];
   /**
    * @minItems 1
    * @maxItems 1
    */
-  "bottom-margin": [Tenths26];
+  "bottom-margin": [Tenths];
 } & LeftRightMargins;
 /**
  * The left-right-margins group specifies horizontal margins in tenths.
@@ -4251,12 +3497,12 @@ export type LeftRightMargins = {
    * @minItems 1
    * @maxItems 1
    */
-  "left-margin": [Tenths26];
+  "left-margin": [Tenths];
   /**
    * @minItems 1
    * @maxItems 1
    */
-  "right-margin": [Tenths26];
+  "right-margin": [Tenths];
 };
 /**
  * The left-right-margins group specifies horizontal margins in tenths.
@@ -4266,31 +3512,29 @@ export type LeftRightMargins1 = {
    * @minItems 1
    * @maxItems 1
    */
-  "left-margin": [Tenths26];
+  "left-margin": [Tenths];
   /**
    * @minItems 1
    * @maxItems 1
    */
-  "right-margin": [Tenths26];
+  "right-margin": [Tenths];
 };
 /**
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
 export type PrintObject12 = {
-  "print-object"?: YesNo4;
+  "print-object"?: YesNo;
 };
 /**
  * The print-style-align attribute group adds the halign and valign attributes to the position, font, and color attributes.
  */
 export type PrintStyleAlign13 = ({
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 } & {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -4301,7 +3545,7 @@ export type PrintStyleAlign13 = ({
 } & {
   color?: Color1;
 }) & {
-  halign?: LeftCenterRight1;
+  halign?: LeftCenterRight;
 } & {
   valign?: Valign;
 };
@@ -4310,38 +3554,17 @@ export type PrintStyleAlign13 = ({
  */
 export type OptionalUniqueId41 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 export type RightLeftMiddle = {
-  _?: string;
+  _: string;
 } & ("right" | "left" | "middle");
-export type BarStyle = {
-  _: string;
-} & (
-  | "regular"
-  | "dotted"
-  | "dashed"
-  | "heavy"
-  | "light-light"
-  | "light-heavy"
-  | "heavy-light"
-  | "heavy-heavy"
-  | "tick"
-  | "short"
-  | "none"
-);
-export type StartStopDiscontinue = {
-  _?: string;
-} & ("start" | "stop" | "discontinue");
 export type BackwardForward = {
-  _?: string;
-} & ("backward" | "forward");
-export type YesNo61 = {
   _: string;
-} & ("yes" | "no");
+} & ("backward" | "forward");
 export type Winged = {
-  _?: string;
+  _: string;
 } & ("none" | "straight" | "curved" | "double-straight" | "double-curved");
 /**
  * The editorial group specifies editorial information for a musical element.
@@ -4352,11 +3575,11 @@ export type Editorial7 = Footnote & Level;
  */
 export type OptionalUniqueId42 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
-export type StartStopSingle2 = {
-  _?: string;
+export type StartStopSingle = {
+  _: string;
 } & ("start" | "stop" | "single");
 /**
  * The link-attributes group includes all the simple XLink attributes supported in the MusicXML format. It is also used to connect a MusicXML score with MusicXML parts or a MusicXML opus.
@@ -4370,23 +3593,23 @@ export type LinkAttributes = {
   "xlink:actuate"?: Actuate;
 };
 export type Type = {
-  _?: string;
+  _: string;
 } & "simple";
 export type Show = {
-  _?: string;
+  _: string;
 } & ("new" | "replace" | "embed" | "other" | "none");
 export type Actuate = {
-  _?: string;
+  _: string;
 } & ("onRequest" | "onLoad" | "other" | "none");
 /**
  * The element and position attributes are new as of Version 2.0. They allow for bookmarks and links to be positioned at higher resolution than the level of music-data elements. When no element and position attributes are present, the bookmark or link element refers to the next sibling element in the MusicXML file. The element attribute specifies an element type for a descendant of the next sibling element that is not a link or bookmark. The position attribute specifies the position of this descendant element, where the first position is 1. The position attribute is ignored if the element attribute is not present. For instance, an element value of "beam" and a position value of "2" defines the link or bookmark to refer to the second beam descendant of the next sibling element that is not a link or bookmark. This is equivalent to an XPath test of [.//beam[2]] done in the context of the sibling element.
  */
 export type ElementPosition = {
   element?: {
-    _?: string;
+    _: string;
   };
   position?: {
-    _?: number;
+    _: number;
   };
 };
 /**
@@ -4422,20 +3645,20 @@ export type ElementPosition = {
  * As elsewhere in the MusicXML format, tenths are the global tenths defined by the scaling element, not the local tenths of a staff resized by the staff-size element.
  */
 export type Position12 = {
-  "default-x"?: Tenths5;
-  "default-y"?: Tenths6;
-  "relative-x"?: Tenths7;
-  "relative-y"?: Tenths8;
+  "default-x"?: Tenths;
+  "default-y"?: Tenths;
+  "relative-x"?: Tenths;
+  "relative-y"?: Tenths;
 };
 /**
  * The element and position attributes are new as of Version 2.0. They allow for bookmarks and links to be positioned at higher resolution than the level of music-data elements. When no element and position attributes are present, the bookmark or link element refers to the next sibling element in the MusicXML file. The element attribute specifies an element type for a descendant of the next sibling element that is not a link or bookmark. The position attribute specifies the position of this descendant element, where the first position is 1. The position attribute is ignored if the element attribute is not present. For instance, an element value of "beam" and a position value of "2" defines the link or bookmark to refer to the second beam descendant of the next sibling element that is not a link or bookmark. This is equivalent to an XPath test of [.//beam[2]] done in the context of the sibling element.
  */
 export type ElementPosition1 = {
   element?: {
-    _?: string;
+    _: string;
   };
   position?: {
-    _?: number;
+    _: number;
   };
 };
 /**
@@ -4491,19 +3714,11 @@ export type LinkAttributes1 = {
   "xlink:show"?: Show;
   "xlink:actuate"?: Actuate;
 };
-export type YesNo62 = {
-  _: string;
-} & ("yes" | "no");
-export type NoteSizeType = {
-  _?: string;
-} & ("cue" | "grace" | "grace-cue" | "large");
 /**
  * The font attribute group gathers together attributes for determining the font within a credit or direction. They are based on the text styles for Cascading Style Sheets. The font-family is a comma-separated list of font names.The font-style can be normal or italic. The font-size can be one of the CSS sizes or a numeric point size. The font-weight can be normal or bold. The default is application-dependent, but is a text font vs. a music font.
  */
 export type Font3 = {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -4516,9 +3731,7 @@ export type Font3 = {
  * The font attribute group gathers together attributes for determining the font within a credit or direction. They are based on the text styles for Cascading Style Sheets. The font-family is a comma-separated list of font names.The font-style can be normal or italic. The font-size can be one of the CSS sizes or a numeric point size. The font-weight can be normal or bold. The default is application-dependent, but is a text font vs. a music font.
  */
 export type Font4 = {
-  "font-family"?: {
-    [k: string]: unknown;
-  };
+  "font-family"?: unknown;
   "font-style"?: FontStyle;
   "font-size"?:
     | {
@@ -4549,7 +3762,7 @@ export type Layout1 = {
  */
 export type OptionalUniqueId43 = {
   id?: {
-    _?: string;
+    _: string;
   };
 };
 /**
@@ -4562,12 +3775,6 @@ export type PartGroup = {
    */
   "part-group": [PartGroup1];
 };
-export type StartStop12 = {
-  _?: string;
-} & ("start" | "stop");
-export type GroupBarlineValue = {
-  _: string;
-} & ("yes" | "no" | "Mensurstrich");
 /**
  * The editorial group specifies editorial information for a musical element.
  */
@@ -4618,9 +3825,7 @@ export type VirtualInstrumentData = {
        *
        * @minItems 0
        */
-      solo?: {
-        [k: string]: unknown;
-      }[];
+      solo?: Empty[];
     }
   | {
       /**
@@ -4663,10 +3868,10 @@ export interface MusicXML {
   "score-partwise"?: ScorePartwise;
 }
 export interface MeasureText {
-  _?: string;
+  _: string;
 }
 export interface Tenths {
-  _?: number;
+  _: number;
 }
 /**
  * Notes are the most common type of MusicXML data. The MusicXML format distinguishes between elements used for sound information and elements used for notation information (e.g., tie is used for sound, tied for notation). Thus grace notes do not have a duration element. Cue notes have a duration element, as do forward elements, but no tie elements. Having these two types of information available can make interchange easier, as some programs handle one type of information more readily than the other.
@@ -4687,13 +3892,13 @@ export interface Note {
     Color &
     Printout &
     OptionalUniqueId & {
-      "print-leger"?: YesNo6;
+      "print-leger"?: YesNo;
       dynamics?: NonNegativeDecimal;
-      "end-dynamics"?: NonNegativeDecimal1;
+      "end-dynamics"?: NonNegativeDecimal;
       attack?: Divisions;
-      release?: Divisions1;
+      release?: Divisions;
       "time-only"?: TimeOnly;
-      pizzicato?: YesNo7;
+      pizzicato?: YesNo;
     };
   $$: {
     /**
@@ -4782,11 +3987,7 @@ export interface Note {
                * @minItems 1
                * @maxItems 1
                */
-              cue: [
-                {
-                  [k: string]: unknown;
-                }
-              ];
+              cue: [Empty];
             } & FullNote1)
         ))
       | ({
@@ -4796,11 +3997,7 @@ export interface Note {
            * @minItems 1
            * @maxItems 1
            */
-          cue: [
-            {
-              [k: string]: unknown;
-            }
-          ];
+          cue: [Empty];
         } & FullNote2 &
           Duration)
       | ({
@@ -4813,35 +4010,17 @@ export interface Note {
           Duration1)
     );
 }
-export interface Tenths1 {
-  _?: number;
-}
-export interface Tenths2 {
-  _?: number;
-}
-export interface Tenths3 {
-  _?: number;
-}
-export interface Tenths4 {
-  _?: number;
-}
 export interface Color1 {
-  _?: string;
+  _: string;
 }
 export interface NonNegativeDecimal {
-  _?: number;
-}
-export interface NonNegativeDecimal1 {
-  _?: number;
+  _: number;
 }
 export interface Divisions {
-  _?: number;
-}
-export interface Divisions1 {
-  _?: number;
+  _: number;
 }
 export interface TimeOnly {
-  _?: string;
+  _: string;
 }
 /**
  * The instrument type distinguishes between score-instrument elements in a score-part. The id attribute is an IDREF back to the score-instrument ID. If multiple score-instruments are specified in a score-part, there should be an instrument element for each note in the part. Notes that are shared between multiple score-instruments can have more than one instrument element.
@@ -4849,70 +4028,24 @@ export interface TimeOnly {
 export interface Instrument {
   $: {
     id?: {
-      _?: string;
+      _: string;
     };
   };
 }
 /**
  * The note-type type indicates the graphic note type. Values range from 1024th to maxima. The size attribute indicates full, cue, grace-cue, or large size. The default is full for regular notes, grace-cue for notes that contain both grace and cue elements, and cue for notes that contain either a cue or a grace element, but not both.
  */
-export interface NoteType {
-  "0"?: NoteTypeValue & {
-    size?: SymbolSize;
-  };
-}
+export interface NoteType {}
 /**
  * The empty-placement type represents an empty element with print-style and placement attributes.
  */
 export interface EmptyPlacement {
   $: PrintStyle & Placement;
 }
-export interface Tenths5 {
-  _?: number;
-}
-export interface Tenths6 {
-  _?: number;
-}
-export interface Tenths7 {
-  _?: number;
-}
-export interface Tenths8 {
-  _?: number;
-}
 /**
  * The accidental type represents actual notated accidentals. Editorial and cautionary indications are indicated by attributes. Values for these attributes are "no" if not present. Specific graphic display such as parentheses, brackets, and size are controlled by the level-display attribute group.
  */
-export interface Accidental {
-  "0"?: AccidentalValue & {
-    cautionary?: YesNo8;
-    editorial?: YesNo9;
-    smufl?: {
-      [k: string]: unknown;
-    };
-  } & {
-    parentheses?: YesNo10;
-    bracket?: YesNo11;
-    size?: SymbolSize1;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    });
-}
+export interface Accidental {}
 /**
  * Time modification indicates tuplets, double-note tremolos, and other durational changes. A time-modification element shows how the cumulative, sounding effect of tuplets and double-note tremolos compare to the written note type represented by the type and dot elements. Nested tuplets and other notations that use more detailed information need both the time-modification and tuplet elements to be represented accurately.
  */
@@ -4945,28 +4078,7 @@ export interface TimeModification {
 /**
  * Stems can be down, up, none, or double. For down and up stems, the position attributes can be used to specify stem length. The relative values specify the end of the stem relative to the program default. Default values specify an absolute end stem position. Negative values of relative-y that would flip a stem instead of shortening it are ignored. A stem element associated with a rest refers to a stemlet.
  */
-export interface Stem {
-  "0"?: StemValue & {
-    "default-x"?: Tenths9;
-    "default-y"?: Tenths10;
-    "relative-x"?: Tenths11;
-    "relative-y"?: Tenths12;
-  } & {
-    color?: Color1;
-  };
-}
-export interface Tenths9 {
-  _?: number;
-}
-export interface Tenths10 {
-  _?: number;
-}
-export interface Tenths11 {
-  _?: number;
-}
-export interface Tenths12 {
-  _?: number;
-}
+export interface Stem {}
 /**
  * The notehead type indicates shapes other than the open and closed ovals associated with note durations.
  *
@@ -4976,30 +4088,7 @@ export interface Tenths12 {
  *
  * If the parentheses attribute is set to yes, the notehead is parenthesized. It is no by default.
  */
-export interface Notehead {
-  "0"?: NoteheadValue & {
-    filled?: YesNo12;
-    parentheses?: YesNo13;
-  } & {
-    "font-family"?: {
-      [k: string]: unknown;
-    };
-    "font-style"?: FontStyle;
-    "font-size"?:
-      | {
-          _: number;
-        }
-      | CssFontSize;
-    "font-weight"?: FontWeight;
-  } & {
-    color?: Color1;
-  } & {
-    smufl?: SmuflGlyphName;
-  };
-}
-export interface SmuflGlyphName {
-  _?: string;
-}
+export interface Notehead {}
 /**
  * The notehead-text type represents text that is displayed inside a notehead, as is done in some educational music. It is not needed for the numbers used in tablature or jianpu notation. The presence of a TAB or jianpu clefs is sufficient to indicate that numbers are used. The display-text and accidental-text elements allow display of fully formatted text and accidentals.
  */
@@ -5015,161 +4104,11 @@ export interface NoteheadText {
 /**
  * The formatted-text type represents a text element with text-formatting attributes.
  */
-export interface FormattedText {
-  "0"?: {
-    _: string;
-  } & ({
-    /**
-     * Attempting to install the relevant ISO 2- and 3-letter
-     *          codes as the enumerated possible values is probably never
-     *          going to be a realistic possibility.  See
-     *          RFC 3066 at http://www.ietf.org/rfc/rfc3066.txt and the IANA registry
-     *          at http://www.iana.org/assignments/lang-tag-apps.htm for
-     *          further information.
-     *
-     *          The union allows for the 'un-declaration' of xml:lang with
-     *          the empty string.
-     */
-    "xml:lang"?:
-      | {
-          _: string;
-        }
-      | "";
-    "xml:space"?: "default" | "preserve";
-  } & {
-    justify?: LeftCenterRight;
-  } & (({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      halign?: LeftCenterRight1;
-    } & {
-      valign?: Valign;
-    }) & {
-      underline?: NumberOfLines;
-      overline?: NumberOfLines1;
-      "line-through"?: NumberOfLines2;
-    } & {
-      rotation?: RotationDegrees;
-    } & {
-      "letter-spacing"?:
-        | {
-            _: number;
-          }
-        | "normal";
-    } & {
-      "line-height"?:
-        | {
-            _: number;
-          }
-        | "normal";
-    } & {
-      dir?: TextDirection;
-    } & {
-      enclosure?: EnclosureShape;
-    });
-}
-export interface NumberOfLines {
-  _?: number;
-}
-export interface NumberOfLines1 {
-  _?: number;
-}
-export interface NumberOfLines2 {
-  _?: number;
-}
-export interface RotationDegrees {
-  _?: number;
-}
+export interface FormattedText {}
 /**
  * The accidental-text type represents an element with an accidental value and text-formatting attributes.
  */
-export interface AccidentalText {
-  "0"?: AccidentalValue & {
-    smufl?: {
-      [k: string]: unknown;
-    };
-  } & ({
-      /**
-       * Attempting to install the relevant ISO 2- and 3-letter
-       *          codes as the enumerated possible values is probably never
-       *          going to be a realistic possibility.  See
-       *          RFC 3066 at http://www.ietf.org/rfc/rfc3066.txt and the IANA registry
-       *          at http://www.iana.org/assignments/lang-tag-apps.htm for
-       *          further information.
-       *
-       *          The union allows for the 'un-declaration' of xml:lang with
-       *          the empty string.
-       */
-      "xml:lang"?:
-        | {
-            _: string;
-          }
-        | "";
-      "xml:space"?: "default" | "preserve";
-    } & {
-      justify?: LeftCenterRight;
-    } & (({
-        "default-x"?: Tenths5;
-        "default-y"?: Tenths6;
-        "relative-x"?: Tenths7;
-        "relative-y"?: Tenths8;
-      } & {
-        "font-family"?: {
-          [k: string]: unknown;
-        };
-        "font-style"?: FontStyle;
-        "font-size"?:
-          | {
-              _: number;
-            }
-          | CssFontSize;
-        "font-weight"?: FontWeight;
-      } & {
-        color?: Color1;
-      }) & {
-        halign?: LeftCenterRight1;
-      } & {
-        valign?: Valign;
-      }) & {
-        underline?: NumberOfLines;
-        overline?: NumberOfLines1;
-        "line-through"?: NumberOfLines2;
-      } & {
-        rotation?: RotationDegrees;
-      } & {
-        "letter-spacing"?:
-          | {
-              _: number;
-            }
-          | "normal";
-      } & {
-        "line-height"?:
-          | {
-              _: number;
-            }
-          | "normal";
-      } & {
-        dir?: TextDirection;
-      } & {
-        enclosure?: EnclosureShape;
-      });
-}
+export interface AccidentalText {}
 /**
  * Beam values include begin, continue, end, forward hook, and backward hook. Up to eight concurrent beams are available to cover up to 1024th notes. Each beam in a note is represented with a separate beam element, starting with the eighth note beam using a number attribute of 1.
  *
@@ -5179,22 +4118,7 @@ export interface AccidentalText {
  *
  * The repeater attribute has been deprecated in MusicXML 3.0. Formerly used for tremolos, it needs to be specified with a "yes" value for each beam using it.
  */
-export interface Beam {
-  "0"?: BeamValue & {
-    number?: BeamLevel;
-    repeater?: YesNo14;
-    fan?: Fan;
-  } & {
-    color?: Color1;
-  } & {
-    id?: {
-      _?: string;
-    };
-  };
-}
-export interface BeamLevel {
-  _?: number;
-}
+export interface Beam {}
 /**
  * Notations refer to musical notations, not XML notations. Multiple notations are allowed in order to represent multiple editorial levels. The print-object attribute, added in Version 3.0, allows notations to represent details of performance technique, such as fingerings, without having them appear in the score.
  */
@@ -5295,18 +4219,7 @@ export interface Notations {
  *
  * The type attribute indicates whether the editorial information applies to the start of a series of symbols, the end of a series of symbols, or a single symbol. It is single if not specified for compatibility with earlier MusicXML versions.
  */
-export interface Level1 {
-  "0"?: {
-    _: string;
-  } & {
-    reference?: YesNo15;
-    type?: StartStopSingle;
-  } & {
-    parentheses?: YesNo10;
-    bracket?: YesNo11;
-    size?: SymbolSize1;
-  };
-}
+export interface Level1 {}
 /**
  * The tied element represents the notated tie. The tie element represents the tie sound.
  *
@@ -5331,32 +4244,8 @@ export interface Tied {
       number?: NumberLevel;
     };
 }
-export interface Tenths13 {
-  _?: number;
-}
-export interface Tenths14 {
-  _?: number;
-}
-export interface Tenths15 {
-  _?: number;
-}
-export interface Tenths16 {
-  _?: number;
-}
-export interface Tenths17 {
-  _?: number;
-}
-export interface Tenths18 {
-  _?: number;
-}
-export interface Divisions2 {
-  _?: number;
-}
-export interface Divisions3 {
-  _?: number;
-}
 export interface NumberLevel {
-  _?: number;
+  _: number;
 }
 /**
  * Slur types are empty. Most slurs are represented with two elements: one with a start type, and one with a stop type. Slurs can add more elements using a continue type. This is typically used to specify the formatting of cross-system slurs, or to specify the shape of very complex slurs.
@@ -5375,7 +4264,7 @@ export interface Slur {
     };
 }
 export interface NumberLevel1 {
-  _?: number;
+  _: number;
 }
 /**
  * A tuplet element is present when a tuplet is to be displayed graphically, in addition to the sound data provided by the time-modification elements. The number attribute is used to distinguish nested tuplets. The bracket attribute is used to indicate the presence of a bracket. If unspecified, the results are implementation-dependent. The line-shape attribute is used to specify whether the bracket is straight or in the older curved or slurred style. It is straight by default.
@@ -5390,10 +4279,10 @@ export interface Tuplet {
     Placement3 &
     OptionalUniqueId4 & {
       type?: StartStop;
-      number?: NumberLevel2;
-      bracket?: YesNo16;
+      number?: NumberLevel;
+      bracket?: YesNo;
       "show-number"?: ShowTuplet;
-      "show-type"?: ShowTuplet1;
+      "show-type"?: ShowTuplet;
     };
   $$: {
     /**
@@ -5409,9 +4298,6 @@ export interface Tuplet {
      */
     "tuplet-normal"?: TupletPortion[];
   };
-}
-export interface NumberLevel2 {
-  _?: number;
 }
 /**
  * The tuplet-portion type provides optional full control over tuplet specifications. It allows the number and note type (including dots) to be set for the actual and normal portions of a single tuplet. If any of these elements are absent, their values are based on the time-modification element.
@@ -5435,43 +4321,11 @@ export interface TupletPortion {
 /**
  * The tuplet-number type indicates the number of notes for this portion of the tuplet.
  */
-export interface TupletNumber {
-  "0"?: {
-    _: number;
-  } & {
-    "font-family"?: {
-      [k: string]: unknown;
-    };
-    "font-style"?: FontStyle;
-    "font-size"?:
-      | {
-          _: number;
-        }
-      | CssFontSize;
-    "font-weight"?: FontWeight;
-  } & {
-    color?: Color1;
-  };
-}
+export interface TupletNumber {}
 /**
  * The tuplet-type type indicates the graphical note type of the notes for this portion of the tuplet.
  */
-export interface TupletType {
-  "0"?: NoteTypeValue & {
-    "font-family"?: {
-      [k: string]: unknown;
-    };
-    "font-style"?: FontStyle;
-    "font-size"?:
-      | {
-          _: number;
-        }
-      | CssFontSize;
-    "font-weight"?: FontWeight;
-  } & {
-    color?: Color1;
-  };
-}
+export interface TupletType {}
 /**
  * The tuplet-dot type is used to specify dotted tuplet types.
  */
@@ -5481,99 +4335,11 @@ export interface TupletDot {
 /**
  * Glissando and slide types both indicate rapidly moving from one pitch to the other so that individual notes are not discerned. A glissando sounds the distinct notes in between the two pitches and defaults to a wavy line. The optional text is printed alongside the line.
  */
-export interface Glissando {
-  "0"?: {
-    _: string;
-  } & {
-    type?: StartStop1;
-    number?: NumberLevel3;
-  } & {
-    "line-type"?: LineType1;
-  } & {
-    "dash-length"?: Tenths13;
-    "space-length"?: Tenths14;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      id?: {
-        _?: string;
-      };
-    };
-}
-export interface NumberLevel3 {
-  _?: number;
-}
+export interface Glissando {}
 /**
  * Glissando and slide types both indicate rapidly moving from one pitch to the other so that individual notes are not discerned. A slide is continuous between the two pitches and defaults to a solid line. The optional text for a is printed alongside the line.
  */
-export interface Slide {
-  "0"?: {
-    _: string;
-  } & {
-    type?: StartStop2;
-    number?: NumberLevel4;
-  } & {
-    "line-type"?: LineType1;
-  } & {
-    "dash-length"?: Tenths13;
-    "space-length"?: Tenths14;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      accelerate?: YesNo17;
-      beats?: TrillBeats;
-      "first-beat"?: Percent;
-      "last-beat"?: Percent1;
-    } & {
-      id?: {
-        _?: string;
-      };
-    };
-}
-export interface NumberLevel4 {
-  _?: number;
-}
-export interface TrillBeats {
-  _?: number;
-}
-export interface Percent {
-  _?: number;
-}
-export interface Percent1 {
-  _?: number;
-}
+export interface Slide {}
 /**
  * Ornaments can be any of several types, followed optionally by accidentals. The accidental-mark element's content is represented the same as an accidental element, but with a different name to reflect the different musical meaning.
  */
@@ -5721,55 +4487,18 @@ export interface Ornaments {
 /**
  * An accidental-mark can be used as a separate notation or as part of an ornament. When used in an ornament, position and placement are relative to the ornament, not relative to the note.
  */
-export interface AccidentalMark {
-  "0"?: AccidentalValue & {
-    smufl?: {
-      [k: string]: unknown;
-    };
-  } & {
-    parentheses?: YesNo10;
-    bracket?: YesNo11;
-    size?: SymbolSize1;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      placement?: AboveBelow;
-    } & {
-      id?: {
-        _?: string;
-      };
-    };
-}
+export interface AccidentalMark {}
 /**
  * The empty-trill-sound type represents an empty element with print-style, placement, and trill-sound attributes.
  */
 export interface EmptyTrillSound {
   $: PrintStyle1 & Placement4 & TrillSound;
 }
-export interface TrillBeats1 {
-  _?: number;
+export interface TrillBeats {
+  _: number;
 }
-export interface Percent2 {
-  _?: number;
-}
-export interface Percent3 {
-  _?: number;
+export interface Percent {
+  _: number;
 }
 /**
  * The horizontal-turn type represents turn elements that are horizontal rather than vertical. These are empty elements with print-style, placement, trill-sound, and slash attributes. If the slash attribute is yes, then a vertical line is used to slash the turn. It is no if not specified.
@@ -5778,7 +4507,7 @@ export interface HorizontalTurn {
   $: PrintStyle2 &
     Placement5 &
     TrillSound1 & {
-      slash?: YesNo19;
+      slash?: YesNo;
     };
 }
 /**
@@ -5789,26 +4518,15 @@ export interface WavyLine {
     Placement6 &
     Color5 &
     TrillSound2 & {
-      type?: StartStopContinue1;
-      number?: NumberLevel5;
-      smufl?: {
-        [k: string]: unknown;
-      };
+      type?: StartStopContinue;
+      number?: NumberLevel;
+      smufl?: unknown;
     };
-}
-export interface NumberLevel5 {
-  _?: number;
 }
 /**
  * The mordent type is used for both represents the mordent sign with the vertical line and the inverted-mordent sign without the line. The long attribute is "no" by default. The approach and departure attributes are used for compound ornaments, indicating how the beginning and ending of the ornament look relative to the main part of the mordent.
  */
-export interface Mordent {
-  "0"?: EmptyTrillSound & {
-    long?: YesNo20;
-    approach?: AboveBelow1;
-    departure?: AboveBelow2;
-  };
-}
+export interface Mordent {}
 /**
  * The tremolo ornament can be used to indicate single-note, double-note, or unmeasured tremolos. Single-note tremolos use the single type, double-note tremolos use the start and stop types, and unmeasured tremolos use the unmeasured type. The default is "single" for compatibility with Version 1.1. The text of the element indicates the number of tremolo marks and is an integer from 0 to 8. Note that the number of attached beams is not included in this value, but is represented separately using the beam element. The value should be 0 for unmeasured tremolos.
  *
@@ -5818,66 +4536,11 @@ export interface Mordent {
  *
  * Using repeater beams for indicating tremolos is deprecated as of MusicXML 3.0.
  */
-export interface Tremolo {
-  "0"?: TremoloMarks & {
-    type?: TremoloType;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      placement?: AboveBelow;
-    } & {
-      smufl?: SmuflGlyphName;
-    };
-}
-export interface TremoloMarks {
-  _: number;
-}
+export interface Tremolo {}
 /**
  * The other-placement-text type represents a text element with print-style, placement, and smufl attribute groups. This type is used by MusicXML notation extension elements to allow specification of specific SMuFL glyphs without needed to add every glyph as a MusicXML element.
  */
-export interface OtherPlacementText {
-  "0"?: {
-    _: string;
-  } & ({
-    "default-x"?: Tenths5;
-    "default-y"?: Tenths6;
-    "relative-x"?: Tenths7;
-    "relative-y"?: Tenths8;
-  } & {
-    "font-family"?: {
-      [k: string]: unknown;
-    };
-    "font-style"?: FontStyle;
-    "font-size"?:
-      | {
-          _: number;
-        }
-      | CssFontSize;
-    "font-weight"?: FontWeight;
-  } & {
-    color?: Color1;
-  }) & {
-      placement?: AboveBelow;
-    } & {
-      smufl?: SmuflGlyphName;
-    };
-}
+export interface OtherPlacementText {}
 /**
  * Technical indications give performance information for individual instruments.
  */
@@ -6117,9 +4780,7 @@ export interface Harmonic {
          *
          * @minItems 0
          */
-        natural?: {
-          [k: string]: unknown;
-        }[];
+        natural?: Empty[];
       }
     | {
         /**
@@ -6127,9 +4788,7 @@ export interface Harmonic {
          *
          * @minItems 0
          */
-        artificial?: {
-          [k: string]: unknown;
-        }[];
+        artificial?: Empty[];
       }
   ) &
     (
@@ -6139,9 +4798,7 @@ export interface Harmonic {
            *
            * @minItems 0
            */
-          "base-pitch"?: {
-            [k: string]: unknown;
-          }[];
+          "base-pitch"?: Empty[];
         }
       | {
           /**
@@ -6149,9 +4806,7 @@ export interface Harmonic {
            *
            * @minItems 0
            */
-          "touching-pitch"?: {
-            [k: string]: unknown;
-          }[];
+          "touching-pitch"?: Empty[];
         }
       | {
           /**
@@ -6159,162 +4814,43 @@ export interface Harmonic {
            *
            * @minItems 0
            */
-          "sounding-pitch"?: {
-            [k: string]: unknown;
-          }[];
+          "sounding-pitch"?: Empty[];
         }
     );
 }
 /**
+ * The empty type represents an empty element with no attributes.
+ */
+export interface Empty {}
+/**
  * Fingering is typically indicated 1,2,3,4,5. Multiple fingerings may be given, typically to substitute fingerings in the middle of a note. The substitution and alternate values are "no" if the attribute is not present. For guitar and other fretted instruments, the fingering element represents the fretting finger; the pluck element represents the plucking finger.
  */
-export interface Fingering {
-  "0"?: {
-    _: string;
-  } & {
-    substitution?: YesNo21;
-    alternate?: YesNo22;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      placement?: AboveBelow;
-    };
-}
+export interface Fingering {}
 /**
  * The placement-text type represents a text element with print-style and placement attribute groups.
  */
-export interface PlacementText {
-  "0"?: {
-    _: string;
-  } & ({
-    "default-x"?: Tenths5;
-    "default-y"?: Tenths6;
-    "relative-x"?: Tenths7;
-    "relative-y"?: Tenths8;
-  } & {
-    "font-family"?: {
-      [k: string]: unknown;
-    };
-    "font-style"?: FontStyle;
-    "font-size"?:
-      | {
-          _: number;
-        }
-      | CssFontSize;
-    "font-weight"?: FontWeight;
-  } & {
-    color?: Color1;
-  }) & {
-      placement?: AboveBelow;
-    };
-}
+export interface PlacementText {}
 /**
  * The empty-placement-smufl type represents an empty element with print-style, placement, and smufl attributes.
  */
 export interface EmptyPlacementSmufl {
   $: PrintStyle4 & Placement8 & Smufl;
 }
+export interface SmuflGlyphName {
+  _: string;
+}
 /**
  * The fret element is used with tablature notation and chord diagrams. Fret numbers start with 0 for an open string and 1 for the first fret.
  */
-export interface Fret {
-  "0"?: {
-    _: number;
-  } & {
-    "font-family"?: {
-      [k: string]: unknown;
-    };
-    "font-style"?: FontStyle;
-    "font-size"?:
-      | {
-          _: number;
-        }
-      | CssFontSize;
-    "font-weight"?: FontWeight;
-  } & {
-    color?: Color1;
-  };
-}
+export interface Fret {}
 /**
  * The string type is used with tablature notation, regular notation (where it is often circled), and chord diagrams. String numbers start with 1 for the highest pitched full-length string.
  */
-export interface String {
-  "0"?: StringNumber &
-    ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      placement?: AboveBelow;
-    };
-}
-export interface StringNumber {
-  _: number;
-}
+export interface String {}
 /**
  * The hammer-on and pull-off elements are used in guitar and fretted instrument notation. Since a single slur can be marked over many notes, the hammer-on and pull-off elements are separate so the individual pair of notes can be specified. The element content can be used to specify how the hammer-on or pull-off should be notated. An empty element leaves this choice up to the application.
  */
-export interface HammerOnPullOff {
-  "0"?: {
-    _: string;
-  } & {
-    type?: StartStop3;
-    number?: NumberLevel6;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      placement?: AboveBelow;
-    };
-}
-export interface NumberLevel6 {
-  _?: number;
-}
+export interface HammerOnPullOff {}
 /**
  * The bend type is used in guitar notation and tablature. A single note with a bend and release will contain two bend elements: the first to represent the bend and the second to represent the release. The shape attribute distinguishes between the angled bend symbols commonly used in standard notation and the curved bend symbols commonly used in both tablature and standard notation.
  */
@@ -6344,9 +4880,7 @@ export interface Bend {
          *
          * @minItems 0
          */
-        "pre-bend"?: {
-          [k: string]: unknown;
-        }[];
+        "pre-bend"?: Empty[];
       }
     | {
         /**
@@ -6362,54 +4896,15 @@ export interface Semitones {
 /**
  * The release type indicates that a bend is a release rather than a normal bend or pre-bend. The offset attribute specifies where the release starts in terms of divisions relative to the current note. The first-beat and last-beat attributes of the parent bend element are relative to the original note position, not this offset value.
  */
-export interface Release {
-  "0"?: {
-    [k: string]: unknown;
-  } & {
-    offset?: Divisions4;
-  };
-}
-export interface Divisions4 {
-  _?: number;
-}
+export interface Release {}
 /**
  * The tap type indicates a tap on the fretboard. The text content allows specification of the notation; + and T are common choices. If the element is empty, the hand attribute is used to specify the symbol to use. The hand attribute is ignored if the tap glyph is already specified by the text content. If neither text content nor the hand attribute are present, the display is application-specific.
  */
-export interface Tap {
-  "0"?: {
-    _: string;
-  } & {
-    hand?: TapHand;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      placement?: AboveBelow;
-    };
-}
+export interface Tap {}
 /**
  * The heel and toe elements are used with organ pedals. The substitution value is "no" if the attribute is not present.
  */
-export interface HeelToe {
-  "0"?: EmptyPlacement & {
-    substitution?: YesNo23;
-  };
-}
+export interface HeelToe {}
 /**
  * The hole type represents the symbols used for woodwind and brass fingerings as well as other notations.
  */
@@ -6442,11 +4937,7 @@ export interface Hole {
 /**
  * The hole-closed type represents whether the hole is closed, open, or half-open. The optional location attribute indicates which portion of the hole is filled in when the element value is half.
  */
-export interface HoleClosed {
-  "0"?: HoleClosedValue & {
-    location?: HoleClosedLocation;
-  };
-}
+export interface HoleClosed {}
 /**
  * The arrow element represents an arrow used for a musical technical indication. It can represent both Unicode and SMuFL arrows. The presence of an arrowhead element indicates that only the arrowhead is displayed, not the arrow stem. The smufl attribute distinguishes different SMuFL glyphs that have an arrow appearance such as arrowBlackUp, guitarStrumUp, or handbellsSwingUp. The specified glyph should match the descriptive representation.
  */
@@ -6473,38 +4964,13 @@ export interface Arrow {
         /**
          * @minItems 0
          */
-        arrowhead?: {
-          [k: string]: unknown;
-        }[];
+        arrowhead?: Empty[];
       };
 }
 /**
  * The handbell element represents notation for various techniques used in handbell and handchime music.
  */
-export interface Handbell {
-  "0"?: HandbellValue &
-    ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      placement?: AboveBelow;
-    };
-}
+export interface Handbell {}
 /**
  * The harmon-mute type represents the symbols used for harmon mutes in brass notation.
  */
@@ -6521,11 +4987,7 @@ export interface HarmonMute {
 /**
  * The harmon-closed type represents whether the harmon mute is closed, open, or half-open. The optional location attribute indicates which portion of the symbol is filled in when the element value is half.
  */
-export interface HarmonClosed {
-  "0"?: HarmonClosedValue & {
-    location?: HarmonClosedLocation;
-  };
-}
+export interface HarmonClosed {}
 /**
  * Articulations and accents are grouped together here.
  */
@@ -6668,11 +5130,7 @@ export interface Articulations {
 /**
  * The strong-accent type indicates a vertical accent mark. The type attribute indicates if the point of the accent is down or up.
  */
-export interface StrongAccent {
-  "0"?: EmptyPlacement & {
-    type?: UpDown;
-  };
-}
+export interface StrongAccent {}
 /**
  * The empty-line type represents an empty element with line-shape, line-type, line-length, dashed-formatting, print-style and placement attributes.
  */
@@ -6682,57 +5140,11 @@ export interface EmptyLine {
 /**
  * The breath-mark element indicates a place to take a breath.
  */
-export interface BreathMark {
-  "0"?: BreathMarkValue &
-    ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      placement?: AboveBelow;
-    };
-}
+export interface BreathMark {}
 /**
  * The caesura element indicates a slight pause. It is notated using a "railroad tracks" symbol or other variations specified in the element content.
  */
-export interface Caesura {
-  "0"?: CaesuraValue &
-    ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      placement?: AboveBelow;
-    };
-}
+export interface Caesura {}
 /**
  * Dynamics can be associated either with a note or a general musical direction. To avoid inconsistencies between and amongst the letter abbreviations for dynamics (what is sf vs. sfz, standing alone or with a trailing dynamic that is not always piano), we use the actual letters as the names of these dynamic elements. The other-dynamics element allows other dynamic marks that are not covered here. Dynamics elements may also be combined to create marks not covered by a single element, such as sfmp.
  *
@@ -6747,209 +5159,157 @@ export interface Dynamics {
         /**
          * @minItems 0
          */
-        p?: {
-          [k: string]: unknown;
-        }[];
+        p?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        pp?: {
-          [k: string]: unknown;
-        }[];
+        pp?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        ppp?: {
-          [k: string]: unknown;
-        }[];
+        ppp?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        pppp?: {
-          [k: string]: unknown;
-        }[];
+        pppp?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        ppppp?: {
-          [k: string]: unknown;
-        }[];
+        ppppp?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        pppppp?: {
-          [k: string]: unknown;
-        }[];
+        pppppp?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        f?: {
-          [k: string]: unknown;
-        }[];
+        f?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        ff?: {
-          [k: string]: unknown;
-        }[];
+        ff?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        fff?: {
-          [k: string]: unknown;
-        }[];
+        fff?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        ffff?: {
-          [k: string]: unknown;
-        }[];
+        ffff?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        fffff?: {
-          [k: string]: unknown;
-        }[];
+        fffff?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        ffffff?: {
-          [k: string]: unknown;
-        }[];
+        ffffff?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        mp?: {
-          [k: string]: unknown;
-        }[];
+        mp?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        mf?: {
-          [k: string]: unknown;
-        }[];
+        mf?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        sf?: {
-          [k: string]: unknown;
-        }[];
+        sf?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        sfp?: {
-          [k: string]: unknown;
-        }[];
+        sfp?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        sfpp?: {
-          [k: string]: unknown;
-        }[];
+        sfpp?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        fp?: {
-          [k: string]: unknown;
-        }[];
+        fp?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        rf?: {
-          [k: string]: unknown;
-        }[];
+        rf?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        rfz?: {
-          [k: string]: unknown;
-        }[];
+        rfz?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        sfz?: {
-          [k: string]: unknown;
-        }[];
+        sfz?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        sffz?: {
-          [k: string]: unknown;
-        }[];
+        sffz?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        fz?: {
-          [k: string]: unknown;
-        }[];
+        fz?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        n?: {
-          [k: string]: unknown;
-        }[];
+        n?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        pf?: {
-          [k: string]: unknown;
-        }[];
+        pf?: Empty[];
       }
     | {
         /**
          * @minItems 0
          */
-        sfzp?: {
-          [k: string]: unknown;
-        }[];
+        sfzp?: Empty[];
       }
     | {
         /**
@@ -6958,46 +5318,17 @@ export interface Dynamics {
         "other-dynamics"?: OtherText[];
       };
 }
+export interface NumberOfLines {
+  _: number;
+}
 /**
  * The other-text type represents a text element with a smufl attribute group. This type is used by MusicXML direction extension elements to allow specification of specific SMuFL glyphs without needed to add every glyph as a MusicXML element.
  */
-export interface OtherText {
-  "0"?: {
-    _: string;
-  } & {
-    smufl?: SmuflGlyphName;
-  };
-}
+export interface OtherText {}
 /**
  * The fermata text content represents the shape of the fermata sign. An empty fermata element represents a normal fermata. The fermata type is upright if not specified.
  */
-export interface Fermata {
-  "0"?: FermataShape & {
-    type?: UprightInverted;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      id?: {
-        _?: string;
-      };
-    };
-}
+export interface Fermata {}
 /**
  * The arpeggiate type indicates that this note is part of an arpeggiated chord. The number attribute can be used to distinguish between two simultaneous chords arpeggiated separately (different numbers) or together (same number). The direction attribute is used if there is an arrow on the arpeggio sign. By default, arpeggios go from the lowest to highest note.  The length of the sign can be determined from the position attributes for the arpeggiate elements used with the top and bottom notes of the arpeggiated chord. If the unbroken attribute is set to yes, it indicates that the arpeggio continues onto another staff within the part. This serves as a hint to applications and is not required for cross-staff arpeggios.
  */
@@ -7006,13 +5337,10 @@ export interface Arpeggiate {
     Placement14 &
     Color6 &
     OptionalUniqueId9 & {
-      number?: NumberLevel7;
-      direction?: UpDown1;
-      unbroken?: YesNo24;
+      number?: NumberLevel;
+      direction?: UpDown;
+      unbroken?: YesNo;
     };
-}
-export interface NumberLevel7 {
-  _?: number;
 }
 /**
  * The non-arpeggiate type indicates that this note is at the top or bottom of a bracket indicating to not arpeggiate these notes. Since this does not involve playback, it is only used on the top or bottom notes, not on each note as for the arpeggiate type.
@@ -7023,54 +5351,13 @@ export interface NonArpeggiate {
     Color7 &
     OptionalUniqueId10 & {
       type?: TopBottom;
-      number?: NumberLevel8;
+      number?: NumberLevel;
     };
-}
-export interface NumberLevel8 {
-  _?: number;
 }
 /**
  * The other-notation type is used to define any notations not yet in the MusicXML format. It handles notations where more specific extension elements such as other-dynamics and other-technical are not appropriate. The smufl attribute can be used to specify a particular notation, allowing application interoperability without requiring every SMuFL glyph to have a MusicXML element equivalent. Using the other-notation type without the smufl attribute allows for extended representation, though without application interoperability.
  */
-export interface OtherNotation {
-  "0"?: {
-    _: string;
-  } & {
-    type?: StartStopSingle1;
-    number?: NumberLevel9;
-  } & {
-    "print-object"?: YesNo4;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      placement?: AboveBelow;
-    } & {
-      smufl?: SmuflGlyphName;
-    } & {
-      id?: {
-        _?: string;
-      };
-    };
-}
-export interface NumberLevel9 {
-  _?: number;
-}
+export interface OtherNotation {}
 /**
  * The lyric type represents text underlays for lyrics. Two text elements that are not separated by an elision element are part of the same syllable, but may have different text formatting. The MusicXML XSD is more strict than the DTD in enforcing this by disallowing a second syllabic element unless preceded by an elision element. The lyric number indicates multiple lines, though a name can be used as well. Common name examples are verse and chorus.
  *
@@ -7084,12 +5371,12 @@ export interface Lyric {
     PrintObject2 &
     OptionalUniqueId11 & {
       number?: {
-        _?: string;
+        _: string;
       };
       name?: {
-        _?: string;
+        _: string;
       };
-      "time-only"?: TimeOnly1;
+      "time-only"?: TimeOnly;
     };
   $$: {
     /**
@@ -7097,17 +5384,13 @@ export interface Lyric {
      *
      * @minItems 0
      */
-    "end-line"?: {
-      [k: string]: unknown;
-    }[];
+    "end-line"?: Empty[];
     /**
      * The end-paragraph element comes from RP-017 for Standard MIDI File Lyric meta-events. It facilitates lyric display for Karaoke and similar applications.
      *
      * @minItems 0
      */
-    "end-paragraph"?: {
-      [k: string]: unknown;
-    }[];
+    "end-paragraph"?: Empty[];
   } & Editorial1 &
     (
       | {
@@ -7124,11 +5407,7 @@ export interface Lyric {
            * @minItems 1
            * @maxItems 1
            */
-          laughing?: [
-            {
-              [k: string]: unknown;
-            }
-          ];
+          laughing?: [Empty];
         }
       | {
           /**
@@ -7137,11 +5416,7 @@ export interface Lyric {
            * @minItems 1
            * @maxItems 1
            */
-          humming?: [
-            {
-              [k: string]: unknown;
-            }
-          ];
+          humming?: [Empty];
         }
       | {
           /**
@@ -7160,77 +5435,26 @@ export interface Lyric {
         }
     );
 }
-export interface TimeOnly1 {
-  _?: string;
-}
 /**
  * The extend type represents lyric word extension / melisma lines as well as figured bass extensions. The optional type and position attributes are added in Version 3.0 to provide better formatting control.
  */
 export interface Extend {
   $: Position7 &
     Color9 & {
-      type?: StartStopContinue2;
+      type?: StartStopContinue;
     };
 }
 /**
  * The text-element-data type represents a syllable or portion of a syllable for lyric text underlay. A hyphen in the string content should only be used for an actual hyphenated word. Language names for text elements come from ISO 639, with optional country subcodes from ISO 3166.
  */
-export interface TextElementData {
-  "0"?: {
-    _: string;
-  } & {
-    /**
-     * Attempting to install the relevant ISO 2- and 3-letter
-     *          codes as the enumerated possible values is probably never
-     *          going to be a realistic possibility.  See
-     *          RFC 3066 at http://www.ietf.org/rfc/rfc3066.txt and the IANA registry
-     *          at http://www.iana.org/assignments/lang-tag-apps.htm for
-     *          further information.
-     *
-     *          The union allows for the 'un-declaration' of xml:lang with
-     *          the empty string.
-     */
-    "xml:lang"?:
-      | {
-          _: string;
-        }
-      | "";
-  } & {
-    "font-family"?: {
-      [k: string]: unknown;
-    };
-    "font-style"?: FontStyle;
-    "font-size"?:
-      | {
-          _: number;
-        }
-      | CssFontSize;
-    "font-weight"?: FontWeight;
-  } & {
-    color?: Color1;
-  } & {
-    underline?: NumberOfLines;
-    overline?: NumberOfLines1;
-    "line-through"?: NumberOfLines2;
-  } & {
-    rotation?: RotationDegrees;
-  } & {
-    "letter-spacing"?:
-      | {
-          _: number;
-        }
-      | "normal";
-  } & {
-    dir?: TextDirection;
-  };
-}
+export interface TextElementData {}
 /**
  * The play type specifies playback techniques to be used in conjunction with the instrument-sound element. When used as part of a sound element, it applies to all notes going forward in score order. In multi-instrument parts, the affected instrument should be specified using the id attribute. When used as part of a note element, it applies to the current note only.
  */
 export interface Play {
   $: {
     id?: {
-      _?: string;
+      _: string;
     };
   };
   $$:
@@ -7266,15 +5490,7 @@ export interface Play {
 /**
  * The other-play element represents other types of playback. The required type attribute indicates the type of playback to which the element content applies.
  */
-export interface OtherPlay {
-  "0"?: {
-    _: string;
-  } & {
-    type?: {
-      _?: string;
-    };
-  };
-}
+export interface OtherPlay {}
 /**
  * The listen and listening types, new in Version 4.0, specify different ways that a score following or machine listening application can interact with a performer. The listen type handles interactions that are specific to a note. If multiple child elements of the same type are present, they should have distinct player and/or time-only attributes.
  */
@@ -7295,15 +5511,12 @@ export interface Listen {
  */
 export interface Assess {
   $: {
-    type?: YesNo25;
+    type?: YesNo;
     player?: {
-      _?: string;
+      _: string;
     };
-    "time-only"?: TimeOnly2;
+    "time-only"?: TimeOnly;
   };
-}
-export interface TimeOnly2 {
-  _?: string;
 }
 /**
  * The wait type specifies a point where the accompaniment should wait for a performer event before continuing. This typically happens at the start of new sections or after a held note or indeterminate music. These waiting points cannot always be inferred reliably from the contents of the displayed score. The optional player and time-only attributes restrict the type to apply to a single player or set of times through a repeated section, respectively.
@@ -7311,64 +5524,34 @@ export interface TimeOnly2 {
 export interface Wait {
   $: {
     player?: {
-      _?: string;
+      _: string;
     };
-    "time-only"?: TimeOnly3;
+    "time-only"?: TimeOnly;
   };
-}
-export interface TimeOnly3 {
-  _?: string;
 }
 /**
  * The other-listening type represents other types of listening control and interaction. The required type attribute indicates the type of listening to which the element content applies. The optional player and time-only attributes restrict the element to apply to a single player or set of times through a repeated section, respectively.
  */
-export interface OtherListening {
-  "0"?: {
-    _: string;
-  } & {
-    type?: {
-      _?: string;
-    };
-    player?: {
-      _?: string;
-    };
-    "time-only"?: TimeOnly4;
-  };
-}
-export interface TimeOnly4 {
-  _?: string;
-}
+export interface OtherListening {}
 /**
  * The grace type indicates the presence of a grace note. The slash attribute for a grace note is yes for slashed grace notes. The steal-time-previous attribute indicates the percentage of time to steal from the previous note for the grace note. The steal-time-following attribute indicates the percentage of time to steal from the following note for the grace note, as for appoggiaturas. The make-time attribute indicates to make time, not steal time; the units are in real-time divisions for the grace note.
  */
 export interface Grace {
   $: {
-    "steal-time-previous"?: Percent4;
-    "steal-time-following"?: Percent5;
-    "make-time"?: Divisions5;
-    slash?: YesNo26;
+    "steal-time-previous"?: Percent;
+    "steal-time-following"?: Percent;
+    "make-time"?: Divisions;
+    slash?: YesNo;
   };
-}
-export interface Percent4 {
-  _?: number;
-}
-export interface Percent5 {
-  _?: number;
-}
-export interface Divisions5 {
-  _?: number;
 }
 /**
  * The tie element indicates that a tie begins or ends with this note. If the tie element applies only particular times through a repeat, the time-only attribute indicates which times to apply it. The tie element indicates sound; the tied element indicates notation.
  */
 export interface Tie {
   $: {
-    type?: StartStop4;
-    "time-only"?: TimeOnly5;
+    type?: StartStop;
+    "time-only"?: TimeOnly;
   };
-}
-export interface TimeOnly5 {
-  _?: string;
 }
 /**
  * Pitch is represented as a combination of the step of the diatonic scale, the chromatic alteration, and the octave.
@@ -7405,7 +5588,7 @@ export interface Unpitched {
  */
 export interface Rest {
   $: {
-    measure?: YesNo27;
+    measure?: YesNo;
   };
   $$: DisplayStepOctave1;
 }
@@ -7631,88 +5814,14 @@ export interface DirectionType {
 /**
  * The formatted-text-id type represents a text element with text-formatting and id attributes.
  */
-export interface FormattedTextId {
-  "0"?: {
-    _: string;
-  } & ({
-    /**
-     * Attempting to install the relevant ISO 2- and 3-letter
-     *          codes as the enumerated possible values is probably never
-     *          going to be a realistic possibility.  See
-     *          RFC 3066 at http://www.ietf.org/rfc/rfc3066.txt and the IANA registry
-     *          at http://www.iana.org/assignments/lang-tag-apps.htm for
-     *          further information.
-     *
-     *          The union allows for the 'un-declaration' of xml:lang with
-     *          the empty string.
-     */
-    "xml:lang"?:
-      | {
-          _: string;
-        }
-      | "";
-    "xml:space"?: "default" | "preserve";
-  } & {
-    justify?: LeftCenterRight;
-  } & (({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      halign?: LeftCenterRight1;
-    } & {
-      valign?: Valign;
-    }) & {
-      underline?: NumberOfLines;
-      overline?: NumberOfLines1;
-      "line-through"?: NumberOfLines2;
-    } & {
-      rotation?: RotationDegrees;
-    } & {
-      "letter-spacing"?:
-        | {
-            _: number;
-          }
-        | "normal";
-    } & {
-      "line-height"?:
-        | {
-            _: number;
-          }
-        | "normal";
-    } & {
-      dir?: TextDirection;
-    } & {
-      enclosure?: EnclosureShape;
-    }) & {
-      id?: {
-        _?: string;
-      };
-    };
-}
+export interface FormattedTextId {}
 /**
  * The segno type is the visual indicator of a segno sign. The exact glyph can be specified with the smufl attribute. A sound element is also needed to guide playback applications reliably.
  */
 export interface Segno {
   $: PrintStyleAlign1 &
     OptionalUniqueId14 & {
-      smufl?: {
-        [k: string]: unknown;
-      };
+      smufl?: unknown;
     };
 }
 /**
@@ -7721,9 +5830,7 @@ export interface Segno {
 export interface Coda {
   $: PrintStyleAlign2 &
     OptionalUniqueId15 & {
-      smufl?: {
-        [k: string]: unknown;
-      };
+      smufl?: unknown;
     };
 }
 /**
@@ -7736,16 +5843,10 @@ export interface Wedge {
     Color10 &
     OptionalUniqueId16 & {
       type?: WedgeType;
-      number?: NumberLevel10;
-      spread?: Tenths19;
-      niente?: YesNo29;
+      number?: NumberLevel;
+      spread?: Tenths;
+      niente?: YesNo;
     };
-}
-export interface NumberLevel10 {
-  _?: number;
-}
-export interface Tenths19 {
-  _?: number;
 }
 /**
  * The dashes type represents dashes, used for instance with cresc. and dim. marks.
@@ -7755,12 +5856,9 @@ export interface Dashes {
     Position9 &
     Color11 &
     OptionalUniqueId17 & {
-      type?: StartStopContinue3;
-      number?: NumberLevel11;
+      type?: StartStopContinue;
+      number?: NumberLevel;
     };
-}
-export interface NumberLevel11 {
-  _?: number;
 }
 /**
  * Brackets are combined with words in a variety of modern directions. The line-end attribute specifies if there is a jog up or down (or both), an arrow, or nothing at the start or end of the bracket. If the line-end is up or down, the length of the jog can be specified using the end-length attribute. The line-type is solid if not specified.
@@ -7771,17 +5869,11 @@ export interface Bracket {
     Position10 &
     Color12 &
     OptionalUniqueId18 & {
-      type?: StartStopContinue4;
-      number?: NumberLevel12;
+      type?: StartStopContinue;
+      number?: NumberLevel;
       "line-end"?: LineEnd;
-      "end-length"?: Tenths20;
+      "end-length"?: Tenths;
     };
-}
-export interface NumberLevel12 {
-  _?: number;
-}
-export interface Tenths20 {
-  _?: number;
 }
 /**
  * The pedal type represents piano pedal marks, including damper and sostenuto pedal marks. The line attribute is yes if pedal lines are used. The sign attribute is yes if Ped, Sost, and * signs are used. For compatibility with older versions, the sign attribute is yes by default if the line attribute is no, and is no by default if the line attribute is yes. If the sign attribute is set to yes and the type is start or sostenuto, the abbreviated attribute is yes if the short P and S signs are used, and no if the full Ped and Sost signs are used. It is no by default. Otherwise the abbreviated attribute is ignored. The alignment attributes are ignored if the sign attribute is no.
@@ -7790,14 +5882,11 @@ export interface Pedal {
   $: PrintStyleAlign3 &
     OptionalUniqueId19 & {
       type?: PedalType;
-      number?: NumberLevel13;
-      line?: YesNo30;
-      sign?: YesNo31;
-      abbreviated?: YesNo32;
+      number?: NumberLevel;
+      line?: YesNo;
+      sign?: YesNo;
+      abbreviated?: YesNo;
     };
-}
-export interface NumberLevel13 {
-  _?: number;
 }
 /**
  * The metronome type represents metronome marks and other metric relationships. The beat-unit group and per-minute element specify regular metronome marks. The metronome-note and metronome-relation elements allow for the specification of metric modulations and other metric relationships, such as swing tempo marks where two eighths are equated to a quarter note / eighth note triplet. Tied notes can be represented in both types of metronome marks by using the beat-unit-tied and metronome-tied elements. The parentheses attribute indicates whether or not to put the metronome mark in parentheses; its value is no if not specified. The print-object attribute is set to no in cases where the metronome element represents a relationship or range that is not displayed in the music notation.
@@ -7807,7 +5896,7 @@ export interface Metronome {
     PrintObject3 &
     Justify1 &
     OptionalUniqueId20 & {
-      parentheses?: YesNo33;
+      parentheses?: YesNo;
     };
   $$:
     | ({
@@ -7837,9 +5926,7 @@ export interface Metronome {
          *
          * @minItems 0
          */
-        "metronome-arrows"?: {
-          [k: string]: unknown;
-        }[];
+        "metronome-arrows"?: Empty[];
         "metronome-note": MetronomeNote[];
       };
 }
@@ -7852,22 +5939,7 @@ export interface BeatUnitTied {
 /**
  * The per-minute type can be a number, or a text description including numbers. If a font is specified, it overrides the font specified for the overall metronome element. This allows separate specification of a music font for the beat-unit and a text font for the numeric value, in cases where a single metronome font is not used.
  */
-export interface PerMinute {
-  "0"?: {
-    _: string;
-  } & {
-    "font-family"?: {
-      [k: string]: unknown;
-    };
-    "font-style"?: FontStyle;
-    "font-size"?:
-      | {
-          _: number;
-        }
-      | CssFontSize;
-    "font-weight"?: FontWeight;
-  };
-}
+export interface PerMinute {}
 /**
  * The metronome-note type defines the appearance of a note within a metric relationship mark.
  */
@@ -7885,9 +5957,7 @@ export interface MetronomeNote {
      *
      * @minItems 0
      */
-    "metronome-dot"?: {
-      [k: string]: unknown;
-    }[];
+    "metronome-dot"?: Empty[];
     /**
      * @minItems 0
      */
@@ -7905,32 +5975,19 @@ export interface MetronomeNote {
 /**
  * The metronome-beam type works like the beam type in defining metric relationships, but does not include all the attributes available in the beam type.
  */
-export interface MetronomeBeam {
-  "0"?: BeamValue & {
-    number?: BeamLevel1;
-  };
-}
-export interface BeamLevel1 {
-  _?: number;
-}
+export interface MetronomeBeam {}
 /**
  * The metronome-tied indicates the presence of a tie within a metric relationship mark. As with the tied element, both the start and stop of the tie should be specified, in this case within separate metronome-note elements.
  */
 export interface MetronomeTied {
   $: {
-    type?: StartStop5;
+    type?: StartStop;
   };
 }
 /**
  * The metronome-tuplet type uses the same element structure as the time-modification element along with some attributes from the tuplet element.
  */
-export interface MetronomeTuplet {
-  "0"?: TimeModification & {
-    type?: StartStop6;
-    bracket?: YesNo34;
-    "show-number"?: ShowTuplet2;
-  };
-}
+export interface MetronomeTuplet {}
 /**
  * The octave shift type indicates where notes are shifted up or down from their true pitched values because of printing difficulty. Thus a treble clef line noted with 8va will be indicated with an octave-shift down from the pitch data indicated in the notes. A size of 8 indicates one octave; a size of 15 indicates two octaves.
  */
@@ -7939,14 +5996,11 @@ export interface OctaveShift {
     PrintStyle10 &
     OptionalUniqueId21 & {
       type?: UpDownStopContinue;
-      number?: NumberLevel14;
+      number?: NumberLevel;
       size?: {
-        _?: number;
+        _: number;
       };
     };
-}
-export interface NumberLevel14 {
-  _?: number;
 }
 /**
  * The harp-pedals type is used to create harp pedal diagrams. The pedal-step and pedal-alter elements use the same values as the step and alter elements. For easiest reading, the pedal-tuning elements should follow standard harp pedal order, with pedal-step values of D, C, B, E, F, G, and A.
@@ -8007,11 +6061,11 @@ export interface Scordatura {
  */
 export interface Accord {
   $: {
-    string?: StringNumber1;
+    string?: StringNumber;
   };
   $$: Tuning;
 }
-export interface StringNumber1 {
+export interface StringNumber {
   _: number;
 }
 /**
@@ -8020,49 +6074,10 @@ export interface StringNumber1 {
 export interface Image {
   $: ImageAttributes & OptionalUniqueId26;
 }
-export interface Tenths21 {
-  _?: number;
-}
-export interface Tenths22 {
-  _?: number;
-}
 /**
  * The principal-voice type represents principal and secondary voices in a score, either for analysis or for square bracket symbols that appear in a score. The element content is used for analysis and may be any text value. The symbol attribute indicates the type of symbol used. When used for analysis separate from any printed score markings, it should be set to none. Otherwise if the type is stop it should be set to plain.
  */
-export interface PrincipalVoice {
-  "0"?: {
-    _: string;
-  } & {
-    type?: StartStop7;
-    symbol?: PrincipalVoiceSymbol;
-  } & (({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      halign?: LeftCenterRight1;
-    } & {
-      valign?: Valign;
-    }) & {
-      id?: {
-        _?: string;
-      };
-    };
-}
+export interface PrincipalVoice {}
 /**
  * The percussion element is used to define percussion pictogram symbols. Definitions for these symbols can be found in Kurt Stone's "Music Notation in the Twentieth Century" on pages 206-212 and 223. Some values are added to these based on how usage has evolved in the 30 years since Stone's book was published.
  */
@@ -8152,89 +6167,47 @@ export interface Percussion {
 /**
  * The glass type represents pictograms for glass percussion instruments. The smufl attribute is used to distinguish different SMuFL glyphs for wind chimes in the Chimes pictograms range, including those made of materials other than glass.
  */
-export interface Glass {
-  "0"?: GlassValue & {
-    smufl?: {
-      [k: string]: unknown;
-    };
-  };
-}
+export interface Glass {}
 /**
  * The metal type represents pictograms for metal percussion instruments. The smufl attribute is used to distinguish different SMuFL stylistic alternates.
  */
-export interface Metal {
-  "0"?: MetalValue & {
-    smufl?: {
-      [k: string]: unknown;
-    };
-  };
-}
+export interface Metal {}
 /**
  * The wood type represents pictograms for wood percussion instruments. The smufl attribute is used to distinguish different SMuFL stylistic alternates.
  */
-export interface Wood {
-  "0"?: WoodValue & {
-    smufl?: {
-      [k: string]: unknown;
-    };
-  };
-}
+export interface Wood {}
 /**
  * The pitched-value type represents pictograms for pitched percussion instruments. The smufl attribute is used to distinguish different SMuFL glyphs for a particular pictogram within the Tuned mallet percussion pictograms range.
  */
-export interface Pitched {
-  "0"?: PitchedValue & {
-    smufl?: {
-      [k: string]: unknown;
-    };
-  };
-}
+export interface Pitched {}
 /**
  * The membrane type represents pictograms for membrane percussion instruments. The smufl attribute is used to distinguish different SMuFL stylistic alternates.
  */
-export interface Membrane {
-  "0"?: MembraneValue & {
-    smufl?: {
-      [k: string]: unknown;
-    };
-  };
-}
+export interface Membrane {}
 /**
  * The effect type represents pictograms for sound effect percussion instruments. The smufl attribute is used to distinguish different SMuFL stylistic alternates.
  */
-export interface Effect {
-  "0"?: EffectValue & {
-    smufl?: {
-      [k: string]: unknown;
-    };
-  };
-}
+export interface Effect {}
 /**
  * The timpani type represents the timpani pictogram. The smufl attribute is used to distinguish different SMuFL stylistic alternates.
  */
 export interface Timpani {
   $: {
-    smufl?: {
-      [k: string]: unknown;
-    };
+    smufl?: unknown;
   };
 }
 /**
  * The beater type represents pictograms for beaters, mallets, and sticks that do not have different materials represented in the pictogram.
  */
-export interface Beater {
-  "0"?: BeaterValue & {
-    tip?: TipDirection;
-  };
-}
+export interface Beater {}
 /**
  * The stick type represents pictograms where the material of the stick, mallet, or beater is included.The parentheses and dashed-circle attributes indicate the presence of these marks around the round beater part of a pictogram. Values for these attributes are "no" if not present.
  */
 export interface Stick {
   $: {
-    tip?: TipDirection1;
-    parentheses?: YesNo35;
-    "dashed-circle"?: YesNo36;
+    tip?: TipDirection;
+    parentheses?: YesNo;
+    "dashed-circle"?: YesNo;
   };
   $$: {
     /**
@@ -8260,9 +6233,7 @@ export interface AccordionRegistration {
      *
      * @minItems 0
      */
-    "accordion-high"?: {
-      [k: string]: unknown;
-    }[];
+    "accordion-high"?: Empty[];
     /**
      * The accordion-middle element indicates the presence of 1 to 3 dots in the middle (8') section of the registration symbol. This element is omitted if no dots are present.
      *
@@ -8274,9 +6245,7 @@ export interface AccordionRegistration {
      *
      * @minItems 0
      */
-    "accordion-low"?: {
-      [k: string]: unknown;
-    }[];
+    "accordion-low"?: Empty[];
   };
 }
 export interface AccordionMiddle {
@@ -8294,114 +6263,17 @@ export interface StaffDivide {
 /**
  * The other-direction type is used to define any direction symbols not yet in the MusicXML format. The smufl attribute can be used to specify a particular direction symbol, allowing application interoperability without requiring every SMuFL glyph to have a MusicXML element equivalent. Using the other-direction type without the smufl attribute allows for extended representation, though without application interoperability.
  */
-export interface OtherDirection {
-  "0"?: {
-    _: string;
-  } & {
-    "print-object"?: YesNo4;
-  } & (({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      halign?: LeftCenterRight1;
-    } & {
-      valign?: Valign;
-    }) & {
-      smufl?: SmuflGlyphName;
-    } & {
-      id?: {
-        _?: string;
-      };
-    };
-}
+export interface OtherDirection {}
 /**
  * The formatted-symbol-id type represents a SMuFL musical symbol element with formatting and id attributes.
  */
-export interface FormattedSymbolId {
-  "0"?: SmuflGlyphName1 &
-    ({
-      justify?: LeftCenterRight;
-    } & (({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      halign?: LeftCenterRight1;
-    } & {
-      valign?: Valign;
-    }) & {
-        underline?: NumberOfLines;
-        overline?: NumberOfLines1;
-        "line-through"?: NumberOfLines2;
-      } & {
-        rotation?: RotationDegrees;
-      } & {
-        "letter-spacing"?:
-          | {
-              _: number;
-            }
-          | "normal";
-      } & {
-        "line-height"?:
-          | {
-              _: number;
-            }
-          | "normal";
-      } & {
-        dir?: TextDirection;
-      } & {
-        enclosure?: EnclosureShape;
-      }) & {
-      id?: {
-        _?: string;
-      };
-    };
-}
-export interface SmuflGlyphName1 {
-  _: string;
-}
+export interface FormattedSymbolId {}
 /**
  * An offset is represented in terms of divisions, and indicates where the direction will appear relative to the current musical location. The current musical location is always within the current measure, even at the end of a measure.
  *
  * The offset affects the visual appearance of the direction. If the sound attribute is "yes", then the offset affects playback and listening too. If the sound attribute is "no", then any sound or listening associated with the direction takes effect at the current location. The sound attribute is "no" by default for compatibility with earlier versions of the MusicXML format. If an element within a direction includes a default-x attribute, the offset value will be ignored when determining the appearance of that element.
  */
-export interface Offset {
-  "0"?: Divisions6 & {
-    sound?: YesNo37;
-  };
-}
-export interface Divisions6 {
-  _: number;
-}
+export interface Offset {}
 /**
  * The sound element contains general playback parameters. They can stand alone within a part/measure, or be a component element within a direction.
  *
@@ -8433,42 +6305,42 @@ export interface Divisions6 {
  */
 export interface Sound {
   $: OptionalUniqueId30 & {
-    tempo?: NonNegativeDecimal2;
-    dynamics?: NonNegativeDecimal3;
-    dacapo?: YesNo38;
+    tempo?: NonNegativeDecimal;
+    dynamics?: NonNegativeDecimal;
+    dacapo?: YesNo;
     segno?: {
-      _?: string;
+      _: string;
     };
     dalsegno?: {
-      _?: string;
+      _: string;
     };
     coda?: {
-      _?: string;
+      _: string;
     };
     tocoda?: {
-      _?: string;
+      _: string;
     };
-    divisions?: Divisions7;
-    "forward-repeat"?: YesNo39;
+    divisions?: Divisions;
+    "forward-repeat"?: YesNo;
     fine?: {
-      _?: string;
+      _: string;
     };
-    "time-only"?: TimeOnly6;
-    pizzicato?: YesNo40;
-    pan?: RotationDegrees1;
-    elevation?: RotationDegrees2;
+    "time-only"?: TimeOnly;
+    pizzicato?: YesNo;
+    pan?: RotationDegrees;
+    elevation?: RotationDegrees;
     "damper-pedal"?:
-      | YesNo41
+      | YesNo
       | {
           _: number;
         };
     "soft-pedal"?:
-      | YesNo41
+      | YesNo
       | {
           _: number;
         };
     "sostenuto-pedal"?:
-      | YesNo41
+      | YesNo
       | {
           _: number;
         };
@@ -8484,23 +6356,8 @@ export interface Sound {
     offset?: Offset[];
   };
 }
-export interface NonNegativeDecimal2 {
-  _?: number;
-}
-export interface NonNegativeDecimal3 {
-  _?: number;
-}
-export interface Divisions7 {
+export interface RotationDegrees {
   _: number;
-}
-export interface TimeOnly6 {
-  _?: string;
-}
-export interface RotationDegrees1 {
-  _?: number;
-}
-export interface RotationDegrees2 {
-  _?: number;
 }
 /**
  * The swing element specifies whether or not to use swing playback, where consecutive on-beat / off-beat eighth or 16th notes are played with unequal nominal durations.
@@ -8529,11 +6386,7 @@ export interface Swing {
          * @minItems 1
          * @maxItems 1
          */
-        straight?: [
-          {
-            [k: string]: unknown;
-          }
-        ];
+        straight?: [Empty];
       }
     | {
         /**
@@ -8591,16 +6444,13 @@ export interface Sync {
     type?: SyncType;
     latency?: Milliseconds;
     player?: {
-      _?: string;
+      _: string;
     };
-    "time-only"?: TimeOnly7;
+    "time-only"?: TimeOnly;
   };
 }
 export interface Milliseconds {
-  _?: number;
-}
-export interface TimeOnly7 {
-  _?: string;
+  _: number;
 }
 /**
  * The attributes element contains musical information that typically changes on measure boundaries. This includes key and time signatures, clefs, transpositions, and staving. When attributes are changed mid-measure, it affects the music in score order, not in MusicXML document order.
@@ -8664,46 +6514,7 @@ export interface Attributes {
      *
      * @minItems 0
      */
-    directive?: {
-      "0"?: {
-        _: string;
-      } & {
-        /**
-         * Attempting to install the relevant ISO 2- and 3-letter
-         *          codes as the enumerated possible values is probably never
-         *          going to be a realistic possibility.  See
-         *          RFC 3066 at http://www.ietf.org/rfc/rfc3066.txt and the IANA registry
-         *          at http://www.iana.org/assignments/lang-tag-apps.htm for
-         *          further information.
-         *
-         *          The union allows for the 'un-declaration' of xml:lang with
-         *          the empty string.
-         */
-        "xml:lang"?:
-          | {
-              _: string;
-            }
-          | "";
-      } & ({
-          "default-x"?: Tenths5;
-          "default-y"?: Tenths6;
-          "relative-x"?: Tenths7;
-          "relative-y"?: Tenths8;
-        } & {
-          "font-family"?: {
-            [k: string]: unknown;
-          };
-          "font-style"?: FontStyle;
-          "font-size"?:
-            | {
-                _: number;
-              }
-            | CssFontSize;
-          "font-weight"?: FontWeight;
-        } & {
-          color?: Color1;
-        });
-    }[];
+    directive?: {}[];
     /**
      * A measure-style indicates a special way to print partial to multiple measures within a part. This includes multiple rests over several measures, repeats of beats, single, or multiple measures, and use of slash notation.
      *
@@ -8751,27 +6562,16 @@ export interface Key {
   } & (TraditionalKey | NonTraditionalKey);
 }
 export interface StaffNumber {
-  _?: number;
+  _: number;
 }
 /**
  * The key-octave type specifies in which octave an element of a key signature appears. The content specifies the octave value using the same values as the display-octave element. The number attribute is a positive integer that refers to the key signature element in left-to-right order. If the cancel attribute is set to yes, then this number refers to the canceling key signature specified by the cancel element in the parent key element. The cancel attribute cannot be set to yes if there is no corresponding cancel element within the parent key element. It is no by default.
  */
-export interface KeyOctave {
-  "0"?: Octave & {
-    number?: {
-      _?: number;
-    };
-    cancel?: YesNo42;
-  };
-}
+export interface KeyOctave {}
 /**
  * A cancel element indicates that the old key signature should be cancelled before the new one appears. This will always happen when changing to C major or A minor and need not be specified then. The cancel value matches the fifths value of the cancelled key signature (e.g., a cancel of -2 will provide an explicit cancellation for changing from B flat major to F major). The optional location attribute indicates where the cancellation appears relative to the new key signature.
  */
-export interface Cancel {
-  "0"?: Fifths & {
-    location?: CancelLocation;
-  };
-}
+export interface Cancel {}
 export interface Fifths {
   _: number;
 }
@@ -8781,13 +6581,7 @@ export interface Mode {
 /**
  * The key-accidental type indicates the accidental to be displayed in a non-traditional key signature, represented in the same manner as the accidental type without the formatting attributes.
  */
-export interface KeyAccidental {
-  "0"?: AccidentalValue & {
-    smufl?: {
-      [k: string]: unknown;
-    };
-  };
-}
+export interface KeyAccidental {}
 /**
  * Time signatures are represented by the beats element for the numerator and the beat-type element for the denominator. The symbol attribute is used to indicate common and cut time symbols as well as a single number display. Multiple pairs of beat and beat-type elements are used for composite time signatures with multiple denominators, such as 2/4 + 3/8. A composite such as 3+2/8 requires only one beat/beat-type pair.
  *
@@ -8797,7 +6591,7 @@ export interface Time {
   $: PrintStyleAlign11 &
     PrintObject5 &
     OptionalUniqueId32 & {
-      number?: StaffNumber1;
+      number?: StaffNumber;
       symbol?: TimeSymbol;
       separator?: TimeSeparator;
     };
@@ -8822,16 +6616,13 @@ export interface Time {
         interchangeable?: Interchangeable[];
       } & TimeSignature1);
 }
-export interface StaffNumber1 {
-  _?: number;
-}
 /**
  * The interchangeable type is used to represent the second in a pair of interchangeable dual time signatures, such as the 6/8 in 3/4 (6/8). A separate symbol attribute value is available compared to the time element's symbol attribute, which applies to the first of the dual time signatures.
  */
 export interface Interchangeable {
   $: {
-    symbol?: TimeSymbol1;
-    separator?: TimeSeparator1;
+    symbol?: TimeSymbol;
+    separator?: TimeSeparator;
   };
   $$: {
     /**
@@ -8843,25 +6634,7 @@ export interface Interchangeable {
 /**
  * The part-symbol type indicates how a symbol for a multi-staff part is indicated in the score; brace is the default value. The top-staff and bottom-staff attributes are used when the brace does not extend across the entire part. For example, in a 3-staff organ part, the top-staff will typically be 1 for the right hand, while the bottom-staff will typically be 2 for the left hand. Staff 3 for the pedals is usually outside the brace. By default, the presence of a part-symbol element that does not extend across the entire part also indicates a corresponding change in the common barlines within a part.
  */
-export interface PartSymbol {
-  "0"?: GroupSymbolValue & {
-    "top-staff"?: StaffNumber2;
-    "bottom-staff"?: StaffNumber3;
-  } & {
-    "default-x"?: Tenths5;
-    "default-y"?: Tenths6;
-    "relative-x"?: Tenths7;
-    "relative-y"?: Tenths8;
-  } & {
-    color?: Color1;
-  };
-}
-export interface StaffNumber2 {
-  _?: number;
-}
-export interface StaffNumber3 {
-  _?: number;
-}
+export interface PartSymbol {}
 /**
  * Clefs are represented by a combination of sign, line, and clef-octave-change elements. The optional number attribute refers to staff numbers within the part. A value of 1 is assumed if not present.
  *
@@ -8875,15 +6648,12 @@ export interface Clef {
   $: PrintStyle12 &
     PrintObject6 &
     OptionalUniqueId33 & {
-      number?: StaffNumber4;
-      additional?: YesNo43;
-      size?: SymbolSize2;
-      "after-barline"?: YesNo44;
+      number?: StaffNumber;
+      additional?: YesNo;
+      size?: SymbolSize;
+      "after-barline"?: YesNo;
     };
   $$: Clef1;
-}
-export interface StaffNumber4 {
-  _?: number;
 }
 export interface StaffLinePosition {
   _: number;
@@ -8894,7 +6664,7 @@ export interface StaffLinePosition {
 export interface StaffDetails {
   $: PrintObject7 &
     PrintSpacing & {
-      number?: StaffNumber5;
+      number?: StaffNumber;
       "show-frets"?: ShowFrets;
     };
   $$: {
@@ -8920,9 +6690,6 @@ export interface StaffDetails {
     "staff-size"?: StaffSize[];
   };
 }
-export interface StaffNumber5 {
-  _?: number;
-}
 /**
  * The staff-tuning type specifies the open, non-capo tuning of the lines on a tablature staff.
  */
@@ -8933,24 +6700,14 @@ export interface StaffTuning {
   $$: Tuning1;
 }
 export interface StaffLine {
-  _?: number;
+  _: number;
 }
 /**
  * The staff-size element indicates how large a staff space is on this staff, expressed as a percentage of the work's default scaling. Values less than 100 make the staff space smaller while values over 100 make the staff space larger. A staff-type of cue, ossia, or editorial implies a staff-size of less than 100, but the exact value is implementation-dependent unless specified here. Staff size affects staff height only, not the relationship of the staff to the left and right margins.
  *
  * In some cases, a staff-size different than 100 also scales the notation on the staff, such as with a cue staff. In other cases, such as percussion staves, the lines may be more widely spaced without scaling the notation on the staff. The scaling attribute allows these two cases to be distinguished. It specifies the percentage scaling that applies to the notation. Values less that 100 make the notation smaller while values over 100 make the notation larger. The staff-size content and scaling attribute are both non-negative decimal values.
  */
-export interface StaffSize {
-  "0"?: NonNegativeDecimal4 & {
-    scaling?: NonNegativeDecimal5;
-  };
-}
-export interface NonNegativeDecimal4 {
-  _: number;
-}
-export interface NonNegativeDecimal5 {
-  _: number;
-}
+export interface StaffSize {}
 /**
  * A measure-style indicates a special way to print partial to multiple measures within a part. This includes multiple rests over several measures, repeats of beats, single, or multiple measures, and use of slash notation.
  *
@@ -8960,7 +6717,7 @@ export interface MeasureStyle {
   $: Font2 &
     Color13 &
     OptionalUniqueId34 & {
-      number?: StaffNumber6;
+      number?: StaffNumber;
     };
   $$:
     | {
@@ -8992,19 +6749,10 @@ export interface MeasureStyle {
         slash?: [Slash1];
       };
 }
-export interface StaffNumber6 {
-  _?: number;
-}
 /**
  * The text of the multiple-rest type indicates the number of measures in the multiple rest. Multiple rests may use the 1-bar / 2-bar / 4-bar rest symbols, or a single shape. The use-symbols attribute indicates which to use; it is no if not specified.
  */
-export interface MultipleRest {
-  "0"?: {
-    _: number;
-  } & {
-    "use-symbols"?: YesNo45;
-  };
-}
+export interface MultipleRest {}
 /**
  * The measure-repeat type is used for both single and multiple measure repeats. The text of the element indicates the number of measures to be repeated in a single pattern. The slashes attribute specifies the number of slashes to use in the repeat sign. It is 1 if not specified. The text of the element is ignored when the type is stop.
  *
@@ -9012,19 +6760,7 @@ export interface MultipleRest {
  *
  * The measure-repeat element specifies a notation style for repetitions. The actual music being repeated needs to be repeated within each measure of the MusicXML file. This element specifies the notation that indicates the repeat.
  */
-export interface MeasureRepeat {
-  "0"?: (
-    | {
-        _: number;
-      }
-    | ""
-  ) & {
-    type?: StartStop8;
-    slashes?: {
-      _?: number;
-    };
-  };
-}
+export interface MeasureRepeat {}
 /**
  * The beat-repeat type is used to indicate that a single beat (but possibly many notes) is repeated. The slashes attribute specifies the number of slashes to use in the symbol. The use-dots attribute indicates whether or not to use dots as well (for instance, with mixed rhythm patterns). The value for slashes is 1 and the value for use-dots is no if not specified.
  *
@@ -9034,11 +6770,11 @@ export interface MeasureRepeat {
  */
 export interface BeatRepeat {
   $: {
-    type?: StartStop9;
+    type?: StartStop;
     slashes?: {
-      _?: number;
+      _: number;
     };
-    "use-dots"?: YesNo46;
+    "use-dots"?: YesNo;
   };
   $$: Slash;
 }
@@ -9047,9 +6783,9 @@ export interface BeatRepeat {
  */
 export interface Slash1 {
   $: {
-    type?: StartStop10;
-    "use-dots"?: YesNo47;
-    "use-stems"?: YesNo48;
+    type?: StartStop;
+    "use-dots"?: YesNo;
+    "use-stems"?: YesNo;
   };
   $$: Slash2;
 }
@@ -9058,19 +6794,16 @@ export interface Slash1 {
  */
 export interface Transpose {
   $: OptionalUniqueId35 & {
-    number?: StaffNumber7;
+    number?: StaffNumber;
   };
   $$: Transpose1;
-}
-export interface StaffNumber7 {
-  _?: number;
 }
 /**
  * The double type indicates that the music is doubled one octave from what is currently written. If the above attribute is set to yes, the doubling is one octave above what is written, as for mixed flute / piccolo parts in band literature. Otherwise the doubling is one octave below what is written, as for mixed cello / bass parts in orchestral literature.
  */
 export interface Double {
   $: {
-    above?: YesNo49;
+    above?: YesNo;
   };
 }
 /**
@@ -9080,7 +6813,7 @@ export interface Double {
  */
 export interface ForPart {
   $: OptionalUniqueId36 & {
-    number?: StaffNumber8;
+    number?: StaffNumber;
   };
   $$: {
     /**
@@ -9097,9 +6830,6 @@ export interface ForPart {
      */
     "part-transpose": [PartTranspose];
   };
-}
-export interface StaffNumber8 {
-  _?: number;
 }
 /**
  * The child elements of the part-clef type have the same meaning as for the clef type. However that meaning applies to a transposed part created from the existing score file.
@@ -9127,7 +6857,7 @@ export interface Harmony {
     SystemRelation1 &
     OptionalUniqueId37 & {
       type?: HarmonyType;
-      "print-frame"?: YesNo50;
+      "print-frame"?: YesNo;
       arrangement?: HarmonyArrangement;
     };
   $$: {
@@ -9152,10 +6882,10 @@ export interface Frame {
     Halign &
     ValignImage1 &
     OptionalUniqueId38 & {
-      height?: Tenths23;
-      width?: Tenths24;
+      height?: Tenths;
+      width?: Tenths;
       unplayed?: {
-        _?: string;
+        _: string;
       };
     };
   $$: {
@@ -9188,25 +6918,10 @@ export interface Frame {
     "frame-note": FrameNote[];
   };
 }
-export interface Tenths23 {
-  _?: number;
-}
-export interface Tenths24 {
-  _?: number;
-}
 /**
  * The first-fret type indicates which fret is shown in the top space of the frame; it is fret 1 if the element is not present. The optional text attribute indicates how this is represented in the fret diagram, while the location attribute indicates whether the text appears to the left or right of the frame.
  */
-export interface FirstFret {
-  "0"?: {
-    _: number;
-  } & {
-    text?: {
-      _?: string;
-    };
-    location?: LeftRight;
-  };
-}
+export interface FirstFret {}
 /**
  * The frame-note type represents each note included in the frame. An open string will have a fret value of 0, while a muted string will not be associated with a frame-note element.
  */
@@ -9237,7 +6952,7 @@ export interface FrameNote {
  */
 export interface Barre {
   $: Color15 & {
-    type?: StartStop11;
+    type?: StartStop;
   };
 }
 /**
@@ -9259,75 +6974,17 @@ export interface Barre {
  *
  * The text attribute may use strings such as "13sus" that refer to both the kind and one or more degree elements. In this case, the corresponding degree elements should have the print-object attribute set to "no" to keep redundant alterations from being displayed.
  */
-export interface Kind {
-  "0"?: KindValue & {
-    "use-symbols"?: YesNo51;
-    text?: {
-      _?: string;
-    };
-    "stack-degrees"?: YesNo52;
-    "parentheses-degrees"?: YesNo53;
-    "bracket-degrees"?: YesNo54;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      halign?: LeftCenterRight1;
-    } & {
-      valign?: Valign;
-    };
-}
+export interface Kind {}
 /**
  * The inversion type represents harmony inversions. The value is a number indicating which inversion is used: 0 for root position, 1 for first inversion, etc.  The text attribute indicates how the inversion should be displayed in a score.
  */
-export interface Inversion {
-  "0"?: {
-    _: number;
-  } & {
-    text?: {
-      _?: string;
-    };
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    });
-}
+export interface Inversion {}
 /**
  * The bass type is used to indicate a bass note in popular music chord symbols, e.g. G/C. It is generally not used in functional harmony, as inversion is generally not used in pop chord symbols. As with root, it is divided into step and alter elements, similar to pitches. The arrangement attribute specifies where the bass is displayed relative to what precedes it.
  */
 export interface Bass {
   $: {
-    arrangement?: HarmonyArrangement1;
+    arrangement?: HarmonyArrangement;
   };
   $$: {
     /**
@@ -9352,85 +7009,15 @@ export interface Bass {
 /**
  * The style-text type represents a text element with a print-style attribute group.
  */
-export interface StyleText {
-  "0"?: {
-    _: string;
-  } & ({
-    "default-x"?: Tenths5;
-    "default-y"?: Tenths6;
-    "relative-x"?: Tenths7;
-    "relative-y"?: Tenths8;
-  } & {
-    "font-family"?: {
-      [k: string]: unknown;
-    };
-    "font-style"?: FontStyle;
-    "font-size"?:
-      | {
-          _: number;
-        }
-      | CssFontSize;
-    "font-weight"?: FontWeight;
-  } & {
-    color?: Color1;
-  });
-}
+export interface StyleText {}
 /**
  * The bass-step type represents the pitch step of the bass of the current chord within the harmony element. The text attribute indicates how the bass should appear in a score if not using the element contents.
  */
-export interface BassStep {
-  "0"?: Step & {
-    text?: {
-      _?: string;
-    };
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    });
-}
+export interface BassStep {}
 /**
  * The harmony-alter type represents the chromatic alteration of the root, numeral, or bass of the current harmony-chord group within the harmony element. In some chord styles, the text of the preceding element may include alteration information. In that case, the print-object attribute of this type can be set to no. The location attribute indicates whether the alteration should appear to the left or the right of the preceding element. Its default value varies by element.
  */
-export interface HarmonyAlter {
-  "0"?: Semitones & {
-    location?: LeftRight1;
-  } & {
-    "print-object"?: YesNo4;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    });
-}
+export interface HarmonyAlter {}
 /**
  * The degree type is used to add, alter, or subtract individual notes in the chord. The print-object attribute can be used to keep the degree from printing separately when it has already taken into account in the text attribute of the kind element. The degree-value and degree-type text attributes specify how the value and type of the degree should be displayed.
  *
@@ -9459,88 +7046,15 @@ export interface Degree {
 /**
  * The content of the degree-value type is a number indicating the degree of the chord (1 for the root, 3 for third, etc). The text attribute specifies how the value of the degree should be displayed. The symbol attribute indicates that a symbol should be used in specifying the degree. If the symbol attribute is present, the value of the text attribute follows the symbol.
  */
-export interface DegreeValue {
-  "0"?: {
-    _: number;
-  } & {
-    symbol?: DegreeSymbolValue;
-    text?: {
-      _?: string;
-    };
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    });
-}
+export interface DegreeValue {}
 /**
  * The degree-alter type represents the chromatic alteration for the current degree. If the degree-type value is alter or subtract, the degree-alter value is relative to the degree already in the chord based on its kind element. If the degree-type value is add, the degree-alter is relative to a dominant chord (major and perfect intervals except for a minor seventh). The plus-minus attribute is used to indicate if plus and minus symbols should be used instead of sharp and flat symbols to display the degree alteration. It is no if not specified.
  */
-export interface DegreeAlter {
-  "0"?: Semitones & {
-    "plus-minus"?: YesNo55;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    });
-}
+export interface DegreeAlter {}
 /**
  * The degree-type type indicates if this degree is an addition, alteration, or subtraction relative to the kind of the current chord. The value of the degree-type element affects the interpretation of the value of the degree-alter element. The text attribute specifies how the type of the degree should be displayed.
  */
-export interface DegreeType {
-  "0"?: DegreeTypeValue & {
-    text?: {
-      _?: string;
-    };
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    });
-}
+export interface DegreeType {}
 /**
  * The root type indicates a pitch like C, D, E vs. a scale degree like 1, 2, 3. It is used with chord symbols in popular music. The root element has a root-step and optional root-alter element similar to the step and alter elements, but renamed to distinguish the different musical meanings.
  */
@@ -9562,31 +7076,7 @@ export interface Root {
 /**
  * The root-step type represents the pitch step of the root of the current chord within the harmony element. The text attribute indicates how the root should appear in a score if not using the element contents.
  */
-export interface RootStep {
-  "0"?: Step & {
-    text?: {
-      _?: string;
-    };
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    });
-}
+export interface RootStep {}
 /**
  * The numeral type represents the Roman numeral or Nashville number part of a harmony. It requires that the key be specified in the encoding, either with a key or numeral-key element.
  */
@@ -9612,34 +7102,7 @@ export interface Numeral {
 /**
  * The numeral-root type represents the Roman numeral or Nashville number as a positive integer from 1 to 7. The text attribute indicates how the numeral should appear in the score. A numeral-root value of 5 with a kind of major would have a text attribute of "V" if displayed as a Roman numeral, and "5" if displayed as a Nashville number. If the text attribute is not specified, the display is application-dependent.
  */
-export interface NumeralRoot {
-  "0"?: NumeralValue & {
-    text?: {
-      _?: string;
-    };
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    });
-}
-export interface NumeralValue {
-  _: number;
-}
+export interface NumeralRoot {}
 /**
  * The numeral-key type is used when the key for the numeral is different than the key specified by the key signature. The numeral-fifths element specifies the key in the same way as the fifths element. The numeral-mode element specifies the mode similar to the mode element, but with a restricted set of values
  */
@@ -9668,7 +7131,7 @@ export interface FiguredBass {
     Placement19 &
     Printout1 &
     OptionalUniqueId39 & {
-      parentheses?: YesNo56;
+      parentheses?: YesNo;
     };
   $$: {
     figure: Figure[];
@@ -9730,9 +7193,6 @@ export interface Print {
     "part-abbreviation-display"?: NameDisplay[];
   } & Layout;
 }
-export interface Tenths25 {
-  _?: number;
-}
 /**
  * The measure-layout type includes the horizontal distance from the previous measure. It applies to the current measure only.
  */
@@ -9743,11 +7203,8 @@ export interface MeasureLayout {
      *
      * @minItems 0
      */
-    "measure-distance"?: Tenths26[];
+    "measure-distance"?: Tenths[];
   };
-}
-export interface Tenths26 {
-  _: number;
 }
 /**
  * The measure-numbering type describes how frequently measure numbers are displayed on this part. The text attribute from the measure element is used for display, or the number attribute if the text attribute is not present. Measures with an implicit attribute set to "yes" never display a measure number, regardless of the measure-numbering setting.
@@ -9756,39 +7213,7 @@ export interface Tenths26 {
  *
  * The optional multiple-rest-always and multiple-rest-range attributes describe how measure numbers are shown on multiple rests when the measure-numbering value is not set to none. The multiple-rest-always attribute is set to yes when the measure number should always be shown, even if the multiple rest starts midway through a system when measure numbering is set to system level. The multiple-rest-range attribute is set to yes when measure numbers on multiple rests display the range of numbers for the first and last measure, rather than just the number of the first measure.
  */
-export interface MeasureNumbering {
-  "0"?: MeasureNumberingValue & {
-    system?: SystemRelationNumber;
-    staff?: StaffNumber9;
-    "multiple-rest-always"?: YesNo59;
-    "multiple-rest-range"?: YesNo60;
-  } & (({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      halign?: LeftCenterRight1;
-    } & {
-      valign?: Valign;
-    });
-}
-export interface StaffNumber9 {
-  _?: number;
-}
+export interface MeasureNumbering {}
 /**
  * The name-display type is used for exact formatting of multi-font text in part and group names to the left of the system. The print-object attribute can be used to determine what, if anything, is printed at the start of each system. Enclosure for the display-text element is none by default. Language for the display-text element is Italian ("it") by default.
  */
@@ -9851,11 +7276,11 @@ export interface SystemLayout {
     /**
      * @minItems 0
      */
-    "system-distance"?: Tenths26[];
+    "system-distance"?: Tenths[];
     /**
      * @minItems 0
      */
-    "top-system-distance"?: Tenths26[];
+    "top-system-distance"?: Tenths[];
     /**
      * @minItems 0
      */
@@ -9900,17 +7325,14 @@ export interface EmptyPrintObjectStyleAlign {
  */
 export interface StaffLayout {
   $: {
-    number?: StaffNumber10;
+    number?: StaffNumber;
   };
   $$: {
     /**
      * @minItems 0
      */
-    "staff-distance"?: Tenths26[];
+    "staff-distance"?: Tenths[];
   };
-}
-export interface StaffNumber10 {
-  _?: number;
 }
 /**
  * If a barline is other than a normal single barline, it should be represented by a barline type that describes it. This includes information about repeats and multiple endings, as well as line style. Barline data is on the same level as the other musical data in a score - a child of a measure in a partwise score, or a part in a timewise score. This allows for barlines within measures, as in dotted barlines that subdivide measures in complex meters. The two fermata elements allow for fermatas on both sides of the barline (the lower one inverted).
@@ -9921,12 +7343,12 @@ export interface Barline {
   $: OptionalUniqueId41 & {
     location?: RightLeftMiddle;
     segno?: {
-      _?: string;
+      _: string;
     };
     coda?: {
-      _?: string;
+      _: string;
     };
-    divisions?: Divisions8;
+    divisions?: Divisions;
   };
   $$: {
     /**
@@ -9960,67 +7382,16 @@ export interface Barline {
     repeat?: Repeat[];
   } & Editorial7;
 }
-export interface Divisions8 {
-  _: number;
-}
 /**
  * The bar-style-color type contains barline style and color information.
  */
-export interface BarStyleColor {
-  "0"?: BarStyle & {
-    color?: Color1;
-  };
-}
+export interface BarStyleColor {}
 /**
  * The ending type represents multiple (e.g. first and second) endings. Typically, the start type is associated with the left barline of the first measure in an ending. The stop and discontinue types are associated with the right barline of the last measure in an ending. Stop is used when the ending mark concludes with a downward jog, as is typical for first endings. Discontinue is used when there is no downward jog, as is typical for second endings that do not conclude a piece. The length of the jog can be specified using the end-length attribute. The text-x and text-y attributes are offsets that specify where the baseline of the start of the ending text appears, relative to the start of the ending line.
  *
  * The number attribute indicates which times the ending is played, similar to the time-only attribute used by other elements. While this often represents the numeric values for what is under the ending line, it can also indicate whether an ending is played during a larger dal segno or da capo repeat. Single endings such as "1" or comma-separated multiple endings such as "1,2" may be used. The ending element text is used when the text displayed in the ending is different than what appears in the number attribute. The print-object attribute is used to indicate when an ending is present but not printed, as is often the case for many parts in a full score.
  */
-export interface Ending {
-  "0"?: {
-    _: string;
-  } & {
-    number?: EndingNumber;
-    type?: StartStopDiscontinue;
-    "end-length"?: Tenths27;
-    "text-x"?: Tenths28;
-    "text-y"?: Tenths29;
-  } & {
-    "print-object"?: YesNo4;
-  } & ({
-      "default-x"?: Tenths5;
-      "default-y"?: Tenths6;
-      "relative-x"?: Tenths7;
-      "relative-y"?: Tenths8;
-    } & {
-      "font-family"?: {
-        [k: string]: unknown;
-      };
-      "font-style"?: FontStyle;
-      "font-size"?:
-        | {
-            _: number;
-          }
-        | CssFontSize;
-      "font-weight"?: FontWeight;
-    } & {
-      color?: Color1;
-    }) & {
-      system?: "only-top" | "also-top" | "none";
-    };
-}
-export interface EndingNumber {
-  _?: string;
-}
-export interface Tenths27 {
-  _: number;
-}
-export interface Tenths28 {
-  _: number;
-}
-export interface Tenths29 {
-  _: number;
-}
+export interface Ending {}
 /**
  * The repeat type represents repeat marks. The start of the repeat has a forward direction while the end of the repeat has a backward direction. The times and after-jump attributes are only used with backward repeats that are not part of an ending. The times attribute indicates the number of times the repeated section is played. The after-jump attribute indicates if the repeats are played after a jump due to a da capo or dal segno.
  */
@@ -10028,9 +7399,9 @@ export interface Repeat {
   $: {
     direction?: BackwardForward;
     times?: {
-      _?: number;
+      _: number;
     };
-    "after-jump"?: YesNo61;
+    "after-jump"?: YesNo;
     winged?: Winged;
   };
 }
@@ -10041,12 +7412,12 @@ export interface Repeat {
  */
 export interface Grouping {
   $: OptionalUniqueId42 & {
-    type?: StartStopSingle2;
+    type?: StartStopSingle;
     number?: {
-      _?: string;
+      _: string;
     };
     "member-of"?: {
-      _?: string;
+      _: string;
     };
   };
   $$: {
@@ -10059,15 +7430,7 @@ export interface Grouping {
 /**
  * The feature type is a part of the grouping element used for musical analysis. The type attribute represents the type of the feature and the element content represents its value. This type is flexible to allow for different analyses.
  */
-export interface Feature {
-  "0"?: {
-    _: string;
-  } & {
-    type?: {
-      _?: string;
-    };
-  };
-}
+export interface Feature {}
 /**
  * The link type serves as an outgoing simple XLink. If a relative link is used within a document that is part of a compressed MusicXML file, the link is relative to the root folder of the zip file.
  */
@@ -10076,18 +7439,18 @@ export interface Link {
     ElementPosition &
     Position12 & {
       name?: {
-        _?: string;
+        _: string;
       };
     };
 }
 export interface Href {
-  _?: string;
+  _: string;
 }
 export interface Role {
-  _?: string;
+  _: string;
 }
 export interface Title {
-  _?: string;
+  _: string;
 }
 /**
  * The bookmark type serves as a well-defined target for an incoming simple XLink.
@@ -10095,10 +7458,10 @@ export interface Title {
 export interface Bookmark {
   $: ElementPosition1 & {
     id?: {
-      _?: string;
+      _: string;
     };
     name?: {
-      _?: string;
+      _: string;
     };
   };
 }
@@ -10179,15 +7542,7 @@ export interface Identification {
 /**
  * The typed-text type represents a text element with a type attribute.
  */
-export interface TypedText {
-  "0"?: {
-    _: string;
-  } & {
-    type?: {
-      _?: string;
-    };
-  };
-}
+export interface TypedText {}
 /**
  * The encoding element contains information about who did the digital encoding, when, with what software, and in what aspects. Standard type values for the encoder element are music, words, and arrangement, but other types may be used. The type attribute is only needed when there are multiple encoder elements.
  */
@@ -10236,15 +7591,15 @@ export interface YyyyMmDd {
  */
 export interface Supports {
   $: {
-    type?: YesNo62;
+    type?: YesNo;
     element?: {
-      _?: string;
+      _: string;
     };
     attribute?: {
-      _?: string;
+      _: string;
     };
     value?: {
-      _?: string;
+      _: string;
     };
   };
 }
@@ -10262,15 +7617,7 @@ export interface Miscellaneous {
 /**
  * If a program has other metadata not yet supported in the MusicXML format, each type of metadata can go in a miscellaneous-field element. The required name attribute indicates the type of metadata the element content represents.
  */
-export interface MiscellaneousField {
-  "0"?: {
-    _: string;
-  } & {
-    name?: {
-      _?: string;
-    };
-  };
-}
+export interface MiscellaneousField {}
 /**
  * The defaults type specifies score-wide defaults for scaling; whether or not the file is a concert score; layout; and default values for the music font, word font, lyric font, and lyric language. Except for the concert-score element, if any defaults are missing, the choice of what to use is determined by the application.
  */
@@ -10287,9 +7634,7 @@ export interface Defaults {
      *
      * @minItems 0
      */
-    "concert-score"?: {
-      [k: string]: unknown;
-    }[];
+    "concert-score"?: Empty[];
     /**
      * @minItems 0
      */
@@ -10326,7 +7671,7 @@ export interface Scaling {
      * @minItems 1
      * @maxItems 1
      */
-    tenths: [Tenths26];
+    tenths: [Tenths];
   };
 }
 export interface Millimeters {
@@ -10362,56 +7707,23 @@ export interface Appearance {
 /**
  * The line-width type indicates the width of a line type in tenths. The type attribute defines what type of line is being defined. Values include beam, bracket, dashes, enclosure, ending, extend, heavy barline, leger, light barline, octave shift, pedal, slur middle, slur tip, staff, stem, tie middle, tie tip, tuplet bracket, and wedge. The text content is expressed in tenths.
  */
-export interface LineWidth {
-  "0"?: Tenths26 & {
-    type?: LineWidthType;
-  };
-}
-export interface LineWidthType {
-  _?: string;
-}
+export interface LineWidth {}
 /**
  * The note-size type indicates the percentage of the regular note size to use for notes with a cue and large size as defined in the type element. The grace type is used for notes of cue size that that include a grace element. The cue type is used for all other notes with cue size, whether defined explicitly or implicitly via a cue element. The large type is used for notes of large size. The text content represent the numeric percentage. A value of 100 would be identical to the size of a regular note as defined by the music font.
  */
-export interface NoteSize {
-  "0"?: NonNegativeDecimal4 & {
-    type?: NoteSizeType;
-  };
-}
+export interface NoteSize {}
 /**
  * The distance element represents standard distances between notation elements in tenths. The type attribute defines what type of distance is being defined. Valid values include hyphen (for hyphens in lyrics) and beam.
  */
-export interface Distance {
-  "0"?: Tenths26 & {
-    type?: DistanceType;
-  };
-}
-export interface DistanceType {
-  _?: string;
-}
+export interface Distance {}
 /**
  * The glyph element represents what SMuFL glyph should be used for different variations of symbols that are semantically identical. The type attribute specifies what type of glyph is being defined. The element value specifies what SMuFL glyph to use, including recommended stylistic alternates. The SMuFL glyph name should match the type. For instance, a type of quarter-rest would use values restQuarter, restQuarterOld, or restQuarterZ. A type of g-clef-ottava-bassa would use values gClef8vb, gClef8vbOld, or gClef8vbCClef. A type of octave-shift-up-8 would use values ottava, ottavaBassa, ottavaBassaBa, ottavaBassaVb, or octaveBassa.
  */
-export interface Glyph {
-  "0"?: SmuflGlyphName1 & {
-    type?: GlyphType;
-  };
-}
-export interface GlyphType {
-  _?: string;
-}
+export interface Glyph {}
 /**
  * The other-appearance type is used to define any graphical settings not yet in the current version of the MusicXML format. This allows extended representation, though without application interoperability.
  */
-export interface OtherAppearance {
-  "0"?: {
-    _: string;
-  } & {
-    type?: {
-      _?: string;
-    };
-  };
-}
+export interface OtherAppearance {}
 /**
  * The empty-font type represents an empty element with font attributes.
  */
@@ -10424,10 +7736,10 @@ export interface EmptyFont {
 export interface LyricFont {
   $: Font4 & {
     number?: {
-      _?: string;
+      _: string;
     };
     name?: {
-      _?: string;
+      _: string;
     };
   };
 }
@@ -10437,10 +7749,10 @@ export interface LyricFont {
 export interface LyricLanguage {
   $: {
     number?: {
-      _?: string;
+      _: string;
     };
     name?: {
-      _?: string;
+      _: string;
     };
     /**
      * Attempting to install the relevant ISO 2- and 3-letter
@@ -10473,7 +7785,7 @@ export interface LyricLanguage {
 export interface Credit {
   $: OptionalUniqueId43 & {
     page?: {
-      _?: number;
+      _: number;
     };
   };
   $$: {
@@ -10532,9 +7844,9 @@ export interface PartList {
  */
 export interface PartGroup1 {
   $: {
-    type?: StartStop12;
+    type?: StartStop;
     number?: {
-      _?: string;
+      _: string;
     };
   };
   $$: {
@@ -10571,67 +7883,28 @@ export interface PartGroup1 {
      *
      * @minItems 0
      */
-    "group-time"?: {
-      [k: string]: unknown;
-    }[];
+    "group-time"?: Empty[];
   } & Editorial8;
 }
 /**
  * The group-name type describes the name or abbreviation of a part-group element. Formatting attributes in the group-name type are deprecated in Version 2.0 in favor of the new group-name-display and group-abbreviation-display elements.
  */
-export interface GroupName {
-  "0"?: {
-    _: string;
-  } & (({
-    "default-x"?: Tenths5;
-    "default-y"?: Tenths6;
-    "relative-x"?: Tenths7;
-    "relative-y"?: Tenths8;
-  } & {
-    "font-family"?: {
-      [k: string]: unknown;
-    };
-    "font-style"?: FontStyle;
-    "font-size"?:
-      | {
-          _: number;
-        }
-      | CssFontSize;
-    "font-weight"?: FontWeight;
-  } & {
-    color?: Color1;
-  }) & {
-    justify?: LeftCenterRight;
-  });
-}
+export interface GroupName {}
 /**
  * The group-symbol type indicates how the symbol for a group is indicated in the score. It is none if not specified.
  */
-export interface GroupSymbol {
-  "0"?: GroupSymbolValue & {
-    "default-x"?: Tenths5;
-    "default-y"?: Tenths6;
-    "relative-x"?: Tenths7;
-    "relative-y"?: Tenths8;
-  } & {
-    color?: Color1;
-  };
-}
+export interface GroupSymbol {}
 /**
  * The group-barline type indicates if the group should have common barlines.
  */
-export interface GroupBarline {
-  "0"?: GroupBarlineValue & {
-    color?: Color1;
-  };
-}
+export interface GroupBarline {}
 /**
  * The score-part type collects part-wide information for each part in a score. Often, each MusicXML part corresponds to a track in a Standard MIDI Format 1 file. In this case, the midi-device element is used to make a MIDI device or port assignment for the given track or specific MIDI instruments. Initial midi-instrument assignments may be made here as well. The score-instrument elements are used when there are multiple instruments per track.
  */
 export interface ScorePart1 {
   $: {
     id?: {
-      _?: string;
+      _: string;
     };
   };
   $$: {
@@ -10704,40 +7977,14 @@ export interface PartLink {
 export interface InstrumentLink {
   $: {
     id?: {
-      _?: string;
+      _: string;
     };
   };
 }
 /**
  * The part-name type describes the name or abbreviation of a score-part element. Formatting attributes for the part-name element are deprecated in Version 2.0 in favor of the new part-name-display and part-abbreviation-display elements.
  */
-export interface PartName {
-  "0"?: {
-    _: string;
-  } & (({
-    "default-x"?: Tenths5;
-    "default-y"?: Tenths6;
-    "relative-x"?: Tenths7;
-    "relative-y"?: Tenths8;
-  } & {
-    "font-family"?: {
-      [k: string]: unknown;
-    };
-    "font-style"?: FontStyle;
-    "font-size"?:
-      | {
-          _: number;
-        }
-      | CssFontSize;
-    "font-weight"?: FontWeight;
-  } & {
-    color?: Color1;
-  }) & {
-    "print-object"?: YesNo4;
-  } & {
-    justify?: LeftCenterRight;
-  });
-}
+export interface PartName {}
 /**
  * The score-instrument type represents a single instrument within a score-part. As with the score-part type, each score-instrument has a required ID attribute, a name, and an optional abbreviation.
  *
@@ -10748,7 +7995,7 @@ export interface PartName {
 export interface ScoreInstrument {
   $: {
     id?: {
-      _?: string;
+      _: string;
     };
   };
   $$: {
@@ -10802,7 +8049,7 @@ export interface VirtualInstrument {
 export interface Player {
   $: {
     id?: {
-      _?: string;
+      _: string;
     };
   };
   $$: {

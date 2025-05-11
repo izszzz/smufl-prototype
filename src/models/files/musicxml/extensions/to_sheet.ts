@@ -12,8 +12,7 @@ declare module "musicxml" {
 MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
   const score = new Sheet.Score({
     name:
-      this.mxl["score-partwise"]?.$$?.work?.[0]?.$$?.["work-title"]?.[0]?._ ??
-      "",
+      this.mxl["score-partwise"].$$.work?.[0]?.$$?.["work-title"]?.[0]?._ ?? "",
     timesignatures: [],
     keysignatures: [],
     bpms: [],
@@ -23,7 +22,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
           const musicData = measure?.$$;
           const notes = R.pipe(
             musicData ? ("note" in musicData ? musicData.note ?? [] : []) : [],
-            R.groupBy((note) => note.$$.staff[0]._),
+            R.groupBy((note) => note.$$?.staff[0]._),
             R.entries(),
             R.flatMap(([voice, notes]) => {
               let time = 0;
@@ -81,20 +80,14 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
           });
           const attributes =
             musicData && "attributes" in musicData ? musicData.attributes : [];
-
-          console.log(attributes?.[0]?.$$.staves?.[0]);
           return new Sheet.Bar({
             id: i,
             notes,
             timesignature,
             staffLines: 5,
-            staves: R.times(attributes?.[0]?.$$.staves?.[0]?._ ?? 1, (i) => {
+            staves: R.times(attributes?.[0]?.$$?.staves?.[0]?._ ?? 1, (i) => {
               const clef = attributes?.[0]?.$$?.clef?.find(
-                (clef) =>
-                  Number(
-                    clef.$ && "number" in clef.$ ? clef.$.number ?? 1 : 1
-                  ) ===
-                  i + 1
+                (clef) => Number(clef.$.number?._ ?? 1) === i + 1
               );
               return new Sheet.Stave({
                 id: i,

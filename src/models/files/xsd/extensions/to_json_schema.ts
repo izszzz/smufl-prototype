@@ -269,7 +269,7 @@ function handleAttributeGroup({
   };
 }
 function handleAttribute({
-  $: { type, name, ref, use, default: $default },
+  $: { type, name, ref, default: $default },
   $$,
 }: Attribute): SetRequired<JSONSchema, "title"> {
   const simpleType = $$?.["xs:simpleType"]?.[0];
@@ -281,7 +281,6 @@ function handleAttribute({
     ...(type ? handleType(type) : {}),
     ...(simpleType ? handleSimpleType(simpleType) : {}),
     ...(annotation ? handleAnnotation(annotation) : {}),
-    required: use === "required",
   };
 }
 function handleAnnotation({ $$ }: Annotation): JSONSchema {
@@ -455,68 +454,62 @@ function handleComplexType({ $, $$ }: ComplexType): JSONSchema {
   const attributes = $$?.["xs:attribute"];
   const simpleContent = $$?.["xs:simpleContent"]?.[0];
   const complexContent = $$?.["xs:complexContent"]?.[0];
+  if ($?.name === "empty") {
+    return {
+      title: $.name,
+      type: "object",
+      properties: {},
+      ...(annotation ? handleAnnotation(annotation) : {}),
+    };
+  }
+
   return {
     ...($?.name ? { title: $.name } : {}),
     ...(annotation ? handleAnnotation(annotation) : {}),
-    ...(choice ||
-    sequence ||
-    group ||
-    attributes ||
-    attributeGroups ||
-    simpleContent ||
-    complexContent
-      ? {
-          properties: {
-            ...(attributes || attributeGroups
-              ? {
-                  $: {
-                    allOf: [
-                      ...R.pipe(
-                        attributeGroups ?? [],
-                        R.map(handleAttributeGroup)
-                      ),
-                      ...(attributes
-                        ? [
-                            {
-                              properties: R.pipe(
-                                attributes,
-                                R.map(handleAttribute),
-                                R.mapToObj(({ title, ...other }) => [
-                                  title,
-                                  other,
-                                ])
-                              ),
-                            },
-                          ]
-                        : []),
-                    ],
-                  },
-                }
-              : {}),
-            ...(choice || sequence || group
-              ? {
-                  $$: {
-                    allOf: [
-                      ...(choice ? [handleChoice(choice)] : []),
-                      ...(sequence ? [handleSequence(sequence)] : []),
-                      ...(group ? [handleGroup(group)] : []),
-                    ],
-                  },
-                }
-              : {}),
-            ...(simpleContent || complexContent
-              ? {
-                  ...(simpleContent ? [handleContent(simpleContent)] : []),
-                  ...(complexContent ? [handleContent(complexContent)] : []),
-                }
-              : {}),
-          },
-          required: [
-            ...(attributes || attributeGroups ? ["$"] : []),
-            ...(choice || sequence || group ? ["$$"] : []),
-          ],
-        }
-      : {}),
+    properties: {
+      ...(attributes || attributeGroups
+        ? {
+            $: {
+              allOf: [
+                ...R.pipe(attributeGroups ?? [], R.map(handleAttributeGroup)),
+                ...(attributes
+                  ? [
+                      {
+                        properties: R.pipe(
+                          attributes,
+                          R.map(handleAttribute),
+                          R.mapToObj(({ title, ...other }) => [title, other])
+                        ),
+                      },
+                    ]
+                  : []),
+              ],
+            },
+          }
+        : {}),
+      ...(choice || sequence || group
+        ? {
+            $$: {
+              allOf: [
+                ...(choice ? [handleChoice(choice)] : []),
+                ...(sequence ? [handleSequence(sequence)] : []),
+                ...(group ? [handleGroup(group)] : []),
+              ],
+            },
+          }
+        : {}),
+      ...(simpleContent || complexContent
+        ? {
+            ...(simpleContent ? handleContent(simpleContent).properties : {}),
+            ...(complexContent ? handleContent(complexContent).properties : {}),
+          }
+        : {}),
+    },
+    required: [
+      ...(attributes || attributeGroups ? ["$"] : []),
+      ...(choice || sequence || group ? ["$$"] : []),
+      ...(simpleContent || complexContent ? ["_"] : []),
+    ],
   };
 }
 

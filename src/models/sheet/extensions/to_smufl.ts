@@ -61,9 +61,9 @@ function createStaveGroup(stave: Sheet.Stave) {
       new SMUFL.Text({
         glyph: SMUFL.Glyph.find(
           "clefs",
-          (v) => v.charAt(0) === stave.clef?.$$.sign[0]._.toLowerCase()
+          (v) => v.charAt(0) === stave.clef?.sign[0]._.toLowerCase()
         ),
-        y: (stave.clef.$$.line?.[0]?._ ?? 0) - 1,
+        y: (stave.clef.line?.[0]?._ ?? 0) - 1,
       })
     );
   }
@@ -141,7 +141,7 @@ function createStaveGroup(stave: Sheet.Stave) {
         })
       );
       if (stem) {
-        if (stem[0]?._ === "up") {
+        if (stem === "up") {
           noteGroup.children.push(
             new SMUFL.Text({
               glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
@@ -157,7 +157,7 @@ function createStaveGroup(stave: Sheet.Stave) {
             );
           }
         }
-        if (stem[0]?._ === "down") {
+        if (stem[0] === "down") {
           noteGroup.children.push(
             new SMUFL.Text({
               glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),

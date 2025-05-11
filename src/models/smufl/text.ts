@@ -13,7 +13,6 @@ export class Text {
   get dx() {
     return this.glyph.advancedWidth;
   }
-
   constructor({
     glyph,
     y,
