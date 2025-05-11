@@ -2,7 +2,6 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "soundfont2";
 import * as Browser from "./models/browser";
 import * as Sheet from "./models/sheet";
-
 import { Player } from "./models/browser/audio/player";
 
 function App() {

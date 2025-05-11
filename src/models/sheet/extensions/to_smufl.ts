@@ -32,17 +32,12 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
     ),
   });
 
-  const maxLengthBarsTrack =
-    R.firstBy(this.tracks, [(track) => track.bars.length, "desc"])?.bars
-      .length ?? 0;
-
-  R.times(maxLengthBarsTrack, (i) => {
-    score.masterbars.push(
-      new SMUFL.Masterbar({
-        id: i,
-        bars: R.times(score.tracks.length, (j) => score.tracks[j]!.bars[i]!),
-      })
-    );
+  score.masterbars = this.masterbars.map((masterbar, i) => {
+    const bars = R.times(score.tracks.length, (j) => score.tracks[j]!.bars[i]!);
+    return new SMUFL.Masterbar({
+      ...masterbar,
+      bars,
+    });
   });
 
   for (const masterbar of score.masterbars) {
@@ -51,6 +46,8 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
         stave.group.order();
       }
     }
+    masterbar.width =
+      R.firstBy(masterbar.bars, [R.prop("width"), "desc"])?.width ?? 0;
   }
   return score;
 };
@@ -64,9 +61,9 @@ function createStaveGroup(stave: Sheet.Stave) {
       new SMUFL.Text({
         glyph: SMUFL.Glyph.find(
           "clefs",
-          (v) => v.charAt(0) === stave.clef.sign.toLowerCase()
+          (v) => v.charAt(0) === stave.clef?.$$.sign[0]._.toLowerCase()
         ),
-        y: stave.clef.line - 1,
+        y: (stave.clef.$$.line?.[0]?._ ?? 0) - 1,
       })
     );
   }
@@ -132,8 +129,11 @@ function createStaveGroup(stave: Sheet.Stave) {
     } else {
       const type = note.type;
       const stem = note.stem;
-      const noteHeadsGlyph = SMUFL.Glyph.find("noteheads", (v) =>
-        v.toLocaleLowerCase().includes(type === "quarter" ? "black" : type)
+      const noteHeadsGlyph = SMUFL.Glyph.find(
+        "noteheads",
+        (v) => v.toLocaleLowerCase().includes("black")
+        // .includes(type?.[0]?._ === "quarter" ? "black" : type)
+        //
       );
       noteGroup.children.push(
         new SMUFL.Text({
@@ -141,7 +141,7 @@ function createStaveGroup(stave: Sheet.Stave) {
         })
       );
       if (stem) {
-        if (stem.direction === "up" || stem === "up") {
+        if (stem[0]?._ === "up") {
           noteGroup.children.push(
             new SMUFL.Text({
               glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
@@ -157,7 +157,7 @@ function createStaveGroup(stave: Sheet.Stave) {
             );
           }
         }
-        if (stem.direction === "down" || stem === "down") {
+        if (stem[0]?._ === "down") {
           noteGroup.children.push(
             new SMUFL.Text({
               glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),

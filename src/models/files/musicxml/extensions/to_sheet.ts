@@ -10,10 +10,9 @@ declare module "musicxml" {
   }
 }
 MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
-  console.log(this);
   const score = new Sheet.Score({
     name:
-      this.mxl["score-partwise"]?.$$?.work?.[0]?.$$?.["work-title"]?.[0]?.[0] ??
+      this.mxl["score-partwise"]?.$$?.work?.[0]?.$$?.["work-title"]?.[0]?._ ??
       "",
     timesignatures: [],
     keysignatures: [],
@@ -24,7 +23,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
           const musicData = measure?.$$;
           const notes = R.pipe(
             musicData ? ("note" in musicData ? musicData.note ?? [] : []) : [],
-            R.groupBy((note) => note.$$?.staff[0]),
+            R.groupBy((note) => note.$$.staff[0]._),
             R.entries(),
             R.flatMap(([voice, notes]) => {
               let time = 0;
@@ -34,10 +33,10 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                     voice: Number(voice),
                     id,
                     rest: match(note)
-                      .with({ $$: { rest: P.not(P.nullish) } }, () => {
-                        return true;
+                      .with({ $$: { rest: P.not(P.nullish) } }, (note) => {
+                        return note.$$.rest[0];
                       })
-                      .otherwise(() => false),
+                      .otherwise(() => undefined),
                     chord: match(note)
                       .with({ $$: { chord: P.not(P.nullish) } }, () => {
                         return true;
@@ -45,12 +44,12 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                       .otherwise(() => false),
                     type: note.$$.type?.[0],
                     stem: note.$$.stem?.[0],
-                    staff: note.$$.staff[0],
+                    staff: note.$$.staff[0]._,
                     pitch: match(note)
                       .with({ $$: { pitch: P.not(P.nullish) } }, (note) => {
                         return new MusicXML.Unit.Pitch({
-                          step: note.$$.pitch.$$.step[0],
-                          octave: Number(note.$$.pitch.$$?.octave),
+                          step: note.$$.pitch[0].$$.step[0]._,
+                          octave: Number(note.$$.pitch[0].$$?.octave),
                         }).toCore();
                       })
                       .otherwise(() =>
@@ -62,7 +61,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                     start: time,
                     duration: match(note)
                       .with({ $$: { duration: P.not(P.nullish) } }, (note) => {
-                        const duration = Number(note.$$.duration[0]);
+                        const duration = Number(note.$$.duration);
                         time += duration;
                         return duration;
                       })
@@ -83,29 +82,27 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
           const attributes =
             musicData && "attributes" in musicData ? musicData.attributes : [];
 
+          console.log(attributes?.[0]?.$$.staves?.[0]);
           return new Sheet.Bar({
             id: i,
             notes,
             timesignature,
             staffLines: 5,
-            staves: R.times(attributes?.[0]?.$$?.staves?.[0]?.[0] ?? 1, (i) => {
+            staves: R.times(attributes?.[0]?.$$.staves?.[0]?._ ?? 1, (i) => {
               const clef = attributes?.[0]?.$$?.clef?.find(
                 (clef) =>
                   Number(
-                    clef.$ && "number" in clef.$ ? clef.$.number?.[0] ?? 1 : 1
+                    clef.$ && "number" in clef.$ ? clef.$.number ?? 1 : 1
                   ) ===
                   i + 1
               );
               return new Sheet.Stave({
                 id: i,
-                clef: {
-                  sign: clef?.$$?.sign[0],
-                  line: Number(clef?.$$?.line?.[0] ?? 0),
-                  number:
-                    clef?.$ && "number" in clef.$ ? clef.$.number?.[0] ?? 1 : 1,
-                },
-                barlines:
-                  musicData && "barline" in musicData ? musicData.barline : [],
+                clef,
+                barline:
+                  musicData && "barline" in musicData
+                    ? musicData.barline?.[0]
+                    : void 0,
                 notes: notes.filter((note) => (note.staff ?? 1) - 1 === i),
               });
             }),
@@ -117,7 +114,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
         });
         return new Sheet.Track({
           id: trackIndex,
-          name: part?.$?.id?.[0] ?? "",
+          name: part?.$?.id?._ ?? "",
           notes: bars?.flatMap((bar) => bar.notes) ?? [],
           bars: bars ?? [],
           preset: new Core.Unit.Preset(0),

@@ -7,4 +7,13 @@ export class Score<
   Timesignature extends Sheet.Timesignature = Sheet.Timesignature,
   Keysignature extends Sheet.Keysignature = Sheet.Keysignature,
   Bpm extends Sheet.Bpm = Sheet.Bpm,
-> extends Core.Score<Note, Track, Timesignature, Keysignature, Bpm> {}
+  Stave extends Sheet.Stave = Sheet.Stave,
+  Masterbar extends Sheet.Masterbar<
+    Note,
+    Stave,
+    Sheet.Bar<Note, Stave>
+  > = Sheet.Masterbar<Note, Stave, Sheet.Bar<Note, Stave>>,
+> extends Core.Score<Note, Track, Timesignature, Keysignature, Bpm> {
+  masterbars: Masterbar[] = [];
+  layout: "page" | "vertical" | "horizontal" = "horizontal";
+}

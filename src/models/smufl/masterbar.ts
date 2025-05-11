@@ -1,15 +1,7 @@
 import * as Sheet from "sheet";
-import { firstBy, prop } from "remeda";
-import { Stave } from "./stave";
+import * as SMUFL from "smufl";
 
-export class Masterbar<Bar extends Sheet.Bar<Sheet.Note, Stave>> {
-  id;
-  bars;
-  get width() {
-    return firstBy(this.bars, [prop("width"), "desc"])?.width ?? 0;
-  }
-  constructor({ id, bars }: { id: number; bars: Bar[] }) {
-    this.id = id;
-    this.bars = bars;
-  }
-}
+export class Masterbar<
+  Note extends Sheet.Note = Sheet.Note,
+  Stave extends SMUFL.Stave = SMUFL.Stave,
+> extends Sheet.Masterbar<Note, Stave, Sheet.Bar<Note, Stave>> {}

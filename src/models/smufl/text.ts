@@ -1,5 +1,5 @@
 import { Glyph } from "./glyph";
-import Glyphnames from "./glyphnames.json";
+import Glyphnames from "../../const/smufl/glyphnames.json";
 
 export class Text {
   glyph;

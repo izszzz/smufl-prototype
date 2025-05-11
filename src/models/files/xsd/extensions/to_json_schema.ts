@@ -2,17 +2,13 @@
 import * as xml2js from "xml2js";
 import fs from "fs";
 import * as R from "remeda";
-import { JSONSchema } from "json-schema-to-typescript";
+import { JSONSchema, compile } from "json-schema-to-typescript";
 import { SetRequired } from "type-fest";
 
+const parser = new xml2js.Parser({
+  explicitChildren: true,
+});
 export const xsdToJsonSchema = async () => {
-  let compile: typeof import("json-schema-to-typescript").compile | undefined;
-  if (typeof window === "undefined") {
-    compile = (await import("json-schema-to-typescript")).compile;
-  }
-  if (compile === undefined) return;
-
-  const parser = new xml2js.Parser({ explicitChildren: true });
   const musicxml = await parser.parseStringPromise(
     fs.readFileSync("src/const/musicxml/4.0/musicxml.xsd")
   );
@@ -221,23 +217,18 @@ function handleXsType(base: XsType): JSONSchema {
     case "xs:anyURI":
     case "xs:NMTOKEN":
     case "xs:language":
-      return generateArray({ type: "string" });
+      return template({ type: "string" });
     case "xs:integer":
-      return generateArray({ type: "integer" });
+      return template({ type: "integer" });
     case "xs:nonNegativeInteger":
-      return generateArray({ type: "integer", minimum: 0 });
+      return template({ type: "integer", minimum: 0 });
     case "xs:positiveInteger":
-      return generateArray({ type: "integer", minimum: 1 });
+      return template({ type: "integer", minimum: 1 });
     case "xs:decimal":
-      return generateArray({ type: "number" });
+      return template({ type: "number" });
   }
-  function generateArray(obj: JSONSchema) {
-    return {
-      type: "array" as const,
-      items: obj,
-      minItems: 1,
-      maxItems: 1,
-    };
+  function template(obj: JSONSchema) {
+    return { properties: { _: obj }, required: ["_"] };
   }
 }
 function handleType(type: string) {
@@ -337,8 +328,8 @@ function handleGroup({
   return {
     title: name ?? ref,
     ...(ref ? { $ref: "#/$defs/musicxml/group/" + ref } : {}),
-    ...(annotation ? handleAnnotation(annotation) : {}),
     ...(sequence ? handleSequence(sequence) : {}),
+    ...(annotation ? handleAnnotation(annotation) : {}),
   };
 }
 function handleSequence({ $$ }: Sequence): JSONSchema {
@@ -378,25 +369,24 @@ function handleElement({
 }: Element): SetRequired<JSONSchema, "title"> {
   const annotation = $$?.["xs:annotation"]?.[0];
   const complexType = $$?.["xs:complexType"]?.[0];
-
   return {
     title: name,
+    type: "array",
     ...(minOccurs || maxOccurs
       ? {
-          type: "array",
           ...(minOccurs ? { minItems: Number(minOccurs) } : {}),
-          ...(maxOccurs && maxOccurs !== "unbounded"
-            ? { maxItems: Number(maxOccurs) }
-            : {}),
-          items: {
-            ...(type ? handleType(type) : {}),
-            ...(complexType ? handleComplexType(complexType) : {}),
-          },
+          ...(maxOccurs === undefined || maxOccurs === "unbounded"
+            ? {}
+            : { maxItems: Number(maxOccurs) }),
         }
       : {
-          ...(type ? handleType(type) : {}),
-          ...(complexType ? handleComplexType(complexType) : {}),
+          minItems: 1,
+          maxItems: 1,
         }),
+    items: {
+      ...(type ? handleType(type) : {}),
+      ...(complexType ? handleComplexType(complexType) : {}),
+    },
     ...(annotation ? handleAnnotation(annotation) : {}),
   };
 }
@@ -427,13 +417,7 @@ function handleChoice({ $, $$ }: Choice): JSONSchema {
     ],
   };
 }
-function handleSimpleContent({ $$ }: SimpleContent): JSONSchema {
-  const extension = $$["xs:extension"][0];
-  return {
-    ...(extension ? handleExtension(extension) : {}),
-  };
-}
-function handleComplexContent({ $$ }: ComplexContent): JSONSchema {
+function handleContent({ $$ }: SimpleContent | ComplexContent): JSONSchema {
   const extension = $$["xs:extension"][0];
   return {
     ...(extension ? handleExtension(extension) : {}),
@@ -509,29 +493,27 @@ function handleComplexType({ $, $$ }: ComplexType): JSONSchema {
                   },
                 }
               : {}),
-            ...(choice || sequence || group || simpleContent || complexContent
+            ...(choice || sequence || group
               ? {
                   $$: {
                     allOf: [
                       ...(choice ? [handleChoice(choice)] : []),
                       ...(sequence ? [handleSequence(sequence)] : []),
                       ...(group ? [handleGroup(group)] : []),
-                      ...(simpleContent
-                        ? [handleSimpleContent(simpleContent)]
-                        : []),
-                      ...(complexContent
-                        ? [handleComplexContent(complexContent)]
-                        : []),
                     ],
                   },
+                }
+              : {}),
+            ...(simpleContent || complexContent
+              ? {
+                  ...(simpleContent ? [handleContent(simpleContent)] : []),
+                  ...(complexContent ? [handleContent(complexContent)] : []),
                 }
               : {}),
           },
           required: [
             ...(attributes || attributeGroups ? ["$"] : []),
-            ...(choice || sequence || group || simpleContent || complexContent
-              ? ["$$"]
-              : []),
+            ...(choice || sequence || group ? ["$$"] : []),
           ],
         }
       : {}),

@@ -8,6 +8,8 @@ import "core/extensions/to_sheet";
 import "musicxml/extensions/to_sheet";
 import "sheet/extensions/to_smufl";
 import "smufl/extensions/to_svg";
+import { MusicXML } from "src/const/musicxml/4.0/musicxml";
+import { parseNumbers } from "xml2js/lib/processors";
 
 export class Importer {
   core;
@@ -32,15 +34,21 @@ export class Importer {
         if (!pathName) return;
         const data = await zip.files[pathName]?.async("text");
         if (!data) return;
+        console.log(
+          await new xml2js.Parser({
+            explicitArray: true,
+            explicitCharkey: true,
+            explicitChildren: true,
+            valueProcessors: [parseNumbers],
+          }).parseStringPromise(data)
+        );
         this.core = new MusicXml.MXL(
-          (
-            (await new xml2js.Parser({
-              tagNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
-              attrNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
-            }).parseStringPromise(data)) as {
-              scorePartwise: MusicXml.Type.ScorePartwise;
-            }
-          ).scorePartwise
+          (await new xml2js.Parser({
+            explicitArray: true,
+            explicitCharkey: true,
+            explicitChildren: true,
+            valueProcessors: [parseNumbers],
+          }).parseStringPromise(data)) as MusicXML
         ).toSheet();
       }
     }

@@ -1,5 +1,5 @@
 import * as Sheet from "sheet";
-import { Type } from "../files/musicxml/schema";
+import { Barline, Clef } from "src/const/musicxml/4.0/musicxml";
 
 export class Stave {
   id;
@@ -10,12 +10,12 @@ export class Stave {
   constructor({
     id,
     clef,
-    barlines: barline,
+    barline,
     notes,
   }: {
     id: number;
-    clef: Type.Clef;
-    barlines: Type.Barline;
+    clef?: Clef;
+    barline?: Barline;
     notes: Sheet.Note[];
   }) {
     this.id = id;

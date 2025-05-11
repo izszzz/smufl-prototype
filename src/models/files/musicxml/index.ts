@@ -1,6 +1,6 @@
-import { Type } from "./schema";
+import { ScorePartwise } from "src/const/musicxml/4.0/musicxml";
 export * as Unit from "./unit";
-export * as Type from "./schema";
+
 export class MXL {
-  constructor(public scorePartwise: Type.ScorePartwise) {}
+  constructor(public mxl: { ["score-partwise"]: ScorePartwise[number] }) {}
 }
