@@ -7,6 +7,11 @@ module.exports = {
     "plugin:react-hooks/recommended",
     "prettier",
   ],
+  parserOptions: {
+    project: "./tsconfig.json", // 型情報の参照
+    tsconfigRootDir: __dirname,
+    sourceType: "module",
+  },
   ignorePatterns: ["dist", ".eslintrc.cjs"],
   parser: "@typescript-eslint/parser",
   plugins: ["react-refresh"],
@@ -15,5 +20,8 @@ module.exports = {
       "warn",
       { allowConstantExport: true },
     ],
+    // custom rurles
+    "no-useless-rename": ["error"],
+    "@typescript-eslint/no-unnecessary-condition": ["error"],
   },
 };
