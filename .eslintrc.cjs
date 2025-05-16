@@ -22,6 +22,7 @@ module.exports = {
     ],
     // custom rurles
     "no-useless-rename": ["error"],
+    "no-void": ["error"],
     "@typescript-eslint/no-unnecessary-condition": ["error"],
   },
 };

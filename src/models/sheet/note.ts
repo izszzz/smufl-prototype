@@ -1,6 +1,14 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
-import { NoteType, Rest, Stem } from "src/const/musicxml/4.0/musicxml";
+import * as R from "remeda";
+import {
+  NoteType,
+  Rest,
+  Staff,
+  Stem,
+  Voice,
+} from "src/const/musicxml/4.0/musicxml";
+import { P, match } from "ts-pattern";
 
 export class Note extends Core.Note {
   track!: Sheet.Track;
@@ -14,8 +22,13 @@ export class Note extends Core.Note {
   staff;
   flag: null = null;
   get line() {
-    if (this.rest) return 0;
-    if (this.stave.clef?.$$.sign[0]._ === "G") {
+    if (R.isNonNullish(this.rest)) {
+      if (this.rest.$?.measure === "yes") return 0;
+      return match(this.type?._)
+        .with(P.union("quarter", "half"), () => 12.5)
+        .otherwise(() => 0);
+    }
+    if (this.stave.clef?.$$.sign?.[0]._ === "G") {
       return (
         ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +
           this.pitch.whiteKey -
@@ -23,7 +36,7 @@ export class Note extends Core.Note {
         2
       );
     }
-    if (this.stave.clef?.$$.sign[0]._ === "F") {
+    if (this.stave.clef?.$$.sign?.[0]._ === "F") {
       return (
         ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +
           this.pitch.whiteKey -
@@ -65,8 +78,8 @@ export class Note extends Core.Note {
     stem?: Stem;
     rest?: Rest;
     chord: boolean;
-    staff: number;
-    voice: number;
+    staff?: Staff["staff"];
+    voice: Voice["voice"];
   } & Core.Note) {
     super(note);
     this.chord = chord;

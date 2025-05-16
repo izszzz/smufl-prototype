@@ -8,10 +8,10 @@ import { SetRequired } from "type-fest";
 const parser = new xml2js.Parser({
   explicitChildren: true,
 });
+const musicxml = await parser.parseStringPromise(
+  fs.readFileSync("src/const/musicxml/4.0/musicxml.xsd")
+);
 export const xsdToJsonSchema = async () => {
-  const musicxml = await parser.parseStringPromise(
-    fs.readFileSync("src/const/musicxml/4.0/musicxml.xsd")
-  );
   const xlink = await parser.parseStringPromise(
     fs.readFileSync("src/const/musicxml/4.0/xlink.xsd")
   );
@@ -98,6 +98,7 @@ type XsType =
   | "xs:ID"
   | "xs:IDREF"
   | "xs:NMTOKEN"
+  | "xs:NCName"
   | "xs:anyURI"
   | "xs:integer"
   | "xs:decimal"
@@ -162,7 +163,7 @@ type Annotation = {
 };
 type Group = {
   $: { name: string; ref?: string; minOccurs?: string; maxOccurs?: string };
-  $$: {
+  $$?: {
     ["xs:annotation"]: Annotation[];
     ["xs:sequence"]: Sequence[];
   };
@@ -216,6 +217,7 @@ function handleXsType(base: XsType): JSONSchema {
     case "xs:date":
     case "xs:anyURI":
     case "xs:NMTOKEN":
+    case "xs:NCName":
     case "xs:language":
       return template({ type: "string" });
     case "xs:integer":
@@ -228,12 +230,15 @@ function handleXsType(base: XsType): JSONSchema {
       return template({ type: "number" });
   }
   function template(obj: JSONSchema) {
-    return { properties: { _: obj }, required: ["_"] };
+    return obj;
   }
 }
 function handleType(type: string) {
-  const xsType = handleXsType(type as XsType);
-  return xsType ? xsType : { $ref: "#/$defs/musicxml/type/" + type };
+  if (type.includes("xs:")) {
+    return handleXsType(type as XsType);
+  } else {
+    return { $ref: "#/$defs/musicxml/type/" + type };
+  }
 }
 function handleAttributeGroup({
   $: { name, ref },
@@ -276,8 +281,8 @@ function handleAttribute({
   const annotation = $$?.["xs:annotation"]?.[0];
   return {
     title: name ?? ref ?? "error",
-    ...($default ? { $default } : {}),
-    ...(ref ? resolveRef(ref) : {}),
+    ...($default ? { default: $default } : {}),
+    ...(ref ? handleRef(ref) : {}),
     ...(type ? handleType(type) : {}),
     ...(simpleType ? handleSimpleType(simpleType) : {}),
     ...(annotation ? handleAnnotation(annotation) : {}),
@@ -322,19 +327,19 @@ function handleGroup({
   $: { name, ref },
   $$,
 }: Group): SetRequired<JSONSchema, "title"> {
-  const annotation = $$?.["xs:annotation"]?.[0];
-  const sequence = $$?.["xs:sequence"]?.[0];
+  const annotation = $$?.["xs:annotation"][0];
+  const sequence = $$?.["xs:sequence"][0];
   return {
-    title: name ?? ref,
+    title: ref ?? name,
     ...(ref ? { $ref: "#/$defs/musicxml/group/" + ref } : {}),
     ...(sequence ? handleSequence(sequence) : {}),
     ...(annotation ? handleAnnotation(annotation) : {}),
   };
 }
 function handleSequence({ $$ }: Sequence): JSONSchema {
-  const elements = $$?.["xs:element"];
-  const choices = $$?.["xs:choice"];
-  const groups = $$?.["xs:group"];
+  const elements = $$["xs:element"];
+  const choices = $$["xs:choice"];
+  const groups = $$["xs:group"];
   return {
     ...(elements || groups || choices
       ? {
@@ -343,15 +348,15 @@ function handleSequence({ $$ }: Sequence): JSONSchema {
               ? [
                   {
                     properties: R.pipe(
-                      elements ?? [],
+                      elements,
                       R.map(handleElement),
                       R.mapToObj(({ title, ...other }) => [title, other])
                     ),
-                    required: R.pipe(
-                      elements ?? [],
-                      R.filter((element) => element.$.minOccurs !== "0"),
-                      R.map((element) => element.$.name)
-                    ),
+                    // required: R.pipe(
+                    //   elements,
+                    //   R.filter((element) => element.$.minOccurs !== "0"),
+                    //   R.map((element) => element.$.name)
+                    // ),
                   },
                 ]
               : []),
@@ -383,17 +388,27 @@ function handleElement({
           maxItems: 1,
         }),
     items: {
-      ...(type ? handleType(type) : {}),
+      ...(type
+        ? (() => {
+            const typee = handleType(type);
+            if (typee.$ref) {
+              if (isSimpleType(type))
+                return { properties: { _: typee }, required: ["_"] };
+              return typee;
+            }
+            return { properties: { _: typee }, required: ["_"] };
+          })()
+        : {}),
       ...(complexType ? handleComplexType(complexType) : {}),
     },
     ...(annotation ? handleAnnotation(annotation) : {}),
   };
 }
 function handleChoice({ $, $$ }: Choice): JSONSchema {
-  const elements = $$?.["xs:element"];
-  const sequence = $$?.["xs:sequence"];
-  const groups = $$?.["xs:group"];
-  const choices = $$?.["xs:choice"];
+  const elements = $$["xs:element"];
+  const sequence = $$["xs:sequence"];
+  const groups = $$["xs:group"];
+  const choices = $$["xs:choice"];
   const minOccurs = $?.minOccurs;
   const maxOccurs = $?.maxOccurs;
   return {
@@ -425,24 +440,30 @@ function handleContent({ $$ }: SimpleContent | ComplexContent): JSONSchema {
 function handleExtension({ $, $$ }: Extension): JSONSchema {
   const attributes = $$?.["xs:attribute"];
   const attributeGroups = $$?.["xs:attributeGroup"];
+
   return {
-    allOf: [
-      handleType($.base),
-      ...(attributes
-        ? [
-            {
-              properties: R.pipe(
-                attributes,
-                R.map(handleAttribute),
-                R.mapToObj(({ title, ...other }) => [title, other])
-              ),
-            },
-          ]
-        : []),
-      ...(attributeGroups?.map((attributeGroup) => ({
-        $ref: "#/$defs/musicxml/attributeGroup/" + attributeGroup.$.ref,
-      })) ?? []),
-    ],
+    properties: {
+      _: handleType($.base),
+      $: {
+        allOf: [
+          ...(attributes
+            ? [
+                {
+                  properties: R.pipe(
+                    attributes,
+                    R.map(handleAttribute),
+                    R.mapToObj(({ title, ...other }) => [title, other])
+                  ),
+                },
+              ]
+            : []),
+          ...(attributeGroups?.map((attributeGroup) => ({
+            $ref: "#/$defs/musicxml/attributeGroup/" + attributeGroup.$.ref,
+          })) ?? []),
+        ],
+      },
+      required: ["_", "$"],
+    },
   };
 }
 function handleComplexType({ $, $$ }: ComplexType): JSONSchema {
@@ -506,14 +527,13 @@ function handleComplexType({ $, $$ }: ComplexType): JSONSchema {
         : {}),
     },
     required: [
-      ...(attributes || attributeGroups ? ["$"] : []),
       ...(choice || sequence || group ? ["$$"] : []),
       ...(simpleContent || complexContent ? ["_"] : []),
     ],
   };
 }
 
-function resolveRef(ref: string) {
+function handleRef(ref: string) {
   if (ref.includes("xml")) {
     return { $ref: "#/$defs/xml/attribute/" + ref.replace("xml:", "") };
   }
@@ -523,3 +543,9 @@ function resolveRef(ref: string) {
 }
 
 xsdToJsonSchema();
+
+function isSimpleType(type: string) {
+  return musicxml["xs:schema"].$$["xs:simpleType"].some(
+    (data: SimpleType) => data.$?.name === type
+  );
+}

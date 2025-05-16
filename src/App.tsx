@@ -2,12 +2,14 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "soundfont2";
 import * as Browser from "./models/browser";
 import * as Sheet from "./models/sheet";
+import * as Core from "core";
 import { Player } from "./models/browser/audio/player";
 
 function App() {
   const [fontSize, setFontSize] = useState(30);
   const [audioPlayer, setAudioPlayer] = useState<Player>();
   const [soundfont2, setSoundfont2] = useState<Soundfont2>();
+  const [core, setCore] = useState<Core.Score | null>(null);
 
   const ref = useRef<SVGSVGElement>(null);
 
@@ -32,8 +34,8 @@ function App() {
         if (!(importer.core instanceof Sheet.Score)) {
           importer.core = importer.core.toSheet();
         }
+        setCore(importer.core);
         ref.current.appendChild(importer.core.toSMUFL().toSVG({ ratio: 4 }));
-
         setAudioPlayer(new Player(importer.core, soundfont2));
       }
     }
@@ -41,6 +43,7 @@ function App() {
 
   return (
     <div>
+      <h3>{core?.name}</h3>
       <div
         ref={ref}
         className="bravura"

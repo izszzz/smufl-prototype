@@ -30,7 +30,6 @@ SMUFL.Score.prototype.toSVG = function (this: SMUFL.Score) {
             .data(masterbar.bars)
             .join("g")
             .attr("type", "bar")
-
             .each(function (bar) {
               const g = d3.select(this);
               g.selectAll("g[type=stave]")
