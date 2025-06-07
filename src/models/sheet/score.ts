@@ -15,5 +15,21 @@ export class Score<
   > = Sheet.Masterbar<Note, Stave, Sheet.Bar<Note, Stave>>,
 > extends Core.Score<Note, Track, Timesignature, Keysignature, Bpm> {
   masterbars: Masterbar[] = [];
-  layout: "page" | "vertical" | "horizontal" = "horizontal";
+  height = 1000;
+  width = 1000;
+  constructor({
+    ...score
+  }: ConstructorParameters<
+    typeof Core.Score<Note, Track, Timesignature, Keysignature, Bpm>
+  >[0]) {
+    super(score);
+  }
+  setLayoutType(layoutType: Sheet.LayoutType) {
+    if (layoutType === Sheet.LayoutType.Horizontal) {
+      this.masterbars.reduce((acc, cur) => {
+        cur.x = acc;
+        return acc + cur.width;
+      }, 0);
+    }
+  }
 }

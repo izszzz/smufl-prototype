@@ -7,6 +7,12 @@ export class Stave {
   barlines;
   notes;
   bar!: Sheet.Bar;
+  get width() {
+    return 0;
+  }
+  get prev() {
+    return this.bar.prev?.staves[this.id];
+  }
   constructor({
     id,
     clef,

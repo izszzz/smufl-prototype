@@ -12,9 +12,8 @@ SMUFL.Score.prototype.toSVG = function (this: SMUFL.Score) {
   const svg = d3
     .create("svg")
     .attr("font-size", 4)
-    .attr("height", 1000)
-    .attr("width", 1000);
-
+    .attr("height", this.height)
+    .attr("width", this.width);
   svg
     .append("g")
     .attr("type", "score")
@@ -24,6 +23,7 @@ SMUFL.Score.prototype.toSVG = function (this: SMUFL.Score) {
         .data(this.masterbars)
         .join("g")
         .attr("type", "masterbar")
+        .attr("transform", (masterbar) => `translate(${masterbar.x}, 0)`)
         .each(function (masterbar) {
           const g = d3.select(this);
           g.selectAll("g[type=bar]")
@@ -53,7 +53,6 @@ SMUFL.Score.prototype.toSVG = function (this: SMUFL.Score) {
                               SMUFL.BravuraMetadata.engravingDefaults
                                 .staffLineThickness
                             )
-
                             .attr(
                               "d",
                               d3.line()([

@@ -46,8 +46,6 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
         stave.group.order();
       }
     }
-    masterbar.width =
-      R.firstBy(masterbar.bars, [R.prop("width"), "desc"])?.width ?? 0;
   }
   return score;
 };

@@ -35,7 +35,9 @@ function App() {
           importer.core = importer.core.toSheet();
         }
         setCore(importer.core);
-        ref.current.appendChild(importer.core.toSMUFL().toSVG({ ratio: 4 }));
+
+        importer.core.setLayoutType(Sheet.LayoutType.Horizontal);
+        ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
         setAudioPlayer(new Player(importer.core, soundfont2));
       }
     }

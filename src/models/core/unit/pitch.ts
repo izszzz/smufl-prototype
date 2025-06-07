@@ -10,6 +10,9 @@ export class Pitch {
       this.pitchClassesLength
     );
   }
+  /**
+   * C4 = 4
+   */
   get octave() {
     return Math.trunc(this.value / this.pitchClassesLength) - 1;
   }

@@ -7,3 +7,9 @@ export * from "./bpm";
 export * from "./keysignature";
 export * from "./timesignature";
 export * from "./note";
+
+export enum LayoutType {
+  Page,
+  Vertical,
+  Horizontal,
+}

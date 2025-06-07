@@ -1,5 +1,6 @@
 import * as Core from "core";
 import * as Midi from "../files/standard-midi-file";
+import * as Sheet from "sheet";
 import { Zip } from "../files/zip";
 import * as xml2js from "xml2js";
 import * as MusicXml from "musicxml";
@@ -10,6 +11,7 @@ import "smufl/extensions/to_svg";
 import { ScorePartwise } from "src/const/musicxml/4.0/musicxml";
 import { parseNumbers } from "xml2js/lib/processors";
 
+// ちゃんと書け
 export class Importer {
   core;
   async import(file: File) {
@@ -33,14 +35,7 @@ export class Importer {
         if (!pathName) return;
         const data = await zip.files[pathName]?.async("text");
         if (!data) return;
-        console.log(
-          await new xml2js.Parser({
-            explicitArray: true,
-            explicitCharkey: true,
-            explicitChildren: true,
-            valueProcessors: [parseNumbers],
-          }).parseStringPromise(data)
-        );
+
         this.core = new MusicXml.MXL(
           (await new xml2js.Parser({
             explicitArray: true,
@@ -51,7 +46,9 @@ export class Importer {
           }).parseStringPromise(data)) as {
             ["score-partwise"]: ScorePartwise[0];
           }
-        ).toSheet();
+        )
+          .toSheet()
+          .toSMUFL();
       }
     }
     if (typeof reader.result === "string") {

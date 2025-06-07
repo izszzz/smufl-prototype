@@ -21,14 +21,19 @@ export class Note extends Core.Note {
   voice;
   staff;
   flag: null = null;
+  get width() {
+    return 0;
+  }
+  // TODO: refactor
   get line() {
     if (R.isNonNullish(this.rest)) {
       if (this.rest.$?.measure === "yes") return 0;
       return match(this.type?._)
-        .with(P.union("quarter", "half"), () => 12.5)
+        .with(P.union("quarter", "half"), () => 2)
         .otherwise(() => 0);
     }
-    if (this.stave.clef?.$$.sign?.[0]._ === "G") {
+    const sign = (this.stave.clef ?? this.stave.prev?.clef)?.$$.sign?.[0]._;
+    if (sign === "G") {
       return (
         ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +
           this.pitch.whiteKey -
@@ -36,7 +41,7 @@ export class Note extends Core.Note {
         2
       );
     }
-    if (this.stave.clef?.$$.sign?.[0]._ === "F") {
+    if (sign === "F") {
       return (
         ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +
           this.pitch.whiteKey -

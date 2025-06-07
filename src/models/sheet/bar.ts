@@ -1,3 +1,4 @@
+import * as R from "remeda";
 import * as Core from "core";
 import * as Sheet from "sheet";
 
@@ -9,7 +10,12 @@ export class Bar<
   implements Core.Identifier
 {
   id;
-  width;
+  get width() {
+    return R.firstBy(this.staves, [(stave) => stave.width, "desc"])?.width ?? 0;
+  }
+  get prev() {
+    return this.track.bars[this.id - 1];
+  }
   staffLines;
   notes;
   staves;
@@ -17,7 +23,6 @@ export class Bar<
   track!: Sheet.Track;
   constructor({
     id,
-    width,
     staffLines,
     notes,
     staves,
@@ -25,7 +30,6 @@ export class Bar<
     ...event
   }: {
     id: number;
-    width: number;
     staffLines: number;
     notes: Note[];
     staves: Stave[];
@@ -34,7 +38,6 @@ export class Bar<
     if ("end" in event) super(event);
     else super(event);
     this.id = id;
-    this.width = width;
     this.staffLines = staffLines;
     this.staves = staves;
     this.notes = notes;

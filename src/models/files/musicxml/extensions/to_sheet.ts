@@ -48,21 +48,31 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                 })
             )
           );
+
+          const attributes =
+            "attributes" in musicData ? musicData.attributes : [];
+          const time = attributes?.[0]?.$$.time?.[0];
+          const denominator = Number(
+            (time?.$$ && "beat-type" in time.$$
+              ? time.$$["beat-type"]?.[0]._
+              : 4) ?? 4
+          );
+          const numerator = Number(
+            (time?.$$ && "beats" in time.$$ ? time.$$.beats?.[0]._ : 4) ?? 4
+          );
           const timesignature = new Sheet.Timesignature({
-            denominator: 4,
-            numerator: 4,
+            denominator,
+            numerator,
             start: 0,
             duration: 0,
             end: 0,
           });
-          const attributes =
-            "attributes" in musicData ? musicData.attributes : [];
-          return new Sheet.Bar({
-            id: i,
-            notes,
-            timesignature,
-            staffLines: 5,
-            staves: R.times(attributes?.[0]?.$$?.staves?.[0]?._ ?? 1, (i) => {
+          const staves = R.times(
+            attributes?.[0]?.$$?.staves?.[0]?._ ?? 1,
+            (i) => {
+              const staveNotes = notes.filter(
+                (note) => (note.staff?.[0]._ ?? 1) - 1 === i
+              );
               const clef = attributes?.[0]?.$$?.clef?.find(
                 (clef) => (clef.$?.number ?? 1) === i + 1
               );
@@ -71,12 +81,16 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                 clef,
                 barline:
                   "barline" in musicData ? musicData.barline?.[0] : undefined,
-                notes: notes.filter(
-                  (note) => (note.staff?.[0]._ ?? 1) - 1 === i
-                ),
+                notes: staveNotes,
               });
-            }),
-            width: 0,
+            }
+          );
+          return new Sheet.Bar({
+            id: i,
+            notes,
+            timesignature,
+            staffLines: 5,
+            staves,
             start: 0,
             duration: 0,
             end: 0,
@@ -109,9 +123,9 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
       new Sheet.Masterbar({
         id: i,
         bars,
-        width: 0,
       })
     );
+    return;
   });
 
   for (const track of score.tracks) {
