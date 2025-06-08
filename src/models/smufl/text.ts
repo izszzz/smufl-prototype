@@ -5,13 +5,11 @@ export class Text {
   glyph;
   y;
   x;
+  dx;
   rotate;
   index;
   get width() {
     return this.glyph.bBox.width + this.glyph.advancedWidth;
-  }
-  get dx() {
-    return this.glyph.advancedWidth;
   }
   constructor({
     glyph,
@@ -31,5 +29,6 @@ export class Text {
     this.x = x ?? 0;
     this.rotate = rotate ?? 0;
     this.index = index ?? 0;
+    this.dx = this.glyph.advancedWidth;
   }
 }

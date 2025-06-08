@@ -21,6 +21,7 @@ export class Note extends Core.Note {
   voice;
   staff;
   flag: null = null;
+
   get width() {
     return 0;
   }

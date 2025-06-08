@@ -114,37 +114,22 @@ function createStaveGroup(stave: Sheet.Stave) {
       if (!note.type) return;
       const stem = note.stem;
       const noteHeadsGlyph = SMUFL.findNotehead(note.type);
-      if (noteHeadsGlyph)
+      if (noteHeadsGlyph) {
         noteGroup.children.push(
           new SMUFL.Text({
             glyph: noteHeadsGlyph,
           })
         );
 
-      if (stem) {
-        if (stem._ === "up") {
-          noteGroup.children.push(
-            new SMUFL.Text({
-              glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
-            })
-          );
-
-          const flag = note.flag;
-          if (flag) {
-            noteGroup.children.push(
-              new SMUFL.Text({
-                glyph: SMUFL.Glyph.find("flags", (v) => v.includes("stem")),
-              })
-            );
+        if (stem) {
+          const stemText = new SMUFL.Text({
+            glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
+          });
+          noteGroup.children.push(stemText);
+          if (stem._ === "down") {
+            stemText.dx -= noteHeadsGlyph.bBox.width;
+            stemText.rotate = 180;
           }
-        }
-        if (stem._ === "down") {
-          noteGroup.children.push(
-            new SMUFL.Text({
-              glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
-              rotate: 180,
-            })
-          );
         }
       }
     }
