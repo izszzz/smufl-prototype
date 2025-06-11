@@ -2,11 +2,15 @@ import * as Core from "core";
 import * as Midi from "../files/standard-midi-file";
 import { Zip } from "../files/zip";
 import * as xml2js from "xml2js";
-import * as R from "remeda";
 import * as MusicXml from "musicxml";
 import "core/extensions/to_sheet";
 import "musicxml/extensions/to_sheet";
-import "sheet/extensions/to_svg";
+import "sheet/extensions/to_smufl";
+import "smufl/extensions/to_svg";
+import { ScorePartwise } from "src/const/musicxml/4.0/musicxml";
+import { parseNumbers } from "xml2js/lib/processors";
+
+// ちゃんと書け
 export class Importer {
   core;
   async import(file: File) {
@@ -30,16 +34,20 @@ export class Importer {
         if (!pathName) return;
         const data = await zip.files[pathName]?.async("text");
         if (!data) return;
+
         this.core = new MusicXml.MXL(
-          (
-            (await new xml2js.Parser({
-              tagNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
-              attrNameProcessors: [(name) => R.pipe(name, R.toCamelCase())],
-            }).parseStringPromise(data)) as {
-              scorePartwise: MusicXml.Type.ScorePartwise;
-            }
-          ).scorePartwise
-        ).toSheet();
+          (await new xml2js.Parser({
+            explicitArray: true,
+            explicitCharkey: true,
+            explicitChildren: true,
+            valueProcessors: [parseNumbers],
+            attrValueProcessors: [parseNumbers],
+          }).parseStringPromise(data)) as {
+            ["score-partwise"]: ScorePartwise[0];
+          }
+        )
+          .toSheet()
+          .toSMUFL();
       }
     }
     if (typeof reader.result === "string") {
