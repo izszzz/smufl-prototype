@@ -10,6 +10,8 @@ declare module "musicxml" {
 }
 MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
   const score = new Sheet.Score({
+    height: 1000,
+    width: 0,
     name:
       this.mxl["score-partwise"].$$.work?.[0]?.$$?.["work-title"]?.[0]?._ ?? "",
     timesignatures: [],
@@ -139,6 +141,11 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
         note.track = track;
         note.bar = bar;
       }
+    }
+  }
+  for (const masterbar of score.masterbars) {
+    for (const bar of masterbar.bars) {
+      bar.masterbar = masterbar;
     }
   }
   if (process.env.NODE_ENV === "development") console.log({ sheet: score });

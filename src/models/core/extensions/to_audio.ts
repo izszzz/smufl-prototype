@@ -18,8 +18,8 @@ Core.Score.prototype.toAudio = function (
       (track) =>
         new Audio.Track({
           ...track,
-          notes: track.notes.map((note) => new Audio.Note(note)),
           audioContext,
+          notes: track.notes.map((note) => new Audio.Note(note)),
         })
     ),
   });

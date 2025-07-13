@@ -12,7 +12,12 @@
   },
   "customizations": {
     "vscode": {
-      "extensions": ["dbaeumer.vscode-eslint", "esbenp.prettier-vscode"]
+      "extensions": [
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "asvetliakov.vscode-neovim"
+      ]
     }
-  }
+  },
+  "postCreateCommand": "apk add --no-cache neovim"
 }

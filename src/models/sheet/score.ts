@@ -13,23 +13,22 @@ export class Score<
     Stave,
     Sheet.Bar<Note, Stave>
   > = Sheet.Masterbar<Note, Stave, Sheet.Bar<Note, Stave>>,
+  Row extends Sheet.Row<Masterbar> = Sheet.Row<Masterbar>,
 > extends Core.Score<Note, Track, Timesignature, Keysignature, Bpm> {
   masterbars: Masterbar[] = [];
-  height = 1000;
-  width = 1000;
+  rows: Row[] = [];
+  height;
+  width;
+
   constructor({
+    height,
+    width,
     ...score
-  }: ConstructorParameters<
+  }: { height: number; width: number } & ConstructorParameters<
     typeof Core.Score<Note, Track, Timesignature, Keysignature, Bpm>
   >[0]) {
     super(score);
-  }
-  setLayoutType(layoutType: Sheet.LayoutType) {
-    if (layoutType === Sheet.LayoutType.Horizontal) {
-      this.masterbars.reduce((acc, cur) => {
-        cur.x = acc;
-        return acc + cur.width;
-      }, 0);
-    }
+    this.height = height;
+    this.width = width;
   }
 }

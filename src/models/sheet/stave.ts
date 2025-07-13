@@ -10,6 +10,9 @@ export class Stave {
   get width() {
     return 0;
   }
+  get height() {
+    return 0;
+  }
   get prev() {
     return this.bar.prev?.staves[this.id];
   }

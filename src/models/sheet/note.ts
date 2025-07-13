@@ -22,9 +22,6 @@ export class Note extends Core.Note {
   staff;
   flag: null = null;
 
-  get width() {
-    return 0;
-  }
   // TODO: refactor
   get line() {
     if (R.isNonNullish(this.rest)) {

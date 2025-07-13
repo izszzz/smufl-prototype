@@ -3,19 +3,19 @@ import * as Core from "core";
 import Soundfont2 from "soundfont2";
 import "../../core/extensions/to_audio";
 
-export class Player {
+export class Controller {
   ctx;
   core;
   score;
   volume;
   sf2;
   isPlaying = false;
-  constructor(core: Core.Score, sf2: Soundfont2) {
-    this.core = core;
-    this.ctx = new AudioContext();
+  constructor(score: Audio.Score, sf2: Soundfont2, audioContext: AudioContext) {
+    this.core = score;
+    this.ctx = audioContext;
     this.volume = this.ctx.createGain();
     this.sf2 = sf2;
-    this.score = core.toAudio(this.ctx);
+    this.score = score;
     this.volume.connect(this.ctx.destination);
   }
   play() {

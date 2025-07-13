@@ -2,14 +2,13 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "soundfont2";
 import * as Browser from "./models/browser";
 import * as Sheet from "./models/sheet";
-import * as Core from "core";
-import { Player } from "./models/browser/audio/player";
+import * as Audio from "./models/browser/audio/controller";
+import * as R from "remeda";
 
 function App() {
-  const [fontSize, setFontSize] = useState(30);
-  const [audioPlayer, setAudioPlayer] = useState<Player>();
+  const [sheetController, setSheetController] = useState<Sheet.Controller>();
+  const [audioPlayer, setAudioPlayer] = useState<Audio.Controller>();
   const [soundfont2, setSoundfont2] = useState<Soundfont2>();
-  const [core, setCore] = useState<Core.Score | null>(null);
 
   const ref = useRef<SVGSVGElement>(null);
 
@@ -27,29 +26,52 @@ function App() {
       const file = input.files[0];
       if (!file) return;
       const importer = new Browser.Importer();
-      await importer.import(file);
+      const core = await importer.import(file);
+      const ctx = new AudioContext();
+      const sheetController = new Sheet.Controller(
+        core!.toSMUFL(),
+        Sheet.LayoutType.Horizontal
+      );
+      setSheetController(sheetController);
+
+      setAudioPlayer(new Audio.Controller(core!.toAudio(ctx), soundfont2, ctx));
+      // ** コピペ
+      console.log(sheetController);
+      sheetController.layout(
+        sheetController.layoutType,
+        ref.current?.clientWidth ?? 0
+      );
+      sheetController.score.rows
+        .flatMap((row) =>
+          row.masterbars.flatMap((masterbar) =>
+            masterbar.bars.flatMap((bar) => bar.staves)
+          )
+        )
+        .map((stave) => {
+          stave.setGroup();
+          stave.group.order();
+        });
+      sheetController.score.rows.forEach((row) => row.order());
+      sheetController.score.width =
+        (R.firstBy(sheetController.score.rows, [R.prop("width"), "desc"])
+          ?.width ?? 0) * 10; // svg側でscale 10しているので調整
+
       if (ref.current) {
         while (ref.current.firstChild)
           ref.current.removeChild(ref.current.firstChild);
-        if (!(importer.core instanceof Sheet.Score)) {
-          importer.core = importer.core.toSheet();
-        }
-        setCore(importer.core);
-
-        importer.core.setLayoutType(Sheet.LayoutType.Horizontal);
-        ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
-        setAudioPlayer(new Player(importer.core, soundfont2));
+        const svg = sheetController.score.toSVG({ ratio: 4, scale: 10 });
+        if (svg) ref.current.appendChild(svg);
       }
     }
   };
 
   return (
     <div>
-      <h3>{core?.name}</h3>
+      <h3>{sheetController?.score.name}</h3>
       <div
         ref={ref}
         className="bravura"
-        style={{ padding: "30px", height: "70vh" }}
+        style={{ height: "70vh", overflow: "auto" }}
       />
       <button
         type="button"
@@ -77,15 +99,49 @@ function App() {
           // if (audioPlayer) audioPlayer.volume.gain.value = volume / 100;
         }}
       />
+
       <label>
-        fontSize
-        <input
-          type="number"
-          value={fontSize}
-          onChange={(e) => setFontSize(Number(e.target.value))}
-        />
+        layout
+        <select
+          onChange={(e) => {
+            if (sheetController) {
+              sheetController.layout(
+                Number(e.target.value) as Sheet.LayoutType,
+                ref.current?.clientWidth ?? 0
+              );
+              sheetController.score.rows
+                .flatMap((row) =>
+                  row.masterbars.flatMap((masterbar) =>
+                    masterbar.bars.flatMap((bar) => bar.staves)
+                  )
+                )
+                .map((stave) => {
+                  stave.setGroup();
+                  stave.group.order();
+                });
+              sheetController.score.rows.forEach((row) => row.order());
+              sheetController.score.width =
+                (R.firstBy(sheetController.score.rows, [
+                  R.prop("width"),
+                  "desc",
+                ])?.width ?? 0) * 10; // svg側でscale 10しているので調整
+              console.log(sheetController.score);
+
+              const svgElement = sheetController.score.toSVG({
+                ratio: 4,
+                scale: 10,
+              });
+
+              while (ref.current?.firstChild)
+                ref.current.removeChild(ref.current.firstChild);
+              if (svgElement) ref.current?.appendChild(svgElement);
+            }
+          }}
+        >
+          <option value={Sheet.LayoutType.Horizontal}>horizontal</option>
+          <option value={Sheet.LayoutType.Vertical}>vertical</option>
+        </select>
       </label>
-      <label>layout</label>
     </div>
   );
 }

@@ -10,17 +10,22 @@ export class Bar<
   implements Core.Identifier
 {
   id;
-  get width() {
-    return R.firstBy(this.staves, [(stave) => stave.width, "desc"])?.width ?? 0;
-  }
-  get prev() {
-    return this.track.bars[this.id - 1];
-  }
   staffLines;
   notes;
   staves;
   timesignature;
+  masterbar!: Sheet.Masterbar;
   track!: Sheet.Track;
+  get width() {
+    return R.firstBy(this.staves, [(stave) => stave.width, "desc"])?.width ?? 0;
+  }
+  get height() {
+    // TODO: 複数staveの場合stave間のスペースを考慮する
+    return this.staves.reduce((acc, cur) => acc + cur.height, 0);
+  }
+  get prev() {
+    return this.track.bars[this.id - 1];
+  }
   constructor({
     id,
     staffLines,

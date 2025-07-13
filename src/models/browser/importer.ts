@@ -12,7 +12,6 @@ import { parseNumbers } from "xml2js/lib/processors";
 
 // ちゃんと書け
 export class Importer {
-  core;
   async import(file: File) {
     const reader = new FileReader();
     const extname = file.name.slice(file.name.lastIndexOf("."));
@@ -22,7 +21,7 @@ export class Importer {
     await new Promise((resolve) => (reader.onload = () => resolve()));
     if (reader.result instanceof ArrayBuffer) {
       if (file.type === "audio/mid")
-        this.core = Midi.toCore(Midi.parse(reader.result));
+        return Midi.toCore(Midi.parse(reader.result));
       if (extname === ".mxl") {
         const zip = await new Zip(reader.result).unzip();
         const meta = await zip.files["META-INF/container.xml"]?.async("text");
@@ -34,8 +33,7 @@ export class Importer {
         if (!pathName) return;
         const data = await zip.files[pathName]?.async("text");
         if (!data) return;
-
-        this.core = new MusicXml.MXL(
+        return new MusicXml.MXL(
           (await new xml2js.Parser({
             explicitArray: true,
             explicitCharkey: true,
@@ -45,14 +43,12 @@ export class Importer {
           }).parseStringPromise(data)) as {
             ["score-partwise"]: ScorePartwise[0];
           }
-        )
-          .toSheet()
-          .toSMUFL();
+        ).toSheet();
       }
     }
     if (typeof reader.result === "string") {
       if (extname === ".json") {
-        this.core = Core.create(JSON.parse(reader.result)).toSheet();
+        return Core.create(JSON.parse(reader.result)).toSheet();
       }
     }
   }
