@@ -28,7 +28,8 @@ function createStaveGroup(stave: Sheet.Stave) {
   const staveGroup = new SMUFL.Group({
     children: [],
   });
-  if (stave.clef) {
+
+  if (stave.bar.masterbar.isRowFirst) {
     const glyph = SMUFL.findClef(stave.clef);
     if (glyph)
       staveGroup.children.push(
@@ -38,7 +39,6 @@ function createStaveGroup(stave: Sheet.Stave) {
         })
       );
   }
-
   if (stave.bar.masterbar.isFirst) {
     const [numerator, denominator] = R.pipe(
       [

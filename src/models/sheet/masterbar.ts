@@ -7,9 +7,10 @@ export class Masterbar<
   Bar extends Sheet.Bar<Note, Stave> = Sheet.Bar<Note, Stave>,
 > {
   id;
-  row: Sheet.Row | null = null;
   bars;
   x = 0;
+  row: Sheet.Row | null = null;
+  score!: Sheet.Score;
   get width() {
     return R.firstBy(this.bars, [(bar) => bar.width, "desc"])?.width ?? 0;
   }
@@ -17,9 +18,11 @@ export class Masterbar<
     // TODO: 複数barの場合、bar間のスペースを考慮する
     return this.bars.reduce((acc, cur) => acc + cur.height, 0);
   }
-
-  get isFirst() {
+  get isRowFirst() {
     return this.row?.masterbars[0] === this;
+  }
+  get isFirst() {
+    return this.score.masterbars[0] === this;
   }
   constructor({ id, bars }: { id: number; bars: Bar[] }) {
     this.id = id;

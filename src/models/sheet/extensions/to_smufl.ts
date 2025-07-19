@@ -19,15 +19,16 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
             (bar) =>
               new Sheet.Bar({
                 ...bar,
-                staves: bar.staves.map(
-                  (stave) =>
-                    new SMUFL.Stave({
-                      ...stave,
-                      group: new SMUFL.Group({
-                        children: [],
-                      }),
-                    })
-                ),
+                staves: bar.staves.map((stave) => {
+                  console.log(stave);
+                  return new SMUFL.Stave({
+                    ...stave,
+                    clef: stave._clef,
+                    group: new SMUFL.Group({
+                      children: [],
+                    }),
+                  });
+                }),
               })
           ),
         })
@@ -45,14 +46,22 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
   });
   score.rows = this.rows.map(
     (row) =>
-      new SMUFL.Row(
-        score.masterbars.filter((masterbar) =>
+      new SMUFL.Row({
+        ...row,
+        masterbars: score.masterbars.filter((masterbar) =>
           row.masterbars.some((rmb) => rmb.id === masterbar.id)
-        )
-      )
+        ),
+      })
   );
 
+  for (const track of score.tracks) {
+    for (const bar of track.bars) {
+      bar.track = track;
+    }
+  }
+
   for (const masterbar of score.masterbars) {
+    masterbar.score = score;
     for (const bar of masterbar.bars) {
       bar.masterbar = masterbar;
       for (const stave of bar.staves) {

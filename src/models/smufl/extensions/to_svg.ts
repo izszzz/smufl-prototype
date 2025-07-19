@@ -4,20 +4,30 @@ import * as SMUFL from "smufl";
 
 declare module "smufl" {
   interface Score {
-    toSVG: (options: { ratio: number; scale: number }) => SVGSVGElement | null;
+    toSVG: (
+      height: number,
+      width: number,
+      options: { ratio: number; scale: number }
+    ) => SVGSVGElement | null;
   }
 }
 
-SMUFL.Score.prototype.toSVG = function (this: SMUFL.Score, options) {
+SMUFL.Score.prototype.toSVG = function (
+  this: SMUFL.Score,
+  height,
+  width,
+  options
+) {
   const svg = d3
     .create("svg")
     .attr("font-size", options.ratio)
-    .attr("height", this.height)
-    .attr("width", this.width);
+    .attr("viewBox", `0 0 ${options.scale} ${options.scale}`)
+    .attr("height", width)
+    .attr("width", height);
   svg
     .append("g")
     .attr("type", "score")
-    .attr("transform", `translate(0, 50) scale(${options.scale})`)
+    .attr("transform", `translate(0, 6.5)`)
     .call((g) => {
       g.selectAll("g[type=row]")
         .data(this.rows)
@@ -43,10 +53,7 @@ SMUFL.Score.prototype.toSVG = function (this: SMUFL.Score, options) {
                     .data(bar.staves)
                     .join("g")
                     .attr("type", "stave")
-                    .attr(
-                      "transform",
-                      (_, i) => `translate(0, ${(4 + 6.5) * i})`
-                    )
+                    .attr("transform", (stave) => `translate(0, ${stave.y})`)
                     .each(function (stave) {
                       renderGroup(this, stave.group);
                       const g = d3.select(this);

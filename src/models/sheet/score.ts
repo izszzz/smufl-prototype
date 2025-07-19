@@ -1,5 +1,6 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
+import * as R from "remeda";
 
 export class Score<
   Note extends Sheet.Note = Sheet.Note,
@@ -17,18 +18,10 @@ export class Score<
 > extends Core.Score<Note, Track, Timesignature, Keysignature, Bpm> {
   masterbars: Masterbar[] = [];
   rows: Row[] = [];
-  height;
-  width;
-
-  constructor({
-    height,
-    width,
-    ...score
-  }: { height: number; width: number } & ConstructorParameters<
-    typeof Core.Score<Note, Track, Timesignature, Keysignature, Bpm>
-  >[0]) {
-    super(score);
-    this.height = height;
-    this.width = width;
+  get height() {
+    return this.rows.reduce((acc, cur) => acc + cur.height, 0);
+  }
+  get width() {
+    return R.firstBy(this.rows, [R.prop("width"), "desc"])?.width ?? 0;
   }
 }

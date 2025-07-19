@@ -5,24 +5,31 @@ import { Row } from "./row";
 export class Controller {
   constructor(
     public score: Score,
-    public layoutType: LayoutType
+    public layoutType: LayoutType,
+    public scale: number = 30
   ) {}
 
-  layout(layoutType: LayoutType, clientWidth: number) {
+  layout(layoutType: LayoutType) {
     this.layoutType = layoutType;
-    switch (this.layoutType) {
+    switch (layoutType) {
       case LayoutType.Horizontal:
-        this.score.rows = [new Row(this.score.masterbars)];
+        this.score.rows = [
+          new Row({
+            id: 0,
+            masterbars: this.score.masterbars,
+          }),
+        ];
         break;
       case LayoutType.Vertical:
         this.score.rows = splitByWidth(
           this.score.masterbars,
-          clientWidth / 10, // svg側でscale 10しているので調整
+          this.scale,
           (mb) => mb.width
-        ).map((masterbars) => new Row(masterbars));
+        ).map((masterbars, id) => new Row({ id, masterbars }));
         break;
     }
     for (const row of this.score.rows) {
+      row.score = this.score;
       for (const masterbar of row.masterbars) {
         masterbar.row = row;
       }
@@ -43,7 +50,7 @@ function splitByWidth<T>(
         const currentSum =
           current?.reduce((sum, el) => sum + weightSelector(el), 0) ?? 0;
         const itemWeight = weightSelector(item);
-
+        console.log();
         if (currentSum + itemWeight > width) {
           acc.push([item]);
         } else {

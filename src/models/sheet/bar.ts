@@ -20,8 +20,8 @@ export class Bar<
     return R.firstBy(this.staves, [(stave) => stave.width, "desc"])?.width ?? 0;
   }
   get height() {
-    // TODO: 複数staveの場合stave間のスペースを考慮する
-    return this.staves.reduce((acc, cur) => acc + cur.height, 0);
+    const lastStave = R.last(this.staves);
+    return (lastStave?.height ?? 0) + (lastStave?.y ?? 0);
   }
   get prev() {
     return this.track.bars[this.id - 1];

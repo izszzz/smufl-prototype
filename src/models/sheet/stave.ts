@@ -3,19 +3,26 @@ import { Barline, Clef } from "src/const/musicxml/4.0/musicxml";
 
 export class Stave {
   id;
-  clef;
   barlines;
   notes;
   bar!: Sheet.Bar;
+  _clef;
   get width() {
     return 0;
   }
   get height() {
     return 0;
   }
+  get y() {
+    return (this.height + 6.5) * this.id;
+  }
   get prev() {
     return this.bar.prev?.staves[this.id];
   }
+  get clef(): Clef {
+    return this._clef ? this._clef : this.prev!.clef;
+  }
+
   constructor({
     id,
     clef,
@@ -28,7 +35,7 @@ export class Stave {
     notes: Sheet.Note[];
   }) {
     this.id = id;
-    this.clef = clef;
+    this._clef = clef;
     this.barlines = barline;
     this.notes = notes;
   }
