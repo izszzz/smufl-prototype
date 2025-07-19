@@ -11,7 +11,6 @@ import {
 import { P, match } from "ts-pattern";
 
 export class Note extends Core.Note {
-  track!: Sheet.Track;
   bar!: Sheet.Bar;
   stave!: Sheet.Stave;
   chord;
@@ -30,7 +29,7 @@ export class Note extends Core.Note {
         .with(P.union("quarter", "half"), () => 2)
         .otherwise(() => 0);
     }
-    const sign = (this.stave.clef ?? this.stave.prev?.clef)?.$$.sign?.[0]._;
+    const sign = this.stave.clef.$$.sign?.[0]._;
     if (sign === "G") {
       return (
         ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +

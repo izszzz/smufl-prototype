@@ -10,7 +10,7 @@ type JSONParams = SetOptional<
     Omit<Core.Track, "score" | "id" | "notes" | "preset">,
     "start" | "duration" | "end"
   > & {
-    preset: number;
+    preset?: number;
     notes: (SetOptional<
       Omit<Core.Track["notes"][number], "id" | "pitch">,
       "duration" | "end" | "start"
@@ -72,12 +72,12 @@ export const create = (
     if (!R.hasAtLeast(params[key] ?? [], 1))
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      params[key]?.push({ ...defaultValue[key] });
+      params[key].push({ ...defaultValue[key] });
     for (const [i, keyParams] of (params[key] ?? []).entries()) {
-      const prev = params[key]?.[i - 1];
+      const prev = params[key][i - 1];
       if (prev) prev.end = keyParams.start;
       if (i === 0) keyParams.start ??= params.start;
-      if (params[key]?.length === i + 1) keyParams.end ??= params.end;
+      if (params[key].length === i + 1) keyParams.end ??= params.end;
     }
     for (const keyParams of params[key] ?? []) {
       if (R.isNonNullish(keyParams.end) && R.isNonNullish(keyParams.duration))
@@ -146,13 +146,13 @@ export const create = (
           start: track.start ?? 0,
           duration: track.duration ?? 0,
           end: track.end ?? 0,
-          preset: new Core.Unit.Preset(track.preset ?? 0),
+          preset: new Core.Unit.Preset(track.preset),
         })
     ),
     start: cparams.start ?? 0,
     duration: cparams.duration ?? 0,
     end: cparams.end ?? 0,
   });
-  if (process.env.NODE_ENV === "development") console.log(core);
+  if (process.env.NODE_ENV === "development") console.log({ core });
   return core;
 };

@@ -9,28 +9,33 @@ declare module "sheet" {
 }
 
 Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
+  const bars = this.tracks
+    .flatMap((track) => track.bars)
+    .map(
+      (bar) =>
+        new Sheet.Bar({
+          ...bar,
+          staves: bar.staves.map(
+            (stave) =>
+              new SMUFL.Stave({
+                ...stave,
+                // ここきもい
+                clef: stave._clef,
+                group: new SMUFL.Group({
+                  children: [],
+                }),
+              })
+          ),
+        })
+    );
+
   const score = new SMUFL.Score({
     ...this,
     tracks: this.tracks.map(
       (track) =>
         new Sheet.Track({
           ...track,
-          bars: track.bars.map(
-            (bar) =>
-              new Sheet.Bar({
-                ...bar,
-                staves: bar.staves.map((stave) => {
-                  console.log(stave);
-                  return new SMUFL.Stave({
-                    ...stave,
-                    clef: stave._clef,
-                    group: new SMUFL.Group({
-                      children: [],
-                    }),
-                  });
-                }),
-              })
-          ),
+          bars,
         })
     ),
   });

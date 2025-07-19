@@ -50,15 +50,17 @@ function App() {
       const file = input.files[0];
       if (!file) return;
       const importer = new Browser.Importer();
-      const core = await importer.import(file);
+      const score = await importer.import(file);
       const ctx = new AudioContext();
       const sheetController = new Sheet.Controller(
-        core!.toSMUFL(),
+        score!.toSMUFL(),
         Sheet.LayoutType.Horizontal
       );
       setSheetController(sheetController);
 
-      setAudioPlayer(new Audio.Controller(core!.toAudio(ctx), soundfont2, ctx));
+      setAudioPlayer(
+        new Audio.Controller(score!.toAudio(ctx), soundfont2, ctx)
+      );
       layouting();
     }
   };

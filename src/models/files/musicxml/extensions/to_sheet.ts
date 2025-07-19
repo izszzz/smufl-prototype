@@ -136,7 +136,6 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
         for (const note of stave.notes) note.stave = stave;
       }
       for (const note of bar.notes) {
-        note.track = track;
         note.bar = bar;
       }
     }
