@@ -1,16 +1,23 @@
 import * as R from "remeda";
 import * as Sheet from "sheet";
 
-export class Masterbar<
-  Note extends Sheet.Note = Sheet.Note,
-  Stave extends Sheet.Stave = Sheet.Stave,
-  Bar extends Sheet.Bar<Note, Stave> = Sheet.Bar<Note, Stave>,
-> {
+export class Masterbar {
   id;
-  bars;
-  x = 0;
-  row: Sheet.Row | null = null;
+  rowId;
   score!: Sheet.Score;
+  get x(): number {
+    const prev = this.row.masterbars[this.row.masterbars.indexOf(this) - 1];
+    return prev ? prev.x + prev.width : 0;
+  }
+  get prev() {
+    return this.score.masterbars[this.id - 1];
+  }
+  get row() {
+    return this.score.rows.find((row) => row.id === this.rowId)!;
+  }
+  get bars() {
+    return this.score.bars.filter((bar) => bar.masterbarId === this.id);
+  }
   get width() {
     return R.firstBy(this.bars, [(bar) => bar.width, "desc"])?.width ?? 0;
   }
@@ -19,13 +26,13 @@ export class Masterbar<
     return this.bars.reduce((acc, cur) => acc + cur.height, 0);
   }
   get isRowFirst() {
-    return this.row?.masterbars[0] === this;
+    return this.row.masterbars[0] === this;
   }
   get isFirst() {
     return this.score.masterbars[0] === this;
   }
-  constructor({ id, bars }: { id: number; bars: Bar[] }) {
+  constructor({ id, rowId }: { id: number; rowId?: number }) {
     this.id = id;
-    this.bars = bars;
+    this.rowId = rowId;
   }
 }

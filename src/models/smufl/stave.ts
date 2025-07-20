@@ -5,22 +5,21 @@ import { Group } from "./group";
 import { Glyph } from "./glyph";
 
 export class Stave extends Sheet.Stave {
-  group: Group;
+  group!: Group;
+  declare score: SMUFL.Score;
+  get bar() {
+    return this.score.bars.find((bar) => bar.id === this.barId)!;
+  }
   override get width() {
     return this.group.width;
   }
   override get height() {
     return Glyph.find("barlines", (v) => v.includes("Single")).bBox.height;
   }
-  constructor({
-    group,
-    ...stave
-  }: { group: Group } & ConstructorParameters<typeof Sheet.Stave>[0]) {
-    super(stave);
-    this.group = group;
-  }
+
   setGroup() {
-    this.group = createStaveGroup(this);
+    // ビックリマーク消せたら消せ
+    this.group = createStaveGroup(this)!;
   }
 }
 

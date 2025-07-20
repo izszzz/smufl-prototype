@@ -12,7 +12,7 @@ type JSONParams = SetOptional<
   > & {
     preset?: number;
     notes: (SetOptional<
-      Omit<Core.Track["notes"][number], "id" | "pitch">,
+      Omit<Core.Track["notes"][number], "id" | "trackId" | "pitch">,
       "duration" | "end" | "start"
     > & { pitch: number | Core.Unit.Pitch })[];
   })[];
@@ -90,6 +90,22 @@ export const create = (
   }
 
   const cparams = params as JSONParams;
+  const notes = cparams.tracks.flatMap((track, trackId) =>
+    track.notes.map(
+      (note, id) =>
+        new Core.Note({
+          ...note,
+          id,
+          trackId,
+          pitch: R.isNumber(note.pitch)
+            ? new Core.Unit.Pitch(note.pitch)
+            : note.pitch,
+          start: note.start ?? 0,
+          duration: note.duration ?? 0,
+          end: note.end ?? 0,
+        })
+    )
+  );
   const core = new Core.Score({
     ...cparams,
     timesignatures:
@@ -125,24 +141,12 @@ export const create = (
             end: bpm.end ?? 0,
           })
       ) ?? [],
+    notes,
     tracks: cparams.tracks.map(
-      (track, id) =>
+      (track, trackId) =>
         new Core.Track({
           ...track,
-          id,
-          notes: track.notes.map(
-            (note, id) =>
-              new Core.Note({
-                ...note,
-                pitch: R.isNumber(note.pitch)
-                  ? new Core.Unit.Pitch(note.pitch)
-                  : note.pitch,
-                id,
-                start: note.start ?? 0,
-                duration: note.duration ?? 0,
-                end: note.end ?? 0,
-              })
-          ),
+          id: trackId,
           start: track.start ?? 0,
           duration: track.duration ?? 0,
           end: track.end ?? 0,

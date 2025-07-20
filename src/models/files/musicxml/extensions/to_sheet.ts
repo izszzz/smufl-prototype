@@ -9,15 +9,12 @@ declare module "musicxml" {
   }
 }
 MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
-  const score = new Sheet.Score({
-    name:
-      this.mxl["score-partwise"].$$.work?.[0]?.$$?.["work-title"]?.[0]?._ ?? "",
-    timesignatures: [],
-    keysignatures: [],
-    bpms: [],
-    tracks:
-      this.mxl["score-partwise"].$$.part?.map((part, trackIndex) => {
-        const bars = part.$$.measure?.map((measure, i) => {
+  const { notes, tracks, bars, staves, maxBarLength } = this.mxl[
+    "score-partwise"
+  ].$$.part?.reduce(
+    (acc, cur, trackId) => {
+      const bars =
+        cur.$$.measure?.map((measure, barId) => {
           const musicData = measure.$$;
           const notes = R.pipe(
             "note" in musicData && musicData.note ? musicData.note : [],
@@ -25,6 +22,9 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
               (note, id) =>
                 new Sheet.Note({
                   id,
+                  staveId: -1 /* will be set later */,
+                  barId,
+                  trackId,
                   voice: note.$$.voice,
                   rest: "rest" in note.$$ ? note.$$.rest?.[0] : undefined,
                   chord: "chord" in note.$$,
@@ -48,6 +48,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                 })
             )
           );
+          acc.notes.push(...notes);
 
           const attributes =
             "attributes" in musicData ? musicData.attributes : [];
@@ -67,82 +68,89 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
             duration: 0,
             end: 0,
           });
-          const staves = R.times(
-            attributes?.[0]?.$$?.staves?.[0]?._ ?? 1,
-            (i) => {
-              const staveNotes = notes.filter(
-                (note) => (note.staff?.[0]._ ?? 1) - 1 === i
-              );
-              const clef = attributes?.[0]?.$$?.clef?.find(
-                (clef) => (clef.$?.number ?? 1) === i + 1
-              );
-              return new Sheet.Stave({
+          R.times(attributes?.[0]?.$$?.staves?.[0]?._ ?? 1, (i) => {
+            const staveNotes = notes.filter(
+              (note) => (note.staff?.[0]._ ?? 1) - 1 === i
+            );
+            const clef = attributes?.[0]?.$$?.clef?.find(
+              (clef) => (clef.$?.number ?? 1) === i + 1
+            );
+            acc.staves.push(
+              new Sheet.Stave({
                 id: i,
+                barId,
                 clef,
                 barline:
                   "barline" in musicData ? musicData.barline?.[0] : undefined,
                 notes: staveNotes,
-              });
-            }
-          );
+              })
+            );
+          });
           return new Sheet.Bar({
-            id: i,
-            notes,
+            id: barId,
+            trackId,
+            masterbarId: barId,
             timesignature,
             staffLines: 5,
-            staves,
             start: 0,
             duration: 0,
             end: 0,
           });
-        });
-        return new Sheet.Track({
-          id: trackIndex,
-          name: part.$?.id ?? "",
-          notes: bars?.flatMap((bar) => bar.notes) ?? [],
-          bars: bars ?? [],
+        }) ?? [];
+      if (acc.maxBarLength < bars.length) acc.maxBarLength = bars.length;
+      acc.bars.push(...bars);
+      acc.tracks.push(
+        new Sheet.Track({
+          id: trackId,
+          name: cur.$?.id ?? "",
           preset: new Core.Unit.Preset(0),
           staffLines: 5,
           start: 0,
           duration: 0,
           end: 0,
-        });
-      }) ?? [],
+        })
+      );
+      return acc;
+    },
+    { notes: [], bars: [], tracks: [], staves: [], maxBarLength: 0 } as {
+      notes: Sheet.Note[];
+      bars: Sheet.Bar[];
+      tracks: Sheet.Track[];
+      staves: Sheet.Stave[];
+      maxBarLength: number;
+    }
+  ) ?? { notes: [], bars: [], tracks: [], staves: [], maxBarLength: 0 };
+  const score = new Sheet.Score({
+    name:
+      this.mxl["score-partwise"].$$.work?.[0]?.$$?.["work-title"]?.[0]?._ ?? "",
+    timesignatures: [],
+    keysignatures: [],
+    bpms: [],
+    rows: [],
+    staves,
+    notes,
+    tracks,
+    bars,
+    masterbars: R.times(maxBarLength, (i) => new Sheet.Masterbar({ id: i })),
     start: 0,
     duration: 0,
     end: 0,
   });
 
-  const maxLengthBarsTrack =
-    R.firstBy(score.tracks, [(track) => track.bars.length, "desc"])?.bars
-      .length ?? 0;
-
-  R.times(maxLengthBarsTrack, (i) => {
-    const bars = R.times(score.tracks.length, (j) => score.tracks[j]!.bars[i]!);
-    score.masterbars.push(
-      new Sheet.Masterbar({
-        id: i,
-        bars,
-      })
-    );
-    return;
-  });
-
   for (const track of score.tracks) {
     for (const bar of track.bars) {
-      bar.track = track;
-      for (const stave of bar.staves) {
-        stave.bar = bar;
-        for (const note of stave.notes) note.stave = stave;
-      }
       for (const note of bar.notes) {
-        note.bar = bar;
+        note.barId = bar.id;
+      }
+      for (const stave of bar.staves) {
+        stave.barId = bar.id;
+        for (const note of stave.notes) note.stave = stave;
       }
     }
   }
   for (const masterbar of score.masterbars) {
     for (const bar of masterbar.bars) {
-      bar.masterbar = masterbar;
+      bar.masterbarId = masterbar.id;
     }
   }
   if (process.env.NODE_ENV === "development") console.log({ sheet: score });

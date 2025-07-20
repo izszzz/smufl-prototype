@@ -30,7 +30,6 @@ function App() {
         stave.setGroup();
         stave.group.order();
       });
-    sheetController.score.rows.forEach((row) => row.order());
 
     if (ref.current) {
       while (ref.current.firstChild)

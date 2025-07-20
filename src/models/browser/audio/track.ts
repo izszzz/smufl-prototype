@@ -1,8 +1,6 @@
-import * as Audio from ".";
 import * as Core from "core";
 
-export class Track extends Core.Track<Audio.Note> {
-  score!: Audio.Score;
+export class Track extends Core.Track {
   volume;
   audioContext;
   constructor({
@@ -10,7 +8,7 @@ export class Track extends Core.Track<Audio.Note> {
     ...core
   }: {
     audioContext: AudioContext;
-  } & Core.Track<Audio.Note>) {
+  } & ConstructorParameters<typeof Core.Track>[0]) {
     super(core);
     this.volume = audioContext.createGain();
     this.audioContext = audioContext;

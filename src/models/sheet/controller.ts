@@ -13,27 +13,21 @@ export class Controller {
     this.layoutType = layoutType;
     switch (layoutType) {
       case LayoutType.Horizontal:
-        this.score.rows = [
-          new Row({
-            id: 0,
-            masterbars: this.score.masterbars,
-          }),
-        ];
+        for (const masterbar of this.score.masterbars) masterbar.rowId = 0;
+        this.score.rows = [new Row({ id: 0 })];
         break;
       case LayoutType.Vertical:
         this.score.rows = splitByWidth(
           this.score.masterbars,
           this.scale,
           (mb) => mb.width
-        ).map((masterbars, id) => new Row({ id, masterbars }));
+        ).map((masterbars, id) => {
+          for (const masterbar of masterbars) masterbar.rowId = id;
+          return new Row({ id });
+        });
         break;
     }
-    for (const row of this.score.rows) {
-      row.score = this.score;
-      for (const masterbar of row.masterbars) {
-        masterbar.row = row;
-      }
-    }
+    for (const row of this.score.rows) row.score = this.score;
   }
 }
 

@@ -2,27 +2,24 @@ import * as Core from "core";
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
 
-export class Track<
-  Note extends Sheet.Note = Sheet.Note,
-  Bar extends Sheet.Bar = Sheet.Bar,
-> extends Core.Track<Note> {
-  bars: Bar[] = [];
+export class Track extends Core.Track {
   staffLines;
+  declare score: Sheet.Score;
   get staff() {
     return SMUFL.Glyph.find("staves", (v) =>
       v.includes(this.staffLines.toString())
     );
   }
+  get bars() {
+    return this.score.bars.filter((bar) => bar.trackId === this.id);
+  }
   constructor({
-    bars,
     staffLines,
     ...track
   }: {
-    bars: Bar[];
     staffLines: number;
-  } & Core.Track<Note>) {
+  } & ConstructorParameters<typeof Core.Track>[0]) {
     super(track);
-    this.bars = bars;
     this.staffLines = staffLines;
   }
 }

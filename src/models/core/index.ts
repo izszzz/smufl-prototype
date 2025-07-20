@@ -14,8 +14,6 @@ export * as Unit from "./unit";
 
 export const convertTimeToSeconds = (time: number, bpm: number) =>
   (60 * time) / bpm;
-export const createId = (ids: Identifier[]) =>
-  (R.firstBy(ids, [R.prop("id"), "desc"])?.id ?? 0) + 1;
 export const getEventsStart = (events: Event[]) =>
   R.firstBy(events, [R.prop("start"), "asc"])?.start ?? 0;
 export const getEventsEnd = (events: Event[]) =>

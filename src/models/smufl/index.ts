@@ -9,10 +9,11 @@ import { P, match } from "ts-pattern";
 export * from "./bbox";
 export * from "./glyph";
 export * from "./stave";
-export * from "./row";
 export * from "./score";
-export * from "./masterbar";
 export * from "./stave";
+export * from "./bar";
+export * from "./masterbar";
+export * from "./row";
 export * from "./group";
 export * from "./text";
 

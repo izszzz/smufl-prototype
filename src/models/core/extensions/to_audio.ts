@@ -19,13 +19,8 @@ Core.Score.prototype.toAudio = function (
         new Audio.Track({
           ...track,
           audioContext,
-          notes: track.notes.map((note) => new Audio.Note(note)),
         })
     ),
   });
-  for (const track of score.tracks) {
-    track.score = score;
-    for (const note of track.notes) note.track = track;
-  }
   return score;
 };

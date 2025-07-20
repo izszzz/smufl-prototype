@@ -1,30 +1,27 @@
 import * as Core from "core";
 
-export class Track<Note extends Core.Note = Core.Note>
-  extends Core.Event
-  implements Core.Identifier
-{
+export class Track extends Core.Event implements Core.Identifier {
   id;
-  notes;
   name;
   preset;
+  score!: Core.Score;
+  get notes() {
+    return this.score.notes.filter((note) => note.trackId === this.id);
+  }
   constructor({
     id,
     name,
-    notes,
     preset,
     ...event
   }: {
     id: number;
     name?: string;
     preset: Core.Unit.Preset;
-    notes: Note[];
   } & Core.EventConstructorParameter) {
     if ("end" in event) super(event);
     else super(event);
     this.id = id;
     this.name = name;
     this.preset = preset;
-    this.notes = notes;
   }
 }
