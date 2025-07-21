@@ -13,6 +13,12 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
     staves: this.staves.map(
       (stave) => new SMUFL.Stave({ ...stave, clef: stave._clef })
     ),
+    bars: this.bars.map((bar) => new SMUFL.Bar(bar)),
+    masterbars: this.masterbars.map(
+      (masterbar) => new SMUFL.Masterbar(masterbar)
+    ),
+    notes: this.notes.map((note) => new SMUFL.Note(note)),
+    rows: this.rows.map((row) => new SMUFL.Row(row)),
   });
 
   if (process.env.NODE_ENV === "development") console.log({ smufl: score });

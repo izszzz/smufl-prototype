@@ -28,6 +28,7 @@ export class Controller {
         break;
     }
     for (const row of this.score.rows) row.score = this.score;
+    console.log(this.score);
   }
 }
 

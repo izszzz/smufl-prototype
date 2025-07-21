@@ -8,8 +8,8 @@ import { P, match } from "ts-pattern";
 
 export * from "./bbox";
 export * from "./glyph";
-export * from "./stave";
 export * from "./score";
+export * from "./note";
 export * from "./stave";
 export * from "./bar";
 export * from "./masterbar";

@@ -10,6 +10,11 @@ export class Stave extends Sheet.Stave {
   get bar() {
     return this.score.bars.find((bar) => bar.id === this.barId)!;
   }
+  get notes() {
+    return this.score.notes.filter(
+      (note) => note.staveId === this.id && note.barId === this.barId
+    );
+  }
   override get width() {
     return this.group.width;
   }

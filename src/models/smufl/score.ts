@@ -2,7 +2,7 @@ import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
 
 export class Score<
-  Note extends Sheet.Note = Sheet.Note,
+  Note extends SMUFL.Note = SMUFL.Note,
   Stave extends SMUFL.Stave = SMUFL.Stave,
   Bar extends SMUFL.Bar = SMUFL.Bar,
   Track extends Sheet.Track = Sheet.Track,

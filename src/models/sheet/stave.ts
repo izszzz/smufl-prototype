@@ -5,17 +5,21 @@ export class Stave {
   id;
   barId;
   barlines;
-  notes;
   _clef;
   score!: Sheet.Score;
   get bar() {
     return this.score.bars.find((bar) => bar.id === this.barId)!;
   }
+  get notes() {
+    return this.score.notes.filter(
+      (note) => note.staveId === this.id && note.barId === this.barId
+    );
+  }
   get width() {
-    return 0;
+    return -1;
   }
   get height() {
-    return 0;
+    return -1;
   }
   get y() {
     return (this.height + 6.5) * this.id;
@@ -32,18 +36,15 @@ export class Stave {
     barId,
     clef,
     barline,
-    notes,
   }: {
     id: number;
     barId: number;
     clef?: Clef;
     barline?: Barline;
-    notes: Sheet.Note[];
   }) {
     this.id = id;
     this.barId = barId;
     this._clef = clef;
     this.barlines = barline;
-    this.notes = notes;
   }
 }

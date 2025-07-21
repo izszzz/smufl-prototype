@@ -68,24 +68,28 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
             duration: 0,
             end: 0,
           });
-          R.times(attributes?.[0]?.$$?.staves?.[0]?._ ?? 1, (i) => {
-            const staveNotes = notes.filter(
-              (note) => (note.staff?.[0]._ ?? 1) - 1 === i
-            );
-            const clef = attributes?.[0]?.$$?.clef?.find(
-              (clef) => (clef.$?.number ?? 1) === i + 1
-            );
-            acc.staves.push(
-              new Sheet.Stave({
-                id: i,
+          const staves = R.times(
+            attributes?.[0]?.$$?.staves?.[0]?._ ?? 1,
+            (staveId) => {
+              const staveNotes = notes.filter(
+                (note) => (note.staff?.[0]._ ?? 1) - 1 === staveId
+              );
+              console.log(staveNotes);
+              for (const note of staveNotes) {
+                note.staveId = staveId;
+              }
+              return new Sheet.Stave({
+                id: staveId,
                 barId,
-                clef,
+                clef: attributes?.[0]?.$$?.clef?.find(
+                  (clef) => (clef.$?.number ?? 1) === staveId + 1
+                ),
                 barline:
                   "barline" in musicData ? musicData.barline?.[0] : undefined,
-                notes: staveNotes,
-              })
-            );
-          });
+              });
+            }
+          );
+          acc.staves.push(...staves);
           return new Sheet.Bar({
             id: barId,
             trackId,
@@ -144,7 +148,6 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
       }
       for (const stave of bar.staves) {
         stave.barId = bar.id;
-        for (const note of stave.notes) note.stave = stave;
       }
     }
   }
