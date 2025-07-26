@@ -1,7 +1,7 @@
 import * as Core from "core";
 
-export class Track extends Core.Event implements Core.Identifier {
-  id;
+export class Track extends Core.Event {
+  readonly id;
   name;
   preset;
   score!: Core.Score;

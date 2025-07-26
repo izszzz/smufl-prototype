@@ -4,6 +4,9 @@ import * as SMUFL from "smufl";
 export class Masterbar extends Sheet.Masterbar {
   declare score: SMUFL.Score;
   override get bars() {
-    return this.score.bars.filter((bar) => bar.masterbarId === this.id);
+    return super.bars as SMUFL.Bar[];
+  }
+  get tracks() {
+    return super.tracks as SMUFL.Track[];
   }
 }

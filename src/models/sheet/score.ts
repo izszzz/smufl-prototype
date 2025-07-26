@@ -4,14 +4,14 @@ import * as R from "remeda";
 
 export class Score<
   Note extends Sheet.Note = Sheet.Note,
+  Track extends Sheet.Track = Sheet.Track,
   Stave extends Sheet.Stave = Sheet.Stave,
   Bar extends Sheet.Bar = Sheet.Bar,
-  Track extends Sheet.Track = Sheet.Track,
+  Masterbar extends Sheet.Masterbar = Sheet.Masterbar,
+  Row extends Sheet.Row = Sheet.Row,
   Timesignature extends Sheet.Timesignature = Sheet.Timesignature,
   Keysignature extends Sheet.Keysignature = Sheet.Keysignature,
   Bpm extends Sheet.Bpm = Sheet.Bpm,
-  Masterbar extends Sheet.Masterbar = Sheet.Masterbar,
-  Row extends Sheet.Row = Sheet.Row,
 > extends Core.Score<Note, Track, Timesignature, Keysignature, Bpm> {
   masterbars;
   rows;

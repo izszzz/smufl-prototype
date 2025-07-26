@@ -3,7 +3,7 @@ import * as R from "remeda";
 
 const paddingBottom = 4;
 export class Row {
-  id;
+  readonly id;
   score!: Sheet.Score;
   get masterbars() {
     return this.score.masterbars.filter(

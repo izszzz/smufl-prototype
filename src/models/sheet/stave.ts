@@ -2,8 +2,9 @@ import * as Sheet from "sheet";
 import { Barline, Clef } from "src/const/musicxml/4.0/musicxml";
 
 export class Stave {
-  id;
+  readonly id;
   barId;
+  trackId;
   barlines;
   _clef;
   score!: Sheet.Score;
@@ -12,7 +13,10 @@ export class Stave {
   }
   get notes() {
     return this.score.notes.filter(
-      (note) => note.staveId === this.id && note.barId === this.barId
+      (note) =>
+        note.staveId === this.id &&
+        note.barId === this.barId &&
+        note.trackId === this.trackId
     );
   }
   get width() {
@@ -34,16 +38,19 @@ export class Stave {
   constructor({
     id,
     barId,
+    trackId,
     clef,
     barline,
   }: {
     id: number;
     barId: number;
+    trackId: number;
     clef?: Clef;
     barline?: Barline;
   }) {
     this.id = id;
     this.barId = barId;
+    this.trackId = trackId;
     this._clef = clef;
     this.barlines = barline;
   }

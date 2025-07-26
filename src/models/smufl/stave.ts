@@ -1,30 +1,26 @@
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
 import * as R from "remeda";
-import { Group } from "./group";
-import { Glyph } from "./glyph";
 
 export class Stave extends Sheet.Stave {
-  group!: Group;
+  group!: SMUFL.Group;
   declare score: SMUFL.Score;
-  get bar() {
-    return this.score.bars.find((bar) => bar.id === this.barId)!;
+  override get bar() {
+    return super.bar as SMUFL.Bar;
   }
-  get notes() {
-    return this.score.notes.filter(
-      (note) => note.staveId === this.id && note.barId === this.barId
-    );
+  override get notes() {
+    return super.notes as SMUFL.Note[];
   }
   override get width() {
     return this.group.width;
   }
   override get height() {
-    return Glyph.find("barlines", (v) => v.includes("Single")).bBox.height;
+    return SMUFL.Glyph.find("barlines", (v) => v.includes("Single")).bBox
+      .height;
   }
 
   setGroup() {
-    // ビックリマーク消せたら消せ
-    this.group = createStaveGroup(this)!;
+    this.group = createStaveGroup(this);
   }
 }
 
@@ -34,7 +30,7 @@ function createStaveGroup(stave: Sheet.Stave) {
   });
 
   if (stave.bar.masterbar.isRowFirst) {
-    const glyph = SMUFL.findClef(stave.clef);
+    const glyph = SMUFL.Glyph.findClef(stave.clef);
     if (glyph)
       staveGroup.children.push(
         new SMUFL.Text({
@@ -86,28 +82,29 @@ function createStaveGroup(stave: Sheet.Stave) {
     }
 
     if (R.isNonNullish(note.rest) && note.type) {
-      const glyph = SMUFL.findRest(note.rest, note.type);
+      const glyph = SMUFL.Glyph.findRest(note.rest, note.type);
       if (glyph) noteGroup.children.push(new SMUFL.Text({ glyph }));
     } else {
-      if (!note.type) return;
-      const stem = note.stem;
-      const noteHeadsGlyph = SMUFL.findNotehead(note.type);
-      if (noteHeadsGlyph) {
-        noteGroup.children.push(
-          new SMUFL.Text({
-            glyph: noteHeadsGlyph,
-          })
-        );
+      if (note.type) {
+        const stem = note.stem;
+        const noteHeadsGlyph = SMUFL.Glyph.findNotehead(note.type);
+        if (noteHeadsGlyph) {
+          noteGroup.children.push(
+            new SMUFL.Text({
+              glyph: noteHeadsGlyph,
+            })
+          );
 
-        if (stem) {
-          const stemText = new SMUFL.Text({
-            glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
-          });
-          if (stem._ === "down") {
-            stemText.dx -= noteHeadsGlyph.bBox.width;
-            stemText.rotate = 180;
+          if (stem) {
+            const stemText = new SMUFL.Text({
+              glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
+            });
+            if (stem._ === "down") {
+              stemText.dx -= noteHeadsGlyph.bBox.width;
+              stemText.rotate = 180;
+            }
+            noteGroup.children.push(stemText);
           }
-          noteGroup.children.push(stemText);
         }
       }
     }

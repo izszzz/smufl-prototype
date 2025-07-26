@@ -27,64 +27,78 @@ SMUFL.Score.prototype.toSVG = function (
   svg
     .append("g")
     .attr("type", "score")
-    .attr("transform", `translate(0, 6.5)`)
+    .attr("transform", createTranslate(0, 6.5))
     .call((g) => {
       g.selectAll("g[type=row]")
         .data(this.rows)
         .join("g")
         .attr("type", "row")
-        .attr("transform", (row) => `translate(0, ${row.y})`)
+        .attr("transform", (row) => createTranslate(0, row.y))
         .each(function (row) {
           const g = d3.select(this);
           g.selectAll("g[type=masterbar]")
             .data(row.masterbars)
             .join("g")
             .attr("type", "masterbar")
-            .attr("transform", (masterbar) => `translate(${masterbar.x}, 0)`)
+            .attr("transform", (masterbar) => createTranslate(masterbar.x, 0))
             .each(function (masterbar) {
               const g = d3.select(this);
-              g.selectAll("g[type=bar]")
-                .data(masterbar.bars)
+              g.selectAll("g[type=track]")
+                .data(masterbar.tracks)
                 .join("g")
-                .attr("type", "bar")
-                .each(function (bar) {
+                .attr("type", "track")
+                .attr("transform", (track) => createTranslate(0, track.y))
+                .each(function (track) {
                   const g = d3.select(this);
-                  g.selectAll("g[type=stave]")
-                    .data(bar.staves)
+                  g.selectAll("g[type=bar]")
+                    .data(track.getMasterbarBars(masterbar.id))
                     .join("g")
-                    .attr("type", "stave")
-                    .attr("transform", (stave) => `translate(0, ${stave.y})`)
-                    .each(function (stave) {
-                      renderGroup(this, stave.group);
+                    .attr("type", "bar")
+                    .each(function (bar) {
                       const g = d3.select(this);
-                      g.append("g").call((g) => {
-                        g.append("g")
-                          .attr("type", "staff")
-                          .attr("transform", `translate(0, 0)`)
-                          .call((g) => {
-                            R.times(bar.staffLines, (i) => {
-                              g.append("path")
-                                .attr("stroke", "black")
-                                .attr(
-                                  "stroke-width",
-                                  SMUFL.BravuraMetadata.engravingDefaults
-                                    .staffLineThickness
-                                )
-                                .attr(
-                                  "d",
-                                  d3.line()([
-                                    [0, -i],
-                                    [stave.group.width, -i],
-                                  ])
-                                );
-                            });
+                      g.selectAll("g[type=stave]")
+                        .data(bar.staves)
+                        .join("g")
+                        .attr("type", "stave")
+                        .attr("transform", (stave) =>
+                          createTranslate(0, stave.y)
+                        )
+                        .each(function (stave) {
+                          renderGroup(this, stave.group);
+                          const g = d3.select(this);
+                          g.append("g").call((g) => {
+                            g.append("g")
+                              .attr("type", "staff")
+                              .attr("transform", createTranslate(0, 0))
+                              .call((g) => {
+                                R.times(bar.staffLines, (i) => {
+                                  g.append("path")
+                                    .attr("stroke", "black")
+                                    .attr(
+                                      "stroke-width",
+                                      SMUFL.BravuraMetadata.engravingDefaults
+                                        .staffLineThickness
+                                    )
+                                    .attr(
+                                      "d",
+                                      d3.line()([
+                                        [0, -i],
+                                        [stave.group.width, -i],
+                                      ])
+                                    );
+                                });
+                              });
                           });
-                      });
+                        });
                     });
                 });
             });
         });
     });
+
+  function createTranslate(x: number, y: number) {
+    return `translate(${x}, ${y})`;
+  }
 
   function renderGroup(element: d3.BaseType | SVGGElement, group: SMUFL.Group) {
     const g = d3.select(element);

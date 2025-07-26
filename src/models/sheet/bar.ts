@@ -2,8 +2,8 @@ import * as R from "remeda";
 import * as Core from "core";
 import * as Sheet from "sheet";
 
-export class Bar extends Core.Event implements Core.Identifier {
-  id;
+export class Bar extends Core.Event {
+  readonly id;
   trackId;
   masterbarId;
   staffLines;
@@ -21,14 +21,16 @@ export class Bar extends Core.Event implements Core.Identifier {
     return this.score.notes.filter((note) => note.barId === this.id);
   }
   get staves() {
-    return this.score.staves.filter((stave) => stave.barId === this.id);
+    return this.score.staves.filter(
+      (stave) => stave.barId === this.id && stave.trackId === this.trackId
+    );
   }
   get width() {
     return R.firstBy(this.staves, [(stave) => stave.width, "desc"])?.width ?? 0;
   }
   get height() {
     const lastStave = R.last(this.staves);
-    return (lastStave?.height ?? 0) + (lastStave?.y ?? 0);
+    return lastStave ? lastStave.height + lastStave.y : 0;
   }
   get prev() {
     return this.track!.bars[this.id - 1];

@@ -3,7 +3,7 @@ import * as SMUFL from "smufl";
 
 export class Bar extends Sheet.Bar {
   declare score: SMUFL.Score;
-  get staves() {
-    return this.score.staves.filter((stave) => stave.barId === this.id);
+  override get staves() {
+    return super.staves as SMUFL.Stave[];
   }
 }

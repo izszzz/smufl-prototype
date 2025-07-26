@@ -3,12 +3,12 @@ import { Event } from "./event";
 import Metadata from "./metadata.json";
 
 export * from "./event";
-export * from "./note";
 export * from "./track";
-export * from "./score";
+export * from "./note";
 export * from "./timesignature";
 export * from "./keysignature";
 export * from "./bpm";
+export * from "./score";
 export * from "./create";
 export * as Unit from "./unit";
 
@@ -19,7 +19,4 @@ export const getEventsStart = (events: Event[]) =>
 export const getEventsEnd = (events: Event[]) =>
   R.firstBy(events, [R.prop("end"), "desc"])?.end ?? 0;
 
-export interface Identifier {
-  readonly id: number;
-}
 export { Metadata };

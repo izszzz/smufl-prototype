@@ -1,7 +1,7 @@
 import * as Core from "core";
 
-export class Note extends Core.Event implements Core.Identifier {
-  id;
+export class Note extends Core.Event {
+  readonly id;
   trackId;
   pitch;
   constructor({

@@ -9,6 +9,7 @@ declare module "musicxml" {
   }
 }
 MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
+  console.log(this);
   const { notes, tracks, bars, staves, maxBarLength } = this.mxl[
     "score-partwise"
   ].$$.part?.reduce(
@@ -74,13 +75,11 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
               const staveNotes = notes.filter(
                 (note) => (note.staff?.[0]._ ?? 1) - 1 === staveId
               );
-              console.log(staveNotes);
-              for (const note of staveNotes) {
-                note.staveId = staveId;
-              }
+              for (const note of staveNotes) note.staveId = staveId;
               return new Sheet.Stave({
                 id: staveId,
                 barId,
+                trackId,
                 clef: attributes?.[0]?.$$?.clef?.find(
                   (clef) => (clef.$?.number ?? 1) === staveId + 1
                 ),
@@ -141,21 +140,6 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
     end: 0,
   });
 
-  for (const track of score.tracks) {
-    for (const bar of track.bars) {
-      for (const note of bar.notes) {
-        note.barId = bar.id;
-      }
-      for (const stave of bar.staves) {
-        stave.barId = bar.id;
-      }
-    }
-  }
-  for (const masterbar of score.masterbars) {
-    for (const bar of masterbar.bars) {
-      bar.masterbarId = masterbar.id;
-    }
-  }
   if (process.env.NODE_ENV === "development") console.log({ sheet: score });
   return score;
 };
