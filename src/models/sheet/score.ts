@@ -42,10 +42,14 @@ export class Score<
     this.staves = staves;
     this.rows = rows;
     this.masterbars = masterbars;
-    for (const note of this.notes) note.score = this;
-    for (const bar of bars) bar.score = this;
-    for (const track of this.tracks) track.score = this;
-    for (const stave of this.staves) stave.score = this;
-    for (const masterbar of this.masterbars) masterbar.score = this;
+    for (const data of [
+      ...this.notes,
+      ...this.tracks,
+      ...this.staves,
+      ...this.bars,
+      ...this.masterbars,
+    ]) {
+      data.score = this;
+    }
   }
 }
