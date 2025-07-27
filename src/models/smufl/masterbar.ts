@@ -1,7 +1,12 @@
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
 
-export class Masterbar<
-  Note extends Sheet.Note = Sheet.Note,
-  Stave extends SMUFL.Stave = SMUFL.Stave,
-> extends Sheet.Masterbar<Note, Stave, Sheet.Bar<Note, Stave>> {}
+export class Masterbar extends Sheet.Masterbar {
+  declare score: SMUFL.Score;
+  override get bars() {
+    return super.bars as SMUFL.Bar[];
+  }
+  override get tracks() {
+    return super.tracks as SMUFL.Track[];
+  }
+}

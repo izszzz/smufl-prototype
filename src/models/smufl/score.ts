@@ -2,11 +2,23 @@ import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
 
 export class Score<
-  Note extends Sheet.Note = Sheet.Note,
+  Note extends SMUFL.Note = SMUFL.Note,
+  Track extends SMUFL.Track = SMUFL.Track,
   Stave extends SMUFL.Stave = SMUFL.Stave,
-  Bar extends Sheet.Bar<Note, Stave> = Sheet.Bar<Note, Stave>,
-  Track extends Sheet.Track<Note, Bar> = Sheet.Track<Note, Bar>,
+  Bar extends SMUFL.Bar = SMUFL.Bar,
+  Masterbar extends SMUFL.Masterbar = SMUFL.Masterbar,
+  Row extends SMUFL.Row = SMUFL.Row,
   Timesignature extends Sheet.Timesignature = Sheet.Timesignature,
   Keysignature extends Sheet.Keysignature = Sheet.Keysignature,
   Bpm extends Sheet.Bpm = Sheet.Bpm,
-> extends Sheet.Score<Note, Track, Timesignature, Keysignature, Bpm, Stave> {}
+> extends Sheet.Score<
+  Note,
+  Track,
+  Stave,
+  Bar,
+  Masterbar,
+  Row,
+  Timesignature,
+  Keysignature,
+  Bpm
+> {}

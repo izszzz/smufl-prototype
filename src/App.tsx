@@ -2,14 +2,12 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "soundfont2";
 import * as Browser from "./models/browser";
 import * as Sheet from "./models/sheet";
-import * as Core from "core";
-import { Player } from "./models/browser/audio/player";
+import * as Audio from "./models/browser/audio/controller";
 
 function App() {
-  const [fontSize, setFontSize] = useState(30);
-  const [audioPlayer, setAudioPlayer] = useState<Player>();
+  const [sheetController, setSheetController] = useState<Sheet.Controller>();
+  const [audioPlayer, setAudioPlayer] = useState<Audio.Controller>();
   const [soundfont2, setSoundfont2] = useState<Soundfont2>();
-  const [core, setCore] = useState<Core.Score | null>(null);
 
   const ref = useRef<SVGSVGElement>(null);
 
@@ -19,6 +17,30 @@ function App() {
       setSoundfont2(Soundfont2.create(new Uint8Array(buffer)));
     })();
   }, []);
+  const layouting = () => {
+    if (!sheetController) return;
+    sheetController.layout(sheetController.layoutType);
+    sheetController.score.rows
+      .flatMap((row) =>
+        row.masterbars.flatMap((masterbar) =>
+          masterbar.bars.flatMap((bar) => bar.staves)
+        )
+      )
+      .map((stave) => {
+        stave.setGroup();
+        stave.group.order();
+      });
+
+    if (ref.current) {
+      while (ref.current.firstChild)
+        ref.current.removeChild(ref.current.firstChild);
+      const svg = sheetController.score.toSVG(500, 500, {
+        ratio: 4,
+        scale: sheetController.scale,
+      });
+      if (svg) ref.current.appendChild(svg);
+    }
+  };
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
     const input = event.target;
@@ -27,29 +49,28 @@ function App() {
       const file = input.files[0];
       if (!file) return;
       const importer = new Browser.Importer();
-      await importer.import(file);
-      if (ref.current) {
-        while (ref.current.firstChild)
-          ref.current.removeChild(ref.current.firstChild);
-        if (!(importer.core instanceof Sheet.Score)) {
-          importer.core = importer.core.toSheet();
-        }
-        setCore(importer.core);
+      const score = await importer.import(file);
+      const ctx = new AudioContext();
+      const sheetController = new Sheet.Controller(
+        score!.toSMUFL(),
+        Sheet.LayoutType.Horizontal
+      );
+      setSheetController(sheetController);
 
-        importer.core.setLayoutType(Sheet.LayoutType.Horizontal);
-        ref.current.appendChild(importer.core.toSVG({ ratio: 4 }));
-        setAudioPlayer(new Player(importer.core, soundfont2));
-      }
+      setAudioPlayer(
+        new Audio.Controller(score!.toAudio(ctx), soundfont2, ctx)
+      );
+      layouting();
     }
   };
 
   return (
     <div>
-      <h3>{core?.name}</h3>
+      <h3>{sheetController?.score.name}</h3>
       <div
         ref={ref}
         className="bravura"
-        style={{ padding: "30px", height: "70vh" }}
+        style={{ height: "70vh", overflow: "auto" }}
       />
       <button
         type="button"
@@ -78,14 +99,30 @@ function App() {
         }}
       />
       <label>
-        fontSize
+        scale
         <input
           type="number"
-          value={fontSize}
-          onChange={(e) => setFontSize(Number(e.target.value))}
+          defaultValue={30}
+          onChange={(e) => {
+            if (sheetController) sheetController.scale = Number(e.target.value);
+            layouting();
+          }}
         />
       </label>
-      <label>layout</label>
+
+      <label>
+        layout
+        <select
+          onChange={(e) => {
+            if (sheetController)
+              sheetController.layoutType = Number(e.target.value);
+            layouting();
+          }}
+        >
+          <option value={Sheet.LayoutType.Horizontal}>horizontal</option>
+          <option value={Sheet.LayoutType.Vertical}>vertical</option>
+        </select>
+      </label>
     </div>
   );
 }

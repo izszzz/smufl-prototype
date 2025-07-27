@@ -2,31 +2,56 @@ import * as Sheet from "sheet";
 import { Barline, Clef } from "src/const/musicxml/4.0/musicxml";
 
 export class Stave {
-  id;
-  clef;
+  readonly id;
+  barId;
+  trackId;
   barlines;
-  notes;
-  bar!: Sheet.Bar;
+  _clef;
+  score!: Sheet.Score;
+  get bar() {
+    return this.score.bars.find((bar) => bar.id === this.barId)!;
+  }
+  get notes() {
+    return this.score.notes.filter(
+      (note) =>
+        note.staveId === this.id &&
+        note.barId === this.barId &&
+        note.trackId === this.trackId
+    );
+  }
   get width() {
-    return 0;
+    return -1;
+  }
+  get height() {
+    return -1;
+  }
+  get y() {
+    return (this.height + 6.5) * this.id;
   }
   get prev() {
     return this.bar.prev?.staves[this.id];
   }
+  get clef(): Clef {
+    return this._clef ? this._clef : this.prev!.clef;
+  }
+
   constructor({
     id,
+    barId,
+    trackId,
     clef,
     barline,
-    notes,
   }: {
     id: number;
+    barId: number;
+    trackId: number;
     clef?: Clef;
     barline?: Barline;
-    notes: Sheet.Note[];
   }) {
     this.id = id;
-    this.clef = clef;
+    this.barId = barId;
+    this.trackId = trackId;
+    this._clef = clef;
     this.barlines = barline;
-    this.notes = notes;
   }
 }

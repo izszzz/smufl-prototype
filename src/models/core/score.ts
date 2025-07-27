@@ -2,7 +2,7 @@ import * as Core from "core";
 
 export class Score<
   Note extends Core.Note = Core.Note,
-  Track extends Core.Track<Note> = Core.Track<Note>,
+  Track extends Core.Track = Core.Track,
   Timesignature extends Core.Timesignature = Core.Timesignature,
   Keysignature extends Core.Keysignature = Core.Keysignature,
   Bpm extends Core.Bpm = Core.Bpm,
@@ -10,17 +10,20 @@ export class Score<
   name;
   timesignatures;
   keysignatures;
-  tracks;
   bpms;
+  tracks;
+  notes;
   constructor({
     name,
     tracks,
+    notes,
     timesignatures,
     keysignatures,
     bpms,
     ...event
   }: {
     tracks: Track[];
+    notes: Note[];
     timesignatures: Timesignature[];
     keysignatures: Keysignature[];
     bpms: Bpm[];
@@ -33,5 +36,9 @@ export class Score<
     this.keysignatures = keysignatures;
     this.bpms = bpms;
     this.tracks = tracks;
+    this.notes = notes;
+    for (const track of this.tracks) {
+      track.score = this;
+    }
   }
 }

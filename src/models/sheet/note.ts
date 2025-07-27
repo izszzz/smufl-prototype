@@ -11,9 +11,8 @@ import {
 import { P, match } from "ts-pattern";
 
 export class Note extends Core.Note {
-  track!: Sheet.Track;
-  bar!: Sheet.Bar;
-  stave!: Sheet.Stave;
+  barId;
+  staveId;
   chord;
   stem;
   type;
@@ -21,9 +20,9 @@ export class Note extends Core.Note {
   voice;
   staff;
   flag: null = null;
-
-  get width() {
-    return 0;
+  score!: Sheet.Score;
+  get stave() {
+    return this.score.staves.find((stave) => stave.id === this.staveId)!;
   }
   // TODO: refactor
   get line() {
@@ -33,7 +32,7 @@ export class Note extends Core.Note {
         .with(P.union("quarter", "half"), () => 2)
         .otherwise(() => 0);
     }
-    const sign = (this.stave.clef ?? this.stave.prev?.clef)?.$$.sign?.[0]._;
+    const sign = this.stave.clef.$$.sign?.[0]._;
     if (sign === "G") {
       return (
         ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +
@@ -72,6 +71,8 @@ export class Note extends Core.Note {
   }
 
   constructor({
+    barId,
+    staveId,
     rest,
     chord,
     type,
@@ -80,6 +81,8 @@ export class Note extends Core.Note {
     staff,
     ...note
   }: {
+    staveId: number;
+    barId: number;
     type?: NoteType;
     stem?: Stem;
     rest?: Rest;
@@ -88,6 +91,8 @@ export class Note extends Core.Note {
     voice: Voice["voice"];
   } & Core.Note) {
     super(note);
+    this.barId = barId;
+    this.staveId = staveId;
     this.chord = chord;
     this.stem = stem;
     this.type = type;

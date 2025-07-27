@@ -1,35 +1,55 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
+import * as R from "remeda";
 
 export class Score<
   Note extends Sheet.Note = Sheet.Note,
-  Track extends Sheet.Track<Note> = Sheet.Track<Note>,
+  Track extends Sheet.Track = Sheet.Track,
+  Stave extends Sheet.Stave = Sheet.Stave,
+  Bar extends Sheet.Bar = Sheet.Bar,
+  Masterbar extends Sheet.Masterbar = Sheet.Masterbar,
+  Row extends Sheet.Row = Sheet.Row,
   Timesignature extends Sheet.Timesignature = Sheet.Timesignature,
   Keysignature extends Sheet.Keysignature = Sheet.Keysignature,
   Bpm extends Sheet.Bpm = Sheet.Bpm,
-  Stave extends Sheet.Stave = Sheet.Stave,
-  Masterbar extends Sheet.Masterbar<
-    Note,
-    Stave,
-    Sheet.Bar<Note, Stave>
-  > = Sheet.Masterbar<Note, Stave, Sheet.Bar<Note, Stave>>,
 > extends Core.Score<Note, Track, Timesignature, Keysignature, Bpm> {
-  masterbars: Masterbar[] = [];
-  height = 1000;
-  width = 1000;
+  masterbars;
+  rows;
+  bars;
+  staves;
+  get height() {
+    return this.rows.reduce((acc, cur) => acc + cur.height, 0);
+  }
+  get width() {
+    return R.firstBy(this.rows, [R.prop("width"), "desc"])?.width ?? 0;
+  }
   constructor({
+    staves,
+    bars,
+    masterbars,
+    rows,
     ...score
-  }: ConstructorParameters<
+  }: {
+    staves: Stave[];
+    bars: Bar[];
+    masterbars: Masterbar[];
+    rows: Row[];
+  } & ConstructorParameters<
     typeof Core.Score<Note, Track, Timesignature, Keysignature, Bpm>
   >[0]) {
     super(score);
-  }
-  setLayoutType(layoutType: Sheet.LayoutType) {
-    if (layoutType === Sheet.LayoutType.Horizontal) {
-      this.masterbars.reduce((acc, cur) => {
-        cur.x = acc;
-        return acc + cur.width;
-      }, 0);
+    this.bars = bars;
+    this.staves = staves;
+    this.rows = rows;
+    this.masterbars = masterbars;
+    for (const data of [
+      ...this.notes,
+      ...this.tracks,
+      ...this.staves,
+      ...this.bars,
+      ...this.masterbars,
+    ]) {
+      data.score = this;
     }
   }
 }
