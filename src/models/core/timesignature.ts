@@ -2,6 +2,9 @@ import * as Core from "core";
 export class Timesignature extends Core.Event {
   denominator;
   numerator;
+  get width() {
+    return this.duration / this.numerator;
+  }
   constructor({
     denominator,
     numerator,

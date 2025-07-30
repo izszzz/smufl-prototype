@@ -89,11 +89,7 @@ function createStaveGroup(stave: Sheet.Stave) {
         const stem = note.stem;
         const noteHeadsGlyph = SMUFL.Glyph.findNotehead(note.type);
         if (noteHeadsGlyph) {
-          noteGroup.children.push(
-            new SMUFL.Text({
-              glyph: noteHeadsGlyph,
-            })
-          );
+          noteGroup.children.push(new SMUFL.Text({ glyph: noteHeadsGlyph }));
 
           if (stem) {
             const stemText = new SMUFL.Text({

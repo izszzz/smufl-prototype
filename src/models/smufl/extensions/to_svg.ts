@@ -44,7 +44,7 @@ SMUFL.Score.prototype.toSVG = function (
             .each(function (masterbar) {
               const g = d3.select(this);
               g.selectAll("g[type=track]")
-                .data(masterbar.tracks)
+                .data(masterbar.score.tracks)
                 .join("g")
                 .attr("type", "track")
                 .attr("transform", (track) => createTranslate(0, track.y))

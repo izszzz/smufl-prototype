@@ -17,6 +17,16 @@ export class Event {
       this.duration = end - start;
     }
   }
+  isOverflow(event: Event) {
+    return this.start < event.start || this.end > event.end;
+  }
+  isOverlapped(event: Event) {
+    return (
+      (this.start >= event.start && this.start < event.end) ||
+      (this.end > event.start && this.end <= event.end) ||
+      (this.start <= event.start && this.end >= event.end)
+    );
+  }
 }
 // export type EventConstructorParameter = ConstructorParameters<typeof Event>[0];
 export type EventConstructorParameter = StartEnd | StartDuration;

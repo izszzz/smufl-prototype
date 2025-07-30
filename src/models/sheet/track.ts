@@ -28,7 +28,7 @@ export class Track extends Core.Track {
 
   getMasterbarBars(masterbarId: number) {
     return this.score.bars.filter(
-      (bar) => bar.trackId === this.id && bar.masterbarId === masterbarId
+      (bar) => bar.trackId === this.id && bar.id === masterbarId
     );
   }
 }

@@ -1,6 +1,7 @@
 import { times } from "remeda";
 import * as Sheet from "sheet";
 import * as Core from "core";
+import { match } from "ts-pattern";
 
 declare module "core" {
   interface Score {
@@ -9,91 +10,129 @@ declare module "core" {
 }
 
 Core.Score.prototype.toSheet = function (this: Core.Score) {
-  const score = new Sheet.Score({
-    ...this,
-    tracks: this.tracks.map((track) => {
-      const trackNotes = track.notes.map(
-        (note) =>
-          new Sheet.Note({
-            ...note,
-            type: null,
-            stem: null,
-            rest: false,
-            chord: false,
-            //仮置き
-            staff: 0,
-            voice: 0,
-          })
-      );
-      return new Sheet.Track({
-        ...track,
-        staffLines: 5,
-        notes: trackNotes,
-        bars: [] as Sheet.Bar[],
-      });
-    }),
-  });
-  for (const track of score.tracks) {
-    const { bars } = this.timesignatures.reduce(
+  const notes = this.notes.map(
+    (note) =>
+      new Sheet.Note({
+        ...note,
+        type: match(note.duration)
+          .with(0.5, () => ({ _: "eighth" }))
+          .with(1, () => ({ _: "quarter" }))
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          .exhaustive(),
+        stem: { _: "up" },
+        rest: undefined,
+        chord: false,
+        staff: undefined,
+        voice: undefined,
+        staveId: -1, // will be set later
+      })
+  );
+  const masterbars = this.timesignatures
+    .reduce(
       (acc, cur) => {
-        const bars = times(
-          Math.max(Math.ceil(cur.duration / cur.numerator), 1),
-          (i) => {
-            acc.end += cur.numerator;
-            const bar = new Sheet.Bar({
-              notes: track.notes.filter(
-                (e) => e.end > acc.start && e.start < acc.end
-              ),
-              staves: generateStaves(track),
-              timesignature: new Sheet.Timesignature(cur),
-              id: i,
-              width: 3,
-              staffLines: 5,
+        acc.events.push(
+          ...times(Math.ceil(cur.width), () => {
+            const event = new Core.Event({
               start: acc.start,
-              end: acc.end,
+              duration: cur.numerator,
             });
-            acc.start += cur.end;
-            return bar;
-          }
+            acc.start += cur.numerator;
+            return event;
+          })
         );
-        acc.bars.push(...bars);
         return acc;
       },
-      { start: 0, end: 0, bars: [] as Sheet.Bar[] }
-    );
-    track.bars = bars;
-  }
-
-  for (const track of score.tracks) {
-    for (const note of track.notes) note.track = track;
-  }
+      { start: 0, events: [] as Core.Event[] }
+    )
+    .events.map((event, id) => new Sheet.Masterbar({ id, ...event }));
+  const staves = this.tracks.flatMap((track) =>
+    masterbars.flatMap((masterbar) =>
+      match(track.preset.toName())
+        .with("Acoustic Grand Piano", () => {
+          for (const note of notes)
+            note.staveId = note.pitch.value < 60 ? 1 : 0;
+          return [
+            <ConstructorParameters<typeof Sheet.Stave>[0]>{
+              id: 0,
+              barId: masterbar.id,
+              trackId: track.id,
+              clef: {
+                $$: {
+                  sign: [{ _: "G" }],
+                  line: [{ _: 2 }],
+                  "clef-octave-change": [{ _: 0 }],
+                },
+                $: {},
+              },
+              barline: { $: { location: "left" }, $$: {} },
+            },
+            <ConstructorParameters<typeof Sheet.Stave>[0]>{
+              id: 1,
+              barId: masterbar.id,
+              trackId: track.id,
+              clef: {
+                $$: {
+                  sign: [{ _: "F" }],
+                  line: [{ _: 4 }],
+                  "clef-octave-change": [{ _: 0 }],
+                },
+                $: {},
+              },
+              barline: { $: { location: "left" }, $$: {} },
+            },
+          ];
+        })
+        .otherwise(() => {
+          for (const note of notes) {
+            note.staveId = 1;
+          }
+          return [
+            <ConstructorParameters<typeof Sheet.Stave>[0]>{
+              id: 0,
+              barId: masterbar.id,
+              trackId: track.id,
+              clef: {
+                $$: {
+                  sign: [{ _: "G" }] as const,
+                  line: [{ _: 4 }],
+                  "clef-octave-change": [{ _: 0 }],
+                },
+                $: {},
+              },
+              barline: { $: { location: "left" }, $$: {} },
+            },
+          ];
+        })
+        .map((stave) => new Sheet.Stave(stave))
+    )
+  );
+  const score = new Sheet.Score({
+    ...this,
+    notes,
+    tracks: this.tracks.map(
+      (track) => new Sheet.Track({ ...track, staffLines: 5 })
+    ),
+    bars: this.tracks.flatMap((track) =>
+      masterbars.map(
+        (masterbar) =>
+          new Sheet.Bar({
+            ...masterbar,
+            staffLines: 5,
+            trackId: track.id,
+          })
+      )
+    ),
+    masterbars,
+    staves,
+    rows: [],
+    timesignatures: this.timesignatures.map(
+      (timesignature) => new Sheet.Timesignature(timesignature)
+    ),
+    keysignatures: this.keysignatures.map(
+      (keysignature) => new Sheet.Keysignature(keysignature)
+    ),
+  });
   console.log({ sheet: score });
   return score;
 };
-
-function generateStaves({ preset }: Core.Track): Sheet.Stave[] {
-  switch (preset.toName()) {
-    case "Acoustic Grand Piano":
-      return [
-        new Sheet.Stave({
-          id: 0,
-          clef: { sign: "G", line: 2, clefOctaveChange: 0, $: {} },
-          barlines: { $: { location: "left" } },
-        }),
-        new Sheet.Stave({
-          id: 0,
-          clef: { sign: "F", line: 4, clefOctaveChange: 0, $: {} },
-          barlines: { $: { location: "left" } },
-        }),
-      ];
-
-    default:
-      return [
-        new Sheet.Stave({
-          id: 0,
-          clef: { sign: "G", line: 4, clefOctaveChange: 0, $: {} },
-          barlines: { $: { location: "left" } },
-        }),
-      ];
-  }
-}

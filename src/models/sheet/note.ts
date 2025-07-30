@@ -11,7 +11,6 @@ import {
 import { P, match } from "ts-pattern";
 
 export class Note extends Core.Note {
-  barId;
   staveId;
   chord;
   stem;
@@ -71,7 +70,6 @@ export class Note extends Core.Note {
   }
 
   constructor({
-    barId,
     staveId,
     rest,
     chord,
@@ -82,16 +80,14 @@ export class Note extends Core.Note {
     ...note
   }: {
     staveId: number;
-    barId: number;
     type?: NoteType;
     stem?: Stem;
     rest?: Rest;
     chord: boolean;
     staff?: Staff["staff"];
     voice: Voice["voice"];
-  } & Core.Note) {
+  } & ConstructorParameters<typeof Core.Note>[0]) {
     super(note);
-    this.barId = barId;
     this.staveId = staveId;
     this.chord = chord;
     this.stem = stem;

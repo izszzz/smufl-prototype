@@ -1,7 +1,8 @@
 import * as R from "remeda";
+import * as Core from "core";
 import * as Sheet from "sheet";
 
-export class Masterbar {
+export class Masterbar extends Core.Event {
   readonly id;
   rowId;
   score!: Sheet.Score;
@@ -13,8 +14,6 @@ export class Masterbar {
     return R.firstBy(this.bars, [(bar) => bar.width, "desc"])?.width ?? 0;
   }
   get height() {
-    // trackも考慮
-    // TODO: 複数barの場合、bar間のスペースを考慮する
     return this.bars.reduce((acc, cur) => acc + cur.height, 0);
   }
   get isRowFirst() {
@@ -30,12 +29,18 @@ export class Masterbar {
     return this.score.rows.find((row) => row.id === this.rowId)!;
   }
   get bars() {
-    return this.score.bars.filter((bar) => bar.masterbarId === this.id);
+    return this.score.bars.filter((bar) => bar.id === this.id);
   }
-  get tracks() {
-    return this.score.tracks;
+  get notes() {
+    return this.score.notes.filter((note) => note.isOverlapped(this));
   }
-  constructor({ id, rowId }: { id: number; rowId?: number }) {
+  constructor({
+    id,
+    rowId,
+    ...event
+  }: { id: number; rowId?: number } & Core.EventConstructorParameter) {
+    if ("end" in event) super(event);
+    else super(event);
     this.id = id;
     this.rowId = rowId;
   }

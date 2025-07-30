@@ -21,7 +21,7 @@ export class Importer {
     await new Promise((resolve) => (reader.onload = () => resolve()));
     if (reader.result instanceof ArrayBuffer) {
       if (file.type === "audio/mid")
-        return Midi.toCore(Midi.parse(reader.result));
+        return Midi.toCore(Midi.parse(reader.result)).toSheet();
       if (extname === ".mxl") {
         const zip = await new Zip(reader.result).unzip();
         const meta = await zip.files["META-INF/container.xml"]?.async("text");

@@ -5,20 +5,21 @@ import * as Sheet from "sheet";
 export class Bar extends Core.Event {
   readonly id;
   trackId;
-  masterbarId;
   staffLines;
-  timesignature;
   score!: Sheet.Score;
+  get timesignature() {
+    return this.score.timesignatures.find((timesignature) =>
+      timesignature.isOverlapped(this)
+    )!;
+  }
   get track() {
     return this.score.tracks.find((track) => track.id === this.trackId)!;
   }
   get masterbar() {
-    return this.score.masterbars.find(
-      (masterbar) => masterbar.id === this.masterbarId
-    )!;
+    return this.score.masterbars.find((masterbar) => masterbar.id === this.id)!;
   }
   get notes() {
-    return this.score.notes.filter((note) => note.barId === this.id);
+    return this.masterbar.notes.filter((note) => note.trackId === this.trackId);
   }
   get staves() {
     return this.score.staves.filter(
@@ -38,23 +39,17 @@ export class Bar extends Core.Event {
   constructor({
     id,
     trackId,
-    masterbarId,
     staffLines,
-    timesignature,
     ...event
   }: {
     id: number;
     trackId: number;
-    masterbarId: number;
     staffLines: number;
-    timesignature: Sheet.Timesignature;
   } & Core.EventConstructorParameter) {
     if ("end" in event) super(event);
     else super(event);
     this.id = id;
     this.trackId = trackId;
-    this.masterbarId = masterbarId;
     this.staffLines = staffLines;
-    this.timesignature = timesignature;
   }
 }

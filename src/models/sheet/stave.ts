@@ -12,11 +12,8 @@ export class Stave {
     return this.score.bars.find((bar) => bar.id === this.barId)!;
   }
   get notes() {
-    return this.score.notes.filter(
-      (note) =>
-        note.staveId === this.id &&
-        note.barId === this.barId &&
-        note.trackId === this.trackId
+    return this.bar.notes.filter(
+      (note) => note.staveId === this.id && note.trackId === this.trackId
     );
   }
   get width() {
@@ -34,7 +31,6 @@ export class Stave {
   get clef(): Clef {
     return this._clef ? this._clef : this.prev!.clef;
   }
-
   constructor({
     id,
     barId,
