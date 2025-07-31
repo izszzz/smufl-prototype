@@ -20,6 +20,23 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
       const bars =
         cur.$$.measure?.map((measure, barId) => {
           const musicData = measure.$$;
+          const attributes =
+            "attributes" in musicData ? musicData.attributes : [];
+          const time = attributes?.[0]?.$$.time?.[0];
+          const denominator = Number(
+            (time?.$$ && "beat-type" in time.$$
+              ? time.$$["beat-type"]?.[0]._
+              : 4) ?? 4
+          );
+          const numerator = Number(
+            (time?.$$ && "beats" in time.$$ ? time.$$.beats?.[0]._ : 4) ?? 4
+          );
+          const timesignature = new Sheet.Timesignature({
+            denominator,
+            numerator,
+            start: numerator * barId,
+            duration: numerator,
+          });
           const { notes } = (
             "note" in musicData && musicData.note ? musicData.note : []
           ).reduce(
@@ -55,21 +72,11 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
               return acc;
             },
             {
-              start: 0,
+              start: numerator * barId,
               notes: [] as Sheet.Note[],
             }
           );
-          const attributes =
-            "attributes" in musicData ? musicData.attributes : [];
-          const time = attributes?.[0]?.$$.time?.[0];
-          const denominator = Number(
-            (time?.$$ && "beat-type" in time.$$
-              ? time.$$["beat-type"]?.[0]._
-              : 4) ?? 4
-          );
-          const numerator = Number(
-            (time?.$$ && "beats" in time.$$ ? time.$$.beats?.[0]._ : 4) ?? 4
-          );
+
           const staves = R.times(
             attributes?.[0]?.$$?.staves?.[0]?._ ?? 1,
             (staveId) => {
@@ -89,14 +96,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
               });
             }
           );
-          acc.timesignatures.push(
-            new Sheet.Timesignature({
-              denominator,
-              numerator,
-              start: numerator * barId,
-              duration: numerator,
-            })
-          );
+          acc.timesignatures.push(timesignature);
           acc.notes.push(...notes);
           acc.staves.push(...staves);
           return new Sheet.Bar({

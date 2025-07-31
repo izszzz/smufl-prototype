@@ -102,7 +102,7 @@ function App() {
         scale
         <input
           type="number"
-          defaultValue={30}
+          defaultValue={50}
           onChange={(e) => {
             if (sheetController) sheetController.scale = Number(e.target.value);
             layouting();

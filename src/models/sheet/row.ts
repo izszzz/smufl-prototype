@@ -15,7 +15,7 @@ export class Row {
   }
   get height() {
     return (
-      (R.firstBy(this.masterbars, [(mb) => mb.height, "desc"])?.height ?? 0) +
+      (R.firstBy(this.masterbars, [R.prop("height"), "desc"])?.height ?? 0) +
       paddingBottom
     );
   }

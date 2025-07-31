@@ -83,7 +83,7 @@ SMUFL.Score.prototype.toSVG = function (
                                       "d",
                                       d3.line()([
                                         [0, -i],
-                                        [stave.group.width, -i],
+                                        [masterbar.width, -i],
                                       ])
                                     );
                                 });

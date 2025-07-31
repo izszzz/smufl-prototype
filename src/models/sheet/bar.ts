@@ -27,7 +27,7 @@ export class Bar extends Core.Event {
     );
   }
   get width() {
-    return R.firstBy(this.staves, [(stave) => stave.width, "desc"])?.width ?? 0;
+    return R.firstBy(this.staves, [R.prop("width"), "desc"])?.width ?? 0;
   }
   get height() {
     const lastStave = R.last(this.staves);
