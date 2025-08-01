@@ -1,4 +1,4 @@
-import { Clef, NoteType, Rest } from "src/const/musicxml/4.0/musicxml";
+import { Barline, Clef, NoteType, Rest } from "src/const/musicxml/4.0/musicxml";
 import { P, match } from "ts-pattern";
 import * as SMUFL from "smufl";
 
@@ -25,39 +25,52 @@ export class Glyph<T extends keyof SMUFL.Glyphnames> {
   ) {
     return new Glyph(SMUFL.Ranges[type].glyphs.find(predicate)!);
   }
+
   static findClef(clef: Clef) {
-    const glyphName = match(clef.$$.sign?.[0]?._)
-      .with("G", () => "gClef" as const)
-      .with("F", () => "fClef" as const)
-      .with("C", () => "cClef" as const)
-      .with("percussion", () => "unpitchedPercussionClef1" as const)
-      .with("TAB", () => "6stringTabClef" as const)
-      .with(P.union("none", "jianpu"), () => {})
-      .otherwise(() => {});
-    if (glyphName) return new Glyph(glyphName);
+    return new Glyph(
+      match(clef.$$.sign?.[0]?._)
+        .with("G", () => "gClef" as const)
+        .with("F", () => "fClef" as const)
+        .with("C", () => "cClef" as const)
+        .with("percussion", () => "unpitchedPercussionClef1" as const)
+        .with("TAB", () => "6stringTabClef" as const)
+        .with(P.union("none", "jianpu"), () => {})
+        .exhaustive()
+    );
   }
 
-  static findRest(rest: Rest, type: NoteType) {
+  static findRest(rest: Rest, type?: NoteType) {
     if (rest.$?.measure === "yes") return new Glyph("restWhole");
-    const glyphName = match(type._)
-      .with("quarter", () => "restQuarter" as const)
-      .with("eighth", () => "rest8th" as const)
-      .with("16th", () => "rest16th" as const)
-      .with("half", () => "restHalf" as const)
-      .with("whole", () => "restWhole" as const)
-      .otherwise(() => {});
-    if (glyphName) return new Glyph(glyphName);
+    return new Glyph(
+      match(type?._)
+        .with("quarter", () => "restQuarter" as const)
+        .with("eighth", () => "rest8th" as const)
+        .with("16th", () => "rest16th" as const)
+        .with("half", () => "restHalf" as const)
+        .with("whole", () => "restWhole" as const)
+        .exhaustive()
+    );
   }
 
   static findNotehead(type: NoteType) {
-    const glyphName = match(type._)
-      .with(
-        P.union("quarter", "eighth", "16th"),
-        () => "noteheadBlack" as const
-      )
-      .with("half", () => "noteheadHalf" as const)
-      .with("whole", () => "noteheadWhole" as const)
-      .otherwise(() => {});
-    if (glyphName) return new Glyph(glyphName);
+    return new Glyph(
+      match(type._)
+        .with(
+          P.union("quarter", "eighth", "16th"),
+          () => "noteheadBlack" as const
+        )
+        .with("half", () => "noteheadHalf" as const)
+        .with("whole", () => "noteheadWhole" as const)
+        .exhaustive()
+    );
+  }
+
+  static findBarline(type: Barline) {
+    return new Glyph(
+      match(type.$$["bar-style"]?.[0]?._)
+        .with("light-heavy", () => "barlineFinal" as const)
+        .with("regular", () => "barlineSingle" as const)
+        .exhaustive()
+    );
   }
 }

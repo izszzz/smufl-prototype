@@ -11,7 +11,10 @@ export class Masterbar extends Core.Event {
     return prev ? prev.x + prev.width : 0;
   }
   get width() {
-    return R.firstBy(this.bars, [R.prop("width"), "desc"])?.width ?? 0;
+    return R.pipe(
+      R.firstBy(this.bars, [R.prop("width"), "desc"]),
+      R.pathOr(["width" as const], 0)
+    );
   }
   get height() {
     return this.bars.reduce((acc, cur) => acc + cur.height, 0);
@@ -21,6 +24,9 @@ export class Masterbar extends Core.Event {
   }
   get isFirst() {
     return this.score.masterbars[0]?.id === this.id;
+  }
+  get isLast() {
+    return this.score.masterbars.at(-1)?.id === this.id;
   }
   get prev() {
     return this.score.masterbars[this.id - 1];

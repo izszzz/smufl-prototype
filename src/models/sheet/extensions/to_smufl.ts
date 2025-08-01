@@ -21,7 +21,6 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
       (stave) => new SMUFL.Stave({ ...stave, clef: stave._clef })
     ),
   });
-
   if (process.env.NODE_ENV === "development") console.log({ smufl: score });
   return score;
 };

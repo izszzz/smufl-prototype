@@ -2,6 +2,7 @@ export * from "./row";
 export * from "./masterbar";
 export * from "./bar";
 export * from "./stave";
+export * from "./pitch";
 export * from "./note";
 export * from "./score";
 export * from "./track";
@@ -14,4 +15,10 @@ export enum LayoutType {
   Page,
   Vertical,
   Horizontal,
+}
+
+export enum AccidentalType {
+  Sharp,
+  Flat,
+  Natural,
 }

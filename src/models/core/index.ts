@@ -1,5 +1,3 @@
-import * as R from "remeda";
-import { Event } from "./event";
 import Metadata from "./metadata.json";
 
 export * from "./event";
@@ -10,13 +8,13 @@ export * from "./keysignature";
 export * from "./bpm";
 export * from "./score";
 export * from "./create";
+export * from "./pitch";
 export * as Unit from "./unit";
 
 export const convertTimeToSeconds = (time: number, bpm: number) =>
   (60 * time) / bpm;
-export const getEventsStart = (events: Event[]) =>
-  R.firstBy(events, [R.prop("start"), "asc"])?.start ?? 0;
-export const getEventsEnd = (events: Event[]) =>
-  R.firstBy(events, [R.prop("end"), "desc"])?.end ?? 0;
-
+export enum Tonality {
+  Major,
+  Minor,
+}
 export { Metadata };

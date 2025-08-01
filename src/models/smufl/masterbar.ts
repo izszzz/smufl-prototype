@@ -6,7 +6,4 @@ export class Masterbar extends Sheet.Masterbar {
   override get bars() {
     return super.bars as SMUFL.Bar[];
   }
-  override get tracks() {
-    return super.tracks as SMUFL.Track[];
-  }
 }

@@ -8,7 +8,7 @@
       "numerator": 4
     },
     "keysignatures": {
-      "tonality": false,
+      "tonality": 0,
       "accidental": 0
     },
     "bpms": { "value": 120 }

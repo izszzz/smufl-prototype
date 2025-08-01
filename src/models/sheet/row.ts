@@ -15,8 +15,10 @@ export class Row {
   }
   get height() {
     return (
-      (R.firstBy(this.masterbars, [R.prop("height"), "desc"])?.height ?? 0) +
-      paddingBottom
+      R.pipe(
+        R.firstBy(this.masterbars, [R.prop("height"), "desc"]),
+        R.pathOr(["height" as const], 0)
+      ) + paddingBottom
     );
   }
   get y(): number {

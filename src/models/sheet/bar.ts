@@ -12,6 +12,11 @@ export class Bar extends Core.Event {
       timesignature.isOverlapped(this)
     )!;
   }
+  get keysignature() {
+    return this.score.keysignatures.find((keysignature) =>
+      keysignature.isOverlapped(this)
+    )!;
+  }
   get track() {
     return this.score.tracks.find((track) => track.id === this.trackId)!;
   }
@@ -27,14 +32,18 @@ export class Bar extends Core.Event {
     );
   }
   get width() {
-    return R.firstBy(this.staves, [R.prop("width"), "desc"])?.width ?? 0;
+    return R.pipe(
+      this.staves,
+      R.firstBy([R.prop("width"), "desc"]),
+      R.pathOr(["width" as const], 0)
+    );
   }
   get height() {
     const lastStave = R.last(this.staves);
     return lastStave ? lastStave.height + lastStave.y : 0;
   }
   get prev() {
-    return this.track!.bars[this.id - 1];
+    return this.track.bars[this.id - 1];
   }
   constructor({
     id,

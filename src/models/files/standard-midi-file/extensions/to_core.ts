@@ -22,7 +22,10 @@ export const toCore = (data: Midi.IMidi) => {
               });
             if (R.isNonNullish(cur.event.keySignature))
               trackAcc.keysignatures?.push({
-                tonality: !!cur.event.keySignature.mi,
+                tonality:
+                  cur.event.keySignature === 0
+                    ? Core.Tonality.Major
+                    : Core.Tonality.Minor,
                 accidental: cur.event.keySignature.sf,
                 start: acc.time,
               });

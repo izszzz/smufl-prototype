@@ -14,6 +14,7 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
     (note) =>
       new Sheet.Note({
         ...note,
+        pitch: new Sheet.Pitch(note.pitch),
         type: match(note.duration)
           .with(0.5, () => ({ _: "eighth" }))
           .with(1, () => ({ _: "quarter" }))
@@ -51,7 +52,11 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
       match(track.preset.toName())
         .with("Acoustic Grand Piano", () => {
           for (const note of notes)
-            note.staveId = note.pitch.value < 60 ? 1 : 0;
+            note.staveId =
+              note.pitch.midiNoteNumber.value <
+              Core.Unit.MidiNoteNumber.MIDDLE_C
+                ? 1
+                : 0;
           return [
             <ConstructorParameters<typeof Sheet.Stave>[0]>{
               id: 0,
@@ -65,7 +70,6 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
                 },
                 $: {},
               },
-              barline: { $: { location: "left" }, $$: {} },
             },
             <ConstructorParameters<typeof Sheet.Stave>[0]>{
               id: 1,
@@ -79,7 +83,6 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
                 },
                 $: {},
               },
-              barline: { $: { location: "left" }, $$: {} },
             },
           ];
         })
@@ -100,7 +103,6 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
                 },
                 $: {},
               },
-              barline: { $: { location: "left" }, $$: {} },
             },
           ];
         })

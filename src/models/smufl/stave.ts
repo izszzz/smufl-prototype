@@ -15,8 +15,9 @@ export class Stave extends Sheet.Stave {
     return this.group.width;
   }
   override get height() {
-    return SMUFL.Glyph.find("barlines", (v) => v.includes("Single")).bBox
-      .height;
+    return SMUFL.Glyph.findBarline({
+      $$: { ["bar-style"]: [{ _: "light-heavy" }] },
+    }).bBox.height;
   }
 
   setGroup() {
@@ -29,16 +30,13 @@ function createStaveGroup(stave: Sheet.Stave) {
     children: [],
   });
 
-  if (stave.bar.masterbar.isRowFirst) {
-    const glyph = SMUFL.Glyph.findClef(stave.clef);
-    if (glyph)
-      staveGroup.children.push(
-        new SMUFL.Text({
-          glyph,
-          y: (stave.clef.$$.line?.[0]?._ ?? 0) - 1,
-        })
-      );
-  }
+  if (stave.bar.masterbar.isRowFirst)
+    staveGroup.children.push(
+      new SMUFL.Text({
+        glyph: SMUFL.Glyph.findClef(stave.clef),
+        y: (stave.clef.$$.line?.[0]?._ ?? 0) - 1,
+      })
+    );
   if (stave.bar.masterbar.isFirst) {
     const [numerator, denominator] = R.pipe(
       [
@@ -52,6 +50,22 @@ function createStaveGroup(stave: Sheet.Stave) {
       )
     );
     staveGroup.children.push(
+      new SMUFL.Group({
+        children: [
+          ...stave.bar.keysignature.accidentalPitchClasses.map(
+            (pitch) =>
+              new SMUFL.Text({
+                glyph: SMUFL.Glyph.find("standardAccidentals12Edo", (v) =>
+                  v
+                    .toLowerCase()
+                    .includes(
+                      stave.bar.keysignature.tonality ? "flat" : "sharp"
+                    )
+                ),
+              })
+          ),
+        ],
+      }),
       new SMUFL.Group({
         children: [
           new SMUFL.Text({ glyph: numerator, y: 3 }),
@@ -70,7 +84,7 @@ function createStaveGroup(stave: Sheet.Stave) {
         SMUFL.BravuraMetadata.engravingDefaults.thickBarlineThickness,
     });
 
-    if (note.legerLine > 0) {
+    if (note.legerLine > 0)
       R.times(note.legerLine, (i) => {
         noteGroup.children.push(
           new SMUFL.Text({
@@ -79,28 +93,26 @@ function createStaveGroup(stave: Sheet.Stave) {
           })
         );
       });
-    }
 
-    if (R.isNonNullish(note.rest) && note.type) {
-      const glyph = SMUFL.Glyph.findRest(note.rest, note.type);
-      if (glyph) noteGroup.children.push(new SMUFL.Text({ glyph }));
+    if (R.isDefined(note.rest)) {
+      noteGroup.children.push(
+        new SMUFL.Text({ glyph: SMUFL.Glyph.findRest(note.rest, note.type) })
+      );
     } else {
       if (note.type) {
         const stem = note.stem;
         const noteHeadsGlyph = SMUFL.Glyph.findNotehead(note.type);
-        if (noteHeadsGlyph) {
-          noteGroup.children.push(new SMUFL.Text({ glyph: noteHeadsGlyph }));
+        noteGroup.children.push(new SMUFL.Text({ glyph: noteHeadsGlyph }));
 
-          if (stem) {
-            const stemText = new SMUFL.Text({
-              glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
-            });
-            if (stem._ === "down") {
-              stemText.dx -= noteHeadsGlyph.bBox.width;
-              stemText.rotate = 180;
-            }
-            noteGroup.children.push(stemText);
+        if (stem) {
+          const stemText = new SMUFL.Text({
+            glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
+          });
+          if (stem._ === "down") {
+            stemText.dx -= noteHeadsGlyph.bBox.width;
+            stemText.rotate = 180;
           }
+          noteGroup.children.push(stemText);
         }
       }
     }
@@ -109,7 +121,17 @@ function createStaveGroup(stave: Sheet.Stave) {
 
   staveGroup.children.push(
     new SMUFL.Text({
-      glyph: SMUFL.Glyph.find("barlines", (v) => v.includes("Single")),
+      glyph: SMUFL.Glyph.findBarline(
+        stave.bar.masterbar.isLast
+          ? {
+              $$: { ["bar-style"]: [{ _: "light-heavy" }] },
+            }
+          : stave.barline
+            ? stave.barline
+            : {
+                $$: { ["bar-style"]: [{ _: "regular" }] },
+              }
+      ),
     })
   );
 

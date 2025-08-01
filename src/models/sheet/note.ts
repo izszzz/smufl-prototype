@@ -10,7 +10,9 @@ import {
 } from "src/const/musicxml/4.0/musicxml";
 import { P, match } from "ts-pattern";
 
-export class Note extends Core.Note {
+export class Note<
+  Pitch extends Sheet.Pitch = Sheet.Pitch,
+> extends Core.Note<Pitch> {
   staveId;
   chord;
   stem;
@@ -23,9 +25,14 @@ export class Note extends Core.Note {
   get stave() {
     return this.score.staves.find((stave) => stave.id === this.staveId)!;
   }
+  get keysignature() {
+    return this.score.keysignatures.find((keysignature) =>
+      keysignature.isOverlapped(this)
+    );
+  }
   // TODO: refactor
   get line() {
-    if (R.isNonNullish(this.rest)) {
+    if (R.isDefined(this.rest)) {
       if (this.rest.$?.measure === "yes") return 0;
       return match(this.type?._)
         .with(P.union("quarter", "half"), () => 2)
@@ -34,7 +41,11 @@ export class Note extends Core.Note {
     const sign = this.stave.clef.$$.sign?.[0]._;
     if (sign === "G") {
       return (
-        ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +
+        ((this.pitch.midiNoteNumber.toScientificPitchNotation(
+          Core.Tonality.Major
+        ).octave -
+          4) *
+          Core.Metadata.majorWhiteNotes.length +
           this.pitch.whiteKey -
           2) /
         2
@@ -42,7 +53,11 @@ export class Note extends Core.Note {
     }
     if (sign === "F") {
       return (
-        ((this.pitch.octave - 4) * Core.Metadata.majorWhiteNotes.length +
+        ((this.pitch.midiNoteNumber.toScientificPitchNotation(
+          Core.Tonality.Major
+        ).octave -
+          4) *
+          Core.Metadata.majorWhiteNotes.length +
           this.pitch.whiteKey -
           2 +
           12) /
@@ -51,22 +66,16 @@ export class Note extends Core.Note {
     }
     return 0;
   }
-  // y軸の情報はレンダーエンジン側によって解釈が変わるのでｓｖｇ化する際にyを求める
-  // get y() {
-  //   if (this.rest) {
-  //     return 0;
-  //   }
-  //   console.log(this.pitch);
-  //   return (
-  //     BASE_PITCH_Y() -
-  //     (this.pitch.octave * Core.Metadata.majorWhiteNotes.length +
-  //       this.pitch.whiteKey)
-  //   );
-  // }
+
   get legerLine() {
-    return this.pitch.value > 80 || this.pitch.value <= 60
-      ? Math.ceil((this.pitch.value - 59) / 2)
+    return this.pitch.midiNoteNumber.value > 80 ||
+      this.pitch.midiNoteNumber.value <= 60
+      ? Math.ceil((this.pitch.midiNoteNumber.value - 59) / 2)
       : 0;
+  }
+
+  get accidental() {
+    return;
   }
 
   constructor({
@@ -86,7 +95,7 @@ export class Note extends Core.Note {
     chord: boolean;
     staff?: Staff["staff"];
     voice: Voice["voice"];
-  } & ConstructorParameters<typeof Core.Note>[0]) {
+  } & ConstructorParameters<typeof Core.Note<Pitch>>[0]) {
     super(note);
     this.staveId = staveId;
     this.chord = chord;

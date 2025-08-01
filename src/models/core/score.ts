@@ -1,7 +1,8 @@
 import * as Core from "core";
 
 export class Score<
-  Note extends Core.Note = Core.Note,
+  Pitch extends Core.Pitch = Core.Pitch,
+  Note extends Core.Note<Pitch> = Core.Note<Pitch>,
   Track extends Core.Track = Core.Track,
   Timesignature extends Core.Timesignature = Core.Timesignature,
   Keysignature extends Core.Keysignature = Core.Keysignature,
@@ -37,8 +38,6 @@ export class Score<
     this.bpms = bpms;
     this.tracks = tracks;
     this.notes = notes;
-    for (const track of this.tracks) {
-      track.score = this;
-    }
+    for (const track of this.tracks) track.score = this;
   }
 }

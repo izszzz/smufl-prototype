@@ -3,7 +3,8 @@ import * as Sheet from "sheet";
 import * as R from "remeda";
 
 export class Score<
-  Note extends Sheet.Note = Sheet.Note,
+  Pitch extends Sheet.Pitch = Sheet.Pitch,
+  Note extends Sheet.Note<Pitch> = Sheet.Note<Pitch>,
   Track extends Sheet.Track = Sheet.Track,
   Stave extends Sheet.Stave = Sheet.Stave,
   Bar extends Sheet.Bar = Sheet.Bar,
@@ -12,7 +13,7 @@ export class Score<
   Timesignature extends Sheet.Timesignature = Sheet.Timesignature,
   Keysignature extends Sheet.Keysignature = Sheet.Keysignature,
   Bpm extends Sheet.Bpm = Sheet.Bpm,
-> extends Core.Score<Note, Track, Timesignature, Keysignature, Bpm> {
+> extends Core.Score<Pitch, Note, Track, Timesignature, Keysignature, Bpm> {
   masterbars;
   rows;
   bars;
@@ -21,7 +22,11 @@ export class Score<
     return this.rows.reduce((acc, cur) => acc + cur.height, 0);
   }
   get width() {
-    return R.firstBy(this.rows, [R.prop("width"), "desc"])?.width ?? 0;
+    return R.pipe(
+      this.rows as Sheet.Row[],
+      R.firstBy([R.prop("width"), "desc"]),
+      R.pathOr(["width" as const], 0)
+    );
   }
   constructor({
     staves,
@@ -35,7 +40,7 @@ export class Score<
     masterbars: Masterbar[];
     rows: Row[];
   } & ConstructorParameters<
-    typeof Core.Score<Note, Track, Timesignature, Keysignature, Bpm>
+    typeof Core.Score<Pitch, Note, Track, Timesignature, Keysignature, Bpm>
   >[0]) {
     super(score);
     this.bars = bars;
@@ -44,12 +49,11 @@ export class Score<
     this.masterbars = masterbars;
     for (const data of [
       ...this.notes,
-      ...this.tracks,
       ...this.staves,
       ...this.bars,
       ...this.masterbars,
-    ]) {
+      ...this.rows,
+    ])
       data.score = this;
-    }
   }
 }

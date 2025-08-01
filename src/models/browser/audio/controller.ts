@@ -29,8 +29,8 @@ export class Controller {
           .flatMap((instrument) => instrument.samples)
           .find(
             (sample) =>
-              sample.generators.keyRange.lo <= note.pitch.value &&
-              sample.generators.keyRange.hi >= note.pitch.value
+              sample.generators.keyRange.lo <= note.pitch.midiNoteNumber &&
+              sample.generators.keyRange.hi >= note.pitch.midiNoteNumber
           )!;
 
         // create buffer
@@ -52,7 +52,9 @@ export class Controller {
           bufferSource.loopEnd =
             (sample.endLoop - sample.end) / sample.header.sampleRate.value;
         }
-        bufferSource.playbackRate.value = sample.playBackRate(note.pitch.value);
+        bufferSource.playbackRate.value = sample.playBackRate(
+          note.pitch.midiNoteNumber
+        );
 
         const synth = new Audio.Synth(
           track.audioContext,

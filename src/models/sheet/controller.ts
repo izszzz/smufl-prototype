@@ -45,7 +45,6 @@ function splitByWidth<T>(
         const currentSum =
           current?.reduce((sum, el) => sum + weightSelector(el), 0) ?? 0;
         const itemWeight = weightSelector(item);
-        console.log();
         if (currentSum + itemWeight > width) {
           acc.push([item]);
         } else {

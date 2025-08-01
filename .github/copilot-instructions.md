@@ -1,3 +1,5 @@
+## Import
+
 ### Don't use Ramda
 
 incorrect
@@ -10,4 +12,20 @@ correct
 
 ```
 import * as R from "remeda"
+```
+
+### How to Import Core
+
+incorrect
+
+```
+import { Core } from "@core/core";
+import * as Core from "../../core";
+import * as Core from "../core";
+```
+
+correct
+
+```
+import * as Core from "core"
 ```
