@@ -80,7 +80,6 @@ function createStaveGroup(stave: Sheet.Stave) {
       children: [],
       y:
         note.line *
-        2 *
         SMUFL.BravuraMetadata.engravingDefaults.thickBarlineThickness,
     });
 

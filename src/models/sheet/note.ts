@@ -28,7 +28,19 @@ export class Note<
   get keysignature() {
     return this.score.keysignatures.find((keysignature) =>
       keysignature.isOverlapped(this)
-    );
+    )!;
+  }
+  get accidental() {
+    // TODO: Natural
+    return this.keysignature.accidentalPitchClasses.some(
+      (accidentalPitchClass) =>
+        this.pitch.midiNoteNumber.toPitchClass().value ===
+        accidentalPitchClass.value
+    )
+      ? this.keysignature.tonality === Core.Tonality.Major
+        ? Sheet.AccidentalType.Sharp
+        : Sheet.AccidentalType.Flat
+      : null;
   }
   // TODO: refactor
   get line() {
@@ -38,33 +50,20 @@ export class Note<
         .with(P.union("quarter", "half"), () => 2)
         .otherwise(() => 0);
     }
-    const sign = this.stave.clef.$$.sign?.[0]._;
-    if (sign === "G") {
-      return (
-        ((this.pitch.midiNoteNumber.toScientificPitchNotation(
-          Core.Tonality.Major
-        ).octave -
-          4) *
-          Core.Metadata.majorWhiteNotes.length +
-          this.pitch.whiteKey -
-          2) /
-        2
-      );
-    }
-    if (sign === "F") {
-      return (
-        ((this.pitch.midiNoteNumber.toScientificPitchNotation(
-          Core.Tonality.Major
-        ).octave -
-          4) *
-          Core.Metadata.majorWhiteNotes.length +
-          this.pitch.whiteKey -
-          2 +
-          12) /
-        2
-      );
-    }
-    return 0;
+    const line = this.stave.clef.$$.line?.[0]?._ ?? 0;
+    const SPN = this.pitch.midiNoteNumber.toScientificPitchNotation(
+      this.keysignature.tonality
+    );
+    const baseSPN = match(this.stave.clef.$$.sign?.[0]._)
+      .with("G", (value) => new Core.Unit.ScientificPitchNotation(`${value}4`))
+      .with("F", (value) => new Core.Unit.ScientificPitchNotation(`${value}3`))
+      .exhaustive();
+    return (
+      line -
+      (baseSPN.pitchClassLetter.noteIndex -
+        SPN.pitchClassLetter.noteIndex +
+        (baseSPN.octave - SPN.octave) * Core.Unit.PitchClassLetter.NOTES.length)
+    );
   }
 
   get legerLine() {
@@ -72,10 +71,6 @@ export class Note<
       this.pitch.midiNoteNumber.value <= 60
       ? Math.ceil((this.pitch.midiNoteNumber.value - 59) / 2)
       : 0;
-  }
-
-  get accidental() {
-    return;
   }
 
   constructor({

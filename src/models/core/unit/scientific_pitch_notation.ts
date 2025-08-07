@@ -6,6 +6,11 @@ export class ScientificPitchNotation {
   get octave() {
     return parseInt(this.value.slice(-1), 10);
   }
+  get pitchClassLetter() {
+    return new PitchClassLetter(
+      this.value.slice(0, -1) as PitchClassLetter["value"]
+    );
+  }
   constructor(
     public value: `${PitchClassLetter["value"]}${(typeof ScientificPitchNotation.OCTAVE)[number]}`
   ) {}
@@ -13,8 +18,7 @@ export class ScientificPitchNotation {
   static readonly OCTAVE = [0, 1, 2, 3, 4, 5, 6, 7, 8];
   toMidiNoteNumber() {
     return new MidiNoteNumber(
-      (this.octave + 1) * 12 +
-        PitchClassLetter.STEPS.indexOf(this.value.slice(0, -1))
+      (this.octave + 1) * 12 + this.pitchClassLetter.toPitchClass().value
     );
   }
 }

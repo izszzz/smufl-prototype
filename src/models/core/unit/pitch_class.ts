@@ -16,7 +16,9 @@ export class PitchClass {
             : PitchClassLetter.STEPS[pitchClass - 1] ??
               "" + PitchClassLetter.ACCIDENTALS[1]
         )
-        .otherwise(() => PitchClassLetter.STEPS[this.value] ?? "")
+        .otherwise(
+          () => PitchClassLetter.STEPS[this.value] ?? ""
+        ) as PitchClassLetter["value"]
     );
   }
   static readonly ACCIDENTAL_PITCHECLASSES = [1, 3, 6, 8, 10] as const;

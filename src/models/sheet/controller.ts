@@ -50,7 +50,6 @@ function splitByWidth<T>(
         } else {
           current?.push(item);
         }
-
         return acc;
       },
       [[]] as T[][]

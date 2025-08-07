@@ -9,8 +9,8 @@ export class Keysignature extends Core.Event {
       .slice(0, Math.abs(this.accidental))
       .map(
         (pitch) =>
-          new Core.Pitch({
-            midiNoteNumber: new Core.Unit.MidiNoteNumber(pitch),
+          new Core.Unit.PitchClass({
+            value: pitch,
           })
       );
   }

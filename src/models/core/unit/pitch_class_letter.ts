@@ -1,21 +1,46 @@
+import { PitchClass } from "./pitch_class";
+import { match } from "ts-pattern";
+import { IntRange } from "type-fest";
+
 export class PitchClassLetter {
   _brandNoteLetter!: never;
   constructor(
-    public value: `${(typeof PitchClassLetter.STEPS)[number]}${(typeof PitchClassLetter.ACCIDENTALS)[number]}`
+    public value: `${(typeof PitchClassLetter.NOTES)[number]}${(typeof PitchClassLetter.ACCIDENTALS)[number]}`
   ) {}
+  get accidental() {
+    return (this.value.at(-1) ??
+      "") as (typeof PitchClassLetter.ACCIDENTALS)[number];
+  }
+  get note() {
+    return this.value.at(-1) as (typeof PitchClassLetter.NOTES)[number];
+  }
+  get noteIndex() {
+    return PitchClassLetter.NOTES.indexOf(this.note);
+  }
+  toPitchClass() {
+    return new PitchClass(
+      (PitchClassLetter.STEPS.indexOf(this.note) +
+        match(this.accidental)
+          .with("#", () => 1)
+          .with("b", () => -1)
+          .with("", () => 0)
+          .exhaustive()) as IntRange<0, 11>
+    );
+  }
+  static readonly NOTES = ["C", "D", "E", "F", "G", "A", "B"] as const;
   static readonly STEPS = [
-    "C",
+    this.NOTES[0],
     null,
-    "D",
+    this.NOTES[1],
     null,
-    "E",
-    "F",
+    this.NOTES[2],
+    this.NOTES[3],
     null,
-    "G",
+    this.NOTES[4],
     null,
-    "A",
+    this.NOTES[5],
     null,
-    "B",
+    this.NOTES[6],
   ];
-  static readonly ACCIDENTALS = ["#", "b", ""];
+  static readonly ACCIDENTALS = ["#", "b", ""] as const;
 }

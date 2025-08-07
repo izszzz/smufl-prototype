@@ -14,7 +14,7 @@ export class MidiNoteNumber {
   }
   toScientificPitchNotation(tonality: Tonality) {
     return new ScientificPitchNotation(
-      `${this.toPitchClass().toLetter(tonality)}${
+      `${this.toPitchClass().toLetter(tonality).value}${
         Math.trunc(this.value / Metadata.pitchClasses.length) - 1
       }`
     );
