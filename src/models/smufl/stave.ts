@@ -1,6 +1,8 @@
+import * as Core from "core";
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
 import * as R from "remeda";
+import { P, match } from "ts-pattern";
 
 export class Stave extends Sheet.Stave {
   group!: SMUFL.Group;
@@ -33,8 +35,8 @@ function createStaveGroup(stave: Sheet.Stave) {
   if (stave.bar.masterbar.isRowFirst)
     staveGroup.children.push(
       new SMUFL.Text({
-        glyph: SMUFL.Glyph.findClef(stave.clef),
-        y: (stave.clef.$$.line?.[0]?._ ?? 0) - 1,
+        glyph: SMUFL.Glyph.findClef(stave.resolveClef()),
+        y: stave.resolveClef().$$.line?.[0]?._ ?? 0,
       })
     );
   if (stave.bar.masterbar.isFirst) {
@@ -53,7 +55,7 @@ function createStaveGroup(stave: Sheet.Stave) {
       new SMUFL.Group({
         children: [
           ...stave.bar.keysignature.accidentalPitchClasses.map(
-            (pitch) =>
+            (pitchClass) =>
               new SMUFL.Text({
                 glyph: SMUFL.Glyph.find("standardAccidentals12Edo", (v) =>
                   v
@@ -62,14 +64,36 @@ function createStaveGroup(stave: Sheet.Stave) {
                       stave.bar.keysignature.tonality ? "flat" : "sharp"
                     )
                 ),
+                y:
+                  (stave.resolveClef().$$.line?.[0]?._ ?? 0) -
+                  stave.getClefScientificPitchNotation().getDegree(
+                    new Core.Unit.ScientificPitchNotation(
+                      `${pitchClass.toLetter(stave.bar.keysignature.tonality).value}${match(
+                        stave.resolveClef().$$.sign?.[0]?._
+                      )
+                        .with(P.union("G", "F"), (sign) =>
+                          5 < pitchClass.value
+                            ? match(sign)
+                                .with("G", () => 4)
+                                .with("F", () => 2)
+                                .exhaustive()
+                            : match(sign)
+                                .with("G", () => 5)
+                                .with("F", () => 3)
+                                .exhaustive()
+                        )
+                        .otherwise(() => 0)}`
+                    )
+                  ) *
+                    0.5,
               })
           ),
         ],
       }),
       new SMUFL.Group({
         children: [
-          new SMUFL.Text({ glyph: numerator, y: 3 }),
-          new SMUFL.Text({ glyph: denominator, y: 1, index: 1 }),
+          new SMUFL.Text({ glyph: numerator, y: 4 }),
+          new SMUFL.Text({ glyph: denominator, y: 2, index: 1 }),
         ],
       })
     );
@@ -78,9 +102,7 @@ function createStaveGroup(stave: Sheet.Stave) {
   for (const note of stave.notes) {
     const noteGroup = new SMUFL.Group({
       children: [],
-      y:
-        note.line *
-        SMUFL.BravuraMetadata.engravingDefaults.thickBarlineThickness,
+      y: note.line,
     });
 
     if (note.legerLine > 0)
@@ -131,6 +153,7 @@ function createStaveGroup(stave: Sheet.Stave) {
                 $$: { ["bar-style"]: [{ _: "regular" }] },
               }
       ),
+      y: 1,
     })
   );
 

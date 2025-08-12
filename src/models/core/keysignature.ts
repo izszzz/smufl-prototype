@@ -2,17 +2,15 @@ import * as Core from "core";
 export class Keysignature extends Core.Event {
   tonality;
   accidental;
+  get isMajor() {
+    return this.tonality === Core.Tonality.Major;
+  }
   get accidentalPitchClasses() {
     return Core.Metadata[
-      `${this.tonality ? "minor" : "major"}TonicsByAccidentals`
+      `${this.isMajor ? "major" : "minor"}TonicsByAccidentals`
     ]
       .slice(0, Math.abs(this.accidental))
-      .map(
-        (pitch) =>
-          new Core.Unit.PitchClass({
-            value: pitch,
-          })
-      );
+      .map((pitch) => new Core.Unit.PitchClass(pitch));
   }
   constructor({
     tonality,

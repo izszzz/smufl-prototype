@@ -17,9 +17,7 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
     rows: this.rows.map((row) => new SMUFL.Row(row)),
     notes: this.notes.map((note) => new SMUFL.Note(note)),
     bars: this.bars.map((bar) => new SMUFL.Bar(bar)),
-    staves: this.staves.map(
-      (stave) => new SMUFL.Stave({ ...stave, clef: stave._clef })
-    ),
+    staves: this.staves.map((stave) => new SMUFL.Stave(stave)),
   });
   if (process.env.NODE_ENV === "development") console.log({ smufl: score });
   return score;

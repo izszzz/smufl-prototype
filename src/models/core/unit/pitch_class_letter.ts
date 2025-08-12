@@ -3,7 +3,7 @@ import { match } from "ts-pattern";
 import { IntRange } from "type-fest";
 
 export class PitchClassLetter {
-  _brandNoteLetter!: never;
+  _brandPitchClassLetter!: never;
   constructor(
     public value: `${(typeof PitchClassLetter.NOTES)[number]}${(typeof PitchClassLetter.ACCIDENTALS)[number]}`
   ) {}
@@ -16,6 +16,9 @@ export class PitchClassLetter {
   }
   get noteIndex() {
     return PitchClassLetter.NOTES.indexOf(this.note);
+  }
+  getDegree(pitchClassletter: PitchClassLetter) {
+    return this.noteIndex - pitchClassletter.noteIndex;
   }
   toPitchClass() {
     return new PitchClass(

@@ -72,6 +72,7 @@ SMUFL.Score.prototype.toSVG = function (
                               .attr("transform", createTranslate(0, 0))
                               .call((g) => {
                                 R.times(bar.staffLines, (i) => {
+                                  i++;
                                   g.append("path")
                                     .attr("stroke", "black")
                                     .attr(

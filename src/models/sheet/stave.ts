@@ -1,12 +1,14 @@
+import * as Core from "core";
 import * as Sheet from "sheet";
 import { Barline, Clef } from "src/const/musicxml/4.0/musicxml";
+import { match } from "ts-pattern";
 
 export class Stave {
   readonly id;
   barId;
   trackId;
+  clef;
   barline;
-  _clef;
   score!: Sheet.Score;
   get bar() {
     return this.score.bars.find((bar) => bar.id === this.barId)!;
@@ -26,9 +28,6 @@ export class Stave {
   get prev() {
     return this.bar.prev?.staves[this.id];
   }
-  get clef(): Clef {
-    return this._clef ? this._clef : this.prev!.clef;
-  }
   constructor({
     id,
     barId,
@@ -45,7 +44,18 @@ export class Stave {
     this.id = id;
     this.barId = barId;
     this.trackId = trackId;
-    this._clef = clef;
+    this.clef = clef;
     this.barline = barline;
+  }
+  resolveClef(): Clef {
+    return this.clef ?? this.prev!.resolveClef();
+  }
+  getClefScientificPitchNotation() {
+    return new Core.Unit.ScientificPitchNotation(
+      match(this.resolveClef().$$.sign?.[0]._)
+        .with("G", (value) => `${value}4`)
+        .with("F", (value) => `${value}3`)
+        .exhaustive()
+    );
   }
 }

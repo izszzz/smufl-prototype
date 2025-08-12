@@ -42,7 +42,6 @@ export class Note<
         : Sheet.AccidentalType.Flat
       : null;
   }
-  // TODO: refactor
   get line() {
     if (R.isDefined(this.rest)) {
       if (this.rest.$?.measure === "yes") return 0;
@@ -50,19 +49,16 @@ export class Note<
         .with(P.union("quarter", "half"), () => 2)
         .otherwise(() => 0);
     }
-    const line = this.stave.clef.$$.line?.[0]?._ ?? 0;
-    const SPN = this.pitch.midiNoteNumber.toScientificPitchNotation(
-      this.keysignature.tonality
-    );
-    const baseSPN = match(this.stave.clef.$$.sign?.[0]._)
-      .with("G", (value) => new Core.Unit.ScientificPitchNotation(`${value}4`))
-      .with("F", (value) => new Core.Unit.ScientificPitchNotation(`${value}3`))
-      .exhaustive();
     return (
-      line -
-      (baseSPN.pitchClassLetter.noteIndex -
-        SPN.pitchClassLetter.noteIndex +
-        (baseSPN.octave - SPN.octave) * Core.Unit.PitchClassLetter.NOTES.length)
+      (this.stave.resolveClef().$$.line?.[0]?._ ?? 0) -
+      this.stave
+        .getClefScientificPitchNotation()
+        .getDegree(
+          this.pitch.midiNoteNumber.toScientificPitchNotation(
+            this.keysignature.tonality
+          )
+        ) /
+        2
     );
   }
 

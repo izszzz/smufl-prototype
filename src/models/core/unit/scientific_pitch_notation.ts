@@ -16,6 +16,15 @@ export class ScientificPitchNotation {
   ) {}
   static readonly MIDDLE_C = "C4";
   static readonly OCTAVE = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  getDegree(scientificPitchNotation: ScientificPitchNotation) {
+    return (
+      this.pitchClassLetter.getDegree(
+        scientificPitchNotation.pitchClassLetter
+      ) +
+      (this.octave - scientificPitchNotation.octave) *
+        PitchClassLetter.NOTES.length
+    );
+  }
   toMidiNoteNumber() {
     return new MidiNoteNumber(
       (this.octave + 1) * 12 + this.pitchClassLetter.toPitchClass().value
