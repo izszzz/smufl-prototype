@@ -1,33 +1,29 @@
+import musicTheory from "../../../const/music-theory.json";
 import { MidiNoteNumber } from "./midi_note_number";
-import { PitchClassLetter } from "./pitch_class_letter";
+import { PitchClassName } from "./pitch_class_name";
 
 export class ScientificPitchNotation {
   _brandScientificPitchNotation!: never;
   get octave() {
-    return parseInt(this.value.slice(-1), 10);
+    return Number(this.value.slice(-1));
   }
-  get pitchClassLetter() {
-    return new PitchClassLetter(
-      this.value.slice(0, -1) as PitchClassLetter["value"]
+  get pitchClassName() {
+    return new PitchClassName(
+      this.value.slice(0, -1) as PitchClassName["value"]
     );
   }
-  constructor(
-    public value: `${PitchClassLetter["value"]}${(typeof ScientificPitchNotation.OCTAVE)[number]}`
-  ) {}
-  static readonly MIDDLE_C = "C4";
-  static readonly OCTAVE = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+  constructor(public value: `${PitchClassName["value"]}${number}`) {}
   getDegree(scientificPitchNotation: ScientificPitchNotation) {
     return (
-      this.pitchClassLetter.getDegree(
-        scientificPitchNotation.pitchClassLetter
-      ) +
+      this.pitchClassName.getDegree(scientificPitchNotation.pitchClassName) +
       (this.octave - scientificPitchNotation.octave) *
-        PitchClassLetter.NOTES.length
+        musicTheory.diatonicScale.length
     );
   }
   toMidiNoteNumber() {
     return new MidiNoteNumber(
-      (this.octave + 1) * 12 + this.pitchClassLetter.toPitchClass().value
+      (this.octave + 1) * 12 + this.pitchClassName.toPitchClass().value
     );
   }
+  static readonly MIDDLE_C = "C4";
 }

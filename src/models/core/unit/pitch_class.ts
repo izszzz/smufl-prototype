@@ -1,25 +1,39 @@
 import { Tonality } from "core";
-import { IntRange } from "type-fest";
-import { PitchClassLetter } from "./pitch_class_letter";
+import { PitchClassName } from "./pitch_class_name";
 import { P, match } from "ts-pattern";
+import musicTheory from "../../../const/music-theory.json";
+import { IntRange } from "type-fest";
 
 export class PitchClass {
+  value: IntRange<0, 12>;
   _brandPitchClass!: never;
-  constructor(public value: IntRange<0, 11>) {}
-  toLetter(tonality: Tonality) {
-    return new PitchClassLetter(
+  constructor(value: number) {
+    this.value = this.validate(value);
+  }
+  toPitchClassName(tonality: Tonality) {
+    return new PitchClassName(
       match(this.value)
-        .with(P.union(...PitchClass.ACCIDENTAL_PITCHECLASSES), (pitchClass) =>
-          tonality === Tonality.Major
-            ? PitchClassLetter.STEPS[pitchClass + 1] ??
-              "" + PitchClassLetter.ACCIDENTALS[0]
-            : PitchClassLetter.STEPS[pitchClass - 1] ??
-              "" + PitchClassLetter.ACCIDENTALS[1]
+        .with(
+          P.union(...musicTheory.accidentalPitchClasses),
+          (pitchClass) =>
+            musicTheory.chromaticScale[
+              pitchClass +
+                match(tonality)
+                  .with(Tonality.Major as 0, () => 1)
+                  .with(Tonality.Minor as 1, () => -1)
+                  .exhaustive()
+            ]!.toString() + musicTheory.accidentals[tonality]
         )
         .otherwise(
-          () => PitchClassLetter.STEPS[this.value] ?? ""
-        ) as PitchClassLetter["value"]
+          () => musicTheory.chromaticScale[this.value]!
+        ) as PitchClassName["value"]
     );
   }
-  static readonly ACCIDENTAL_PITCHECLASSES = [1, 3, 6, 8, 10] as const;
+  private validate(value: number) {
+    if (!this.isInRange(value)) throw Error();
+    return value;
+  }
+  private isInRange(value: number): value is IntRange<0, 12> {
+    return 0 <= value && value <= 11;
+  }
 }

@@ -71,7 +71,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                     staff: cur.$$.staff,
                     pitch: new Sheet.Pitch({
                       midiNoteNumber: new Core.Unit.ScientificPitchNotation(
-                        `${new Core.Unit.PitchClassLetter(
+                        `${new Core.Unit.PitchClassName(
                           "pitch" in cur.$$ && cur.$$.pitch?.[0].$$.step?.[0]._
                             ? cur.$$.pitch[0].$$.step[0]._
                             : "C" +

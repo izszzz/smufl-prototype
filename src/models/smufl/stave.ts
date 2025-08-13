@@ -68,7 +68,7 @@ function createStaveGroup(stave: Sheet.Stave) {
                   (stave.resolveClef().$$.line?.[0]?._ ?? 0) -
                   stave.getClefScientificPitchNotation().getDegree(
                     new Core.Unit.ScientificPitchNotation(
-                      `${pitchClass.toLetter(stave.bar.keysignature.tonality).value}${match(
+                      `${pitchClass.toPitchClassName(stave.bar.keysignature.tonality).value}${match(
                         stave.resolveClef().$$.sign?.[0]?._
                       )
                         .with(P.union("G", "F"), (sign) =>
@@ -154,6 +154,7 @@ function createStaveGroup(stave: Sheet.Stave) {
               }
       ),
       y: 1,
+      // x: stave.bar.masterbar.width,
     })
   );
 
