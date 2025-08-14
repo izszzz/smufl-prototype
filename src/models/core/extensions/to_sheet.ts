@@ -44,6 +44,7 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
       { start: 0, events: [] as Core.Event[] }
     )
     .events.map((event, id) => new Sheet.Masterbar({ id, ...event }));
+
   // TODO: refactor
   const staves = this.tracks.flatMap((track) =>
     masterbars.flatMap((masterbar) =>
@@ -127,19 +128,16 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
 
   // insert rests
   // TODO: chordの考慮
-  score.notes = R.pipe(
-    score.notes,
-    R.groupByProp("staveId"),
-    R.entries(),
-    R.flatMap(([staveId, notes]) => {
-      const stave = score.staves.find((stave) => stave.id === Number(staveId))!;
+  R.pipe(
+    score.staves,
+    R.map((stave) => {
       return R.pipe(
         [
           new Core.Event({
             start: stave.bar.start,
             end: stave.bar.start,
           }) as Sheet.Note,
-          ...notes,
+          ...stave.notes,
           new Core.Event({
             start: stave.bar.end,
             end: stave.bar.end,
@@ -147,11 +145,18 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
         ],
         R.reduce(
           (acc, cur, i) => {
-            if (acc.prev && acc.prev.start < cur.start) {
-              if (acc.prev instanceof Sheet.Note) acc.events.push(acc.prev);
-              acc.events.push(
+            if (acc && acc.end < cur.start) {
+              score.notes.splice(
+                R.pipe(
+                  score.notes,
+                  R.filter(R.piped(R.prop("rest"), R.isDefined)),
+                  R.length(),
+                  R.add(i),
+                  R.subtract(1)
+                ),
+                0,
                 new Sheet.Note({
-                  start: acc.prev.end,
+                  start: acc.end,
                   end: cur.start,
                   id: i + score.notes.length,
                   pitch: new Sheet.Pitch({
@@ -162,19 +167,18 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
                   rest: { $: {}, $$: {} },
                   voice: undefined,
                   staff: undefined,
-                  staveId: Number(staveId),
-                  trackId: stave.bar.trackId,
+                  trackId: stave.trackId,
+                  staveId: stave.id,
                 })
               );
             }
-            acc.prev = cur;
-            return acc;
+            return cur;
           },
-          { events: [] as Sheet.Note[], prev: null as Sheet.Note | null }
-        ),
-        R.prop("events")
+          null as Sheet.Note | null
+        )
       );
-    })
+    }),
+    R.flat()
   );
 
   console.log({ sheet: score });
