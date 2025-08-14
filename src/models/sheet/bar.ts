@@ -5,7 +5,6 @@ import * as Sheet from "sheet";
 export class Bar extends Core.Event {
   readonly id;
   trackId;
-  staffLines;
   score!: Sheet.Score;
   get timesignature() {
     return this.score.timesignatures.find((timesignature) =>
@@ -32,10 +31,12 @@ export class Bar extends Core.Event {
     );
   }
   get width() {
-    return R.pipe(
-      this.staves,
-      R.firstBy([R.prop("width"), "desc"]),
-      R.pathOr(["width" as const], 0)
+    return (
+      R.pipe(
+        this.staves,
+        R.firstBy([R.prop("width"), "desc"]),
+        R.prop("width")
+      ) ?? 0
     );
   }
   get height() {
@@ -48,17 +49,14 @@ export class Bar extends Core.Event {
   constructor({
     id,
     trackId,
-    staffLines,
     ...event
   }: {
     id: number;
     trackId: number;
-    staffLines: number;
   } & Core.EventConstructorParameter) {
     if ("end" in event) super(event);
     else super(event);
     this.id = id;
     this.trackId = trackId;
-    this.staffLines = staffLines;
   }
 }

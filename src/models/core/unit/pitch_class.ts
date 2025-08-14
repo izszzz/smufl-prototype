@@ -29,11 +29,11 @@ export class PitchClass {
         ) as PitchClassName["value"]
     );
   }
-  private validate(value: number) {
+  validate(value: number) {
     if (!this.isInRange(value)) throw Error();
     return value;
   }
-  private isInRange(value: number): value is IntRange<0, 12> {
+  private isInRange(value: number): value is PitchClass["value"] {
     return 0 <= value && value <= 11;
   }
 }

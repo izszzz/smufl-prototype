@@ -6,11 +6,6 @@ export class Track extends Sheet.Track {
   override get bars() {
     return super.bars as SMUFL.Bar[];
   }
-  get staff() {
-    return SMUFL.Glyph.find("staves", (v) =>
-      v.includes(this.staffLines.toString())
-    );
-  }
   override getMasterbarBars(masterbarId: number) {
     return super.getMasterbarBars(masterbarId) as SMUFL.Bar[];
   }

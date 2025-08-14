@@ -16,7 +16,6 @@ export class Note<
   staveId;
   chord;
   stem;
-  type;
   rest;
   voice;
   staff;
@@ -45,7 +44,7 @@ export class Note<
   get line() {
     if (R.isDefined(this.rest)) {
       if (this.rest.$?.measure === "yes") return 0;
-      return match(this.type?._)
+      return match(this.type._)
         .with(P.union("quarter", "half"), () => 2)
         .otherwise(() => 0);
     }
@@ -61,7 +60,25 @@ export class Note<
         2
     );
   }
+  get type() {
+    return <NoteType>{
+      _: match(Math.pow(2, Math.floor(Math.log2(this.duration))))
+        .with(4, () => "whole")
+        .with(2, () => "half")
+        .with(1, () => "quarter")
+        .with(0.5, () => "eighth")
+        .with(0.25, () => "16th")
+        .with(0.125, () => "32th")
+        .with(0.0625, () => "64th")
+        .with(0.03125, () => "128th")
+        .with(0.015625, () => "256th")
+        .with(0.0078125, () => "512th")
+        .with(0.00390625, () => "1024th")
+        .otherwise(() => "quarter"),
+    };
+  }
 
+  // FIXME:
   get legerLine() {
     return this.pitch.midiNoteNumber.value > 80 ||
       this.pitch.midiNoteNumber.value <= 60
@@ -73,25 +90,22 @@ export class Note<
     staveId,
     rest,
     chord,
-    type,
     stem,
     voice,
     staff,
     ...note
   }: {
     staveId: number;
-    type?: NoteType;
+    chord: boolean;
     stem?: Stem;
     rest?: Rest;
-    chord: boolean;
     staff?: Staff["staff"];
-    voice: Voice["voice"];
+    voice?: Voice["voice"];
   } & ConstructorParameters<typeof Core.Note<Pitch>>[0]) {
     super(note);
     this.staveId = staveId;
     this.chord = chord;
     this.stem = stem;
-    this.type = type;
     this.rest = rest;
     this.staff = staff;
     this.voice = voice;

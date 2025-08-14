@@ -8,7 +8,7 @@ module.exports = {
     "prettier",
   ],
   parserOptions: {
-    project: "./tsconfig.json", // 型情報の参照
+    project: "./tsconfig.json",
     tsconfigRootDir: __dirname,
     sourceType: "module",
   },
@@ -23,6 +23,7 @@ module.exports = {
     // custom rurles
     "no-useless-rename": ["error"],
     "no-void": ["error"],
+    "no-self-compare": ["error"],
     "@typescript-eslint/no-unnecessary-type-assertion": ["error"],
     "@typescript-eslint/no-unnecessary-condition": ["error"],
   },

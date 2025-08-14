@@ -11,9 +11,11 @@ export class Masterbar extends Core.Event {
     return prev ? prev.x + prev.width : 0;
   }
   get width() {
-    return R.pipe(
-      R.firstBy(this.bars, [R.prop("width"), "desc"]),
-      R.pathOr(["width" as const], 0)
+    return (
+      R.pipe(
+        R.firstBy(this.bars, [R.prop("width"), "desc"]),
+        R.prop("width")
+      ) ?? 0
     );
   }
   get height() {

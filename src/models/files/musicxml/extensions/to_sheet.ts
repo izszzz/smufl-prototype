@@ -18,77 +18,82 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
         const bars =
           cur.$$.measure?.map((measure, barId) => {
             const musicData = measure.$$;
-            const attributes =
-              "attributes" in musicData ? musicData.attributes : [];
+            const attributes = R.prop(musicData, "attributes") ?? [];
+            const staveLines = attributes?.[0]?.$$["staff-details"];
+            console.log(staveLines);
             const time = attributes?.[0]?.$$.time?.[0];
             const key = attributes?.[0]?.$$.key?.[0];
             const denominator = Number(
-              (time?.$$ && "beat-type" in time.$$
-                ? time.$$["beat-type"]?.[0]._
-                : 4) ?? 4
+              R.prop(time?.$$, "beat-type", "0", "_") ?? 4
             );
-            const numerator = Number(
-              (time?.$$ && "beats" in time.$$ ? time.$$.beats?.[0]._ : 4) ?? 4
-            );
-            const accidental =
-              (key?.$$ && "fifths" in key.$$ ? key.$$.fifths?.[0]._ : 0) ?? 0;
+            const numerator = Number(R.prop(time?.$$, "beats", "0", "_") ?? 4);
+            const accidental = R.prop(key?.$$, "fifths", "0", "_") ?? 0;
             const tonality =
-              key?.$$ && "mode" in key.$$
-                ? key.$$.mode?.[0]?._ === "minor"
-                  ? Core.Tonality.Minor
-                  : Core.Tonality.Major
+              R.prop(key?.$$, "mode", "at", "_") === "minor"
+                ? Core.Tonality.Minor
                 : Core.Tonality.Major;
-
             const timesignature = new Sheet.Timesignature({
               denominator,
               numerator,
               start: numerator * barId,
               duration: numerator,
             });
-
             const keysignature = new Sheet.Keysignature({
               accidental,
               tonality,
               start: numerator * barId,
               duration: numerator,
             });
-            const { notes } = (
-              "note" in musicData && musicData.note ? musicData.note : []
-            ).reduce(
+            const { notes } = (R.prop(musicData, "note") ?? []).reduce(
               (acc, cur, id) => {
                 const duration =
-                  "duration" in cur.$$ ? (cur.$$.duration?.[0]._ as number) : 0;
+                  (R.prop(cur.$$, "duration", "0", "_") as number) ?? 0;
+
                 acc.notes.push(
                   new Sheet.Note({
                     id,
                     staveId: -1 /* will be set later */,
                     trackId,
                     voice: cur.$$.voice,
-                    rest: "rest" in cur.$$ ? cur.$$.rest?.[0] : undefined,
-                    chord: "chord" in cur.$$,
-                    type: cur.$$.type?.[0],
+                    rest: R.prop(cur.$$, "rest", "0"),
+                    chord: R.isDefined(R.prop(cur.$$, "chord")),
                     stem: cur.$$.stem?.[0],
                     staff: cur.$$.staff,
                     pitch: new Sheet.Pitch({
                       midiNoteNumber: new Core.Unit.ScientificPitchNotation(
-                        `${new Core.Unit.PitchClassName(
-                          "pitch" in cur.$$ && cur.$$.pitch?.[0].$$.step?.[0]._
-                            ? cur.$$.pitch[0].$$.step[0]._
-                            : "C" +
-                              match(
-                                "pitch" in cur.$$ &&
-                                  cur.$$.pitch?.[0].$$.alter?.[0]?._
-                                  ? cur.$$.pitch[0].$$.alter[0]._
-                                  : 0
-                              )
-                                .with(1, () => "#")
-                                .with(-1, () => "-")
-                                .otherwise(() => "")
-                        )}${
-                          "pitch" in cur.$$ &&
-                          cur.$$.pitch?.[0].$$.octave?.[0]._
-                            ? cur.$$.pitch[0].$$.octave[0]._
-                            : 0
+                        `${
+                          R.prop(
+                            cur.$$,
+                            "pitch",
+                            "0",
+                            "$$",
+                            "step",
+                            "0",
+                            "_"
+                          ) ?? "C"
+                        }${match(
+                          R.prop(
+                            cur.$$,
+                            "pitch",
+                            "0",
+                            "$$",
+                            "alter",
+                            "at",
+                            "_"
+                          ) ?? 0
+                        )
+                          .with(1, () => "#")
+                          .with(-1, () => "b")
+                          .otherwise(() => "")}${
+                          R.prop(
+                            cur.$$,
+                            "pitch",
+                            "0",
+                            "$$",
+                            "octave",
+                            "0",
+                            "_"
+                          ) ?? 0
                         }`
                       ).toMidiNoteNumber(),
                     }),
@@ -131,7 +136,6 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
             return new Sheet.Bar({
               id: barId,
               trackId,
-              staffLines: 5,
               start: numerator * barId,
               duration: numerator,
             });
@@ -142,7 +146,6 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
             id: trackId,
             name: cur.$?.id,
             preset: new Core.Unit.Preset(0),
-            staffLines: 5,
             start: 0,
             duration: 0,
             end: 0,

@@ -22,10 +22,12 @@ export class Score<
     return this.rows.reduce((acc, cur) => acc + cur.height, 0);
   }
   get width() {
-    return R.pipe(
-      this.rows as Sheet.Row[],
-      R.firstBy([R.prop("width"), "desc"]),
-      R.pathOr(["width" as const], 0)
+    return (
+      R.pipe(
+        this.rows as Sheet.Row[],
+        R.firstBy([R.prop("width"), "desc"]),
+        R.prop("width")
+      ) ?? 0
     );
   }
   constructor({
