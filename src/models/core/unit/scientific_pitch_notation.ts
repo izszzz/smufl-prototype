@@ -1,18 +1,15 @@
+import { ValueObject } from "../../valueobject";
 import musicTheory from "../../../const/music-theory.json";
 import { MidiNoteNumber } from "./midi_note_number";
 import { PitchClassName } from "./pitch_class_name";
 
-export class ScientificPitchNotation {
-  value: `${PitchClassName["value"]}${number}`;
-  _brandScientificPitchNotation!: never;
+export class ScientificPitchNotation extends ValueObject<string> {
+  declare value: `${PitchClassName["value"]}${number}`;
   get octave() {
     return Number(this.value.slice(-1));
   }
   get pitchClassName() {
     return new PitchClassName(this.value.slice(0, -1));
-  }
-  constructor(value: string) {
-    this.value = this.validate(value);
   }
   getDegree(scientificPitchNotation: ScientificPitchNotation) {
     return (
@@ -27,7 +24,7 @@ export class ScientificPitchNotation {
     );
   }
   static readonly MIDDLE_C = "C4";
-  private validate(value: string) {
+  protected validate(value: string) {
     const pitchClassName = value.slice(0, -1);
     if (!PitchClassName.isPitchClassName(pitchClassName)) throw Error();
     return `${pitchClassName}${Number(value.slice(-1))}` as const;

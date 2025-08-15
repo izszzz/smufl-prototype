@@ -2,10 +2,9 @@ import { ScientificPitchNotation } from "./scientific_pitch_notation";
 import { PitchClass } from "./pitch_class";
 import { Tonality } from "core";
 import musicTheory from "../../../const/music-theory.json";
+import { ValueObject } from "../../valueobject";
 
-export class MidiNoteNumber {
-  _brandMidiNoteNumber!: never;
-  constructor(public value: number) {}
+export class MidiNoteNumber extends ValueObject<number> {
   toPitchClass() {
     return new PitchClass(this.value % musicTheory.pitchClasses.length);
   }
@@ -15,6 +14,9 @@ export class MidiNoteNumber {
         Math.trunc(this.value / musicTheory.pitchClasses.length) - 1
       }`
     );
+  }
+  protected validate(value: typeof this.value) {
+    return value;
   }
   static readonly MIDDLE_C = 60;
 }

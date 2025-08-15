@@ -2,16 +2,13 @@ import * as R from "remeda";
 import { PitchClass } from "./pitch_class";
 import { match } from "ts-pattern";
 import musicTheory from "../../../const/music-theory.json";
+import { ValueObject } from "../../valueobject";
 
 type DiatonicScale = (typeof musicTheory.diatonicScale)[number];
 type Accidental = (typeof musicTheory.accidentals)[number] | "";
 
-export class PitchClassName {
-  value: `${DiatonicScale}${Accidental}`;
-  _brandPitchClassName!: never;
-  constructor(value: string) {
-    this.value = this.validate(value);
-  }
+export class PitchClassName extends ValueObject<string> {
+  declare value: `${DiatonicScale}${Accidental}`;
   get accidental() {
     const accidental = this.value[1] ?? "";
     this.assertAccidental(accidental);
@@ -57,7 +54,7 @@ export class PitchClassName {
   private static isTone(value: string): value is DiatonicScale {
     return R.isDefined(musicTheory.diatonicScale.find((v) => v === value));
   }
-  private validate(value: string) {
+  protected validate(value: string) {
     const tone = value[0]!;
     const accidental = value[1] ?? "";
     if (!PitchClassName.isTone(tone)) throw new Error();

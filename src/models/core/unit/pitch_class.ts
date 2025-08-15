@@ -3,13 +3,10 @@ import { PitchClassName } from "./pitch_class_name";
 import { P, match } from "ts-pattern";
 import musicTheory from "../../../const/music-theory.json";
 import { IntRange } from "type-fest";
+import { ValueObject } from "../../valueobject";
 
-export class PitchClass {
-  value: IntRange<0, 12>;
-  _brandPitchClass!: never;
-  constructor(value: number) {
-    this.value = this.validate(value);
-  }
+export class PitchClass extends ValueObject<number> {
+  declare value: IntRange<0, 12>;
   toPitchClassName(tonality: Tonality) {
     return new PitchClassName(
       match(this.value)
