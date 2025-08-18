@@ -20,7 +20,6 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "remeda": "^2.27.0",
-    "ts-json-as-const": "^1.0.7",
     "ts-pattern": "^5.1.1",
     "xml2js": "^0.6.2"
   },
