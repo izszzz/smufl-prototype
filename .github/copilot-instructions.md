@@ -29,3 +29,20 @@ correct
 ```
 import * as Core from "core"
 ```
+
+## Naming
+
+- Don't omit naming
+  incorrect
+
+```
+const ts = new Timesignature()
+this.timesignatures.map((ts) => ts)
+```
+
+correct
+
+```
+const timesignature = new Timesignature()
+this.timesignatures.map((timesignature) => timesignature)
+```

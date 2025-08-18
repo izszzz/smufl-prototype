@@ -2,7 +2,6 @@ export * from "./row";
 export * from "./masterbar";
 export * from "./bar";
 export * from "./stave";
-export * from "./pitch";
 export * from "./note";
 export * from "./score";
 export * from "./track";
@@ -10,6 +9,8 @@ export * from "./bpm";
 export * from "./keysignature";
 export * from "./timesignature";
 export * from "./controller";
+export * from "./ligature";
+export * from "./glyph";
 
 export enum LayoutType {
   Page,
@@ -21,4 +22,22 @@ export enum AccidentalType {
   Sharp,
   Flat,
   Natural,
+}
+
+export enum GlyphType {
+  Clef,
+  Numerator,
+  Denominator,
+  Notehead,
+  Stem,
+  Flag,
+  Beam,
+  LegerLine,
+  Accidental,
+  Articulation,
+  Ornament,
+  Slur,
+  Tie,
+  Rest,
+  Barline,
 }

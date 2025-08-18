@@ -7,10 +7,11 @@ export class Controller {
     public score: Score,
     public layoutType: LayoutType,
     public scale: number = 30
-  ) {}
-
-  layout(layoutType: LayoutType) {
+  ) {
     this.layoutType = layoutType;
+    this.layout(layoutType);
+  }
+  layout(layoutType: LayoutType) {
     switch (layoutType) {
       case LayoutType.Horizontal:
         for (const masterbar of this.score.masterbars) masterbar.rowId = 0;
@@ -29,6 +30,7 @@ export class Controller {
     }
     for (const row of this.score.rows) row.score = this.score;
     console.log(this.score);
+    return layoutType;
   }
 }
 

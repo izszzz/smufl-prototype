@@ -1,6 +1,8 @@
 import * as d3 from "d3";
 import * as R from "remeda";
 import * as SMUFL from "smufl";
+import * as Sheet from "sheet";
+import { match, P } from "ts-pattern";
 
 declare module "smufl" {
   interface Score {
@@ -18,6 +20,8 @@ SMUFL.Score.prototype.toSVG = function (
   width,
   options
 ) {
+  this.draw();
+  console.log(this);
   const svg = d3
     .create("svg")
     .attr("font-size", options.ratio)
@@ -64,7 +68,7 @@ SMUFL.Score.prototype.toSVG = function (
                           createTranslate(0, stave.y)
                         )
                         .each(function (stave) {
-                          renderGroup(this, stave.group);
+                          ligatureToSVG(this, stave.ligature);
                           const g = d3.select(this);
                           g.append("g").call((g) => {
                             g.append("g")
@@ -101,24 +105,32 @@ SMUFL.Score.prototype.toSVG = function (
     return `translate(${x}, ${y})`;
   }
 
-  function renderGroup(element: d3.BaseType | SVGGElement, group: SMUFL.Group) {
+  function ligatureToSVG(
+    element: d3.BaseType | SVGGElement,
+    ligature: Sheet.Ligature
+  ) {
     const g = d3.select(element);
-    g.selectAll("g[type=group]")
-      .data(group.children)
+    g.selectAll("g[type=ligature]")
+      .data(ligature.glyphsList)
       .join("g")
-      .attr("type", "group")
-      .attr("transform", `translate(${group.x}, ${-group.y})`)
-      .each(function (child) {
+      .attr("type", "ligature")
+      .attr("transform", `translate(${ligature.x}, ${-ligature.y})`)
+      .each(function (glyphs) {
         const g = d3.select(this);
-        if (child instanceof SMUFL.Group) renderGroup(this, child);
-        if (child instanceof SMUFL.Text) {
-          g.append("text")
-            .attr("y", -child.y)
-            .attr("x", child.x)
-            .attr("dx", child.dx)
-            .attr("rotate", child.rotate)
-            .text(String.fromCodePoint(child.glyph.codepoint));
-        }
+        glyphs.map((glyph) =>
+          match(glyph)
+            .with(P.instanceOf(SMUFL.Glyph), (glyph) =>
+              g
+                .append("text")
+                .attr("x", glyph.x)
+                .attr("y", -glyph.line)
+                .attr("dx", glyph.dx)
+                .text(String.fromCodePoint(glyph.codepoint))
+            )
+            .with(P.instanceOf(Sheet.Ligature), (ligature) =>
+              ligatureToSVG(this, ligature)
+            )
+        );
       });
   }
 

@@ -1,19 +1,18 @@
 import * as R from "remeda";
-import * as Core from "core";
 import * as Sheet from "sheet";
 
-export class Bar extends Core.Event {
+export class Bar {
   readonly id;
   trackId;
   score!: Sheet.Score;
   get timesignature() {
     return this.score.timesignatures.find((timesignature) =>
-      timesignature.isOverlapped(this)
+      timesignature.isOverlapped(this.masterbar)
     )!;
   }
   get keysignature() {
     return this.score.keysignatures.find((keysignature) =>
-      keysignature.isOverlapped(this)
+      keysignature.isOverlapped(this.masterbar)
     )!;
   }
   get track() {
@@ -46,16 +45,7 @@ export class Bar extends Core.Event {
   get prev() {
     return this.track.bars[this.id - 1];
   }
-  constructor({
-    id,
-    trackId,
-    ...event
-  }: {
-    id: number;
-    trackId: number;
-  } & Core.EventConstructorParameter) {
-    if ("end" in event) super(event);
-    else super(event);
+  constructor({ id, trackId }: { id: number; trackId: number }) {
     this.id = id;
     this.trackId = trackId;
   }

@@ -20,16 +20,6 @@ function App() {
   const layouting = () => {
     if (!sheetController) return;
     sheetController.layout(sheetController.layoutType);
-    sheetController.score.rows
-      .flatMap((row) =>
-        row.masterbars.flatMap((masterbar) =>
-          masterbar.bars.flatMap((bar) => bar.staves)
-        )
-      )
-      .map((stave) => {
-        stave.setGroup();
-        stave.group.order();
-      });
 
     if (ref.current) {
       while (ref.current.firstChild)

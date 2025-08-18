@@ -1,11 +1,9 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
-import * as R from "remeda";
 import { P, match } from "ts-pattern";
 
 export class Stave extends Sheet.Stave {
-  group!: SMUFL.Group;
   declare score: SMUFL.Score;
   override get bar() {
     return super.bar as SMUFL.Bar;
@@ -14,149 +12,79 @@ export class Stave extends Sheet.Stave {
     return super.notes as SMUFL.Note[];
   }
   override get width() {
-    return this.group.width;
+    return this.ligature?.width ?? 0;
   }
   override get height() {
-    return SMUFL.Glyph.findBarline({
-      $$: { ["bar-style"]: [{ _: "light-heavy" }] },
-    }).bBox.height;
-  }
-
-  setGroup() {
-    this.group = createStaveGroup(this);
-  }
-}
-
-function createStaveGroup(stave: Sheet.Stave) {
-  const staveGroup = new SMUFL.Group({
-    children: [],
-  });
-
-  if (stave.bar.masterbar.isRowFirst)
-    staveGroup.children.push(
-      new SMUFL.Text({
-        glyph: SMUFL.Glyph.findClef(stave.resolveClef()),
-        y: stave.resolveClef().$$.line?.[0]?._ ?? 0,
-      })
-    );
-  if (stave.bar.masterbar.isFirst) {
-    const [numerator, denominator] = R.pipe(
-      [
-        stave.bar.timesignature.numerator,
-        stave.bar.timesignature.denominator,
-      ] as const,
-      R.map((number) =>
-        SMUFL.Glyph.find("timeSignatures", (v) =>
-          v.toLocaleLowerCase().includes(number.toString())
-        )
-      )
-    );
-    staveGroup.children.push(
-      new SMUFL.Group({
-        children: [
-          ...stave.bar.keysignature.accidentalPitchClasses.map(
-            (pitchClass) =>
-              new SMUFL.Text({
-                glyph: SMUFL.Glyph.find("standardAccidentals12Edo", (v) =>
-                  v
-                    .toLowerCase()
-                    .includes(
-                      stave.bar.keysignature.tonality ? "flat" : "sharp"
-                    )
-                ),
-                y:
-                  (stave.resolveClef().$$.line?.[0]?._ ?? 0) -
-                  stave.getClefScientificPitchNotation().getDegree(
-                    new Core.Unit.ScientificPitchNotation(
-                      `${pitchClass.toPitchClassName(stave.bar.keysignature.tonality).value}${match(
-                        stave.resolveClef().$$.sign?.[0]?._
-                      )
-                        .with(P.union("G", "F"), (sign) =>
-                          5 < pitchClass.value
-                            ? match(sign)
-                                .with("G", () => 4)
-                                .with("F", () => 2)
-                                .exhaustive()
-                            : match(sign)
-                                .with("G", () => 5)
-                                .with("F", () => 3)
-                                .exhaustive()
-                        )
-                        .otherwise(() => 0)}`
-                    )
-                  ) *
-                    0.5,
-              })
-          ),
-        ],
+    return new SMUFL.Glyph(
+      Sheet.GlyphType.Barline,
+      0,
+      SMUFL.Glyph.findBarline({
+        $$: { ["bar-style"]: [{ _: "light-heavy" }] },
       }),
-      new SMUFL.Group({
-        children: [
-          new SMUFL.Text({ glyph: numerator, y: 4 }),
-          new SMUFL.Text({ glyph: denominator, y: 2, index: 1 }),
-        ],
-      })
-    );
+      false
+    ).boundingBox.height;
   }
-
-  for (const note of stave.notes) {
-    const noteGroup = new SMUFL.Group({
-      children: [],
-      y: note.line,
-    });
-
-    if (note.legerLine > 0)
-      R.times(note.legerLine, (i) => {
-        noteGroup.children.push(
-          new SMUFL.Text({
-            index: i + 1,
-            glyph: SMUFL.Glyph.find("staves", (v) => v === "legerLine"),
-          })
-        );
-      });
-
-    if (R.isDefined(note.rest)) {
-      noteGroup.children.push(
-        new SMUFL.Text({ glyph: SMUFL.Glyph.findRest(note.rest, note.type) })
+  override draw() {
+    const handleLigature = (
+      ligature: Sheet.Ligature<SMUFL.Glyph | Sheet.Glyph>
+    ) => {
+      ligature.glyphsList = ligature.glyphsList.map((glyphs) =>
+        glyphs.map((glyph) =>
+          match(glyph)
+            .with(
+              P.when((x): x is SMUFL.Glyph => x.constructor === SMUFL.Glyph),
+              (glyph) => glyph
+            )
+            .with(
+              P.when((x): x is Sheet.Glyph => x.constructor === Sheet.Glyph),
+              (glyph) =>
+                new SMUFL.Glyph(
+                  glyph.type,
+                  glyph.line,
+                  match(glyph.type)
+                    .with(Sheet.GlyphType.Clef, () =>
+                      SMUFL.Glyph.findClef(this.resolveClef())
+                    )
+                    .with(Sheet.GlyphType.Accidental, () =>
+                      SMUFL.Glyph.find("standardAccidentals12Edo", (v) =>
+                        v.toLowerCase().includes(
+                          match(this.bar.keysignature.tonality)
+                            .with(Core.Tonality.Major as 0, () => "flat")
+                            .with(Core.Tonality.Minor as 1, () => "sharp")
+                            .exhaustive()
+                        )
+                      )
+                    )
+                    .with(Sheet.GlyphType.Barline, () =>
+                      SMUFL.Glyph.findBarline(
+                        this.bar.masterbar.isLast
+                          ? {
+                              $$: { ["bar-style"]: [{ _: "light-heavy" }] },
+                            }
+                          : this.barline
+                            ? this.barline
+                            : {
+                                $$: { ["bar-style"]: [{ _: "regular" }] },
+                              }
+                      )
+                    )
+                    .otherwise((glyph) => console.log(glyph)),
+                  true
+                )
+            )
+            .with(
+              P.when(
+                (x): x is Sheet.Ligature => x.constructor === Sheet.Ligature
+              ),
+              handleLigature
+            )
+            .exhaustive()
+        )
       );
-    } else {
-      if (note.type) {
-        const stem = note.stem;
-        const noteHeadsGlyph = SMUFL.Glyph.findNotehead(note.type);
-        noteGroup.children.push(new SMUFL.Text({ glyph: noteHeadsGlyph }));
-
-        if (stem) {
-          const stemText = new SMUFL.Text({
-            glyph: SMUFL.Glyph.find("stems", (v) => v.includes("stem")),
-          });
-          if (stem._ === "down") {
-            stemText.dx -= noteHeadsGlyph.bBox.width;
-            stemText.rotate = 180;
-          }
-          noteGroup.children.push(stemText);
-        }
-      }
-    }
-    staveGroup.children.push(noteGroup);
+      ligature.draw();
+      return ligature;
+    };
+    super.draw();
+    this.ligature = this.ligature ? handleLigature(this.ligature) : null;
   }
-
-  staveGroup.children.push(
-    new SMUFL.Text({
-      glyph: SMUFL.Glyph.findBarline(
-        stave.bar.masterbar.isLast
-          ? {
-              $$: { ["bar-style"]: [{ _: "light-heavy" }] },
-            }
-          : stave.barline
-            ? stave.barline
-            : {
-                $$: { ["bar-style"]: [{ _: "regular" }] },
-              }
-      ),
-      y: 1,
-      // x: stave.bar.masterbar.width,
-    })
-  );
-
-  return staveGroup;
 }

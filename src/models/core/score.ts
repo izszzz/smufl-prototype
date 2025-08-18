@@ -1,8 +1,6 @@
 import * as Core from "core";
-
 export class Score<
-  Pitch extends Core.Pitch = Core.Pitch,
-  Note extends Core.Note<Pitch> = Core.Note<Pitch>,
+  Note extends Core.Note = Core.Note,
   Track extends Core.Track = Core.Track,
   Timesignature extends Core.Timesignature = Core.Timesignature,
   Keysignature extends Core.Keysignature = Core.Keysignature,
@@ -25,9 +23,9 @@ export class Score<
   }: {
     tracks: Track[];
     notes: Note[];
-    timesignatures: Timesignature[];
-    keysignatures: Keysignature[];
-    bpms: Bpm[];
+    timesignatures: Timesignature[] | [Timesignature];
+    keysignatures: Keysignature[] | [Keysignature];
+    bpms: Bpm[] | [Bpm];
     name?: string;
   } & Core.EventConstructorParameter) {
     if ("end" in event) super(event);

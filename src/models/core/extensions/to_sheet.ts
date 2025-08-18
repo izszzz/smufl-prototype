@@ -16,7 +16,6 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
       (note) =>
         new Sheet.Note({
           ...note,
-          pitch: new Sheet.Pitch(note.pitch),
           stem: { _: "up" },
           rest: undefined,
           chord: false,
@@ -26,24 +25,26 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
         })
     )
   );
-  const masterbars = this.timesignatures
-    .reduce(
-      (acc, cur) => {
-        acc.events.push(
-          ...R.times(Math.ceil(cur.width), () => {
-            const event = new Core.Event({
-              start: acc.start,
-              duration: cur.numerator,
-            });
-            acc.start += cur.numerator;
-            return event;
-          })
-        );
-        return acc;
-      },
-      { start: 0, events: [] as Core.Event[] }
-    )
-    .events.map((event, id) => new Sheet.Masterbar({ id, ...event }));
+
+  const barEvents = this.timesignatures.reduce(
+    (acc, cur) => {
+      acc.events.push(
+        ...R.times(Math.ceil(cur.width), () => {
+          const event = new Core.Event({
+            start: acc.start,
+            duration: cur.numerator,
+          });
+          acc.start += cur.numerator;
+          return event;
+        })
+      );
+      return acc;
+    },
+    { start: 0, events: [] as Core.Event[] }
+  ).events;
+  const masterbars = barEvents.map(
+    (event, id) => new Sheet.Masterbar({ id, ...event })
+  );
 
   // TODO: refactor
   const staves = this.tracks.flatMap((track) =>
@@ -119,28 +120,35 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
     staves,
     rows: [],
     timesignatures: this.timesignatures.map(
-      (timesignature) => new Sheet.Timesignature(timesignature)
+      (timesignature) => new Sheet.Timesignature({ ...timesignature })
     ),
     keysignatures: this.keysignatures.map(
-      (keysignature) => new Sheet.Keysignature(keysignature)
+      (keysignature) => new Sheet.Keysignature({ ...keysignature })
     ),
+    start: barEvents[0]?.start ?? 0,
+    end: barEvents.at(-1)?.end ?? 0,
   });
+  console.log(barEvents);
+  // set end
+  // score.timesignatures.at(-1).end = barEvents.at(-1)?.end;
+  const lastKeysignature = score.keysignatures.at(-1);
+  if (lastKeysignature?.end) lastKeysignature.end = barEvents.at(-1)?.end ?? 0;
 
   // insert rests
   // TODO: chordの考慮
   R.pipe(
     score.staves,
-    R.map((stave) => {
+    R.flatMap((stave) => {
       return R.pipe(
         [
           new Core.Event({
-            start: stave.bar.start,
-            end: stave.bar.start,
+            start: stave.bar.masterbar.start,
+            end: stave.bar.masterbar.start,
           }) as Sheet.Note,
           ...stave.notes,
           new Core.Event({
-            start: stave.bar.end,
-            end: stave.bar.end,
+            start: stave.bar.masterbar.end,
+            end: stave.bar.masterbar.end,
           }) as Sheet.Note,
         ],
         R.reduce(
@@ -158,8 +166,8 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
                 new Sheet.Note({
                   start: acc.end,
                   end: cur.start,
-                  id: i + score.notes.length,
-                  pitch: new Sheet.Pitch({
+                  id: score.notes.length + 1,
+                  pitch: new Core.Pitch({
                     midiNoteNumber: new Core.Unit.MidiNoteNumber(-1),
                   }),
                   stem: undefined,
@@ -174,11 +182,10 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
             }
             return cur;
           },
-          null as Sheet.Note | null
+          null as Core.Event | null
         )
       );
-    }),
-    R.flat()
+    })
   );
 
   console.log({ sheet: score });

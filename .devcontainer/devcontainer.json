@@ -15,7 +15,6 @@
       "extensions": [
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "asvetliakov.vscode-neovim",
         "wayou.vscode-todo-highlight"
       ],
       "settings": {

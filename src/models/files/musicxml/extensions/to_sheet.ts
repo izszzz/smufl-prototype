@@ -19,10 +19,8 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
           cur.$$.measure?.map((measure, barId) => {
             const musicData = measure.$$;
             const attributes = R.prop(musicData, "attributes") ?? [];
-            const staveLines = attributes?.[0]?.$$["staff-details"];
-            console.log(staveLines);
-            const time = attributes?.[0]?.$$.time?.[0];
-            const key = attributes?.[0]?.$$.key?.[0];
+            const time = attributes[0]?.$$.time?.[0];
+            const key = attributes[0]?.$$.key?.[0];
             const denominator = Number(
               R.prop(time?.$$, "beat-type", "0", "_") ?? 4
             );
@@ -46,8 +44,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
             });
             const { notes } = (R.prop(musicData, "note") ?? []).reduce(
               (acc, cur, id) => {
-                const duration =
-                  (R.prop(cur.$$, "duration", "0", "_") as number) ?? 0;
+                const duration = R.prop(cur.$$, "duration", "0", "_") as number;
 
                 acc.notes.push(
                   new Sheet.Note({
@@ -111,7 +108,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
             );
 
             const staves = R.times(
-              attributes?.[0]?.$$?.staves?.[0]?._ ?? 1,
+              attributes[0]?.$$?.staves?.[0]?._ ?? 1,
               (staveId) => {
                 const staveNotes = notes.filter(
                   (note) => (note.staff?.[0]._ ?? 1) - 1 === staveId
@@ -121,7 +118,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                   id: staveId,
                   barId,
                   trackId,
-                  clef: attributes?.[0]?.$$?.clef?.find(
+                  clef: attributes[0]?.$$?.clef?.find(
                     (clef) => (clef.$?.number ?? 1) === staveId + 1
                   ),
                   barline:
@@ -133,12 +130,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
             acc.keysignatures.push(keysignature);
             acc.notes.push(...notes);
             acc.staves.push(...staves);
-            return new Sheet.Bar({
-              id: barId,
-              trackId,
-              start: numerator * barId,
-              duration: numerator,
-            });
+            return new Sheet.Bar({ id: barId, trackId });
           }) ?? [];
         acc.bars.push(...bars);
         acc.tracks.push(

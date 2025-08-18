@@ -3,8 +3,7 @@ import * as Sheet from "sheet";
 import * as R from "remeda";
 
 export class Score<
-  Pitch extends Sheet.Pitch = Sheet.Pitch,
-  Note extends Sheet.Note<Pitch> = Sheet.Note<Pitch>,
+  Note extends Sheet.Note = Sheet.Note,
   Track extends Sheet.Track = Sheet.Track,
   Stave extends Sheet.Stave = Sheet.Stave,
   Bar extends Sheet.Bar = Sheet.Bar,
@@ -13,7 +12,7 @@ export class Score<
   Timesignature extends Sheet.Timesignature = Sheet.Timesignature,
   Keysignature extends Sheet.Keysignature = Sheet.Keysignature,
   Bpm extends Sheet.Bpm = Sheet.Bpm,
-> extends Core.Score<Pitch, Note, Track, Timesignature, Keysignature, Bpm> {
+> extends Core.Score<Note, Track, Timesignature, Keysignature, Bpm> {
   masterbars;
   rows;
   bars;
@@ -42,7 +41,7 @@ export class Score<
     masterbars: Masterbar[];
     rows: Row[];
   } & ConstructorParameters<
-    typeof Core.Score<Pitch, Note, Track, Timesignature, Keysignature, Bpm>
+    typeof Core.Score<Note, Track, Timesignature, Keysignature, Bpm>
   >[0]) {
     super(score);
     this.bars = bars;
@@ -57,5 +56,9 @@ export class Score<
       ...this.rows,
     ])
       data.score = this;
+  }
+  draw() {
+    for (const data of [...this.notes, ...this.staves, ...this.timesignatures])
+      data.draw();
   }
 }

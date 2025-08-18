@@ -5,6 +5,9 @@ declare module "sheet" {
   interface Score {
     toSMUFL: () => SMUFL.Score;
   }
+  interface Ligature {
+    toSMUFL: () => SMUFL.Score;
+  }
 }
 
 Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
@@ -18,6 +21,9 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
     notes: this.notes.map((note) => new SMUFL.Note(note)),
     bars: this.bars.map((bar) => new SMUFL.Bar(bar)),
     staves: this.staves.map((stave) => new SMUFL.Stave(stave)),
+    timesignatures: this.timesignatures.map(
+      (timesignature) => new SMUFL.Timesignature(timesignature)
+    ),
   });
   if (process.env.NODE_ENV === "development") console.log({ smufl: score });
   return score;

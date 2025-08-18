@@ -1,6 +1,5 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
-import * as R from "remeda";
 import {
   NoteType,
   Rest,
@@ -9,10 +8,9 @@ import {
   Voice,
 } from "src/const/musicxml/4.0/musicxml";
 import { P, match } from "ts-pattern";
+import { filter, isDefined, isTruthy, times } from "remeda";
 
-export class Note<
-  Pitch extends Sheet.Pitch = Sheet.Pitch,
-> extends Core.Note<Pitch> {
+export class Note extends Core.Note {
   staveId;
   chord;
   stem;
@@ -20,6 +18,7 @@ export class Note<
   voice;
   staff;
   flag: null = null;
+  ligature: Sheet.Ligature | null = null;
   score!: Sheet.Score;
   get stave() {
     return this.score.staves.find((stave) => stave.id === this.staveId)!;
@@ -36,13 +35,14 @@ export class Note<
         this.pitch.midiNoteNumber.toPitchClass().value ===
         accidentalPitchClass.value
     )
-      ? this.keysignature.tonality === Core.Tonality.Major
-        ? Sheet.AccidentalType.Sharp
-        : Sheet.AccidentalType.Flat
+      ? match(this.keysignature.tonality)
+          .with(Core.Tonality.Major as 0, () => Sheet.AccidentalType.Sharp)
+          .with(Core.Tonality.Minor as 1, () => Sheet.AccidentalType.Flat)
+          .exhaustive()
       : null;
   }
   get line() {
-    if (R.isDefined(this.rest)) {
+    if (isDefined(this.rest)) {
       if (this.rest.$?.measure === "yes") return 0;
       return match(this.type._)
         .with(P.union("quarter", "half"), () => 2)
@@ -101,7 +101,7 @@ export class Note<
     rest?: Rest;
     staff?: Staff["staff"];
     voice?: Voice["voice"];
-  } & ConstructorParameters<typeof Core.Note<Pitch>>[0]) {
+  } & ConstructorParameters<typeof Core.Note>[0]) {
     super(note);
     this.staveId = staveId;
     this.chord = chord;
@@ -109,5 +109,40 @@ export class Note<
     this.rest = rest;
     this.staff = staff;
     this.voice = voice;
+  }
+  draw() {
+    this.ligature = new Sheet.Ligature(
+      filter(
+        [
+          this.accidental
+            ? [new Sheet.Glyph(Sheet.GlyphType.Accidental, 0)]
+            : null,
+          [
+            ...(this.legerLine
+              ? times(
+                  this.legerLine,
+                  () => new Sheet.Glyph(Sheet.GlyphType.LegerLine, 0)
+                )
+              : []),
+            this.rest
+              ? new Sheet.Glyph(Sheet.GlyphType.Rest, 0)
+              : new Sheet.Ligature(
+                  filter(
+                    [
+                      [new Sheet.Glyph(Sheet.GlyphType.Notehead, 0)],
+                      this.stem
+                        ? [new Sheet.Glyph(Sheet.GlyphType.Stem, 0)]
+                        : null,
+                    ],
+                    isTruthy
+                  ),
+                  0
+                ),
+          ],
+        ],
+        isTruthy
+      ),
+      this.line
+    );
   }
 }
