@@ -5,4 +5,7 @@ export abstract class ValueObject<T> {
     this.value = this.validate(value);
   }
   protected abstract validate(value: typeof this.value): typeof this.value;
+  equal(other: ValueObject<T>): boolean {
+    return this.value === other.value;
+  }
 }

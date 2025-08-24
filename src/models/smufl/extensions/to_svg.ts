@@ -114,7 +114,7 @@ SMUFL.Score.prototype.toSVG = function (
       .data(ligature.glyphsList)
       .join("g")
       .attr("type", "ligature")
-      .attr("transform", `translate(${ligature.x}, ${-ligature.y})`)
+      .attr("transform", `translate(${ligature.x}, ${-ligature.line})`)
       .each(function (glyphs) {
         const g = d3.select(this);
         glyphs.map((glyph) =>

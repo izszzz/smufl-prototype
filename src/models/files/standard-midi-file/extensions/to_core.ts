@@ -6,7 +6,7 @@ export const toCore = (data: Midi.IMidi) => {
   if (process.env.NODE_ENV === "development") console.log({ midi: data });
   const params = data.mtrks.reduce(
     (trackAcc, trackCur) => {
-      const { notes, time, name } = trackCur.events.reduce(
+      const { notes, name } = trackCur.events.reduce(
         (acc, cur) => {
           acc.time += Midi.calcDuration(cur.deltaTime, data.mthd.resolution);
           if (Midi.isMetaEvent(cur)) {
@@ -17,13 +17,15 @@ export const toCore = (data: Midi.IMidi) => {
               });
             if (R.isNonNullish(cur.event.tempo))
               trackAcc.bpms?.push({
-                ...{ value: new Midi.Unit.Tempo(cur.event.tempo).toBpm() },
+                ...{
+                  value: new Midi.Unit.Tempo(cur.event.tempo).toBpm().value,
+                },
                 start: acc.time,
               });
             if (R.isNonNullish(cur.event.keySignature))
               trackAcc.keysignatures?.push({
                 tonality:
-                  cur.event.keySignature === 0
+                  cur.event.keySignature.mi === 0
                     ? Core.Tonality.Major
                     : Core.Tonality.Minor,
                 accidental: cur.event.keySignature.sf,
@@ -45,14 +47,15 @@ export const toCore = (data: Midi.IMidi) => {
           return acc;
         },
         { notes: [], time: 0 } as {
-          notes: Parameters<typeof Core.create>[0]["tracks"][number]["notes"];
+          notes: Parameters<
+            typeof Core.Score.create
+          >[0]["tracks"][number]["notes"];
           time: number;
           name?: string;
         }
       );
       if (R.isEmpty(notes)) return trackAcc;
-      if ((trackAcc.end ?? 0) < time) trackAcc.end = time;
-      trackAcc.tracks.push({ notes, end: trackAcc.end, name });
+      trackAcc.tracks.push({ notes, name });
 
       return trackAcc;
     },
@@ -62,11 +65,8 @@ export const toCore = (data: Midi.IMidi) => {
       timesignatures: [],
       bpms: [],
       name: undefined,
-      start: 0,
-      end: 0,
-    } as Parameters<typeof Core.create>[0]
+    } as Parameters<typeof Core.Score.create>[0]
   );
 
-  if (process.env.NODE_ENV === "development") console.log(params);
-  return Core.create(params);
+  return Core.Score.create(params);
 };

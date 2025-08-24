@@ -7,8 +7,6 @@ export * from "./timesignature";
 export * from "./keysignature";
 export * from "./bpm";
 export * from "./score";
-export * from "./create";
-export * from "./pitch";
 export * as Unit from "./unit";
 
 export const convertTimeToSeconds = (time: number, bpm: number) =>

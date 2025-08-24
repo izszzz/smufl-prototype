@@ -5,9 +5,6 @@ declare module "sheet" {
   interface Score {
     toSMUFL: () => SMUFL.Score;
   }
-  interface Ligature {
-    toSMUFL: () => SMUFL.Score;
-  }
 }
 
 Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {

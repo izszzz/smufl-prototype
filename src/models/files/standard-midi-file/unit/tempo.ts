@@ -1,8 +1,10 @@
 import * as Core from "core";
-export class Tempo {
-  _brandTempo!: never;
-  constructor(public value: number) {}
+import { ValueObject } from "../../../valueobject";
+export class Tempo extends ValueObject<number> {
   toBpm() {
-    return new Core.Unit.Bpm(Math.floor(60000000 / this.value));
+    return new Core.Unit.Tempo(Math.floor(60000000 / this.value));
+  }
+  validate(value: typeof this.value) {
+    return value;
   }
 }

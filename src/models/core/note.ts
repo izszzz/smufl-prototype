@@ -1,9 +1,17 @@
 import * as Core from "core";
 
-export class Note<Pitch extends Core.Pitch = Core.Pitch> extends Core.Event {
+export class Note extends Core.Event {
   readonly id;
   trackId;
   pitch;
+  override get params() {
+    return {
+      ...super.params,
+      id: this.id,
+      trackId: this.trackId,
+      pitch: this.pitch,
+    };
+  }
   constructor({
     id,
     trackId,
@@ -12,10 +20,9 @@ export class Note<Pitch extends Core.Pitch = Core.Pitch> extends Core.Event {
   }: {
     id: number;
     trackId: number;
-    pitch: Pitch;
-  } & Core.EventConstructorParameter) {
-    if ("end" in event) super(event);
-    else super(event);
+    pitch: Core.Unit.MidiNoteNumber;
+  } & ConstructorParameters<typeof Core.Event>[0]) {
+    super(event);
     this.id = id;
     this.trackId = trackId;
     this.pitch = pitch;

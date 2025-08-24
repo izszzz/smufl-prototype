@@ -1,4 +1,4 @@
-export * from "./bpm";
+export * from "./tempo";
 export * from "./preset";
 export * from "./midi_note_number";
 export * from "./pitch_class_name";

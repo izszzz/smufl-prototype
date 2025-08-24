@@ -36,7 +36,6 @@ export class Glyph<
     this.anchor = SMUFL.getAnchor(glyphName);
     this.glyphName = glyphName;
     this.width = this.boundingBox.width;
-    console.log(advanced, glyphName);
     this.dx = advanced ? this.advancedWidth : 0;
     if (advanced) this.width += this.advancedWidth;
   }

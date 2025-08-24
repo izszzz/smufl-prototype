@@ -54,7 +54,7 @@ export class PitchClassName extends ValueObject<string> {
   private static isTone(value: string): value is DiatonicScale {
     return R.isDefined(musicTheory.diatonicScale.find((v) => v === value));
   }
-  protected validate(value: string) {
+  protected validate(value: typeof this.value) {
     const tone = value[0]!;
     const accidental = value[1] ?? "";
     if (!PitchClassName.isTone(tone)) throw new Error();

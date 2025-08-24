@@ -8,18 +8,26 @@ export class Track extends Core.Event {
   get notes() {
     return this.score.notes.filter((note) => note.trackId === this.id);
   }
+  override get params() {
+    return {
+      ...super.params,
+      id: this.id,
+      name: this.name,
+      preset: this.preset,
+      notes: this.notes.map((note) => note.params),
+    };
+  }
   constructor({
     id,
-    name,
+    name = "",
     preset,
     ...event
   }: {
     id: number;
     name?: string;
     preset: Core.Unit.Preset;
-  } & Core.EventConstructorParameter) {
-    if ("end" in event) super(event);
-    else super(event);
+  } & ConstructorParameters<typeof Core.Event>[0]) {
+    super(event);
     this.id = id;
     this.name = name;
     this.preset = preset;

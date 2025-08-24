@@ -1,15 +1,25 @@
 import * as Core from "core";
 import musicTheory from "../../const/music-theory.json";
+import { match } from "ts-pattern";
 export class Keysignature extends Core.Event {
   tonality;
   accidental;
-  get isMajor() {
-    return this.tonality === Core.Tonality.Major;
-  }
   get accidentalPitchClasses() {
-    return musicTheory[`${this.isMajor ? "major" : "minor"}TonicsByAccidentals`]
+    return musicTheory[
+      `${match(this.tonality)
+        .with(Core.Tonality.Major as 0, () => "major" as const)
+        .with(Core.Tonality.Minor as 1, () => "minor" as const)
+        .exhaustive()}TonicsByAccidentals`
+    ]
       .slice(0, Math.abs(this.accidental))
       .map((pitch) => new Core.Unit.PitchClass(pitch));
+  }
+  override get params() {
+    return {
+      ...super.params,
+      tonality: this.tonality,
+      accidental: this.accidental,
+    };
   }
   constructor({
     tonality,
@@ -18,9 +28,8 @@ export class Keysignature extends Core.Event {
   }: {
     accidental: number;
     tonality: Core.Tonality;
-  } & Core.EventConstructorParameter) {
-    if ("end" in event) super(event);
-    else super(event);
+  } & ConstructorParameters<typeof Core.Event>[0]) {
+    super(event);
     this.tonality = tonality;
     this.accidental = accidental;
   }

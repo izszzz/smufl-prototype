@@ -5,6 +5,13 @@ export class Timesignature extends Core.Event {
   get width() {
     return this.duration / this.numerator;
   }
+  override get params() {
+    return {
+      ...super.params,
+      denominator: this.denominator,
+      numerator: this.numerator,
+    };
+  }
   constructor({
     denominator,
     numerator,
@@ -12,9 +19,8 @@ export class Timesignature extends Core.Event {
   }: {
     denominator: number;
     numerator: number;
-  } & Core.EventConstructorParameter) {
-    if ("end" in event) super(event);
-    else super(event);
+  } & ConstructorParameters<typeof Core.Event>[0]) {
+    super(event);
     this.denominator = denominator;
     this.numerator = numerator;
   }

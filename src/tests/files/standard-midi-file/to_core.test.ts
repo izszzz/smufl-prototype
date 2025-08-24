@@ -1,15 +1,20 @@
 import path from "path";
-import fs from "fs";
+import { readFileSync } from "fs";
 import { expect, test } from "vitest";
-import { importCore } from "../..";
-import * as Midi from "../../../models/files/standard midi file";
-
+import * as Midi from "../../../models/files/standard-midi-file";
+import { importCore } from "../../../tests";
 const importMidi = (fileName: string) =>
   Midi.toCore(
     Midi.parse(
-      fs
-        .readFileSync(path.join("src", "fixtures", "midi", `${fileName}.mid`))
-        .toArrayBuffer()
+      readFileSync(
+        path.join(
+          "src",
+          "fixtures",
+          "files",
+          "standard-midi-file",
+          `${fileName}.mid`
+        )
+      ).toArrayBuffer()
     )
   );
 

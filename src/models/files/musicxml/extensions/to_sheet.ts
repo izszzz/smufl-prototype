@@ -3,18 +3,24 @@ import * as Core from "core";
 import * as Sheet from "sheet";
 import * as MusicXML from "musicxml";
 import { match } from "ts-pattern";
+import { prop } from "remeda";
 
 declare module "musicxml" {
   interface MXL {
     toSheet(): Sheet.Score;
   }
 }
-// TODO:eventの設定ちゃんとやれ
 MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
-  console.log(this);
-  const { keysignatures, timesignatures, notes, tracks, bars, staves } =
+  if (process.env.NODE_ENV === "development") console.log({ mxl: this });
+  const { keysignatures, timesignatures, tracks, bars, staves, bpms } =
     this.mxl["score-partwise"].$$.part?.reduce(
       (acc, cur, trackId) => {
+        acc.tracks.push({
+          id: trackId,
+          name: cur.$?.id,
+          preset: 0,
+          notes: [],
+        });
         const bars =
           cur.$$.measure?.map((measure, barId) => {
             const musicData = measure.$$;
@@ -30,82 +36,70 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
               R.prop(key?.$$, "mode", "at", "_") === "minor"
                 ? Core.Tonality.Minor
                 : Core.Tonality.Major;
-            const timesignature = new Sheet.Timesignature({
+            const timesignature = {
               denominator,
               numerator,
               start: numerator * barId,
               duration: numerator,
-            });
-            const keysignature = new Sheet.Keysignature({
+            };
+            const keysignature = {
               accidental,
               tonality,
               start: numerator * barId,
               duration: numerator,
-            });
+            };
+            const tempo = prop(
+              musicData,
+              "direction",
+              0,
+              "$$",
+              "sound",
+              0,
+              "$",
+              "tempo"
+            );
+            const bpm = tempo
+              ? { value: tempo, start: numerator * barId, duration: numerator }
+              : undefined;
             const { notes } = (R.prop(musicData, "note") ?? []).reduce(
-              (acc, cur, id) => {
+              (acc, cur) => {
                 const duration = R.prop(cur.$$, "duration", "0", "_") as number;
-
-                acc.notes.push(
-                  new Sheet.Note({
-                    id,
-                    staveId: -1 /* will be set later */,
-                    trackId,
-                    voice: cur.$$.voice,
-                    rest: R.prop(cur.$$, "rest", "0"),
-                    chord: R.isDefined(R.prop(cur.$$, "chord")),
-                    stem: cur.$$.stem?.[0],
-                    staff: cur.$$.staff,
-                    pitch: new Sheet.Pitch({
-                      midiNoteNumber: new Core.Unit.ScientificPitchNotation(
-                        `${
-                          R.prop(
-                            cur.$$,
-                            "pitch",
-                            "0",
-                            "$$",
-                            "step",
-                            "0",
-                            "_"
-                          ) ?? "C"
-                        }${match(
-                          R.prop(
-                            cur.$$,
-                            "pitch",
-                            "0",
-                            "$$",
-                            "alter",
-                            "at",
-                            "_"
-                          ) ?? 0
-                        )
-                          .with(1, () => "#")
-                          .with(-1, () => "b")
-                          .otherwise(() => "")}${
-                          R.prop(
-                            cur.$$,
-                            "pitch",
-                            "0",
-                            "$$",
-                            "octave",
-                            "0",
-                            "_"
-                          ) ?? 0
-                        }`
-                      ).toMidiNoteNumber(),
-                    }),
-                    start: acc.start,
-                    duration,
-                  })
-                );
+                acc.notes.push({
+                  staveId: -1, // will be set later
+                  voice: cur.$$.voice,
+                  rest: R.prop(cur.$$, "rest", "0"),
+                  chord: R.isDefined(R.prop(cur.$$, "chord")),
+                  stem: cur.$$.stem?.[0],
+                  staff: cur.$$.staff,
+                  pitch: new Core.Unit.ScientificPitchNotation(
+                    `${
+                      R.prop(cur.$$, "pitch", "0", "$$", "step", "0", "_") ??
+                      "C"
+                    }${match(
+                      R.prop(cur.$$, "pitch", "0", "$$", "alter", "at", "_") ??
+                        0
+                    )
+                      .with(1, () => "#")
+                      .with(-1, () => "b")
+                      .otherwise(() => "")}${
+                      R.prop(cur.$$, "pitch", "0", "$$", "octave", "0", "_") ??
+                      0
+                    }`
+                  ).toMidiNoteNumber().value,
+                  start: acc.start,
+                  duration,
+                });
                 acc.start += duration;
                 return acc;
               },
               {
                 start: numerator * barId,
-                notes: [] as Sheet.Note[],
+                notes: [] as Parameters<
+                  typeof Sheet.Score.create
+                >[0]["tracks"][number]["notes"],
               }
             );
+            acc.tracks[trackId]?.notes.push(...notes);
 
             const staves = R.times(
               attributes[0]?.$$?.staves?.[0]?._ ?? 1,
@@ -126,82 +120,42 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                 });
               }
             );
-            acc.timesignatures.push(timesignature);
-            acc.keysignatures.push(keysignature);
-            acc.notes.push(...notes);
-            acc.staves.push(...staves);
-            return new Sheet.Bar({ id: barId, trackId });
+            acc.timesignatures?.push(timesignature);
+            acc.keysignatures?.push(keysignature);
+            if (bpm) acc.bpms?.push(bpm);
+            acc.staves?.push(...staves);
+            return { id: barId, trackId };
           }) ?? [];
-        acc.bars.push(...bars);
-        acc.tracks.push(
-          new Sheet.Track({
-            id: trackId,
-            name: cur.$?.id,
-            preset: new Core.Unit.Preset(0),
-            start: 0,
-            duration: 0,
-            end: 0,
-          })
-        );
+        acc.bars?.push(...bars);
         return acc;
       },
       {
-        notes: [],
         bars: [],
         tracks: [],
         staves: [],
         timesignatures: [],
         keysignatures: [],
-      } as {
-        notes: Sheet.Note[];
-        bars: Sheet.Bar[];
-        tracks: Sheet.Track[];
-        staves: Sheet.Stave[];
-        timesignatures: Sheet.Timesignature[];
-        keysignatures: Sheet.Keysignature[];
-      }
+        bpms: [],
+      } as Parameters<typeof Sheet.Score.create>[0]
     ) ?? {
-      notes: [],
       bars: [],
       tracks: [],
       staves: [],
       timesignatures: [],
       keysignatures: [],
+      bpms: [],
     };
-  const score = new Sheet.Score({
+  const params = {
     name:
       this.mxl["score-partwise"].$$.work?.[0]?.$$?.["work-title"]?.[0]?._ ?? "",
     keysignatures,
     timesignatures,
-    bpms: [],
+    bpms,
     rows: [],
     staves,
-    notes,
     tracks,
     bars,
-    masterbars: timesignatures
-      .reduce(
-        (acc, cur) => {
-          acc.events.push(
-            ...R.times(Math.ceil(cur.width), () => {
-              const event = new Core.Event({
-                start: acc.start,
-                duration: cur.numerator,
-              });
-              acc.start += cur.numerator;
-              return event;
-            })
-          );
-          return acc;
-        },
-        { start: 0, events: [] as Core.Event[] }
-      )
-      .events.map((event, id) => new Sheet.Masterbar({ id, ...event })),
-    start: 0,
-    duration: 0,
-    end: 0,
-  });
+  };
 
-  if (process.env.NODE_ENV === "development") console.log({ sheet: score });
-  return score;
+  return Sheet.Score.create(params);
 };

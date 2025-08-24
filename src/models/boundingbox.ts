@@ -9,8 +9,4 @@ export class BoundingBox {
     this.width = width;
     this.height = height;
   }
-  move(x: number, y: number) {
-    this.x += x;
-    this.y += y;
-  }
 }

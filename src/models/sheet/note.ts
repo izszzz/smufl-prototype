@@ -20,6 +20,9 @@ export class Note extends Core.Note {
   flag: null = null;
   ligature: Sheet.Ligature | null = null;
   score!: Sheet.Score;
+  get track() {
+    return this.score.tracks.find((track) => track.id === this.trackId)!;
+  }
   get stave() {
     return this.score.staves.find((stave) => stave.id === this.staveId)!;
   }
@@ -32,8 +35,7 @@ export class Note extends Core.Note {
     // TODO: Natural
     return this.keysignature.accidentalPitchClasses.some(
       (accidentalPitchClass) =>
-        this.pitch.midiNoteNumber.toPitchClass().value ===
-        accidentalPitchClass.value
+        this.pitch.toPitchClass().equal(accidentalPitchClass)
     )
       ? match(this.keysignature.tonality)
           .with(Core.Tonality.Major as 0, () => Sheet.AccidentalType.Sharp)
@@ -53,9 +55,7 @@ export class Note extends Core.Note {
       this.stave
         .getClefScientificPitchNotation()
         .getDegree(
-          this.pitch.midiNoteNumber.toScientificPitchNotation(
-            this.keysignature.tonality
-          )
+          this.pitch.toScientificPitchNotation(this.keysignature.tonality)
         ) /
         2
     );
@@ -80,9 +80,8 @@ export class Note extends Core.Note {
 
   // FIXME:
   get legerLine() {
-    return this.pitch.midiNoteNumber.value > 80 ||
-      this.pitch.midiNoteNumber.value <= 60
-      ? Math.ceil((this.pitch.midiNoteNumber.value - 59) / 2)
+    return this.pitch.value > 80 || this.pitch.value <= 60
+      ? Math.ceil((this.pitch.value - 59) / 2)
       : 0;
   }
 
@@ -124,7 +123,7 @@ export class Note extends Core.Note {
                   () => new Sheet.Glyph(Sheet.GlyphType.LegerLine, 0)
                 )
               : []),
-            this.rest
+            isDefined(this.rest)
               ? new Sheet.Glyph(Sheet.GlyphType.Rest, 0)
               : new Sheet.Ligature(
                   filter(

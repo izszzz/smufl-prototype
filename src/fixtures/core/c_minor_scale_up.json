@@ -13,5 +13,5 @@
       ]
     }
   ],
-  "keysignatures": [{ "tonality": true, "accidental": -3 }]
+  "keysignatures": [{ "tonality": 1, "accidental": -3 }]
 }

@@ -26,7 +26,7 @@ export class PitchClass extends ValueObject<number> {
         ) as PitchClassName["value"]
     );
   }
-  validate(value: number) {
+  validate(value: typeof this.value) {
     if (!this.isInRange(value)) throw Error();
     return value;
   }

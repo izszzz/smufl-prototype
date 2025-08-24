@@ -46,9 +46,10 @@ export class Masterbar extends Core.Event {
     id,
     rowId,
     ...event
-  }: { id: number; rowId?: number } & Core.EventConstructorParameter) {
-    if ("end" in event) super(event);
-    else super(event);
+  }: { id: number; rowId?: number } & ConstructorParameters<
+    typeof Core.Event
+  >[0]) {
+    super(event);
     this.id = id;
     this.rowId = rowId;
   }
