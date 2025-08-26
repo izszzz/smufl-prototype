@@ -1,14 +1,14 @@
 import * as Core from "core";
 
-export class Bpm extends Core.Event {
+export class Tempo extends Core.Event {
   value;
-
   override get params() {
     return {
       ...super.params,
-      value: this.value,
+      value: this.value.value,
     };
   }
+
   constructor({
     value,
     ...event

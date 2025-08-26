@@ -1,4 +1,5 @@
 import { match, P } from "ts-pattern";
+import { Beat } from "./unit/beat";
 
 export class Event {
   start;
@@ -6,48 +7,68 @@ export class Event {
   end;
   get params() {
     return {
-      start: this.start,
-      duration: this.duration,
-      end: this.end,
+      start: this.start.value,
+      duration: this.duration.value,
+      end: this.end.value,
     };
   }
-
-  constructor(event: { start: number; end: number });
-  constructor(event: { start: number; duration: number });
-  constructor(event: { end: number; duration: number });
-  constructor(event: { start?: number; duration?: number; end?: number }); // avoid broken ConstructorParameters
-  constructor(event: { start?: number; duration?: number; end?: number }) {
+  constructor(event: { start: Beat; end: Beat });
+  constructor(event: { start: Beat; duration: Beat });
+  constructor(event: { end: Beat; duration: Beat });
+  constructor(event: { start?: Beat; duration?: Beat; end?: Beat }); // avoid broken ConstructorParameters
+  constructor(event: { start?: Beat; duration?: Beat; end?: Beat }) {
     const { start, duration, end } = match(event)
+      .with(
+        { start: P.nonNullable, duration: P.nonNullable, end: P.nonNullable },
+        (params) => ({
+          start: params.start,
+          duration: params.duration,
+          end: params.end,
+        })
+      )
       .with({ start: P.nonNullable, end: P.nonNullable }, (params) => ({
         start: params.start,
-        duration: params.end - params.start,
+        duration: Beat.subtract(params.end, params.start),
         end: params.end,
       }))
       .with({ start: P.nonNullable, duration: P.nonNullable }, (params) => ({
         start: params.start,
         duration: params.duration,
-        end: params.start + params.duration,
+        end: Beat.add(params.start, params.duration),
       }))
       .with({ duration: P.nonNullable, end: P.nonNullable }, (params) => ({
-        start: params.end - params.duration,
+        start: Beat.subtract(params.end, params.duration),
         duration: params.duration,
         end: params.end,
       }))
       .otherwise(() => {
-        throw new Error();
+        throw new Error("Invalid parameter");
       });
     this.start = start;
     this.duration = duration;
     this.end = end;
   }
+  setStart(start: Beat) {
+    this.start = start;
+    this.duration = Beat.subtract(this.end, this.start);
+  }
+  setEnd(end: Beat) {
+    this.end = end;
+    this.duration = Beat.subtract(this.end, this.start);
+  }
   isOverflow(event: Event) {
-    return this.start < event.start || this.end > event.end;
+    return (
+      this.start.value < event.start.value || this.end.value > event.end.value
+    );
   }
   isOverlapped(event: Event) {
     return (
-      (this.start >= event.start && this.start < event.end) ||
-      (this.end > event.start && this.end <= event.end) ||
-      (this.start <= event.start && this.end >= event.end)
+      (this.start.value >= event.start.value &&
+        this.start.value < event.end.value) ||
+      (this.end.value > event.start.value &&
+        this.end.value <= event.end.value) ||
+      (this.start.value <= event.start.value &&
+        this.end.value >= event.end.value)
     );
   }
 }

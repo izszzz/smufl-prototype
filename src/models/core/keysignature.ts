@@ -4,6 +4,13 @@ import { match } from "ts-pattern";
 export class Keysignature extends Core.Event {
   tonality;
   accidental;
+  override get params() {
+    return {
+      ...super.params,
+      tonality: this.tonality,
+      accidental: this.accidental,
+    };
+  }
   get accidentalPitchClasses() {
     return musicTheory[
       `${match(this.tonality)
@@ -13,13 +20,6 @@ export class Keysignature extends Core.Event {
     ]
       .slice(0, Math.abs(this.accidental))
       .map((pitch) => new Core.Unit.PitchClass(pitch));
-  }
-  override get params() {
-    return {
-      ...super.params,
-      tonality: this.tonality,
-      accidental: this.accidental,
-    };
   }
   constructor({
     tonality,

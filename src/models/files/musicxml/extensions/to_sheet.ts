@@ -12,11 +12,10 @@ declare module "musicxml" {
 }
 MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
   if (process.env.NODE_ENV === "development") console.log({ mxl: this });
-  const { keysignatures, timesignatures, tracks, bars, staves, bpms } =
+  const { keysignatures, timesignatures, tracks, bars, staves, tempos } =
     this.mxl["score-partwise"].$$.part?.reduce(
       (acc, cur, trackId) => {
         acc.tracks.push({
-          id: trackId,
           name: cur.$?.id,
           preset: 0,
           notes: [],
@@ -122,7 +121,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
             );
             acc.timesignatures?.push(timesignature);
             acc.keysignatures?.push(keysignature);
-            if (bpm) acc.bpms?.push(bpm);
+            if (bpm) acc.tempos?.push(bpm);
             acc.staves?.push(...staves);
             return { id: barId, trackId };
           }) ?? [];
@@ -135,7 +134,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
         staves: [],
         timesignatures: [],
         keysignatures: [],
-        bpms: [],
+        tempos: [],
       } as Parameters<typeof Sheet.Score.create>[0]
     ) ?? {
       bars: [],
@@ -143,14 +142,14 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
       staves: [],
       timesignatures: [],
       keysignatures: [],
-      bpms: [],
+      tempos: [],
     };
   const params = {
     name:
       this.mxl["score-partwise"].$$.work?.[0]?.$$?.["work-title"]?.[0]?._ ?? "",
     keysignatures,
     timesignatures,
-    bpms,
+    bpms: tempos,
     rows: [],
     staves,
     tracks,

@@ -1,5 +1,4 @@
 import * as Audio from ".";
-import * as Core from "core";
 import Soundfont2 from "soundfont2";
 import "../../core/extensions/to_audio";
 
@@ -29,8 +28,8 @@ export class Controller {
           .flatMap((instrument) => instrument.samples)
           .find(
             (sample) =>
-              sample.generators.keyRange.lo <= note.pitch.midiNoteNumber &&
-              sample.generators.keyRange.hi >= note.pitch.midiNoteNumber
+              sample.generators.keyRange.lo <= note.pitch.value &&
+              sample.generators.keyRange.hi >= note.pitch.value
           )!;
 
         // create buffer
@@ -52,9 +51,7 @@ export class Controller {
           bufferSource.loopEnd =
             (sample.endLoop - sample.end) / sample.header.sampleRate.value;
         }
-        bufferSource.playbackRate.value = sample.playBackRate(
-          note.pitch.midiNoteNumber
-        );
+        bufferSource.playbackRate.value = sample.playBackRate(note.pitch.value);
 
         const synth = new Audio.Synth(
           track.audioContext,
@@ -105,11 +102,11 @@ export class Controller {
         );
 
         synth.noteOn(
-          this.ctx.currentTime + Core.convertTimeToSeconds(note.start, 120),
+          this.ctx.currentTime + note.start.toSeconds(note.tempo.value),
           bufferSource
         );
         synth.noteOff(
-          this.ctx.currentTime + Core.convertTimeToSeconds(note.end, 120),
+          this.ctx.currentTime + note.end.toSeconds(note.tempo.value),
           bufferSource
         );
         // bufferSource.connect(synth.filter);

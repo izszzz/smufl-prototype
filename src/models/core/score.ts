@@ -1,5 +1,5 @@
 import { match } from "ts-pattern";
-import { SetOptional, LiteralToPrimitiveDeep, PartialDeep } from "type-fest";
+import { LiteralToPrimitiveDeep, PartialDeep, Merge } from "type-fest";
 import {
   isDefined,
   prop,
@@ -9,6 +9,11 @@ import {
   isEmpty,
   mergeDeep,
   isNullish,
+  filter,
+  entries,
+  piped,
+  last,
+  mapToObj,
 } from "remeda";
 import * as Core from "core";
 export class Score<
@@ -16,12 +21,12 @@ export class Score<
   Track extends Core.Track = Core.Track,
   Timesignature extends Core.Timesignature = Core.Timesignature,
   Keysignature extends Core.Keysignature = Core.Keysignature,
-  Bpm extends Core.Bpm = Core.Bpm,
+  Tempo extends Core.Tempo = Core.Tempo,
 > extends Core.Event {
   name;
   timesignatures;
   keysignatures;
-  bpms;
+  tempos;
   tracks;
   notes;
 
@@ -31,21 +36,21 @@ export class Score<
     notes,
     timesignatures,
     keysignatures,
-    bpms,
+    tempos,
     ...event
   }: {
     tracks: Track[];
     notes: Note[];
     timesignatures: Timesignature[] | [Timesignature];
     keysignatures: Keysignature[] | [Keysignature];
-    bpms: Bpm[] | [Bpm];
+    tempos: Tempo[] | [Tempo];
     name?: string;
   } & ConstructorParameters<typeof Core.Event>[0]) {
     super(event);
     this.name = name;
     this.timesignatures = timesignatures;
     this.keysignatures = keysignatures;
-    this.bpms = bpms;
+    this.tempos = tempos;
     this.tracks = tracks;
     this.notes = notes;
     for (const track of this.tracks) track.score = this;
@@ -91,103 +96,135 @@ export class Score<
             );
       track.duration ??= track.end - track.start;
     }
-    for (const key of ["keysignatures", "timesignatures", "bpms"] as const) {
+    for (const key of ["keysignatures", "timesignatures", "tempos"] as const) {
       if (isNullish(param[key]) || isEmpty(param[key]))
         match(key)
           .with("timesignatures", (key) => (param[key] = [defaultValue[key]]))
           .with("keysignatures", (key) => (param[key] = [defaultValue[key]]))
-          .with("bpms", (key) => (param[key] = [defaultValue[key]]))
+          .with("tempos", (key) => (param[key] = [defaultValue[key]]))
           .exhaustive();
-      if (param[key]?.length === 1)
-        for (const event of param[key]) event.start = param.start;
+      if (param[key]?.length === 1) param[key][0]!.start = param.start;
 
       param[key]?.toReversed().reduce(
         (acc, cur) => {
           cur.end = acc.start;
           return cur;
         },
-        { start: param.end, duration: -1, end: -1 } as Partial<
-          ConstructorParameters<typeof Core.Event>[0]
-        >
+        { start: param.end, duration: -1, end: -1 } as EventParameter
       );
     }
 
-    const notes = param.tracks.flatMap((track, trackId) =>
-      track.notes.map(
-        (note, id) =>
-          new Core.Note({
-            ...note,
-            id,
-            trackId,
-            pitch: new Core.Unit.MidiNoteNumber(note.pitch),
-          })
-      )
-    );
-    const core = new this({
-      ...param,
+    const { start, duration, end, ...score } = param;
+    const core = new Core.Score({
+      ...score,
       timesignatures:
         param.timesignatures?.map(
-          (timesignature) => new Core.Timesignature(timesignature)
+          ({ start, end, duration, ...timesignature }) =>
+            new Core.Timesignature({
+              ...timesignature,
+              ...pipe(
+                { start, duration, end },
+                entries(),
+                filter(piped(last, isDefined)),
+                mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+              ),
+            })
         ) ?? [],
       keysignatures:
         param.keysignatures?.map(
-          (keysignature) => new Core.Keysignature(keysignature)
-        ) ?? [],
-      bpms:
-        param.bpms?.map(
-          (bpm) =>
-            new Core.Bpm({
-              ...bpm,
-              value: new Core.Unit.Tempo(bpm.value),
+          ({ start, end, duration, ...keysignature }) =>
+            new Core.Keysignature({
+              ...keysignature,
+              ...pipe(
+                { start, duration, end },
+                entries(),
+                filter(piped(last, isDefined)),
+                mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+              ),
             })
         ) ?? [],
-      notes,
+      tempos:
+        param.tempos?.map(
+          ({ start, end, duration, ...tempo }) =>
+            new Core.Tempo({
+              value: new Core.Unit.Tempo(tempo.value),
+              ...pipe(
+                { start, duration, end },
+                entries(),
+                filter(piped(last, isDefined)),
+                mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+              ),
+            })
+        ) ?? [],
+      notes: param.tracks.flatMap((track, trackId) =>
+        track.notes.map(
+          ({ start, duration, end, ...note }, id) =>
+            new Core.Note({
+              id,
+              trackId,
+              pitch: new Core.Unit.MidiNoteNumber(note.pitch),
+              ...pipe(
+                { start, duration, end },
+                entries(),
+                filter(piped(last, isDefined)),
+                mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+              ),
+            })
+        )
+      ),
       tracks: param.tracks.map(
-        (track, trackId) =>
+        ({ start, duration, end, ...track }, trackId) =>
           new Core.Track({
             ...track,
             id: trackId,
             preset: new Core.Unit.Preset(
               track.preset ?? defaultValue.track.preset
             ),
-            start: track.start!,
+            ...pipe(
+              { start, duration, end },
+              entries(),
+              filter(piped(last, isDefined)),
+              mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+            ),
           })
       ),
-      start: param.start ?? 0,
-      duration: param.duration ?? 0,
-      end: param.end ?? 0,
+      ...pipe(
+        { start, duration, end },
+        entries(),
+        filter(piped(last, isDefined)),
+        mapToObj(([key, value]) => [key, new Core.Unit.Beat(value)])
+      ),
     });
     return core;
   }
 }
-type Parameter = Partial<Pick<Core.Score, "start" | "end" | "duration">> & {
-  tracks: (Omit<
-    SetOptional<
-      ConstructorParameters<typeof Core.Track>[0],
-      "start" | "end" | "duration"
-    >,
-    "score" | "id" | "notes" | "preset"
-  > & {
-    preset?: number;
-    notes: (Omit<
-      ConstructorParameters<typeof Core.Note>[0],
-      "id" | "trackId" | "pitch"
-    > & {
-      pitch: number;
-    })[];
-  })[];
-  keysignatures?: SetOptional<
+
+type EventParameter = {
+  start?: number;
+  duration?: number;
+  end?: number;
+};
+type Parameter = EventParameter & {
+  tracks: Merge<
+    Omit<ConstructorParameters<typeof Core.Track>[0], "score" | "id">,
+    EventParameter & {
+      preset?: number;
+      notes: Merge<
+        Omit<ConstructorParameters<typeof Core.Note>[0], "id" | "trackId">,
+        EventParameter & { pitch: number }
+      >[];
+    }
+  >[];
+  keysignatures?: Merge<
     ConstructorParameters<typeof Core.Keysignature>[0],
-    "start"
+    EventParameter
   >[];
-  timesignatures?: SetOptional<
+  timesignatures?: Merge<
     ConstructorParameters<typeof Core.Timesignature>[0],
-    "start"
+    EventParameter
   >[];
-  bpms?: (Omit<
-    SetOptional<ConstructorParameters<typeof Core.Bpm>[0], "start">,
-    "value"
-  > & {
-    value: number;
-  })[];
+  tempos?: Merge<
+    ConstructorParameters<typeof Core.Tempo>[0],
+    EventParameter & { value: number }
+  >[];
 };

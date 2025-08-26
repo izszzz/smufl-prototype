@@ -13,10 +13,10 @@ export class Track extends Core.Event {
       ...super.params,
       id: this.id,
       name: this.name,
-      preset: this.preset,
-      notes: this.notes.map((note) => note.params),
+      preset: this.preset.value,
     };
   }
+
   constructor({
     id,
     name = "",

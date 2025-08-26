@@ -5,12 +5,10 @@ export * from "./track";
 export * from "./note";
 export * from "./timesignature";
 export * from "./keysignature";
-export * from "./bpm";
+export * from "./tempo";
 export * from "./score";
 export * as Unit from "./unit";
 
-export const convertTimeToSeconds = (time: number, bpm: number) =>
-  (60 * time) / bpm;
 export enum Tonality {
   Major,
   Minor,

@@ -18,6 +18,12 @@ const importMidi = (fileName: string) =>
     )
   );
 
+test("quarter_middle_c", async () =>
+  expect(importMidi(`quarter_middle_c`)).toEqual(
+    await importCore("quarter_middle_c")
+  ));
+test("quarter_rest", async () =>
+  expect(importMidi(`quarter_rest`)).toEqual(await importCore("quarter_rest")));
 test("8th_middle_c", async () =>
   expect(importMidi("8th_middle_c")).toEqual(await importCore("8th_middle_c")));
 test("8th_rest", async () =>
@@ -38,12 +44,6 @@ test("quarter_dot_middle_c", async () =>
   expect(importMidi(`quarter_dot_middle_c`)).toEqual(
     await importCore("quarter_dot_middle_c")
   ));
-test("quarter_middle_c", async () =>
-  expect(importMidi(`quarter_middle_c`)).toEqual(
-    await importCore("quarter_middle_c")
-  ));
-test("quarter_rest", async () =>
-  expect(importMidi(`quarter_rest`)).toEqual(await importCore("quarter_rest")));
 test("two-tracks", async () =>
   expect(importMidi(`two_tracks`)).toEqual(await importCore("two_tracks")));
 test("timesignature_3_4", async () =>

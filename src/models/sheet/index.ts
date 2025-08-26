@@ -5,7 +5,6 @@ export * from "./stave";
 export * from "./note";
 export * from "./score";
 export * from "./track";
-export * from "./bpm";
 export * from "./keysignature";
 export * from "./timesignature";
 export * from "./controller";

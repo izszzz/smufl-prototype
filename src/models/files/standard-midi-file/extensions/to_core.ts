@@ -16,7 +16,7 @@ export const toCore = (data: Midi.IMidi) => {
                 start: acc.time,
               });
             if (R.isNonNullish(cur.event.tempo))
-              trackAcc.bpms?.push({
+              trackAcc.tempos?.push({
                 ...{
                   value: new Midi.Unit.Tempo(cur.event.tempo).toBpm().value,
                 },
@@ -63,7 +63,7 @@ export const toCore = (data: Midi.IMidi) => {
       tracks: [],
       keysignatures: [],
       timesignatures: [],
-      bpms: [],
+      tempos: [],
       name: undefined,
     } as Parameters<typeof Core.Score.create>[0]
   );

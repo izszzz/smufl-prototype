@@ -9,7 +9,7 @@ export class Note extends Core.Event {
       ...super.params,
       id: this.id,
       trackId: this.trackId,
-      pitch: this.pitch,
+      pitch: this.pitch.value,
     };
   }
   constructor({

@@ -11,6 +11,6 @@ export default {
       tonality: 0,
       accidental: 0,
     },
-    bpms: { value: 120 },
+    tempos: { value: 120 },
   },
 } as const;

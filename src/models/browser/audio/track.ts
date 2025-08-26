@@ -1,8 +1,12 @@
 import * as Core from "core";
+import * as Audio from "../audio";
 
 export class Track extends Core.Track {
   volume;
   audioContext;
+  override get notes() {
+    return super.notes as Audio.Note[];
+  }
   constructor({
     audioContext,
     ...core

@@ -9,13 +9,12 @@ declare module "core" {
 }
 
 Core.Score.prototype.toSheet = function (this: Core.Score) {
-  const params = {
-    ...this,
+  return Sheet.Score.create({
+    ...this.params,
     tracks: this.tracks.map((track) => ({
-      ...track,
-      preset: track.preset.value,
+      ...track.params,
       notes: track.notes.map((note) => ({
-        ...note,
+        ...note.params,
         pitch: note.pitch.value,
         stem: { _: "up" as const },
         rest: undefined,
@@ -29,7 +28,12 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
           .otherwise(() => 0),
       })),
     })),
-    bpms: this.bpms.map((bpm) => ({ ...bpm, value: bpm.value.value })),
-  };
-  return Sheet.Score.create(params);
+    keysignatures: this.keysignatures.map(
+      (keysignature) => keysignature.params
+    ),
+    timesignatures: this.timesignatures.map(
+      (timesignature) => timesignature.params
+    ),
+    tempos: this.tempos.map((tempo) => tempo.params),
+  });
 };

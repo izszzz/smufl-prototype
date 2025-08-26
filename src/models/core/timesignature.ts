@@ -3,7 +3,7 @@ export class Timesignature extends Core.Event {
   denominator;
   numerator;
   get width() {
-    return this.duration / this.numerator;
+    return this.duration.value / this.numerator;
   }
   override get params() {
     return {
