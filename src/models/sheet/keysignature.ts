@@ -2,7 +2,6 @@ import * as Core from "core";
 import { Ligature } from "./ligature";
 import { Glyph } from "./glyph";
 import { GlyphType } from "sheet";
-import musicTheory from "../../const/music-theory.json";
 
 export class Keysignature extends Core.Keysignature {
   override get accidentalPitchClasses() {
@@ -14,8 +13,7 @@ export class Keysignature extends Core.Keysignature {
         ...this.accidentalPitchClasses.map((pitchClass) => [
           new Glyph(
             GlyphType.Accidental,
-            (5 < pitchClass.value ? musicTheory.pitchClasses.length : 0) +
-              pitchClass.value
+            pitchClass.toPitchClassName(this.tonality).toneIndex / 2
           ),
         ]),
       ],

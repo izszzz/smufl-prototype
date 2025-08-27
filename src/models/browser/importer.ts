@@ -48,7 +48,7 @@ export class Importer {
     }
     if (typeof reader.result === "string") {
       if (extname === ".json") {
-        return Core.create(JSON.parse(reader.result)).toSheet();
+        return Core.Score.create(JSON.parse(reader.result)).toSheet();
       }
     }
   }

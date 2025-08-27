@@ -20,6 +20,20 @@ export class Note extends Sheet.Note {
                   glyph.type,
                   glyph.line,
                   match(glyph.type)
+                    .with(Sheet.GlyphType.Accidental, () =>
+                      SMUFL.Glyph.find("standardAccidentals12Edo", (v) =>
+                        v.toLowerCase().includes(
+                          match(this.accidental)
+                            .with(
+                              Sheet.AccidentalType.Sharp as 0,
+                              () => "sharp"
+                            )
+
+                            .with(Sheet.AccidentalType.Flat as 1, () => "flat")
+                            .exhaustive()
+                        )
+                      )
+                    )
                     .with(Sheet.GlyphType.LegerLine, () =>
                       SMUFL.Glyph.find("staves", (v) => v === "legerLine")
                     )

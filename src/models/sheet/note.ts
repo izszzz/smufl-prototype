@@ -33,6 +33,7 @@ export class Note extends Core.Note {
   }
   get accidental() {
     // TODO: Natural
+    if (isDefined(this.rest)) return null;
     return this.keysignature.accidentalPitchClasses.some(
       (accidentalPitchClass) =>
         this.pitch.toPitchClass().equal(accidentalPitchClass)
@@ -62,7 +63,7 @@ export class Note extends Core.Note {
   }
   get type() {
     return <NoteType>{
-      _: match(Math.pow(2, Math.floor(Math.log2(this.duration))))
+      _: match(Math.pow(2, Math.floor(Math.log2(this.duration.value))))
         .with(4, () => "whole")
         .with(2, () => "half")
         .with(1, () => "quarter")

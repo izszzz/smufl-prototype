@@ -257,7 +257,7 @@ export class Score<
           ],
           reduce(
             (acc, cur, i) => {
-              if (acc && acc.end < cur.start) {
+              if (acc && acc.end.value < cur.start.value) {
                 score.notes.splice(
                   pipe(
                     score.notes,

@@ -1,3 +1,4 @@
+import * as Core from "core";
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
 
@@ -10,7 +11,7 @@ export class Score<
   Row extends SMUFL.Row = SMUFL.Row,
   Timesignature extends SMUFL.Timesignature = SMUFL.Timesignature,
   Keysignature extends Sheet.Keysignature = Sheet.Keysignature,
-  Bpm extends Sheet.Bpm = Sheet.Bpm,
+  Tempo extends Core.Tempo = Core.Tempo,
 > extends Sheet.Score<
   Note,
   Track,
@@ -20,5 +21,5 @@ export class Score<
   Row,
   Timesignature,
   Keysignature,
-  Bpm
+  Tempo
 > {}

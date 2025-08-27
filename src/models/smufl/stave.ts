@@ -1,4 +1,5 @@
 import * as Core from "core";
+import { pipe } from "remeda";
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
 import { P, match } from "ts-pattern";
@@ -49,8 +50,8 @@ export class Stave extends Sheet.Stave {
                       SMUFL.Glyph.find("standardAccidentals12Edo", (v) =>
                         v.toLowerCase().includes(
                           match(this.bar.keysignature.tonality)
-                            .with(Core.Tonality.Major as 0, () => "flat")
-                            .with(Core.Tonality.Minor as 1, () => "sharp")
+                            .with(Core.Tonality.Major as 0, () => "sharp")
+                            .with(Core.Tonality.Minor as 1, () => "flat")
                             .exhaustive()
                         )
                       )
@@ -68,8 +69,10 @@ export class Stave extends Sheet.Stave {
                               }
                       )
                     )
-                    .otherwise((glyph) => console.log(glyph)),
-                  true
+                    .otherwise((glyph) => glyph),
+                  match(glyph.type)
+                    .with(P.not(pipe(Sheet.GlyphType.Accidental)), () => true)
+                    .otherwise(() => false)
                 )
             )
             .with(
@@ -85,6 +88,6 @@ export class Stave extends Sheet.Stave {
       return ligature;
     };
     super.draw();
-    this.ligature = this.ligature ? handleLigature(this.ligature) : null;
+    this.ligature = this.ligature && handleLigature(this.ligature);
   }
 }

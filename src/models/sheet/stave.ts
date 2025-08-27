@@ -61,12 +61,9 @@ export class Stave {
                 ),
               ]
             : null,
-          [
-            new Sheet.Ligature(
-              this.bar.keysignature.ligature.glyphsList,
-              this.resolveClef().$$.line?.[0]?._ ?? 0
-            ),
-          ],
+          this.bar.masterbar.isFirst
+            ? [new Sheet.Ligature(this.bar.keysignature.ligature.glyphsList)]
+            : null,
           this.bar.masterbar.isFirst
             ? filter([this.bar.timesignature.ligature], isTruthy)
             : null,
