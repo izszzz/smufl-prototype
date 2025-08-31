@@ -7,11 +7,10 @@ import { BoundingBox } from "../boundingbox";
 export class Glyph<
   T extends keyof SMUFL.Glyphnames = keyof SMUFL.Glyphnames,
 > extends Sheet.Glyph {
-  boundingBox;
-  advancedWidth;
   glyphName;
-  anchor;
-  dx;
+  glyphBBox;
+  glyphAdvancedWidth;
+  glyphWithAnchor;
   get codepoint() {
     return parseInt(
       SMUFL.Glyphnames[this.glyphName].codepoint.replace("U+", ""),
@@ -19,25 +18,23 @@ export class Glyph<
     );
   }
   constructor(
-    type: Sheet.Glyph["type"],
-    line: Sheet.Glyph["line"],
     glyphName: T,
-    advanced: boolean
+    advanced: boolean,
+    ...params: ConstructorParameters<typeof Sheet.Glyph>
   ) {
-    super(type, line);
-    const { bBoxNE, bBoxSW } = SMUFL.getBoundingBox(glyphName);
-    this.boundingBox = new BoundingBox(
+    super(...params);
+    const { bBoxNE, bBoxSW } = SMUFL.getGlyphBBox(glyphName);
+    this.glyphBBox = new BoundingBox(
       bBoxSW[0],
       bBoxNE[1],
       bBoxNE[0] - bBoxSW[0],
       bBoxNE[1] - bBoxSW[1]
     );
-    this.advancedWidth = SMUFL.getAdvanceWidth(glyphName);
-    this.anchor = SMUFL.getAnchor(glyphName);
+    this.glyphAdvancedWidth = SMUFL.getGlyphAdvanceWidth(glyphName);
+    this.glyphWithAnchor = SMUFL.getGlyphWithAnchor(glyphName);
     this.glyphName = glyphName;
-    this.width = this.boundingBox.width;
-    this.dx = advanced ? this.advancedWidth : 0;
-    if (advanced) this.width += this.advancedWidth;
+    this.boundingBox.width = this.glyphBBox.width;
+    if (advanced) this.boundingBox.width = this.glyphAdvancedWidth;
   }
   static find(
     type: keyof SMUFL.Ranges,
@@ -47,42 +44,86 @@ export class Glyph<
   }
 
   static findClef(clef: Clef) {
-    return match(clef.$$.sign?.[0]?._)
+    return match(clef.$$.sign![0]._)
       .with("G", () => "gClef" as const)
       .with("F", () => "fClef" as const)
       .with("C", () => "cClef" as const)
       .with("percussion", () => "unpitchedPercussionClef1" as const)
       .with("TAB", () => "6stringTabClef" as const)
-      .with(P.union("none", "jianpu"), () => {})
+      .with("jianpu", () => {
+        throw new Error();
+      })
+      .with(P.union("none"), () => null)
       .exhaustive();
   }
 
   static findRest(rest: Rest, type: NoteType) {
     if (rest.$?.measure === "yes") return "restWhole";
     return match(type._)
+      .with("breve", () => "restDoubleWhole" as const)
+      .with("long", () => "restLonga" as const)
+      .with("maxima", () => "restMaxima" as const)
+      .with("whole", () => "restWhole" as const)
+      .with("half", () => "restHalf" as const)
       .with("quarter", () => "restQuarter" as const)
       .with("eighth", () => "rest8th" as const)
       .with("16th", () => "rest16th" as const)
-      .with("half", () => "restHalf" as const)
-      .with("whole", () => "restWhole" as const)
+      .with("32nd", () => "rest32nd" as const)
+      .with("64th", () => "rest64th" as const)
+      .with("128th", () => "rest128th" as const)
+      .with("256th", () => "rest256th" as const)
+      .with("512th", () => "rest512th" as const)
+      .with("1024th", () => "rest1024th" as const)
       .exhaustive();
   }
 
   static findNotehead(type: NoteType) {
     return match(type._)
+      .with("breve", () => "noteheadDoubleWhole" as const)
+      .with("long", () => "noteheadWhole" as const)
+      .with("maxima", () => "noteheadWhole" as const)
+      .with("whole", () => "noteheadWhole" as const)
+      .with("half", () => "noteheadHalf" as const)
       .with(
-        P.union("quarter", "eighth", "16th"),
+        P.union(
+          "quarter",
+          "eighth",
+          "16th",
+          "32nd",
+          "64th",
+          "128th",
+          "256th",
+          "512th",
+          "1024th"
+        ),
         () => "noteheadBlack" as const
       )
-      .with("half", () => "noteheadHalf" as const)
-      .with("whole", () => "noteheadWhole" as const)
       .exhaustive();
   }
 
   static findBarline(type: Barline) {
-    return match(type.$$["bar-style"]?.[0]?._)
+    return match(type.$$["bar-style"]![0]!._)
       .with("light-heavy", () => "barlineFinal" as const)
+      .with("light-light", () => "barlineDouble" as const)
+      .with("heavy-light", () => "barlineReverseFinal" as const)
+      .with("heavy-heavy", () => "barlineHeavyHeavy" as const)
+      .with("tick", () => "barlineTick" as const)
+      .with("short", () => "barlineShort" as const)
       .with("regular", () => "barlineSingle" as const)
+      .with("dotted", () => "barlineDotted" as const)
+      .with("dashed", () => "barlineDashed" as const)
+      .with("heavy", () => "barlineHeavy" as const)
+      .with("none", () => null)
+      .exhaustive();
+  }
+  static findAccidental(type: Sheet.AccidentalType) {
+    return match(type)
+      .with(Sheet.AccidentalType.Sharp as 0, () => "accidentalSharp" as const)
+      .with(Sheet.AccidentalType.Flat as 1, () => "accidentalFlat" as const)
+      .with(
+        Sheet.AccidentalType.Natural as 2,
+        () => "accidentalNatural" as const
+      )
       .exhaustive();
   }
 }

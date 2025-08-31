@@ -3,6 +3,9 @@ import * as Sheet from "sheet";
 
 export class Track extends Core.Track {
   declare score: Sheet.Score;
+  get notes() {
+    return super.notes as Sheet.Note[];
+  }
   get bars() {
     return this.score.bars.filter((bar) => bar.trackId === this.id);
   }
@@ -15,10 +18,6 @@ export class Track extends Core.Track {
   get prev() {
     return this.score.tracks[this.id - 1];
   }
-  constructor(track: ConstructorParameters<typeof Core.Track>[0]) {
-    super(track);
-  }
-
   getMasterbarBars(masterbarId: number) {
     return this.score.bars.filter(
       (bar) => bar.trackId === this.id && bar.id === masterbarId

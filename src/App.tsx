@@ -17,17 +17,26 @@ function App() {
       setSoundfont2(Soundfont2.create(new Uint8Array(buffer)));
     })();
   }, []);
-  const layouting = () => {
+  const layouting = (sheetController: Sheet.Controller | undefined) => {
     if (!sheetController) return;
     sheetController.layout(sheetController.layoutType);
+    sheetController.order();
+
+    // sheetController.align();
 
     if (ref.current) {
       while (ref.current.firstChild)
         ref.current.removeChild(ref.current.firstChild);
-      const svg = sheetController.score.toSVG(500, 500, {
-        ratio: 4,
-        scale: sheetController.scale,
-      });
+      const svg = sheetController.score.toSVG(
+        500,
+        sheetController.layoutType === Sheet.LayoutType.Horizontal
+          ? sheetController.score.width
+          : 500,
+        {
+          ratio: 4,
+          scale: sheetController.scale,
+        }
+      );
       if (svg) ref.current.appendChild(svg);
     }
   };
@@ -50,7 +59,7 @@ function App() {
       setAudioPlayer(
         new Audio.Controller(score!.toAudio(ctx), soundfont2, ctx)
       );
-      layouting();
+      layouting(sheetController);
     }
   };
 

@@ -15,15 +15,15 @@ export * from "./glyph";
 
 export { Metadatas, Ranges, Glyphnames, BravuraMetadata };
 
-export const getBoundingBox = (glyphName: keyof Glyphnames) =>
+export const getGlyphBBox = (glyphName: keyof Glyphnames) =>
   BravuraMetadata.glyphBBoxes[
     glyphName as keyof BravuraMetadata["glyphBBoxes"]
   ];
-export const getAdvanceWidth = (glyphName: keyof Glyphnames) =>
+export const getGlyphAdvanceWidth = (glyphName: keyof Glyphnames) =>
   BravuraMetadata.glyphAdvanceWidths[
     glyphName as keyof BravuraMetadata["glyphAdvanceWidths"]
   ];
-export const getAnchor = <T extends keyof Glyphnames>(glyphName: T) =>
+export const getGlyphWithAnchor = <T extends keyof Glyphnames>(glyphName: T) =>
   BravuraMetadata.glyphsWithAnchors[
     glyphName as keyof BravuraMetadata["glyphsWithAnchors"]
   ];

@@ -28,16 +28,16 @@ export class Event {
       )
       .with({ start: P.nonNullable, end: P.nonNullable }, (params) => ({
         start: params.start,
-        duration: Beat.subtract(params.end, params.start),
+        duration: params.end.subtract(params.start),
         end: params.end,
       }))
       .with({ start: P.nonNullable, duration: P.nonNullable }, (params) => ({
         start: params.start,
         duration: params.duration,
-        end: Beat.add(params.start, params.duration),
+        end: params.start.add(params.duration),
       }))
       .with({ duration: P.nonNullable, end: P.nonNullable }, (params) => ({
-        start: Beat.subtract(params.end, params.duration),
+        start: params.end.subtract(params.duration),
         duration: params.duration,
         end: params.end,
       }))
@@ -50,11 +50,11 @@ export class Event {
   }
   setStart(start: Beat) {
     this.start = start;
-    this.duration = Beat.subtract(this.end, this.start);
+    this.duration = this.end.subtract(this.start);
   }
   setEnd(end: Beat) {
     this.end = end;
-    this.duration = Beat.subtract(this.end, this.start);
+    this.duration = this.end.subtract(this.start);
   }
   isOverflow(event: Event) {
     return (

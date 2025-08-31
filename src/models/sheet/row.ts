@@ -1,15 +1,12 @@
 import * as Sheet from "sheet";
 import * as R from "remeda";
+import { BoundingBox } from "../boundingbox";
 
 const paddingBottom = 4;
 export class Row {
   readonly id;
+  boundingBox = new BoundingBox(0, 0, 0, 0);
   score!: Sheet.Score;
-  get masterbars() {
-    return this.score.masterbars.filter(
-      (masterbar) => masterbar.rowId === this.id
-    );
-  }
   get width() {
     return this.masterbars.reduce((acc, cur) => acc + cur.width, 0);
   }
@@ -23,6 +20,11 @@ export class Row {
   }
   get y(): number {
     return this.prev ? this.prev.y + this.height : 0;
+  }
+  get masterbars() {
+    return this.score.masterbars.filter(
+      (masterbar) => masterbar.rowId === this.id
+    );
   }
   get prev() {
     return this.score.rows[this.id - 1];

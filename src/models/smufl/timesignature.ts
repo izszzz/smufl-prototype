@@ -4,13 +4,11 @@ import { match } from "ts-pattern";
 export class Timesignature extends Sheet.Timesignature {
   draw() {
     const handleLigature = (ligature: Sheet.Ligature) => {
-      ligature.glyphsList = ligature.glyphsList.map((glyphs) =>
+      ligature.glyphLists = ligature.glyphLists.map((glyphs) =>
         glyphs.map((glyph) => {
           if (glyph instanceof Sheet.Ligature) return handleLigature(glyph);
           else
             return new Glyph(
-              glyph.type,
-              glyph.line,
               Glyph.find("timeSignatures", (v) =>
                 v.toLocaleLowerCase().includes(
                   match(glyph.type)
@@ -20,7 +18,9 @@ export class Timesignature extends Sheet.Timesignature {
                     .toString()
                 )
               ),
-              true
+              true,
+              glyph.type,
+              glyph.line
             );
         })
       );
@@ -28,6 +28,5 @@ export class Timesignature extends Sheet.Timesignature {
     };
     super.draw();
     this.ligature = this.ligature ? handleLigature(this.ligature) : null;
-    this.ligature?.draw();
   }
 }

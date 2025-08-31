@@ -40,8 +40,8 @@ export class Stave {
     id: number;
     barId: number;
     trackId: number;
+    barline: Barline;
     clef?: Clef;
-    barline?: Barline;
   }) {
     this.id = id;
     this.barId = barId;
@@ -62,7 +62,7 @@ export class Stave {
               ]
             : null,
           this.bar.masterbar.isFirst
-            ? [new Sheet.Ligature(this.bar.keysignature.ligature.glyphsList)]
+            ? [new Sheet.Ligature(this.bar.keysignature.ligature.glyphLists)]
             : null,
           this.bar.masterbar.isFirst
             ? filter([this.bar.timesignature.ligature], isTruthy)
@@ -73,7 +73,7 @@ export class Stave {
             filter(isTruthy),
             map((x) => [x])
           ),
-          this.barline ? [new Sheet.Glyph(Sheet.GlyphType.Barline, 0)] : null,
+          [new Sheet.Glyph(Sheet.GlyphType.Barline, 1)],
         ],
         isTruthy
       ),

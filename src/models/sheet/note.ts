@@ -20,6 +20,17 @@ export class Note extends Core.Note {
   flag: null = null;
   ligature: Sheet.Ligature | null = null;
   score!: Sheet.Score;
+  override get params() {
+    return {
+      ...super.params,
+      staveId: this.staveId,
+      chord: this.chord,
+      stem: this.stem,
+      rest: this.rest,
+      voice: this.voice,
+      staff: this.staff,
+    };
+  }
   get track() {
     return this.score.tracks.find((track) => track.id === this.trackId)!;
   }

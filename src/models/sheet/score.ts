@@ -3,7 +3,6 @@ import * as Sheet from "sheet";
 import {
   length,
   filter,
-  firstBy,
   isEmpty,
   isNullish,
   pipe,
@@ -18,6 +17,7 @@ import {
   entries,
   mapToObj,
   last,
+  firstBy,
 } from "remeda";
 import { LiteralToPrimitiveDeep, Merge, PartialDeep } from "type-fest";
 import { match } from "ts-pattern";
@@ -37,9 +37,9 @@ export class Score<
   rows;
   bars;
   staves;
-  get height() {
-    return this.rows.reduce((acc, cur) => acc + cur.height, 0);
-  }
+  // get height() {
+  //   return this.rows.reduce((acc, cur) => acc + cur.height, 0);
+  // }
   get width() {
     return firstBy(this.rows, [prop("width"), "desc"])?.width ?? 0;
   }
@@ -71,10 +71,7 @@ export class Score<
     ])
       data.score = this;
   }
-  draw() {
-    for (const data of [...this.notes, ...this.staves, ...this.timesignatures])
-      data.draw();
-  }
+
   static override create(
     param: Parameter,
     options: {

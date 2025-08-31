@@ -22,4 +22,21 @@ export class Score<
   Timesignature,
   Keysignature,
   Tempo
-> {}
+> {
+  static override create(...params: Parameters<typeof Sheet.Score.create>) {
+    const sheet = super.create(...params);
+    return new SMUFL.Score({
+      ...sheet,
+      tracks: sheet.tracks.map((track) => new SMUFL.Track(track)),
+      masterbars: sheet.masterbars.map(
+        (masterbar) => new SMUFL.Masterbar(masterbar)
+      ),
+      notes: sheet.notes.map((note) => new SMUFL.Note(note)),
+      bars: sheet.bars.map((bar) => new SMUFL.Bar(bar)),
+      staves: sheet.staves.map((stave) => new SMUFL.Stave(stave)),
+      timesignatures: sheet.timesignatures.map(
+        (timesignature) => new SMUFL.Timesignature(timesignature)
+      ),
+    });
+  }
+}

@@ -1,12 +1,11 @@
 import { GlyphType } from "sheet";
-import { BoundingBox } from "../boundingbox";
+import { Element } from "./element";
 
-export class Glyph extends BoundingBox {
-  rotate = 0;
+export class Glyph extends Element {
   constructor(
     public type: GlyphType,
     public line: number
   ) {
-    super(0, 0, 0, 0);
+    super();
   }
 }

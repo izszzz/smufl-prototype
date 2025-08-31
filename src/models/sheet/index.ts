@@ -39,4 +39,5 @@ export enum GlyphType {
   Tie,
   Rest,
   Barline,
+  Ligature,
 }

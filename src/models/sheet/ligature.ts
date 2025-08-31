@@ -1,35 +1,36 @@
-import { firstBy, map, pipe, prop, reduce } from "remeda";
-import { BoundingBox } from "../boundingbox";
+import { firstBy, last, prop } from "remeda";
 import { Glyph } from "./glyph";
+import { Element } from "./element";
 
-export class Ligature<T extends Glyph = Glyph> extends BoundingBox {
+export class Ligature<T extends Glyph = Glyph> extends Element {
   constructor(
-    public glyphsList: (T | Ligature<T>)[][],
+    public glyphLists: (T | Ligature<T>)[][],
     public line: number = 0
   ) {
-    super(0, 0, 0, 0);
+    super();
   }
-  draw() {
-    // set width
-    this.width = pipe(
-      this.glyphsList,
-      map((glyphs) => firstBy(glyphs, [prop("width"), "desc"])?.width ?? 0),
-      reduce((acc, cur) => acc + cur, 0)
+  order() {
+    this.glyphLists.reduce(
+      (acc, cur) => {
+        for (const glyphOrLigature of cur)
+          if (glyphOrLigature instanceof Ligature) glyphOrLigature.order();
+        if (acc)
+          for (const glyph of cur) {
+            const prevMaxWidthGlyph = firstBy(acc, [prop("width"), "desc"]);
+            if (prevMaxWidthGlyph)
+              glyph.boundingBox.x =
+                prevMaxWidthGlyph.boundingBox.x + prevMaxWidthGlyph.width;
+          }
+        return cur;
+      },
+      null as Ligature["glyphLists"][number] | null
     );
-    // order children
-    pipe(
-      this.glyphsList,
-      reduce(
-        (acc, cur) => {
-          if (acc)
-            for (const glyph of cur) {
-              const maxWidthGlyph = firstBy(acc, [prop("width"), "desc"]);
-              glyph.x = (maxWidthGlyph?.x ?? 0) + (maxWidthGlyph?.width ?? 0);
-            }
-          return cur;
-        },
-        null as Ligature["glyphsList"][number] | null
-      )
-    );
+    const lastMaxWidthGlyph = firstBy(last(this.glyphLists) ?? [], [
+      prop("width"),
+      "desc",
+    ]);
+    this.boundingBox.width = lastMaxWidthGlyph
+      ? lastMaxWidthGlyph.boundingBox.x + lastMaxWidthGlyph.width
+      : 0;
   }
 }
