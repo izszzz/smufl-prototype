@@ -19,7 +19,6 @@ export class Glyph<
   }
   constructor(
     glyphName: T,
-    advanced: boolean,
     ...params: ConstructorParameters<typeof Sheet.Glyph>
   ) {
     super(...params);
@@ -33,8 +32,8 @@ export class Glyph<
     this.glyphAdvancedWidth = SMUFL.getGlyphAdvanceWidth(glyphName);
     this.glyphWithAnchor = SMUFL.getGlyphWithAnchor(glyphName);
     this.glyphName = glyphName;
-    this.boundingBox.width = this.glyphBBox.width;
-    if (advanced) this.boundingBox.width = this.glyphAdvancedWidth;
+    // this.boundingBox.width = this.glyphBBox.width;
+    this.boundingBox.width = this.glyphAdvancedWidth;
   }
   static find(
     type: keyof SMUFL.Ranges,

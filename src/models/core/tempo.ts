@@ -8,7 +8,6 @@ export class Tempo extends Core.Event {
       value: this.value.value,
     };
   }
-
   constructor({
     value,
     ...event

@@ -1,4 +1,3 @@
-import Metadatas from "./metadata.json";
 import BravuraMetadata from "../../const/bravura/bravura_metadata.json";
 import Glyphnames from "../../const/smufl/glyphnames.json";
 import Ranges from "../../const/smufl/ranges.json";
@@ -13,7 +12,7 @@ export * from "./score";
 export * from "./track";
 export * from "./glyph";
 
-export { Metadatas, Ranges, Glyphnames, BravuraMetadata };
+export { Ranges, Glyphnames, BravuraMetadata };
 
 export const getGlyphBBox = (glyphName: keyof Glyphnames) =>
   BravuraMetadata.glyphBBoxes[

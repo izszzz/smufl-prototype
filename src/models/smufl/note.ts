@@ -34,7 +34,6 @@ export class Note extends Sheet.Note {
                     )
                     // .with(Sheet.GlyphType.Flag, (type) => new SMUFL.Glyph(type))
                     .run(),
-                  false,
                   glyph.type,
                   glyph.line
                 )

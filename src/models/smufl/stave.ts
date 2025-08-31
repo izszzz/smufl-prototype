@@ -20,7 +20,6 @@ export class Stave extends Sheet.Stave {
       SMUFL.Glyph.findBarline({
         $$: { ["bar-style"]: [{ _: "light-heavy" }] },
       }),
-      false,
       Sheet.GlyphType.Barline,
       0
     ).glyphBBox.height;
@@ -47,12 +46,7 @@ export class Stave extends Sheet.Stave {
                         this.resolveClef()
                       );
                       return glyphName
-                        ? new SMUFL.Glyph(
-                            glyphName,
-                            true,
-                            glyph.type,
-                            glyph.line
-                          )
+                        ? new SMUFL.Glyph(glyphName, glyph.type, glyph.line)
                         : null;
                     })
                     .with(
@@ -67,7 +61,6 @@ export class Stave extends Sheet.Stave {
                                 .exhaustive()
                             )
                           ),
-                          false,
                           glyph.type,
                           glyph.line
                         )
@@ -85,12 +78,7 @@ export class Stave extends Sheet.Stave {
                               }
                       );
                       return glyphName
-                        ? new SMUFL.Glyph(
-                            glyphName,
-                            true,
-                            glyph.type,
-                            glyph.line
-                          )
+                        ? new SMUFL.Glyph(glyphName, glyph.type, glyph.line)
                         : null;
                     })
                     .otherwise(() => glyph)

@@ -21,19 +21,6 @@ const importMusicXML = async (fileName: string) => {
   if (!pathName) return;
   const data = await zip.files[pathName]?.async("text");
   if (!data) return;
-  console.log(
-    new MusicXml.MXL(
-      (await new xml2js.Parser({
-        explicitArray: true,
-        explicitCharkey: true,
-        explicitChildren: true,
-        valueProcessors: [parseNumbers],
-        attrValueProcessors: [parseNumbers],
-      }).parseStringPromise(data)) as {
-        ["score-partwise"]: ScorePartwise[0];
-      }
-    ).toSheet()
-  );
   return new MusicXml.MXL(
     (await new xml2js.Parser({
       explicitArray: true,

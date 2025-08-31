@@ -16,7 +16,6 @@ export class Track extends Core.Event {
       preset: this.preset.value,
     };
   }
-
   constructor({
     id,
     name = "",

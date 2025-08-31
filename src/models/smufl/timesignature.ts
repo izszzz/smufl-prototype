@@ -18,7 +18,6 @@ export class Timesignature extends Sheet.Timesignature {
                     .toString()
                 )
               ),
-              true,
               glyph.type,
               glyph.line
             );

@@ -17,9 +17,7 @@ export const toCore = (data: Midi.IMidi) => {
               });
             if (R.isNonNullish(cur.event.tempo))
               trackAcc.tempos?.push({
-                ...{
-                  value: new Midi.Unit.Tempo(cur.event.tempo).toBpm().value,
-                },
+                value: new Midi.Unit.MidiTempo(cur.event.tempo).toTempo().value,
                 start: acc.time,
               });
             if (R.isNonNullish(cur.event.keySignature))
