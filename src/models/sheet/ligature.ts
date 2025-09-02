@@ -1,4 +1,16 @@
-import { firstBy, last, prop } from "remeda";
+import {
+  defaultTo,
+  filter,
+  firstBy,
+  identity,
+  isTruthy,
+  last,
+  map,
+  pipe,
+  piped,
+  prop,
+  reduce,
+} from "remeda";
 import { Glyph } from "./glyph";
 import { Element } from "./element";
 
@@ -9,6 +21,14 @@ export class Ligature<T extends Glyph = Glyph> extends Element {
   ) {
     super();
   }
+  override get minWidth(): number {
+    return pipe(
+      this.glyphLists,
+      map(piped(map(prop("minWidth")), firstBy([identity(), "desc"]))),
+      filter(isTruthy),
+      reduce((acc, cur) => acc + cur, 0)
+    );
+  }
   order() {
     this.glyphLists.reduce(
       (acc, cur) => {
@@ -18,8 +38,7 @@ export class Ligature<T extends Glyph = Glyph> extends Element {
           for (const glyph of cur) {
             const prevMaxWidthGlyph = firstBy(acc, [prop("width"), "desc"]);
             if (prevMaxWidthGlyph)
-              glyph.boundingBox.x =
-                prevMaxWidthGlyph.boundingBox.x + prevMaxWidthGlyph.width;
+              glyph.boundingBox.x = prevMaxWidthGlyph.right;
           }
         return cur;
       },
@@ -29,8 +48,6 @@ export class Ligature<T extends Glyph = Glyph> extends Element {
       prop("width"),
       "desc",
     ]);
-    this.boundingBox.width = lastMaxWidthGlyph
-      ? lastMaxWidthGlyph.boundingBox.x + lastMaxWidthGlyph.width
-      : 0;
+    if (lastMaxWidthGlyph) this.boundingBox.width = lastMaxWidthGlyph.right;
   }
 }

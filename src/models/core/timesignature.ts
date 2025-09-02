@@ -2,7 +2,7 @@ import * as Core from "core";
 export class Timesignature extends Core.Event {
   denominator;
   numerator;
-  get width() {
+  get barCount() {
     return this.duration.value / this.numerator;
   }
   override get params() {

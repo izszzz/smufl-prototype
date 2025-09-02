@@ -37,9 +37,9 @@ export class Score<
   rows;
   bars;
   staves;
-  // get height() {
-  //   return this.rows.reduce((acc, cur) => acc + cur.height, 0);
-  // }
+  get height() {
+    return this.rows.reduce((acc, cur) => acc + cur.height, 0);
+  }
   get width() {
     return firstBy(this.rows, [prop("width"), "desc"])?.width ?? 0;
   }
@@ -197,12 +197,12 @@ export class Score<
               ...note,
               id,
               trackId,
-              pitch: new Core.Unit.MidiNoteNumber(note.pitch),
+              pitch: new Core.Units.MidiNoteNumber(note.pitch),
               ...pipe(
                 { start, duration, end },
                 entries(),
                 filter(piped(last, isDefined)),
-                mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
               ),
             })
         )
@@ -218,7 +218,7 @@ export class Score<
               { start, duration, end },
               entries(),
               filter(piped(last, isDefined)),
-              mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+              mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
             ),
           })
       ),
@@ -269,7 +269,7 @@ export class Score<
                     end: cur.start,
                     id: score.notes.length + 1,
                     staveId: stave.id,
-                    pitch: new Core.Unit.MidiNoteNumber(-1),
+                    pitch: new Core.Units.MidiNoteNumber(-1),
                     stem: undefined,
                     chord: false,
                     rest: { $: {}, $$: {} },

@@ -1,4 +1,13 @@
-import * as R from "remeda";
+import {
+  defaultTo,
+  firstBy,
+  identity,
+  last,
+  map,
+  pipe,
+  piped,
+  prop,
+} from "remeda";
 import * as Sheet from "sheet";
 
 export class Bar {
@@ -31,15 +40,24 @@ export class Bar {
   }
   get width() {
     return (
-      R.pipe(
+      pipe(
         this.staves,
-        R.firstBy([R.prop("width"), "desc"]),
-        R.prop("width")
+        map(piped(prop("ligature", "width"), defaultTo(0))),
+        firstBy([identity(), "desc"])
+      ) ?? 0
+    );
+  }
+  get minWidth() {
+    return (
+      pipe(
+        this.staves,
+        map(piped(prop("ligature", "minWidth"), defaultTo(0))),
+        firstBy([identity(), "desc"])
       ) ?? 0
     );
   }
   get height() {
-    const lastStave = R.last(this.staves);
+    const lastStave = last(this.staves);
     return lastStave ? lastStave.height + lastStave.y : 0;
   }
   get prev() {

@@ -1,4 +1,4 @@
-import { Tonality } from "core";
+import { Tonality } from "../enums/tonality";
 import { PitchClassName } from "./pitch_class_name";
 import { P, match } from "ts-pattern";
 import musicTheory from "../../../const/music-theory.json";

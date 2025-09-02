@@ -1,5 +1,5 @@
-import { Cent } from "../unit/cent";
-import { Hertz } from "../unit/hertz";
+import { Cent } from "../units/cent";
+import { Hertz } from "../units/hertz";
 
 export class Header {
   name;

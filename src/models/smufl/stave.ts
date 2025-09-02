@@ -56,8 +56,14 @@ export class Stave extends Sheet.Stave {
                           SMUFL.Glyph.find("standardAccidentals12Edo", (v) =>
                             v.toLowerCase().includes(
                               match(this.bar.keysignature.tonality)
-                                .with(Core.Tonality.Major as 0, () => "sharp")
-                                .with(Core.Tonality.Minor as 1, () => "flat")
+                                .with(
+                                  Core.Enums.Tonality.Major as 0,
+                                  () => "sharp"
+                                )
+                                .with(
+                                  Core.Enums.Tonality.Minor as 1,
+                                  () => "flat"
+                                )
                                 .exhaustive()
                             )
                           ),

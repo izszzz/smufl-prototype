@@ -28,10 +28,8 @@ function App() {
       while (ref.current.firstChild)
         ref.current.removeChild(ref.current.firstChild);
       const svg = sheetController.score.toSVG(
-        500,
-        sheetController.layoutType === Sheet.LayoutType.Horizontal
-          ? sheetController.score.width
-          : 500,
+        window.innerWidth,
+        window.innerHeight,
         {
           ratio: 4,
           scale: sheetController.scale,
@@ -66,11 +64,7 @@ function App() {
   return (
     <div>
       <h3>{sheetController?.score.name}</h3>
-      <div
-        ref={ref}
-        className="bravura"
-        style={{ height: "70vh", overflow: "auto" }}
-      />
+      <div ref={ref} className="bravura" style={{ overflow: "auto" }} />
       <button
         type="button"
         onClick={() => {
@@ -101,10 +95,10 @@ function App() {
         scale
         <input
           type="number"
-          defaultValue={50}
+          defaultValue={1}
           onChange={(e) => {
             if (sheetController) sheetController.scale = Number(e.target.value);
-            layouting();
+            layouting(sheetController);
           }}
         />
       </label>
@@ -115,7 +109,7 @@ function App() {
           onChange={(e) => {
             if (sheetController)
               sheetController.layoutType = Number(e.target.value);
-            layouting();
+            layouting(sheetController);
           }}
         >
           <option value={Sheet.LayoutType.Horizontal}>horizontal</option>

@@ -11,7 +11,9 @@ export class Tempo extends Core.Event {
   constructor({
     value,
     ...event
-  }: { value: Core.Unit.Tempo } & ConstructorParameters<typeof Core.Event>[0]) {
+  }: { value: Core.Units.Tempo } & ConstructorParameters<
+    typeof Core.Event
+  >[0]) {
     super(event);
     this.value = value;
   }

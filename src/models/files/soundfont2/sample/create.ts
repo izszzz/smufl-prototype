@@ -6,22 +6,22 @@ import Instrument from "../instrument";
 import * as R from "remeda";
 
 import { match } from "ts-pattern";
-import { Smpls32k } from "../unit/32ksmpls";
-import { Smpls } from "../unit/smpls";
-import { TCentKey } from "../unit/tcentkey";
-import { Centfs } from "../unit/centfs";
-import { Centibel } from "../unit/centibel";
-import { Centibelfs } from "../unit/centibelfs";
-import { Centibelattan } from "../unit/centibelattan";
-import { Timecent } from "../unit/timecent";
-import { Cent } from "../unit/cent";
-import { CentKey } from "../unit/centkey";
-import { MidiKey } from "../unit/midikey";
-import { MidiVel } from "../unit/midivel";
-import { BitFlag } from "../unit/bitflag";
-import { Semitone } from "../unit/semitone";
-import { Arbitrary } from "../unit/arbitrary";
-import { Promille } from "../unit/promille";
+import { Smpls32k } from "../units/32ksmpls";
+import { Smpls } from "../units/smpls";
+import { TCentKey } from "../units/tcentkey";
+import { Centfs } from "../units/centfs";
+import { Centibel } from "../units/centibel";
+import { Centibelfs } from "../units/centibelfs";
+import { Centibelattan } from "../units/centibelattan";
+import { Timecent } from "../units/timecent";
+import { Cent } from "../units/cent";
+import { CentKey } from "../units/centkey";
+import { MidiKey } from "../units/midikey";
+import { MidiVel } from "../units/midivel";
+import { BitFlag } from "../units/bitflag";
+import { Semitone } from "../units/semitone";
+import { Arbitrary } from "../units/arbitrary";
+import { Promille } from "../units/promille";
 
 export function create(
   instrument: Instrument,

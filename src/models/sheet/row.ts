@@ -1,14 +1,15 @@
 import * as Sheet from "sheet";
 import * as R from "remeda";
-import { BoundingBox } from "../boundingbox";
 
 const paddingBottom = 4;
 export class Row {
   readonly id;
-  boundingBox = new BoundingBox(0, 0, 0, 0);
   score!: Sheet.Score;
   get width() {
     return this.masterbars.reduce((acc, cur) => acc + cur.width, 0);
+  }
+  get minWidth() {
+    return this.masterbars.reduce((acc, cur) => acc + cur.minWidth, 0);
   }
   get height() {
     return (

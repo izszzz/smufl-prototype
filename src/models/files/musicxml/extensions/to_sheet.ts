@@ -33,8 +33,8 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
             const accidental = R.prop(key?.$$, "fifths", "0", "_") ?? 0;
             const tonality =
               R.prop(key?.$$, "mode", "at", "_") === "minor"
-                ? Core.Tonality.Minor
-                : Core.Tonality.Major;
+                ? Core.Enums.Tonality.Minor
+                : Core.Enums.Tonality.Major;
             const timesignature = {
               denominator,
               numerator,
@@ -70,7 +70,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                   chord: R.isDefined(R.prop(cur.$$, "chord")),
                   stem: cur.$$.stem?.[0],
                   staff: cur.$$.staff,
-                  pitch: new Core.Unit.ScientificPitchNotation(
+                  pitch: new Core.Units.ScientificPitchNotation(
                     `${
                       R.prop(cur.$$, "pitch", "0", "$$", "step", "0", "_") ??
                       "C"

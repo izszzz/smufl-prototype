@@ -50,8 +50,11 @@ export class Note extends Core.Note {
         this.pitch.toPitchClass().equal(accidentalPitchClass)
     )
       ? match(this.keysignature.tonality)
-          .with(Core.Tonality.Major as 0, () => Sheet.AccidentalType.Sharp)
-          .with(Core.Tonality.Minor as 1, () => Sheet.AccidentalType.Flat)
+          .with(
+            Core.Enums.Tonality.Major as 0,
+            () => Sheet.AccidentalType.Sharp
+          )
+          .with(Core.Enums.Tonality.Minor as 1, () => Sheet.AccidentalType.Flat)
           .exhaustive()
       : null;
   }

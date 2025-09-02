@@ -1,18 +1,26 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
-import { firstBy, pipe, prop } from "remeda";
+import { firstBy, identity, map, pipe, prop } from "remeda";
 
 export class Masterbar extends Core.Event {
   readonly id;
   rowId;
   score!: Sheet.Score;
   get x(): number {
-    const prev = this.row.masterbars[this.id - 1];
-    return prev ? prev.x + prev.width : 0;
+    const prev = this.row.masterbars[this.row.masterbars.indexOf(this) - 1];
+    return prev ? prev.right : 0;
+  }
+  get right() {
+    return this.x + this.width;
   }
   get width() {
     return (
-      pipe(firstBy(this.bars, [prop("width"), "desc"]), prop("width")) ?? 0
+      pipe(this.bars, map(prop("width")), firstBy([identity(), "desc"])) ?? 0
+    );
+  }
+  get minWidth() {
+    return (
+      pipe(this.bars, map(prop("minWidth")), firstBy([identity(), "desc"])) ?? 0
     );
   }
   get height() {

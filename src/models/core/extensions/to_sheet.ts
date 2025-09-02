@@ -23,7 +23,7 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
         voice: undefined,
         staveId: match(track.preset.toName())
           .with("Acoustic Grand Piano", () =>
-            note.pitch.value < Core.Unit.MidiNoteNumber.MIDDLE_C ? 1 : 0
+            note.pitch.value < Core.Units.MidiNoteNumber.MIDDLE_C ? 1 : 0
           )
           .otherwise(() => 0),
       })),

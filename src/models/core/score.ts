@@ -131,7 +131,7 @@ export class Score<
                 { start, duration, end },
                 entries(),
                 filter(piped(last, isDefined)),
-                mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
               ),
             })
         ) ?? [],
@@ -144,7 +144,7 @@ export class Score<
                 { start, duration, end },
                 entries(),
                 filter(piped(last, isDefined)),
-                mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
               ),
             })
         ) ?? [],
@@ -152,12 +152,12 @@ export class Score<
         param.tempos?.map(
           ({ start, end, duration, ...tempo }) =>
             new Core.Tempo({
-              value: new Core.Unit.Tempo(tempo.value),
+              value: new Core.Units.Tempo(tempo.value),
               ...pipe(
                 { start, duration, end },
                 entries(),
                 filter(piped(last, isDefined)),
-                mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
               ),
             })
         ) ?? [],
@@ -167,12 +167,12 @@ export class Score<
             new Core.Note({
               id,
               trackId,
-              pitch: new Core.Unit.MidiNoteNumber(note.pitch),
+              pitch: new Core.Units.MidiNoteNumber(note.pitch),
               ...pipe(
                 { start, duration, end },
                 entries(),
                 filter(piped(last, isDefined)),
-                mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
               ),
             })
         )
@@ -182,14 +182,14 @@ export class Score<
           new Core.Track({
             ...track,
             id: trackId,
-            preset: new Core.Unit.Preset(
+            preset: new Core.Units.Preset(
               track.preset ?? defaultValue.track.preset
             ),
             ...pipe(
               { start, duration, end },
               entries(),
               filter(piped(last, isDefined)),
-              mapToObj(([key, value]) => [key, new Core.Unit.Beat(value!)])
+              mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
             ),
           })
       ),
@@ -197,7 +197,7 @@ export class Score<
         { start, duration, end },
         entries(),
         filter(piped(last, isDefined)),
-        mapToObj(([key, value]) => [key, new Core.Unit.Beat(value)])
+        mapToObj(([key, value]) => [key, new Core.Units.Beat(value)])
       ),
     });
     return core;

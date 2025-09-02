@@ -7,10 +7,7 @@ export * from "./timesignature";
 export * from "./keysignature";
 export * from "./tempo";
 export * from "./score";
-export * as Unit from "./unit";
+export * as Units from "./units";
+export * as Enums from "./enums";
 
-export enum Tonality {
-  Major,
-  Minor,
-}
 export { Metadata };

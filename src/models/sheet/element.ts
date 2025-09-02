@@ -7,7 +7,13 @@ export class Element {
   get width() {
     return this.boundingBox.width + this.inset.left + this.inset.right;
   }
+  get minWidth() {
+    return this.boundingBox.width;
+  }
   get height() {
     return this.boundingBox.height + this.inset.top + this.inset.bottom;
+  }
+  get right() {
+    return this.width + this.boundingBox.x;
   }
 }

@@ -1,5 +1,5 @@
 import { match, P } from "ts-pattern";
-import { Beat } from "./unit/beat";
+import { Beat } from "./units/beat";
 
 export class Event {
   start;

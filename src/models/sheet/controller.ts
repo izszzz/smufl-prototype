@@ -10,39 +10,43 @@ import {
   groupBy,
   pipe,
   piped,
+  length,
   prop,
   reduce,
+  mapWithFeedback,
 } from "remeda";
 
 export class Controller {
   constructor(
     public score: Score,
     public layoutType: LayoutType,
-    public scale: number = 30
+    public scale: number = 1
   ) {
     this.layoutType = layoutType;
     this.layout(layoutType);
   }
   layout(layoutType: LayoutType) {
-    switch (layoutType) {
-      case LayoutType.Horizontal:
+    match(layoutType)
+      .with(LayoutType.Page as 0, () => {})
+      .with(LayoutType.Horizontal as 2, () => {
         for (const masterbar of this.score.masterbars) masterbar.rowId = 0;
         this.score.rows = [new Row({ id: 0 })];
-        break;
-      case LayoutType.Vertical:
+      })
+      .with(LayoutType.Vertical as 1, () => {
+        // remeda takeWhileで実装できるかも
         this.score.rows = splitByWidth(
           this.score.masterbars,
-          this.scale,
-          (mb) => mb.width
+          window.innerWidth / this.scale,
+          (mb) => mb.minWidth
         ).map((masterbars, id) => {
           for (const masterbar of masterbars) masterbar.rowId = id;
           return new Row({ id });
         });
-        break;
-    }
+      })
+      .exhaustive();
     for (const row of this.score.rows) row.score = this.score;
     this.draw();
-    this.space();
+    this.space(window.innerWidth, window.innerHeight);
     this.order();
     console.log(this.score);
   }
@@ -57,7 +61,7 @@ export class Controller {
   order() {
     this.score.staves.flatMap((stave) => stave.ligature?.order());
   }
-  space() {
+  space(width: number, height: number) {
     for (const row of this.score.rows) {
       const groupedByStartNotes = pipe(
         row,
@@ -74,10 +78,12 @@ export class Controller {
               if (note.ligature) note.ligature.inset.right = 2; // FIXME: const
         })
         .with(LayoutType.Vertical as 1, () => {
-          // const space = clientWidth / pipe(groupedByStartNotes, length());
-          // for (const [, notes] of groupedByStartNotes)
-          //   for (const note of notes)
-          //     if (note.ligature) note.ligature.width += space;
+          const space =
+            (width / this.scale - row.minWidth) /
+            pipe(groupedByStartNotes, length());
+          for (const [, notes] of groupedByStartNotes)
+            for (const note of notes)
+              if (note.ligature) note.ligature.inset.right = space;
         })
         .exhaustive();
     }
@@ -104,16 +110,16 @@ export class Controller {
 function splitByWidth<T>(
   items: T[],
   width: number,
-  weightSelector: (item: T) => number
+  selector: (item: T) => number
 ): T[][] {
   return pipe(
     items,
     reduce(
       (acc, item) => {
-        const current = acc[acc.length - 1];
+        const current = acc.at(-1);
         const currentSum =
-          current?.reduce((sum, el) => sum + weightSelector(el), 0) ?? 0;
-        const itemWeight = weightSelector(item);
+          current?.reduce((sum, el) => sum + selector(el), 0) ?? 0;
+        const itemWeight = selector(item);
         if (currentSum + itemWeight > width) {
           acc.push([item]);
         } else {

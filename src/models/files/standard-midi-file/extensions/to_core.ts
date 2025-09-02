@@ -24,8 +24,8 @@ export const toCore = (data: Midi.IMidi) => {
               trackAcc.keysignatures?.push({
                 tonality:
                   cur.event.keySignature.mi === 0
-                    ? Core.Tonality.Major
-                    : Core.Tonality.Minor,
+                    ? Core.Enums.Tonality.Major
+                    : Core.Enums.Tonality.Minor,
                 accidental: cur.event.keySignature.sf,
                 start: acc.time,
               });

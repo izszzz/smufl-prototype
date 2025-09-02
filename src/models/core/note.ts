@@ -20,7 +20,7 @@ export class Note extends Core.Event {
   }: {
     id: number;
     trackId: number;
-    pitch: Core.Unit.MidiNoteNumber;
+    pitch: Core.Units.MidiNoteNumber;
   } & ConstructorParameters<typeof Core.Event>[0]) {
     super(event);
     this.id = id;

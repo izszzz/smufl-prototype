@@ -21,6 +21,9 @@ export class Stave {
   get width() {
     return -1;
   }
+  get minWidth() {
+    return -1;
+  }
   get height() {
     return -1;
   }
@@ -84,7 +87,7 @@ export class Stave {
     return this.clef ?? this.prev!.resolveClef();
   }
   getClefScientificPitchNotation() {
-    return new Core.Unit.ScientificPitchNotation(
+    return new Core.Units.ScientificPitchNotation(
       match(this.resolveClef().$$.sign?.[0]._)
         .with("G", (value) => `${value}4`)
         .with("F", (value) => `${value}3`)

@@ -16,17 +16,17 @@ declare module "smufl" {
 
 SMUFL.Score.prototype.toSVG = function (
   this: SMUFL.Score,
-  height,
   width,
+  height,
   options
 ) {
   console.log(this);
   const svg = d3
     .create("svg")
     .attr("font-size", options.ratio)
-    // .attr("viewBox", `0 0 ${options.scale} ${options.scale}`)
-    .attr("height", width)
-    .attr("width", height);
+    .attr("viewBox", `0 0 ${width / options.scale} ${height / options.scale}`)
+    .attr("height", height)
+    .attr("width", width);
   svg
     .append("g")
     .attr("type", "score")

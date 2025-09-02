@@ -18,7 +18,7 @@ export class Importer {
     if (file.type === "application/json") reader.readAsText(file);
     if (file.type === "audio/mid" || extname === ".mxl")
       reader.readAsArrayBuffer(file);
-    await new Promise((resolve) => (reader.onload = () => resolve()));
+    await new Promise<void>((resolve) => (reader.onload = () => resolve()));
     if (reader.result instanceof ArrayBuffer) {
       if (file.type === "audio/mid")
         return Midi.toCore(Midi.parse(reader.result)).toSheet();

@@ -24,7 +24,7 @@ export class Track extends Core.Event {
   }: {
     id: number;
     name?: string;
-    preset: Core.Unit.Preset;
+    preset: Core.Units.Preset;
   } & ConstructorParameters<typeof Core.Event>[0]) {
     super(event);
     this.id = id;
