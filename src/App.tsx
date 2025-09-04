@@ -20,9 +20,6 @@ function App() {
   const layouting = (sheetController: Sheet.Controller | undefined) => {
     if (!sheetController) return;
     sheetController.layout(sheetController.layoutType);
-    sheetController.order();
-
-    // sheetController.align();
 
     if (ref.current) {
       while (ref.current.firstChild)
@@ -52,6 +49,9 @@ function App() {
         score!.toSMUFL(),
         Sheet.LayoutType.Horizontal
       );
+      window.addEventListener("resize", () => {
+        layouting(sheetController);
+      });
       setSheetController(sheetController);
 
       setAudioPlayer(

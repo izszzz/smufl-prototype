@@ -45,18 +45,26 @@ export class Note extends Core.Note {
   get accidental() {
     // TODO: Natural
     if (isDefined(this.rest)) return null;
-    return this.keysignature.accidentalPitchClasses.some(
-      (accidentalPitchClass) =>
-        this.pitch.toPitchClass().equal(accidentalPitchClass)
+    return match(
+      this.pitch.toPitchClass().toPitchClassName(this.keysignature.tonality)
+        .accidental
     )
-      ? match(this.keysignature.tonality)
-          .with(
-            Core.Enums.Tonality.Major as 0,
-            () => Sheet.AccidentalType.Sharp
-          )
-          .with(Core.Enums.Tonality.Minor as 1, () => Sheet.AccidentalType.Flat)
-          .exhaustive()
-      : null;
+      .with("#", () => Sheet.AccidentalType.Sharp)
+      .with("b", () => Sheet.AccidentalType.Flat)
+      .with("", () => null)
+      .exhaustive();
+    // audioで使うかも
+    // this.keysignature.accidentalPitchClasses.some(
+    //   (accidentalPitchClass) =>
+    //     this.pitch.toPitchClass().equal(accidentalPitchClass)
+    // )
+    //   ? match(this.keysignature.tonality)
+    //       .with(
+    //         Core.Enums.Tonality.Major as 0,
+    //         () => Sheet.AccidentalType.Sharp
+    //       )
+    //       .with(Core.Enums.Tonality.Minor as 1, () => Sheet.AccidentalType.Flat)
+    //       .exhaustive()
   }
   get line() {
     if (isDefined(this.rest)) {

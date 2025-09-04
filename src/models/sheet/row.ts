@@ -1,5 +1,5 @@
+import { firstBy, identity, map, pipe, prop } from "remeda";
 import * as Sheet from "sheet";
-import * as R from "remeda";
 
 const paddingBottom = 4;
 export class Row {
@@ -13,9 +13,10 @@ export class Row {
   }
   get height() {
     return (
-      (R.pipe(
-        R.firstBy(this.masterbars, [R.prop("height"), "desc"]),
-        R.prop("height")
+      (pipe(
+        this.masterbars,
+        map(prop("height")),
+        firstBy([identity(), "desc"])
       ) ?? 0) + paddingBottom
     );
   }

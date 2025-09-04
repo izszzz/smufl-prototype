@@ -12,9 +12,9 @@ export * from "./ligature";
 export * from "./glyph";
 
 export enum LayoutType {
-  Page,
-  Vertical,
   Horizontal,
+  Vertical,
+  Page,
 }
 
 export enum AccidentalType {

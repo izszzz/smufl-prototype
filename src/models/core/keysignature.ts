@@ -1,6 +1,5 @@
 import * as Core from "core";
 import musicTheory from "../../const/music-theory.json";
-import { match } from "ts-pattern";
 export class Keysignature extends Core.Event {
   tonality;
   accidental;
@@ -13,10 +12,7 @@ export class Keysignature extends Core.Event {
   }
   get accidentalPitchClasses() {
     return musicTheory[
-      `${match(this.tonality)
-        .with(Core.Enums.Tonality.Major as 0, () => "major" as const)
-        .with(Core.Enums.Tonality.Minor as 1, () => "minor" as const)
-        .exhaustive()}TonicsByAccidentals`
+      `orderOf${Math.sign(this.accidental) === 1 ? ("Sharps" as const) : ("Flats" as const)}`
     ]
       .slice(0, Math.abs(this.accidental))
       .map((pitch) => new Core.Units.PitchClass(pitch));

@@ -12,9 +12,6 @@ export class Stave extends Sheet.Stave {
   override get notes() {
     return super.notes as SMUFL.Note[];
   }
-  override get width() {
-    return this.ligature?.width ?? 0;
-  }
   override get height() {
     return new SMUFL.Glyph(
       SMUFL.Glyph.findBarline({

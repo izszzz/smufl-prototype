@@ -41,6 +41,8 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
               start: numerator * barId,
               duration: numerator,
             };
+
+            if (trackId === 0) acc.timesignatures?.push(timesignature);
             const keysignature = {
               accidental,
               tonality,
@@ -119,7 +121,6 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                 });
               }
             );
-            acc.timesignatures?.push(timesignature);
             acc.keysignatures?.push(keysignature);
             if (bpm) acc.tempos?.push(bpm);
             acc.staves?.push(...staves);

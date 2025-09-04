@@ -18,12 +18,6 @@ export class Stave {
   get notes() {
     return this.bar.notes.filter((note) => note.staveId === this.id);
   }
-  get width() {
-    return -1;
-  }
-  get minWidth() {
-    return -1;
-  }
   get height() {
     return -1;
   }
@@ -65,7 +59,15 @@ export class Stave {
               ]
             : null,
           this.bar.masterbar.isFirst
-            ? [new Sheet.Ligature(this.bar.keysignature.ligature.glyphLists)]
+            ? [
+                new Sheet.Ligature(
+                  this.bar.keysignature.ligature.glyphLists,
+                  match(this.resolveClef().$$.sign?.[0]._)
+                    .with("G", () => 0)
+                    .with("F", () => -1)
+                    .exhaustive()
+                ),
+              ]
             : null,
           this.bar.masterbar.isFirst
             ? filter([this.bar.timesignature.ligature], isTruthy)

@@ -1,20 +1,7 @@
 import { match } from "ts-pattern";
 import { LayoutType, Score } from "./";
 import { Row } from "./row";
-import {
-  defaultTo,
-  entries,
-  firstBy,
-  flatMap,
-  forEach,
-  groupBy,
-  pipe,
-  piped,
-  length,
-  prop,
-  reduce,
-  mapWithFeedback,
-} from "remeda";
+import { entries, flatMap, groupBy, pipe, length, prop, reduce } from "remeda";
 
 export class Controller {
   constructor(
@@ -27,13 +14,12 @@ export class Controller {
   }
   layout(layoutType: LayoutType) {
     match(layoutType)
-      .with(LayoutType.Page as 0, () => {})
-      .with(LayoutType.Horizontal as 2, () => {
+      .with(LayoutType.Page as 2, () => {})
+      .with(LayoutType.Horizontal as 0, () => {
         for (const masterbar of this.score.masterbars) masterbar.rowId = 0;
         this.score.rows = [new Row({ id: 0 })];
       })
       .with(LayoutType.Vertical as 1, () => {
-        // remeda takeWhileで実装できるかも
         this.score.rows = splitByWidth(
           this.score.masterbars,
           window.innerWidth / this.scale,
@@ -48,7 +34,6 @@ export class Controller {
     this.draw();
     this.space(window.innerWidth, window.innerHeight);
     this.order();
-    console.log(this.score);
   }
   draw() {
     for (const data of [
@@ -71,8 +56,10 @@ export class Controller {
         entries()
       );
       match(this.layoutType)
-        .with(LayoutType.Page as 0, () => {})
-        .with(LayoutType.Horizontal as 2, () => {
+        .with(LayoutType.Page as 2, () => {
+          height;
+        })
+        .with(LayoutType.Horizontal as 0, () => {
           for (const [, notes] of groupedByStartNotes)
             for (const note of notes)
               if (note.ligature) note.ligature.inset.right = 2; // FIXME: const

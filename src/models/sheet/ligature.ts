@@ -1,5 +1,4 @@
 import {
-  defaultTo,
   filter,
   firstBy,
   identity,

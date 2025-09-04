@@ -1,1 +1,16 @@
-{}
+{
+  "spacing": {
+    "clef": {},
+    "timesignature": {},
+    "keysignature": {},
+    "note": {
+      "left": 0,
+      "right": 2
+    }
+  },
+  "defaultValue": {
+    "scale": 1,
+    "layoutType": 0,
+    "spaced": true
+  }
+}
