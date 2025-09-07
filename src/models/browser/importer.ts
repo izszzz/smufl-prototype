@@ -4,9 +4,11 @@ import { Zip } from "../files/zip";
 import * as xml2js from "xml2js";
 import * as MusicXml from "musicxml";
 import "core/extensions/to_sheet";
+import "core/extensions/to_audio";
 import "musicxml/extensions/to_sheet";
 import "sheet/extensions/to_smufl";
 import "smufl/extensions/to_svg";
+import "../audio/extensions/to_browser_audio";
 import { ScorePartwise } from "src/const/musicxml/4.0/musicxml";
 import { parseNumbers } from "xml2js/lib/processors";
 

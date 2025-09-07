@@ -265,6 +265,7 @@ export class Score<
                   ),
                   0,
                   new Sheet.Note({
+                    velocity: 0,
                     start: acc.end,
                     end: cur.start,
                     id: score.notes.length + 1,

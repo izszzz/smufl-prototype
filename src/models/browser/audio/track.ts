@@ -1,20 +1,16 @@
-import * as Core from "core";
-import * as Audio from "../audio";
+import * as Audio from "../../audio";
+import { Note } from "./note";
 
-export class Track extends Core.Track {
-  volume;
-  audioContext;
+export class Track extends Audio.Track {
+  gain;
   override get notes() {
-    return super.notes as Audio.Note[];
+    return super.notes as Note[];
   }
   constructor({
-    audioContext,
-    ...core
-  }: {
-    audioContext: AudioContext;
-  } & ConstructorParameters<typeof Core.Track>[0]) {
-    super(core);
-    this.volume = audioContext.createGain();
-    this.audioContext = audioContext;
+    gain,
+    ...track
+  }: { gain: GainNode } & ConstructorParameters<typeof Audio.Track>[0]) {
+    super(track);
+    this.gain = gain;
   }
 }

@@ -39,6 +39,7 @@ export const toCore = (data: Midi.IMidi) => {
             if (note) note.end = acc.time;
           } else if (Midi.isNoteOnEvent(cur))
             acc.notes.push({
+              velocity: cur.event.velocity,
               pitch: cur.event.pitch,
               start: acc.time,
             });

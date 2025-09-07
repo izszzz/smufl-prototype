@@ -3,10 +3,10 @@ import Soundfont2 from "soundfont2";
 import * as Browser from "./models/browser";
 import * as Sheet from "./models/sheet";
 import * as Audio from "./models/browser/audio/controller";
-
+const audioContext = new AudioContext();
 function App() {
   const [sheetController, setSheetController] = useState<Sheet.Controller>();
-  const [audioPlayer, setAudioPlayer] = useState<Audio.Controller>();
+  const [audioController, setAudioController] = useState<Audio.Controller>();
   const [soundfont2, setSoundfont2] = useState<Soundfont2>();
 
   const ref = useRef<SVGSVGElement>(null);
@@ -44,18 +44,21 @@ function App() {
       if (!file) return;
       const importer = new Browser.Importer();
       const score = await importer.import(file);
-      const ctx = new AudioContext();
       const sheetController = new Sheet.Controller(
         score!.toSMUFL(),
         Sheet.LayoutType.Horizontal
       );
+
       window.addEventListener("resize", () => {
         layouting(sheetController);
       });
       setSheetController(sheetController);
 
-      setAudioPlayer(
-        new Audio.Controller(score!.toAudio(ctx), soundfont2, ctx)
+      setAudioController(
+        new Audio.Controller(
+          score!.toAudio().toBrowserAudio(audioContext, soundfont2),
+          audioContext
+        )
       );
       layouting(sheetController);
     }
@@ -68,7 +71,7 @@ function App() {
       <button
         type="button"
         onClick={() => {
-          audioPlayer?.play();
+          audioController?.play();
         }}
       >
         play

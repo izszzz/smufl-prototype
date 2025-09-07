@@ -1,8 +1,15 @@
-import * as Core from "core";
-import * as Audio from "../audio";
-export class Note extends Core.Note {
-  score!: Audio.Score;
-  get tempo() {
-    return this.score.tempos.find((tempo) => tempo.isOverlapped(this))!;
+import * as Audio from "../../audio";
+import * as BrowserAudio from "../audio";
+export class Note extends Audio.Note {
+  declare score: BrowserAudio.Score;
+  synth;
+  constructor({
+    synth,
+    ...note
+  }: { synth: BrowserAudio.Synth } & ConstructorParameters<
+    typeof Audio.Note
+  >[0]) {
+    super(note);
+    this.synth = synth;
   }
 }

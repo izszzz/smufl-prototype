@@ -67,6 +67,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                 const duration = R.prop(cur.$$, "duration", "0", "_") as number;
                 acc.notes.push({
                   staveId: -1, // will be set later
+                  velocity: 64,
                   voice: cur.$$.voice,
                   rest: R.prop(cur.$$, "rest", "0"),
                   chord: R.isDefined(R.prop(cur.$$, "chord")),

@@ -165,6 +165,7 @@ export class Score<
         track.notes.map(
           ({ start, duration, end, ...note }, id) =>
             new Core.Note({
+              ...note,
               id,
               trackId,
               pitch: new Core.Units.MidiNoteNumber(note.pitch),

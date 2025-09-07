@@ -4,7 +4,7 @@ import { match } from "ts-pattern";
 
 declare module "core" {
   interface Score {
-    toSheet: () => Sheet.Score;
+    toSheet(): Sheet.Score;
   }
 }
 
