@@ -1,7 +1,19 @@
 import { match } from "ts-pattern";
 import { LayoutType, Score } from "./";
 import { Row } from "./row";
-import { entries, flatMap, groupBy, pipe, length, prop, reduce } from "remeda";
+import {
+  entries,
+  flatMap,
+  groupBy,
+  pipe,
+  length,
+  prop,
+  reduce,
+  forEach,
+  firstBy,
+  piped,
+  defaultTo,
+} from "remeda";
 
 export class Controller {
   constructor(
@@ -34,6 +46,7 @@ export class Controller {
     this.draw();
     this.space(window.innerWidth, window.innerHeight);
     this.order();
+    this.align();
   }
   draw() {
     for (const data of [
@@ -75,23 +88,24 @@ export class Controller {
         .exhaustive();
     }
   }
-  /* align() {
+  align() {
     pipe(
       this.score.notes,
       groupBy(prop("start", "value")),
       entries(),
       forEach(([, notes]) => {
         const maxXNote = firstBy(notes, [
-          piped(prop("ligature", "x"), defaultTo(0)),
+          piped(prop("ligature", "boundingBox", "x"), defaultTo(0)),
           "desc",
         ]);
         for (const note of notes) {
           if (note.id === maxXNote.id) continue;
-          if (note.ligature) note.ligature.x = maxXNote.ligature?.x ?? 0;
+          if (note.ligature)
+            note.ligature.boundingBox.x = maxXNote.ligature?.boundingBox.x ?? 0;
         }
       })
     );
-  } */
+  }
 }
 
 function splitByWidth<T>(

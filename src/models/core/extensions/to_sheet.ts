@@ -19,7 +19,6 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
         stem: { _: "up" as const },
         rest: undefined,
         chord: false,
-        staff: undefined,
         voice: undefined,
         staveId: match(track.preset.toName())
           .with("Acoustic Grand Piano", () =>
