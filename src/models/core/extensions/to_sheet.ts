@@ -28,12 +28,8 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
           .otherwise(() => 0),
       })),
     })),
-    keysignatures: this.keysignatures.map(
-      (keysignature) => keysignature.params
-    ),
-    timesignatures: this.timesignatures.map(
-      (timesignature) => timesignature.params
-    ),
-    tempos: this.tempos.map((tempo) => tempo.params),
+    keysignatures: this.keysignatures.map(({ params }) => params),
+    timesignatures: this.timesignatures.map(({ params }) => params),
+    tempos: this.tempos.map(({ params }) => params),
   });
 };

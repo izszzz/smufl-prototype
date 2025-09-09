@@ -12,14 +12,10 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
     ...this.params,
     tracks: this.tracks.map((track) => ({
       ...track.params,
-      notes: track.notes.map((note) => note.params),
+      notes: track.notes.map(({ params }) => params),
     })),
-    keysignatures: this.keysignatures.map(
-      (keysignature) => keysignature.params
-    ),
-    timesignatures: this.timesignatures.map(
-      (timesignature) => timesignature.params
-    ),
-    tempos: this.tempos.map((tempo) => tempo.params),
+    keysignatures: this.keysignatures.map(({ params }) => params),
+    timesignatures: this.timesignatures.map(({ params }) => params),
+    tempos: this.tempos.map(({ params }) => params),
   });
 };

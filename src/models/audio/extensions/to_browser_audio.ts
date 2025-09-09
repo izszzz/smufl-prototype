@@ -27,67 +27,14 @@ Audio.Score.prototype.toBrowserAudio = function (
         ...track.params,
         notes: track.notes
           .filter((note) => note.pitch.value !== -1)
-          .map((note) => {
-            const sample = preset.instruments
-              .flatMap((instrument) => instrument.samples)
-              .find(
-                (sample) =>
-                  sample.generators.keyRange.lo <= note.pitch.value &&
-                  sample.generators.keyRange.hi >= note.pitch.value
-              )!;
-            return {
-              ...note.params,
-              synth: {
-                pitch: note.pitch,
-                preset,
-                audioContext,
-                volume: {
-                  envelope: {
-                    delay: sample.generators.delayVolEnv.toSeconds().value,
-                    attack:
-                      sample.generators.delayVolEnv.toSeconds().value +
-                      sample.generators.attackVolEnv.toSeconds().value,
-                    hold:
-                      sample.generators.delayVolEnv.toSeconds().value +
-                      sample.generators.attackVolEnv.toSeconds().value +
-                      sample.generators.holdVolEnv.toSeconds().value,
-                    sustain: sample.generators.sustainVolEnv.value,
-                    decay:
-                      sample.generators.delayVolEnv.toSeconds().value +
-                      sample.generators.attackVolEnv.toSeconds().value +
-                      sample.generators.holdVolEnv.toSeconds().value +
-                      sample.generators.decayVolEnv.toSeconds().value,
-                    release: sample.generators.releaseVolEnv.toSeconds().value,
-                  },
-                },
-                modulator: {
-                  envelope: {
-                    delay: sample.generators.delayModEnv.toSeconds().value,
-                    attack:
-                      sample.generators.delayModEnv.toSeconds().value +
-                      sample.generators.attackModEnv.toSeconds().value,
-                    hold:
-                      sample.generators.delayModEnv.toSeconds().value +
-                      sample.generators.attackModEnv.toSeconds().value +
-                      sample.generators.holdModEnv.toSeconds().value,
-                    sustain: -sample.generators.sustainModEnv.toNumber(),
-                    decay:
-                      sample.generators.delayModEnv.toSeconds().value +
-                      sample.generators.attackModEnv.toSeconds().value +
-                      sample.generators.holdModEnv.toSeconds().value +
-                      sample.generators.decayModEnv.toSeconds().value,
-                    release: sample.generators.releaseModEnv.toSeconds().value,
-                  },
-                  Q: sample.generators.initialFilterQ.toDecibel().value,
-                  frequency: {
-                    min: sample.generators.initialFilterFc.toHertz().value,
-                    max: sample.generators.modEnvToFilterFc.value,
-                  },
-                },
-                pan: sample.generators.pan.toNumber(),
-              },
-            };
-          }),
+          .map((note) => ({
+            ...note.params,
+            synth: {
+              pitch: note.soundingPitch,
+              preset,
+              audioContext,
+            },
+          })),
       };
     }),
   });

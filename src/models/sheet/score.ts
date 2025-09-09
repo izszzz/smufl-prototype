@@ -275,7 +275,6 @@ export class Score<
                     chord: false,
                     rest: { $: {}, $$: {} },
                     voice: undefined,
-                    staff: undefined,
                     trackId: stave.trackId,
                   })
                 );

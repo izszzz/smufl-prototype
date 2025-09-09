@@ -13,11 +13,6 @@ export class Controller extends Audio.Controller {
   play() {
     const startTime = this.audioContext.currentTime;
     for (const note of this.score.notes) {
-      console.log(
-        startTime,
-        note.start.toSeconds(note.tempo.value),
-        note.end.toSeconds(note.tempo.value)
-      );
       note.synth.noteOn(startTime + note.start.toSeconds(note.tempo.value));
       note.synth.noteOff(startTime + note.end.toSeconds(note.tempo.value));
     }

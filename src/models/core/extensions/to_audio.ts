@@ -4,7 +4,7 @@ import "../../../extensions/int16array/to_float32array.extensions";
 
 declare module "core" {
   interface Score {
-    toAudio: () => Audio.Score;
+    toAudio(): Audio.Score;
   }
 }
 
@@ -13,9 +13,8 @@ Core.Score.prototype.toAudio = function (this: Core.Score) {
     ...this.params,
     tracks: this.tracks.map((track) => ({
       ...track.params,
-      notes: track.notes.map((note) => ({
-        ...note.params,
-      })),
+      notes: track.notes.map(({ params }) => params),
     })),
+    keysignatures: this.keysignatures.map(({ params }) => params),
   });
 };

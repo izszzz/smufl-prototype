@@ -1,12 +1,6 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
-import {
-  NoteType,
-  Rest,
-  Staff,
-  Stem,
-  Voice,
-} from "src/const/musicxml/4.0/musicxml";
+import { NoteType, Rest, Stem, Voice } from "src/const/musicxml/4.0/musicxml";
 import { P, match } from "ts-pattern";
 import { filter, isDefined, isTruthy, times } from "remeda";
 
@@ -16,7 +10,6 @@ export class Note extends Core.Note {
   stem;
   rest;
   voice;
-  staff;
   flag: null = null;
   ligature: Sheet.Ligature | null = null;
   score!: Sheet.Score;
@@ -28,7 +21,6 @@ export class Note extends Core.Note {
       stem: this.stem,
       rest: this.rest,
       voice: this.voice,
-      staff: this.staff,
     };
   }
   get track() {
@@ -53,18 +45,6 @@ export class Note extends Core.Note {
       .with("b", () => Sheet.AccidentalType.Flat)
       .with("", () => null)
       .exhaustive();
-    // audioで使うかも
-    // this.keysignature.accidentalPitchClasses.some(
-    //   (accidentalPitchClass) =>
-    //     this.pitch.toPitchClass().equal(accidentalPitchClass)
-    // )
-    //   ? match(this.keysignature.tonality)
-    //       .with(
-    //         Core.Enums.Tonality.Major as 0,
-    //         () => Sheet.AccidentalType.Sharp
-    //       )
-    //       .with(Core.Enums.Tonality.Minor as 1, () => Sheet.AccidentalType.Flat)
-    //       .exhaustive()
   }
   get line() {
     if (isDefined(this.rest)) {
@@ -114,14 +94,12 @@ export class Note extends Core.Note {
     chord,
     stem,
     voice,
-    staff,
     ...note
   }: {
     staveId: number;
     chord: boolean;
     stem?: Stem;
     rest?: Rest;
-    staff?: Staff["staff"];
     voice?: Voice["voice"];
   } & ConstructorParameters<typeof Core.Note>[0]) {
     super(note);
@@ -129,7 +107,6 @@ export class Note extends Core.Note {
     this.chord = chord;
     this.stem = stem;
     this.rest = rest;
-    this.staff = staff;
     this.voice = voice;
   }
   draw() {

@@ -62,52 +62,87 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
             const bpm = tempo
               ? { value: tempo, start: numerator * barId, duration: numerator }
               : undefined;
-            const { notes } = (R.prop(musicData, "note") ?? []).reduce(
-              (acc, cur) => {
-                const duration = R.prop(cur.$$, "duration", "0", "_") as number;
-                acc.notes.push({
-                  staveId: -1, // will be set later
-                  velocity: 64,
-                  voice: cur.$$.voice,
-                  rest: R.prop(cur.$$, "rest", "0"),
-                  chord: R.isDefined(R.prop(cur.$$, "chord")),
-                  stem: cur.$$.stem?.[0],
-                  staff: cur.$$.staff,
-                  pitch: new Core.Units.ScientificPitchNotation(
-                    `${
-                      R.prop(cur.$$, "pitch", "0", "$$", "step", "0", "_") ??
-                      "C"
-                    }${match(
-                      R.prop(cur.$$, "pitch", "0", "$$", "alter", "at", "_") ??
-                        0
-                    )
-                      .with(1, () => "#")
-                      .with(-1, () => "b")
-                      .otherwise(() => "")}${
-                      R.prop(cur.$$, "pitch", "0", "$$", "octave", "0", "_") ??
-                      0
-                    }`
-                  ).toMidiNoteNumber().value,
-                  start: acc.start,
-                  duration,
-                });
-                acc.start += duration;
-                return acc;
-              },
-              {
-                start: numerator * barId,
-                notes: [] as Parameters<
-                  typeof Sheet.Score.create
-                >[0]["tracks"][number]["notes"],
-              }
+            const notes = R.pipe(
+              R.prop(musicData, "note") ?? [],
+              R.groupBy(R.piped(R.prop("$$", "staff", 0, "_"), R.defaultTo(1))),
+              R.entries(),
+              R.map(
+                R.piped(R.last(), (last) =>
+                  last.reduce(
+                    (acc, cur) => {
+                      const divistion = (attributes[0]?.$$?.divisions?.[0]?._ ??
+                        1) as number;
+                      const duration =
+                        (R.prop(cur.$$, "duration", "0", "_") as number) /
+                        divistion;
+                      acc.notes.push({
+                        staveId: (R.prop(cur, "$$", "staff", 0, "_") ?? 1) - 1,
+                        velocity: 64,
+                        voice: cur.$$.voice,
+                        rest: R.prop(cur.$$, "rest", "0"),
+                        chord: R.isDefined(R.prop(cur.$$, "chord")),
+                        stem: cur.$$.stem?.[0],
+                        pitch: new Core.Units.ScientificPitchNotation(
+                          `${
+                            R.prop(
+                              cur.$$,
+                              "pitch",
+                              "0",
+                              "$$",
+                              "step",
+                              "0",
+                              "_"
+                            ) ?? "C"
+                          }${match(
+                            R.prop(
+                              cur.$$,
+                              "pitch",
+                              "0",
+                              "$$",
+                              "alter",
+                              "at",
+                              "_"
+                            ) ?? 0
+                          )
+                            .with(1, () => "#")
+                            .with(-1, () => "b")
+                            .otherwise(() => "")}${
+                            R.prop(
+                              cur.$$,
+                              "pitch",
+                              "0",
+                              "$$",
+                              "octave",
+                              "0",
+                              "_"
+                            ) ?? 0
+                          }`
+                        ).toMidiNoteNumber().value,
+                        start: acc.start,
+                        duration,
+                      });
+                      acc.start += duration;
+                      return acc;
+                    },
+                    {
+                      start: numerator * barId,
+                      notes: [] as Parameters<
+                        typeof Sheet.Score.create
+                      >[0]["tracks"][number]["notes"],
+                    }
+                  )
+                )
+              ),
+              R.flatMap(R.prop("notes"))
             );
+
             acc.tracks[trackId]?.notes.push(...notes);
 
             const staves = R.times(
               attributes[0]?.$$?.staves?.[0]?._ ?? 1,
               (staveId) => {
                 const staveNotes = notes.filter(
-                  (note) => (note.staff?.[0]._ ?? 1) - 1 === staveId
+                  (note) => note.staveId === staveId
                 );
                 for (const note of staveNotes) note.staveId = staveId;
                 return new Sheet.Stave({
