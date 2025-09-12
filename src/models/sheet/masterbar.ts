@@ -1,10 +1,12 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
 import { firstBy, identity, map, pipe, prop } from "remeda";
+import { Barline } from "src/const/musicxml/4.0/musicxml";
 
 export class Masterbar extends Core.Event {
   readonly id;
   rowId;
+  barline;
   score!: Sheet.Score;
   get x(): number {
     return (
@@ -30,6 +32,9 @@ export class Masterbar extends Core.Event {
   get isRowFirst() {
     return this.row.masterbars[0]?.id === this.id;
   }
+  get isRowLast() {
+    return this.row.masterbars.at(-1)?.id === this.id;
+  }
   get isFirst() {
     return this.score.masterbars[0]?.id === this.id;
   }
@@ -51,12 +56,14 @@ export class Masterbar extends Core.Event {
   constructor({
     id,
     rowId,
+    barline,
     ...event
-  }: { id: number; rowId?: number } & ConstructorParameters<
+  }: { id: number; rowId?: number; barline: Barline } & ConstructorParameters<
     typeof Core.Event
   >[0]) {
     super(event);
     this.id = id;
     this.rowId = rowId;
+    this.barline = barline;
   }
 }

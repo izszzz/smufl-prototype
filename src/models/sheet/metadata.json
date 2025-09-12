@@ -9,7 +9,7 @@
     }
   },
   "defaultValue": {
-    "scale": 1,
+    "scale": 8,
     "layoutType": 0,
     "spaced": true
   }

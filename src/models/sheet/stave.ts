@@ -1,6 +1,6 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
-import { Barline, Clef } from "src/const/musicxml/4.0/musicxml";
+import { Clef } from "src/const/musicxml/4.0/musicxml";
 import { match } from "ts-pattern";
 import { filter, isTruthy, map, pipe, prop } from "remeda";
 
@@ -9,7 +9,6 @@ export class Stave {
   barId;
   trackId;
   clef;
-  barline;
   score!: Sheet.Score;
   ligature: Sheet.Ligature | null = null;
   get bar() {
@@ -32,19 +31,16 @@ export class Stave {
     barId,
     trackId,
     clef,
-    barline,
   }: {
     id: number;
     barId: number;
     trackId: number;
-    barline: Barline;
     clef?: Clef;
   }) {
     this.id = id;
     this.barId = barId;
     this.trackId = trackId;
     this.clef = clef;
-    this.barline = barline;
   }
   draw() {
     this.ligature = new Sheet.Ligature(
@@ -78,7 +74,6 @@ export class Stave {
             filter(isTruthy),
             map((x) => [x])
           ),
-          [new Sheet.Glyph(Sheet.GlyphType.Barline, 1)],
         ],
         isTruthy
       ),

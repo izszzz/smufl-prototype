@@ -71,7 +71,7 @@ export class Note extends Core.Note {
         .with(1, () => "quarter")
         .with(0.5, () => "eighth")
         .with(0.25, () => "16th")
-        .with(0.125, () => "32th")
+        .with(0.125, () => "32nd")
         .with(0.0625, () => "64th")
         .with(0.03125, () => "128th")
         .with(0.015625, () => "256th")

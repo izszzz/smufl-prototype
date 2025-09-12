@@ -1,4 +1,4 @@
-import { firstBy, identity, map, pipe, prop } from "remeda";
+import { filter, firstBy, identity, isTruthy, map, pipe, prop } from "remeda";
 import * as Sheet from "sheet";
 
 const paddingBottom = 4;

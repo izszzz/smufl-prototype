@@ -152,8 +152,6 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                   clef: attributes[0]?.$$?.clef?.find(
                     (clef) => (clef.$?.number ?? 1) === staveId + 1
                   ),
-                  barline:
-                    "barline" in musicData ? musicData.barline?.[0] : undefined,
                 });
               }
             );
