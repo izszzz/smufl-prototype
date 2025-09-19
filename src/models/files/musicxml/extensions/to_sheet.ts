@@ -3,7 +3,24 @@ import * as Core from "core";
 import * as Sheet from "sheet";
 import * as MusicXML from "musicxml";
 import { match } from "ts-pattern";
-import { prop } from "remeda";
+import {
+  flatMap,
+  firstBy,
+  add,
+  isArray,
+  pipe,
+  prop,
+  reduce,
+  take,
+  map,
+  isTruthy,
+  filter,
+  identity,
+  isNullish,
+  isDefined,
+  last,
+  piped,
+} from "remeda";
 
 declare module "musicxml" {
   interface MXL {
@@ -14,8 +31,8 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
   if (process.env.NODE_ENV === "development") console.log({ mxl: this });
   const { keysignatures, timesignatures, tracks, bars, staves, tempos } =
     this.mxl["score-partwise"].$$.part?.reduce(
-      (acc, cur, trackId) => {
-        acc.tracks.push({
+      (partAcc, cur, trackId) => {
+        partAcc.tracks.push({
           name: cur.$?.id,
           preset: 0,
           notes: [],
@@ -42,7 +59,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
               duration: numerator,
             };
 
-            if (trackId === 0) acc.timesignatures?.push(timesignature);
+            if (trackId === 0) partAcc.timesignatures?.push(timesignature);
             const keysignature = {
               accidental,
               tonality,
@@ -59,6 +76,8 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
               "$",
               "tempo"
             );
+            const divistion = (attributes[0]?.$$?.divisions?.[0]?._ ??
+              1) as number;
             const bpm = tempo
               ? { value: tempo, start: numerator * barId, duration: numerator }
               : undefined;
@@ -67,24 +86,21 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
               R.groupBy(R.piped(R.prop("$$", "staff", 0, "_"), R.defaultTo(1))),
               R.entries(),
               R.map(
-                R.piped(R.last(), (last) =>
+                piped(last(), (last) =>
                   last.reduce(
-                    (acc, cur) => {
-                      const divistion = (attributes[0]?.$$?.divisions?.[0]?._ ??
-                        1) as number;
+                    (acc, cur, i, array) => {
                       const duration =
-                        (R.prop(cur.$$, "duration", "0", "_") as number) /
+                        (prop(cur.$$, "duration", "0", "_") as number) /
                         divistion;
-                      acc.notes.push({
-                        staveId: (R.prop(cur, "$$", "staff", 0, "_") ?? 1) - 1,
+                      const param = {
+                        staveId: (prop(cur, "$$", "staff", 0, "_") ?? 1) - 1,
                         velocity: 64,
                         voice: cur.$$.voice,
-                        rest: R.prop(cur.$$, "rest", "0"),
-                        chord: R.isDefined(R.prop(cur.$$, "chord")),
+                        rest: prop(cur.$$, "rest", "0"),
                         stem: cur.$$.stem?.[0],
                         pitch: new Core.Units.ScientificPitchNotation(
                           `${
-                            R.prop(
+                            prop(
                               cur.$$,
                               "pitch",
                               "0",
@@ -94,7 +110,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                               "_"
                             ) ?? "C"
                           }${match(
-                            R.prop(
+                            prop(
                               cur.$$,
                               "pitch",
                               "0",
@@ -107,7 +123,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                             .with(1, () => "#")
                             .with(-1, () => "b")
                             .otherwise(() => "")}${
-                            R.prop(
+                            prop(
                               cur.$$,
                               "pitch",
                               "0",
@@ -118,10 +134,54 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                             ) ?? 0
                           }`
                         ).toMidiNoteNumber().value,
-                        start: acc.start,
+                        start: pipe(
+                          array,
+                          take(i + 1),
+                          reduce((acc, cur, i, array) => {
+                            if (
+                              isNullish(array[i - 1]) ||
+                              isDefined(R.prop(cur.$$, "chord"))
+                            )
+                              return acc;
+                            return (
+                              acc +
+                              (prop(
+                                array[i - 1]!.$$,
+                                "duration",
+                                "0",
+                                "_"
+                              ) as number) /
+                                divistion
+                            );
+                          }, 0),
+                          add(
+                            partAcc.tracks[trackId]?.notes.reduce(
+                              (acc, cur) =>
+                                acc +
+                                (isArray(cur)
+                                  ? pipe(
+                                      cur,
+                                      map(prop("duration")),
+                                      filter(isTruthy),
+                                      firstBy([identity(), "desc"])
+                                    )!
+                                  : cur.duration!),
+                              0
+                            ) ?? 0
+                          )
+                        ),
                         duration,
-                      });
-                      acc.start += duration;
+                      };
+
+                      if (isDefined(prop(cur.$$, "chord"))) {
+                        const last = acc.notes.at(-1);
+                        if (isArray(last)) last.push(param);
+                        else if (last)
+                          acc.notes[acc.notes.length - 1] = [param, last];
+                      } else {
+                        acc.notes.push(param);
+                      }
+
                       return acc;
                     },
                     {
@@ -133,17 +193,17 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                   )
                 )
               ),
-              R.flatMap(R.prop("notes"))
+              flatMap(prop("notes"))
             );
 
-            acc.tracks[trackId]?.notes.push(...notes);
+            partAcc.tracks[trackId]?.notes.push(...notes);
 
             const staves = R.times(
               attributes[0]?.$$?.staves?.[0]?._ ?? 1,
               (staveId) => {
-                const staveNotes = notes.filter(
-                  (note) => note.staveId === staveId
-                );
+                const staveNotes = notes
+                  .flat()
+                  .filter((note) => note.staveId === staveId);
                 for (const note of staveNotes) note.staveId = staveId;
                 return new Sheet.Stave({
                   id: staveId,
@@ -155,13 +215,13 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                 });
               }
             );
-            acc.keysignatures?.push(keysignature);
-            if (bpm) acc.tempos?.push(bpm);
-            acc.staves?.push(...staves);
+            partAcc.keysignatures?.push(keysignature);
+            if (bpm) partAcc.tempos?.push(bpm);
+            partAcc.staves?.push(...staves);
             return { id: barId, trackId };
           }) ?? [];
-        acc.bars?.push(...bars);
-        return acc;
+        partAcc.bars?.push(...bars);
+        return partAcc;
       },
       {
         bars: [],

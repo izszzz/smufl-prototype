@@ -53,6 +53,12 @@ export class Masterbar extends Core.Event {
   get notes() {
     return this.score.notes.filter((note) => note.isOverlapped(this));
   }
+  get chords() {
+    return this.score.chords.filter((chord) => chord.isOverlapped(this));
+  }
+  get events() {
+    return this.score.events.filter((event) => event.isOverlapped(this));
+  }
   constructor({
     id,
     rowId,

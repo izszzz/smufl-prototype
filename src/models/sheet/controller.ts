@@ -51,6 +51,7 @@ export class Controller {
   draw() {
     for (const data of [
       ...this.score.notes,
+      ...this.score.chords,
       ...this.score.staves,
       ...this.score.timesignatures,
     ])
@@ -61,10 +62,10 @@ export class Controller {
   }
   space(width: number, height: number) {
     for (const row of this.score.rows) {
-      const groupedByStartNotes = pipe(
+      const groupedByStartEvents = pipe(
         row,
         prop("masterbars"),
-        flatMap(prop("notes")),
+        flatMap(prop("events")),
         groupBy(prop("start", "value")),
         entries()
       );
@@ -73,24 +74,24 @@ export class Controller {
           height;
         })
         .with(LayoutType.Horizontal as 0, () => {
-          for (const [, notes] of groupedByStartNotes)
-            for (const note of notes)
-              if (note.ligature) note.ligature.inset.right = 2; // FIXME: const
+          for (const [, events] of groupedByStartEvents)
+            for (const event of events)
+              if (event.ligature) event.ligature.inset.right = 2; // FIXME: const
         })
         .with(LayoutType.Vertical as 1, () => {
           const space =
             (width / this.scale - row.minWidth) /
-            pipe(groupedByStartNotes, length());
-          for (const [, notes] of groupedByStartNotes)
-            for (const note of notes)
-              if (note.ligature) note.ligature.inset.right = space;
+            pipe(groupedByStartEvents, length());
+          for (const [, events] of groupedByStartEvents)
+            for (const event of events)
+              if (event.ligature) event.ligature.inset.right = space;
         })
         .exhaustive();
     }
   }
   align() {
     pipe(
-      this.score.notes,
+      this.score.events,
       groupBy(prop("start", "value")),
       entries(),
       forEach(([, notes]) => {

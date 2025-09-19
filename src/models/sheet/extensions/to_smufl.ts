@@ -1,3 +1,15 @@
+import {
+  entries,
+  filter,
+  groupByProp,
+  isNullish,
+  last,
+  map,
+  pipe,
+  piped,
+  prop,
+  tap,
+} from "remeda";
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
 
@@ -12,7 +24,21 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
     ...this.params,
     tracks: this.tracks.map((track) => ({
       ...track.params,
-      notes: track.notes.map(({ params }) => params),
+      notes: [
+        ...pipe(
+          track.notes,
+          map(({ params }) => params),
+          groupByProp("chordId"),
+          entries(),
+          map(piped(last())),
+          tap(console.log)
+        ),
+        ...pipe(
+          track.notes,
+          filter(piped(prop("chordId"), isNullish)),
+          map(prop("params"))
+        ),
+      ],
     })),
     keysignatures: this.keysignatures.map(({ params }) => params),
     timesignatures: this.timesignatures.map(({ params }) => params),

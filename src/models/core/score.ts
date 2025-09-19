@@ -216,7 +216,10 @@ type Parameter = EventParameter & {
     EventParameter & {
       preset?: number;
       notes: Merge<
-        Omit<ConstructorParameters<typeof Core.Note>[0], "id" | "trackId">,
+        Omit<
+          ConstructorParameters<typeof Core.Note>[0],
+          "id" | "trackId" | "chordId"
+        >,
         EventParameter & { pitch: number }
       >[];
     }

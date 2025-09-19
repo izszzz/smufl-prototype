@@ -33,6 +33,16 @@ export class Bar {
   get notes() {
     return this.masterbar.notes.filter((note) => note.trackId === this.trackId);
   }
+  get chords() {
+    return this.masterbar.chords.filter(
+      (chord) => chord.trackId === this.trackId
+    );
+  }
+  get events() {
+    return this.masterbar.events.filter(
+      (event) => event.trackId === this.trackId
+    );
+  }
   get staves() {
     return this.score.staves.filter(
       (stave) => stave.barId === this.id && stave.trackId === this.trackId

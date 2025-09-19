@@ -17,6 +17,12 @@ export class Stave {
   get notes() {
     return this.bar.notes.filter((note) => note.staveId === this.id);
   }
+  get chords() {
+    return this.bar.chords.filter((chord) => chord.staveId === this.id);
+  }
+  get events() {
+    return this.bar.events.filter((event) => event.staveId === this.id);
+  }
   get height() {
     return -1;
   }
@@ -69,7 +75,7 @@ export class Stave {
             ? filter([this.bar.timesignature.ligature], isTruthy)
             : null,
           ...pipe(
-            this.notes,
+            this.events,
             map(prop("ligature")),
             filter(isTruthy),
             map((x) => [x])

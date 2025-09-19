@@ -6,7 +6,7 @@ import { filter, isDefined, isTruthy, times } from "remeda";
 
 export class Note extends Core.Note {
   staveId;
-  chord;
+  chordId;
   stem;
   rest;
   voice;
@@ -16,8 +16,8 @@ export class Note extends Core.Note {
   override get params() {
     return {
       ...super.params,
+      chordId: this.chordId,
       staveId: this.staveId,
-      chord: this.chord,
       stem: this.stem,
       rest: this.rest,
       voice: this.voice,
@@ -48,7 +48,7 @@ export class Note extends Core.Note {
   }
   get line() {
     if (isDefined(this.rest)) {
-      if (this.rest.$?.measure === "yes") return 0;
+      if (this.rest.$?.measure === "yes") return 3;
       return match(this.type._)
         .with(P.union("quarter", "half"), () => 2)
         .otherwise(() => 0);
@@ -80,31 +80,29 @@ export class Note extends Core.Note {
         .otherwise(() => "quarter"),
     };
   }
-
   // FIXME:
   get legerLine() {
     return this.pitch.value > 80 || this.pitch.value <= 60
       ? Math.ceil((this.pitch.value - 59) / 2)
       : 0;
   }
-
   constructor({
     staveId,
     rest,
-    chord,
+    chordId,
     stem,
     voice,
     ...note
   }: {
     staveId: number;
-    chord: boolean;
+    chordId?: number;
     stem?: Stem;
     rest?: Rest;
     voice?: Voice["voice"];
   } & ConstructorParameters<typeof Core.Note>[0]) {
     super(note);
     this.staveId = staveId;
-    this.chord = chord;
+    this.chordId = chordId;
     this.stem = stem;
     this.rest = rest;
     this.voice = voice;

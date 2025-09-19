@@ -25,7 +25,7 @@ export class Score<
 > {
   static override create(...params: Parameters<typeof Sheet.Score.create>) {
     const sheet = super.create(...params);
-    return new SMUFL.Score({
+    const score = new SMUFL.Score({
       ...sheet,
       tracks: sheet.tracks.map((track) => new SMUFL.Track(track)),
       masterbars: sheet.masterbars.map(
@@ -38,5 +38,7 @@ export class Score<
         (timesignature) => new SMUFL.Timesignature(timesignature)
       ),
     });
+    if (process.env.NODE_ENV === "development") console.log({ smufl: score });
+    return score;
   }
 }

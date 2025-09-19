@@ -18,6 +18,11 @@ import {
   mapToObj,
   last,
   firstBy,
+  isArray,
+  first,
+  isTruthy,
+  map,
+  identity,
 } from "remeda";
 import { LiteralToPrimitiveDeep, Merge, PartialDeep } from "type-fest";
 import { match } from "ts-pattern";
@@ -32,11 +37,19 @@ export class Score<
   Timesignature extends Sheet.Timesignature = Sheet.Timesignature,
   Keysignature extends Sheet.Keysignature = Sheet.Keysignature,
   Tempo extends Core.Tempo = Core.Tempo,
+  Chord extends Sheet.Chord = Sheet.Chord,
 > extends Core.Score<Note, Track, Timesignature, Keysignature, Tempo> {
   masterbars;
   rows;
   bars;
   staves;
+  chords;
+  get events() {
+    return [
+      ...pipe(this.notes, filter(piped(prop("chordId"), isNullish))),
+      ...this.chords,
+    ].sort((a, b) => a.start.subtract(b.start).value);
+  }
   get height() {
     return this.rows.reduce((acc, cur) => acc + cur.height, 0);
   }
@@ -48,12 +61,14 @@ export class Score<
     bars,
     masterbars,
     rows,
+    chords,
     ...score
   }: {
     staves: Stave[];
     bars: Bar[];
     masterbars: Masterbar[];
     rows: Row[];
+    chords: Chord[];
   } & ConstructorParameters<
     typeof Core.Score<Note, Track, Timesignature, Keysignature, Tempo>
   >[0]) {
@@ -62,17 +77,19 @@ export class Score<
     this.staves = staves;
     this.rows = rows;
     this.masterbars = masterbars;
+    this.chords = chords;
     for (const data of [
       ...this.notes,
       ...this.staves,
       ...this.bars,
       ...this.masterbars,
       ...this.rows,
+      ...this.chords,
     ])
       data.score = this;
   }
 
-  static override create(
+  static create(
     param: Parameter,
     options: {
       defaultValue: PartialDeep<
@@ -80,7 +97,16 @@ export class Score<
       >;
     } = { defaultValue: {} }
   ) {
-    const core = super.create(param, options);
+    const core = super.create(
+      {
+        ...param,
+        tracks: param.tracks.map((track) => ({
+          ...track,
+          notes: track.notes.flat(),
+        })),
+      },
+      options
+    );
     const barEvents = pipe(
       core.timesignatures,
       reduce(
@@ -104,7 +130,6 @@ export class Score<
       ),
       prop("events")
     );
-
     param.masterbars ??= barEvents.map((event, id) => ({ id, ...event }));
     if (isNullish(param.masterbars) || isEmpty(param.masterbars))
       param.masterbars = [
@@ -114,7 +139,34 @@ export class Score<
           end: param.timesignatures![0]?.numerator,
         },
       ];
-
+    param.chords ??= param.tracks.flatMap((track, trackId) =>
+      track.notes.filter(isArray).map((notes, chordId) => {
+        for (const note of notes) note.chordId = chordId;
+        return {
+          id: chordId,
+          trackId,
+          staveId: pipe(notes, first(), prop("staveId")),
+          start: pipe(
+            notes,
+            map(prop("start")),
+            filter(isTruthy),
+            firstBy(identity())
+          ),
+          duration: pipe(
+            notes,
+            map(prop("duration")),
+            filter(isTruthy),
+            firstBy([identity(), "desc"])
+          ),
+          end: pipe(
+            notes,
+            map(prop("duration")),
+            filter(isTruthy),
+            firstBy([identity(), "desc"])
+          ),
+        };
+      })
+    );
     param.bars ??= core.tracks.flatMap((track) =>
       param.masterbars!.map((masterbar) => ({
         ...masterbar,
@@ -191,7 +243,7 @@ export class Score<
         (keysignature) => new Sheet.Keysignature(keysignature)
       ),
       notes: param.tracks.flatMap((track, trackId) =>
-        track.notes.map(
+        track.notes.flat().map(
           ({ start, duration, end, ...note }, id) =>
             new Sheet.Note({
               ...note,
@@ -210,18 +262,32 @@ export class Score<
       tracks: core.tracks.map((track) => new Sheet.Track(track)),
       staves: param.staves.map((stave) => new Sheet.Stave(stave)),
       bars: param.bars.map((bar) => new Sheet.Bar(bar)),
-      masterbars: param.masterbars.map(
-        ({ start, duration, end, ...masterbar }) =>
-          new Sheet.Masterbar({
-            ...masterbar,
-            ...pipe(
-              { start, duration, end },
-              entries(),
-              filter(piped(last, isDefined)),
-              mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
-            ),
-          })
-      ),
+      masterbars:
+        param.masterbars?.map(
+          ({ start, duration, end, ...masterbar }) =>
+            new Sheet.Masterbar({
+              ...masterbar,
+              ...pipe(
+                { start, duration, end },
+                entries(),
+                filter(piped(last, isDefined)),
+                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
+              ),
+            })
+        ) ?? [],
+      chords:
+        param.chords?.map(
+          ({ start, duration, end, ...chord }) =>
+            new Sheet.Chord({
+              ...chord,
+              ...pipe(
+                { start, duration, end },
+                entries(),
+                filter(piped(last, isDefined)),
+                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
+              ),
+            })
+        ) ?? [],
       rows: [],
     });
 
@@ -246,7 +312,7 @@ export class Score<
               start: stave.bar.masterbar.start,
               end: stave.bar.masterbar.start,
             }) as Sheet.Note,
-            ...stave.notes,
+            ...stave.events,
             new Core.Event({
               start: stave.bar.masterbar.end,
               end: stave.bar.masterbar.end,
@@ -270,12 +336,11 @@ export class Score<
                     end: cur.start,
                     id: score.notes.length + 1,
                     staveId: stave.id,
+                    trackId: stave.trackId,
                     pitch: new Core.Units.MidiNoteNumber(-1),
                     stem: undefined,
-                    chord: false,
                     rest: { $: {}, $$: {} },
                     voice: undefined,
-                    trackId: stave.trackId,
                   })
                 );
               }
@@ -295,16 +360,17 @@ type EventParameter = {
   duration?: number;
   end?: number;
 };
+type NoteParameter = Merge<
+  Omit<ConstructorParameters<typeof Sheet.Note>[0], "id" | "trackId">,
+  EventParameter & { pitch: number }
+>;
 type Parameter = Merge<
   Parameters<typeof Core.Score.create>[0],
   {
     tracks: Merge<
       Parameters<typeof Core.Score.create>[0]["tracks"][number],
       {
-        notes: Merge<
-          Omit<ConstructorParameters<typeof Sheet.Note>[0], "id" | "trackId">,
-          EventParameter & { pitch: number }
-        >[];
+        notes: (NoteParameter | NoteParameter[])[];
       }
     >[];
     masterbars?: Merge<
@@ -313,5 +379,9 @@ type Parameter = Merge<
     >[];
     bars?: ConstructorParameters<typeof Sheet.Bar>[0][];
     staves?: ConstructorParameters<typeof Sheet.Stave>[0][];
+    chords?: Merge<
+      ConstructorParameters<typeof Sheet.Chord>[0],
+      EventParameter
+    >[];
   }
 >;
