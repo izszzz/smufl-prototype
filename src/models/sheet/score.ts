@@ -145,7 +145,8 @@ export class Score<
         return {
           id: chordId,
           trackId,
-          staveId: pipe(notes, first(), prop("staveId")),
+          staveId: pipe(notes, first(), prop("staveId"))!,
+          voice: pipe(notes, first(), prop("voice"))!,
           start: pipe(
             notes,
             map(prop("start")),
@@ -244,11 +245,11 @@ export class Score<
       ),
       notes: param.tracks.flatMap((track, trackId) =>
         track.notes.flat().map(
-          ({ start, duration, end, ...note }, id) =>
+          ({ start, duration, end, ...note }) =>
             new Sheet.Note({
               ...note,
-              id,
               trackId,
+              voice: 1,
               pitch: new Core.Units.MidiNoteNumber(note.pitch),
               ...pipe(
                 { start, duration, end },
@@ -275,19 +276,18 @@ export class Score<
               ),
             })
         ) ?? [],
-      chords:
-        param.chords?.map(
-          ({ start, duration, end, ...chord }) =>
-            new Sheet.Chord({
-              ...chord,
-              ...pipe(
-                { start, duration, end },
-                entries(),
-                filter(piped(last, isDefined)),
-                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
-              ),
-            })
-        ) ?? [],
+      chords: param.chords.map(
+        ({ start, duration, end, ...chord }) =>
+          new Sheet.Chord({
+            ...chord,
+            ...pipe(
+              { start, duration, end },
+              entries(),
+              filter(piped(last, isDefined)),
+              mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
+            ),
+          })
+      ),
       rows: [],
     });
 
@@ -301,8 +301,7 @@ export class Score<
     ] as const)
       score[key].at(-1)!.setEnd(score.end);
 
-    // insert rests
-    // TODO: chordの考慮
+    // insert rest
     pipe(
       score.staves,
       flatMap((stave) => {
@@ -321,6 +320,18 @@ export class Score<
           reduce(
             (acc, cur, i) => {
               if (acc && acc.end.value < cur.start.value) {
+                const note = new Sheet.Note({
+                  velocity: 102,
+                  start: acc.end,
+                  end: cur.start,
+                  staveId: stave.id,
+                  trackId: stave.trackId,
+                  pitch: new Core.Units.MidiNoteNumber(-1),
+                  stem: undefined,
+                  rest: true,
+                  voice: 1,
+                });
+                note.score = score;
                 score.notes.splice(
                   pipe(
                     score.notes,
@@ -330,18 +341,7 @@ export class Score<
                     subtract(1)
                   ),
                   0,
-                  new Sheet.Note({
-                    velocity: 0,
-                    start: acc.end,
-                    end: cur.start,
-                    id: score.notes.length + 1,
-                    staveId: stave.id,
-                    trackId: stave.trackId,
-                    pitch: new Core.Units.MidiNoteNumber(-1),
-                    stem: undefined,
-                    rest: { $: {}, $$: {} },
-                    voice: undefined,
-                  })
+                  note
                 );
               }
               return cur;

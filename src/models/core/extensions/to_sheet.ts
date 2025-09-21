@@ -17,9 +17,7 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
         ...note.params,
         pitch: note.pitch.value,
         stem: { _: "up" as const },
-        rest: undefined,
-        chord: false,
-        voice: undefined,
+        voice: 1,
         staveId: match(track.preset.toName())
           .with("Acoustic Grand Piano", () =>
             note.pitch.value < Core.Units.MidiNoteNumber.MIDDLE_C ? 1 : 0

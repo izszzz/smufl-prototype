@@ -100,7 +100,7 @@ export class Controller {
           "desc",
         ]);
         for (const note of notes) {
-          if (note.id === maxXNote.id) continue;
+          if (note === maxXNote) continue;
           if (note.ligature)
             note.ligature.boundingBox.x = maxXNote.ligature?.boundingBox.x ?? 0;
         }

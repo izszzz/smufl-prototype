@@ -7,6 +7,7 @@ import { parseNumbers } from "xml2js/lib/processors";
 import { Zip } from "../../../../src/models/files/zip";
 import path from "path";
 import { ScorePartwise } from "src/const/musicxml/4.0/musicxml";
+
 const importMusicXML = async (fileName: string) => {
   const arrayBuffer = readFileSync(
     path.join("src", "fixtures", "files", "musicxml", `${fileName}.mxl`)
@@ -38,3 +39,9 @@ test("quarter_middle_c", async () =>
   expect(await importMusicXML("quarter_middle_c")).toEqual(
     (await importCore("quarter_middle_c")).toSheet()
   ));
+test("8th_middle_c", async () =>
+  expect(await importMusicXML("8th_middle_c")).toEqual(
+    (await importCore("8th_middle_c")).toSheet()
+  ));
+// test("beat_4", async () =>
+//   expect(await importMusicXML("beat_4")).toEqual(await importCore("beat_4")));

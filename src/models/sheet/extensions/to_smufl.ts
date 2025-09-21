@@ -8,7 +8,6 @@ import {
   pipe,
   piped,
   prop,
-  tap,
 } from "remeda";
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
@@ -30,8 +29,7 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
           map(({ params }) => params),
           groupByProp("chordId"),
           entries(),
-          map(piped(last())),
-          tap(console.log)
+          map(piped(last()))
         ),
         ...pipe(
           track.notes,

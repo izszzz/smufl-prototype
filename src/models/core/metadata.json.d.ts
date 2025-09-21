@@ -3,6 +3,9 @@ export default {
     track: {
       preset: 0,
     },
+    note: {
+      velocity: 102,
+    },
     timesignatures: {
       denominator: 4,
       numerator: 4,

@@ -163,11 +163,11 @@ export class Score<
         ) ?? [],
       notes: param.tracks.flatMap((track, trackId) =>
         track.notes.map(
-          ({ start, duration, end, ...note }, id) =>
+          ({ start, duration, end, ...note }) =>
             new Core.Note({
               ...note,
-              id,
               trackId,
+              velocity: note.velocity ?? defaultValue.note.velocity,
               pitch: new Core.Units.MidiNoteNumber(note.pitch),
               ...pipe(
                 { start, duration, end },
@@ -220,7 +220,7 @@ type Parameter = EventParameter & {
           ConstructorParameters<typeof Core.Note>[0],
           "id" | "trackId" | "chordId"
         >,
-        EventParameter & { pitch: number }
+        EventParameter & { pitch: number; velocity?: number }
       >[];
     }
   >[];

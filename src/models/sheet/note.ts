@@ -1,8 +1,8 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
-import { NoteType, Rest, Stem, Voice } from "src/const/musicxml/4.0/musicxml";
+import { NoteType, Stem } from "src/const/musicxml/4.0/musicxml";
 import { P, match } from "ts-pattern";
-import { filter, isDefined, isTruthy, times } from "remeda";
+import { filter, isTruthy, times } from "remeda";
 
 export class Note extends Core.Note {
   staveId;
@@ -36,7 +36,7 @@ export class Note extends Core.Note {
   }
   get accidental() {
     // TODO: Natural
-    if (isDefined(this.rest)) return null;
+    if (this.rest) return null;
     return match(
       this.pitch.toPitchClass().toPitchClassName(this.keysignature.tonality)
         .accidental
@@ -47,8 +47,8 @@ export class Note extends Core.Note {
       .exhaustive();
   }
   get line() {
-    if (isDefined(this.rest)) {
-      if (this.rest.$?.measure === "yes") return 3;
+    if (this.rest) {
+      if (this.stave.bar.masterbar.duration.equal(this.duration)) return 3;
       return match(this.type._)
         .with(P.union("quarter", "half"), () => 2)
         .otherwise(() => 0);
@@ -88,7 +88,7 @@ export class Note extends Core.Note {
   }
   constructor({
     staveId,
-    rest,
+    rest = false,
     chordId,
     stem,
     voice,
@@ -97,8 +97,8 @@ export class Note extends Core.Note {
     staveId: number;
     chordId?: number;
     stem?: Stem;
-    rest?: Rest;
-    voice?: Voice["voice"];
+    rest?: boolean;
+    voice: number;
   } & ConstructorParameters<typeof Core.Note>[0]) {
     super(note);
     this.staveId = staveId;
@@ -121,7 +121,7 @@ export class Note extends Core.Note {
                   () => new Sheet.Glyph(Sheet.GlyphType.LegerLine, 0)
                 )
               : []),
-            isDefined(this.rest)
+            this.rest
               ? new Sheet.Glyph(Sheet.GlyphType.Rest, 0)
               : new Sheet.Ligature(
                   filter(

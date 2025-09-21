@@ -5,6 +5,7 @@ export class Chord extends Core.Event {
   readonly id;
   staveId;
   trackId;
+  voice;
   score!: Sheet.Score;
   ligature: Sheet.Ligature | null = null;
   get notes() {
@@ -14,16 +15,19 @@ export class Chord extends Core.Event {
     id,
     staveId,
     trackId,
+    voice,
     ...event
   }: {
     id: number;
     staveId: number;
     trackId: number;
+    voice: number;
   } & ConstructorParameters<typeof Core.Event>[0]) {
     super(event);
     this.id = id;
     this.staveId = staveId;
     this.trackId = trackId;
+    this.voice = voice;
   }
   draw() {
     this.ligature = new Sheet.Ligature(

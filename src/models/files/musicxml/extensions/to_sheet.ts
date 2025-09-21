@@ -21,6 +21,7 @@ import {
   last,
   piped,
 } from "remeda";
+import { MidiNoteNumber } from "../../../core/units";
 
 declare module "musicxml" {
   interface MXL {
@@ -32,8 +33,12 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
   const { keysignatures, timesignatures, tracks, bars, staves, tempos } =
     this.mxl["score-partwise"].$$.part?.reduce(
       (partAcc, cur, trackId) => {
+        const scorePart = this.mxl["score-partwise"].$$["part-list"]?.[0].$$[
+          "score-part"
+        ]?.find((scorePart) => scorePart.$?.id === cur.$?.id);
+        const partName = scorePart?.$$["part-name"]?.[0];
         partAcc.tracks.push({
-          name: cur.$?.id,
+          name: partName?.$?.["print-object"] === "no" ? "" : partName?._ ?? "",
           preset: 0,
           notes: [],
         });
@@ -92,48 +97,51 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                       const duration =
                         (prop(cur.$$, "duration", "0", "_") as number) /
                         divistion;
+                      const rest = isDefined(prop(cur.$$, "rest", "0"));
                       const param = {
                         staveId: (prop(cur, "$$", "staff", 0, "_") ?? 1) - 1,
-                        velocity: 64,
-                        voice: cur.$$.voice,
-                        rest: prop(cur.$$, "rest", "0"),
+                        velocity: 102,
+                        voice: Number(cur.$$.voice?.[0]._ ?? 1),
+                        rest,
                         stem: cur.$$.stem?.[0],
-                        pitch: new Core.Units.ScientificPitchNotation(
-                          `${
-                            prop(
-                              cur.$$,
-                              "pitch",
-                              "0",
-                              "$$",
-                              "step",
-                              "0",
-                              "_"
-                            ) ?? "C"
-                          }${match(
-                            prop(
-                              cur.$$,
-                              "pitch",
-                              "0",
-                              "$$",
-                              "alter",
-                              "at",
-                              "_"
-                            ) ?? 0
-                          )
-                            .with(1, () => "#")
-                            .with(-1, () => "b")
-                            .otherwise(() => "")}${
-                            prop(
-                              cur.$$,
-                              "pitch",
-                              "0",
-                              "$$",
-                              "octave",
-                              "0",
-                              "_"
-                            ) ?? 0
-                          }`
-                        ).toMidiNoteNumber().value,
+                        pitch: rest
+                          ? new MidiNoteNumber(-1).value
+                          : new Core.Units.ScientificPitchNotation(
+                              `${
+                                prop(
+                                  cur.$$,
+                                  "pitch",
+                                  "0",
+                                  "$$",
+                                  "step",
+                                  "0",
+                                  "_"
+                                ) ?? "C"
+                              }${match(
+                                prop(
+                                  cur.$$,
+                                  "pitch",
+                                  "0",
+                                  "$$",
+                                  "alter",
+                                  "at",
+                                  "_"
+                                ) ?? 0
+                              )
+                                .with(1, () => "#")
+                                .with(-1, () => "b")
+                                .otherwise(() => "")}${
+                                prop(
+                                  cur.$$,
+                                  "pitch",
+                                  "0",
+                                  "$$",
+                                  "octave",
+                                  "0",
+                                  "_"
+                                ) ?? 0
+                              }`
+                            ).toMidiNoteNumber().value,
                         start: pipe(
                           array,
                           take(i + 1),
