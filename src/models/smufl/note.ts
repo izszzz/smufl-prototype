@@ -18,19 +18,24 @@ export class Note extends Sheet.Note {
                 new SMUFL.Glyph(
                   match(glyph.type)
                     .with(Sheet.GlyphType.Accidental, () =>
-                      SMUFL.Glyph.findAccidental(this.accidental)
+                      SMUFL.Glyph.findAccidental(this.accidental!)
                     )
                     .with(Sheet.GlyphType.LegerLine, () =>
                       SMUFL.Glyph.find("staves", (v) => v === "legerLine")
                     )
                     .with(Sheet.GlyphType.Rest, () =>
-                      SMUFL.Glyph.findRest(this.rest!, this.type)
+                      SMUFL.Glyph.findRest(this.type)
                     )
                     .with(Sheet.GlyphType.Notehead, () =>
                       SMUFL.Glyph.findNotehead(this.type)
                     )
                     .with(Sheet.GlyphType.Stem, () =>
                       SMUFL.Glyph.find("stems", (v) => v.includes("stem"))
+                    )
+                    .with(Sheet.GlyphType.Dot, () =>
+                      SMUFL.Glyph.find("individualNotes", (v) =>
+                        v.includes("Dot")
+                      )
                     )
                     // .with(Sheet.GlyphType.Flag, (type) => new SMUFL.Glyph(type))
                     .run(),

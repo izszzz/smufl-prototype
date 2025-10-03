@@ -36,7 +36,7 @@ export class Score<
       staves: sheet.staves.map((stave) => new SMUFL.Stave(stave)),
       timesignatures: sheet.timesignatures.map(
         (timesignature) => new SMUFL.Timesignature(timesignature)
-      ),
+      ) as [SMUFL.Timesignature, ...SMUFL.Timesignature[]],
     });
     if (process.env.NODE_ENV === "development") console.log({ smufl: score });
     return score;

@@ -1,4 +1,4 @@
-import { filter, isTruthy, map, pipe, prop } from "remeda";
+import { filter, firstBy, isTruthy, map, pipe, prop } from "remeda";
 import * as Core from "core";
 import * as Sheet from "sheet";
 export class Chord extends Core.Event {
@@ -11,6 +11,12 @@ export class Chord extends Core.Event {
   get notes() {
     return this.score.notes.filter((note) => note.chordId === this.id);
   }
+  override get start() {
+    return firstBy(this.notes, [prop("start"), "asc"])!.start;
+  }
+  override get end() {
+    return firstBy(this.notes, [prop("end"), "desc"])!.end;
+  }
   constructor({
     id,
     staveId,
@@ -22,7 +28,7 @@ export class Chord extends Core.Event {
     staveId: number;
     trackId: number;
     voice: number;
-  } & ConstructorParameters<typeof Core.Event>[0]) {
+  }) {
     super(event);
     this.id = id;
     this.staveId = staveId;

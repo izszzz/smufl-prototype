@@ -8,13 +8,12 @@ export class Tempo extends Core.Event {
       value: this.value.value,
     };
   }
-  constructor({
-    value,
-    ...event
-  }: { value: Core.Units.Tempo } & ConstructorParameters<
-    typeof Core.Event
-  >[0]) {
-    super(event);
-    this.value = value;
+  constructor(
+    tempo: { value: Core.Units.Tempo } & ConstructorParameters<
+      typeof Core.Event
+    >[0]
+  ) {
+    super(tempo);
+    this.value = tempo.value;
   }
 }

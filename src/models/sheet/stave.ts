@@ -20,6 +20,9 @@ export class Stave {
   get chords() {
     return this.bar.chords.filter((chord) => chord.staveId === this.id);
   }
+  get beams() {
+    return this.bar.beams.filter((beam) => beam.staveId === this.id);
+  }
   get events() {
     return this.bar.events.filter((event) => event.staveId === this.id);
   }

@@ -43,5 +43,11 @@ test("8th_middle_c", async () =>
   expect(await importMusicXML("8th_middle_c")).toEqual(
     (await importCore("8th_middle_c")).toSheet()
   ));
-// test("beat_4", async () =>
-//   expect(await importMusicXML("beat_4")).toEqual(await importCore("beat_4")));
+test("beat_4", async () =>
+  expect(await importMusicXML("beat_4")).toEqual(
+    (await importCore("beat_4")).toSheet()
+  ));
+test("c_major_chord", async () =>
+  expect(await importMusicXML("c_major_chord")).toEqual(
+    (await importCore("c_major_chord")).toSheet()
+  ));

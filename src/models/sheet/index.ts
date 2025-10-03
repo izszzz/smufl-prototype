@@ -6,6 +6,7 @@ export * from "./note";
 export * from "./score";
 export * from "./track";
 export * from "./chord";
+export * from "./beam";
 export * from "./keysignature";
 export * from "./timesignature";
 export * from "./controller";
@@ -40,4 +41,5 @@ export enum GlyphType {
   Tie,
   Rest,
   Barline,
+  Dot,
 }

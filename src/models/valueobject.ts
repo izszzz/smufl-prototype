@@ -1,3 +1,5 @@
+import { isStrictEqual } from "remeda";
+
 export abstract class ValueObject<T> {
   readonly value: T;
 
@@ -6,6 +8,6 @@ export abstract class ValueObject<T> {
   }
   protected abstract validate(value: typeof this.value): typeof this.value;
   equal(other: ValueObject<T>): boolean {
-    return this.value === other.value;
+    return isStrictEqual(this.value, other.value);
   }
 }

@@ -33,6 +33,9 @@ export class Bar {
   get notes() {
     return this.masterbar.notes.filter((note) => note.trackId === this.trackId);
   }
+  get beams() {
+    return this.masterbar.beams.filter((beam) => beam.trackId === this.trackId);
+  }
   get chords() {
     return this.masterbar.chords.filter(
       (chord) => chord.trackId === this.trackId

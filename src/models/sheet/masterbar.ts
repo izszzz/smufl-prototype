@@ -50,6 +50,13 @@ export class Masterbar extends Core.Event {
   get bars() {
     return this.score.bars.filter((bar) => bar.id === this.id);
   }
+  get beams() {
+    return this.score.beams.filter((beam) =>
+      this.notes
+        .map((note) => note.id)
+        .some((noteId) => beam.noteIds.includes(noteId))
+    );
+  }
   get notes() {
     return this.score.notes.filter((note) => note.isOverlapped(this));
   }
@@ -59,15 +66,15 @@ export class Masterbar extends Core.Event {
   get events() {
     return this.score.events.filter((event) => event.isOverlapped(this));
   }
-  constructor({
-    id,
-    rowId,
-    barline,
-    ...event
-  }: { id: number; rowId?: number; barline: Barline } & ConstructorParameters<
-    typeof Core.Event
-  >[0]) {
-    super(event);
+  constructor(
+    masterbar: {
+      id: number;
+      rowId?: number;
+      barline: Barline;
+    } & ConstructorParameters<typeof Core.Event>[0]
+  ) {
+    const { id, rowId, barline } = masterbar;
+    super(masterbar);
     this.id = id;
     this.rowId = rowId;
     this.barline = barline;

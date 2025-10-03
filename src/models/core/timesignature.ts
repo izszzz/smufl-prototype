@@ -12,15 +12,14 @@ export class Timesignature extends Core.Event {
       numerator: this.numerator,
     };
   }
-  constructor({
-    denominator,
-    numerator,
-    ...event
-  }: {
-    denominator: number;
-    numerator: number;
-  } & ConstructorParameters<typeof Core.Event>[0]) {
-    super(event);
+  constructor(
+    timesignature: {
+      denominator: number;
+      numerator: number;
+    } & ConstructorParameters<typeof Core.Event>[0]
+  ) {
+    const { denominator, numerator } = timesignature;
+    super(timesignature);
     this.denominator = denominator;
     this.numerator = numerator;
   }

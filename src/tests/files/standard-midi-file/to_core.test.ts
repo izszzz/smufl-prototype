@@ -38,7 +38,7 @@ test("c_major", async () =>
   expect(importMidi("c_major")).toEqual(await importCore("c_major")));
 test("c_minor", async () =>
   expect(importMidi("c_minor")).toEqual(await importCore("c_minor")));
-test("chord", async () =>
+test("c_major_chord", async () =>
   expect(importMidi("c_major_chord")).toEqual(
     await importCore("c_major_chord")
   ));

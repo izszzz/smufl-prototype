@@ -17,15 +17,14 @@ export class Keysignature extends Core.Event {
       .slice(0, Math.abs(this.accidental))
       .map((pitch) => new Core.Units.PitchClass(pitch));
   }
-  constructor({
-    tonality,
-    accidental,
-    ...event
-  }: {
-    accidental: number;
-    tonality: Core.Enums.Tonality;
-  } & ConstructorParameters<typeof Core.Event>[0]) {
-    super(event);
+  constructor(
+    keysignature: {
+      accidental: number;
+      tonality: Core.Enums.Tonality;
+    } & ConstructorParameters<typeof Core.Event>[0]
+  ) {
+    const { accidental, tonality } = keysignature;
+    super(keysignature);
     this.tonality = tonality;
     this.accidental = accidental;
   }

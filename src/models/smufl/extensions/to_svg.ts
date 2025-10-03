@@ -3,6 +3,7 @@ import * as R from "remeda";
 import * as SMUFL from "smufl";
 import * as Sheet from "sheet";
 import { match, P } from "ts-pattern";
+import { first, last } from "remeda";
 
 declare module "smufl" {
   interface Score {
@@ -181,6 +182,47 @@ SMUFL.Score.prototype.toSVG = function (
                           if (stave.ligature)
                             ligatureToSVG(this, stave.ligature);
                           const g = d3.select(this);
+                          g.selectAll("g[type=beam]")
+                            .data(stave.beams)
+                            .join("g")
+                            .attr("type", "beam")
+                            .each(function (beam) {
+                              const g = d3.select(this);
+                              g.append("path")
+                                .attr("stroke", "black")
+                                .attr(
+                                  "stroke-width",
+                                  SMUFL.BravuraMetadata.engravingDefaults
+                                    .beamThickness
+                                )
+                                .attr(
+                                  "d",
+                                  d3.line()([
+                                    [
+                                      first(
+                                        beam.notes
+                                      )?.ligature?.boundingBox.toInset()
+                                        .right ?? 0,
+                                      -(first(beam.notes)?.line ?? 0) -
+                                        3 -
+                                        SMUFL.BravuraMetadata.engravingDefaults
+                                          .beamThickness /
+                                          2,
+                                    ],
+                                    [
+                                      last(
+                                        beam.notes
+                                      )?.ligature?.boundingBox.toInset()
+                                        .right ?? 0,
+                                      -(last(beam.notes)?.line ?? 0) -
+                                        3 -
+                                        SMUFL.BravuraMetadata.engravingDefaults
+                                          .beamThickness /
+                                          2,
+                                    ],
+                                  ])
+                                );
+                            });
                           g.append("g").call((g) => {
                             g.append("g")
                               .attr("type", "staff")
@@ -218,7 +260,7 @@ SMUFL.Score.prototype.toSVG = function (
 
   function ligatureToSVG(
     element: d3.BaseType | SVGGElement,
-    ligature: Sheet.Ligature<SMUFL.Glyph>
+    ligature: Sheet.Ligature
   ) {
     const group = d3
       .select(element)

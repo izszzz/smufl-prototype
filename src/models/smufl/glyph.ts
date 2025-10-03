@@ -1,4 +1,4 @@
-import { Barline, Clef, NoteType, Rest } from "src/const/musicxml/4.0/musicxml";
+import { Barline, Clef, NoteType } from "src/const/musicxml/4.0/musicxml";
 import { P, match } from "ts-pattern";
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
@@ -56,8 +56,7 @@ export class Glyph<
       .exhaustive();
   }
 
-  static findRest(rest: Rest, type: NoteType) {
-    if (rest.$?.measure === "yes") return "restWhole";
+  static findRest(type: NoteType) {
     return match(type._)
       .with("breve", () => "restDoubleWhole" as const)
       .with("long", () => "restLonga" as const)

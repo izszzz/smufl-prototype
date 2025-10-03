@@ -25,7 +25,7 @@ export class Ligature<T extends Glyph = Glyph> extends Element {
       this.glyphLists,
       map(piped(map(prop("minWidth")), firstBy([identity(), "desc"]))),
       filter(isTruthy),
-      reduce((acc, cur) => acc + cur, 0)
+      reduce((acc, cur) => acc + (cur as number), 0)
     );
   }
   order() {

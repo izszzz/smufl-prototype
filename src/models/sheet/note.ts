@@ -1,15 +1,21 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
-import { NoteType, Stem } from "src/const/musicxml/4.0/musicxml";
+import {
+  Note as MxlNote,
+  NoteType,
+  Stem,
+} from "src/const/musicxml/4.0/musicxml";
 import { P, match } from "ts-pattern";
 import { filter, isTruthy, times } from "remeda";
 
 export class Note extends Core.Note {
+  readonly id;
   staveId;
   chordId;
   stem;
   rest;
   voice;
+  beam;
   flag: null = null;
   ligature: Sheet.Ligature | null = null;
   score!: Sheet.Score;
@@ -82,30 +88,45 @@ export class Note extends Core.Note {
   }
   // FIXME:
   get legerLine() {
-    return this.pitch.value > 80 || this.pitch.value <= 60
+    return match(this.stave.resolveClef().$$.sign?.[0]._)
+      .with("G", () => this.pitch.value > 80 || this.pitch.value <= 60)
+      .with("F", () => 60 >= this.pitch.value || this.pitch.value <= 43)
+      .exhaustive()
       ? Math.ceil((this.pitch.value - 59) / 2)
       : 0;
   }
-  constructor({
-    staveId,
-    rest = false,
-    chordId,
-    stem,
-    voice,
-    ...note
-  }: {
-    staveId: number;
-    chordId?: number;
-    stem?: Stem;
-    rest?: boolean;
-    voice: number;
-  } & ConstructorParameters<typeof Core.Note>[0]) {
+  get dot() {
+    let duration = this.duration.value;
+    let dot = 0;
+    while (
+      duration % Math.pow(2, Math.floor(Math.log2(this.duration.value))) !==
+      0
+    ) {
+      duration *= 2;
+      dot += 1;
+    }
+    return dot;
+  }
+  constructor(
+    note: {
+      id: number;
+      staveId: number;
+      chordId?: number;
+      stem?: Stem;
+      rest?: boolean;
+      beam?: MxlNote["$$"]["beam"];
+      voice: number;
+    } & ConstructorParameters<typeof Core.Note>[0]
+  ) {
+    const { id, staveId, rest = false, chordId, stem, voice, beam } = note;
     super(note);
+    this.id = id;
     this.staveId = staveId;
     this.chordId = chordId;
     this.stem = stem;
     this.rest = rest;
     this.voice = voice;
+    this.beam = beam;
   }
   draw() {
     this.ligature = new Sheet.Ligature(
@@ -136,6 +157,7 @@ export class Note extends Core.Note {
                   0
                 ),
           ],
+          ...times(this.dot, () => [new Sheet.Glyph(Sheet.GlyphType.Dot, 0)]),
         ],
         isTruthy
       ),

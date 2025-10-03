@@ -1,8 +1,8 @@
 import { ScientificPitchNotation } from "./scientific_pitch_notation";
 import { PitchClass } from "./pitch_class";
-import { Tonality } from "core";
 import musicTheory from "../../../const/music-theory.json";
 import { ValueObject } from "../../valueobject";
+import { Tonality } from "../enums/tonality";
 
 export class MidiNoteNumber extends ValueObject<number> {
   toPitchClass() {

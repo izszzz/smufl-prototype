@@ -6,6 +6,9 @@ import { P, match } from "ts-pattern";
 
 export class Stave extends Sheet.Stave {
   declare score: SMUFL.Score;
+  get track() {
+    return this.score.tracks.find((track) => track.id === this.trackId)!;
+  }
   override get bar() {
     return super.bar as SMUFL.Bar;
   }
@@ -13,13 +16,7 @@ export class Stave extends Sheet.Stave {
     return super.notes as SMUFL.Note[];
   }
   override get height() {
-    return new SMUFL.Glyph(
-      SMUFL.Glyph.findBarline({
-        $$: { ["bar-style"]: [{ _: "light-heavy" }] },
-      }),
-      Sheet.GlyphType.Barline,
-      0
-    ).glyphBBox.height;
+    return Number(this.track.staffDetails.$$["staff-lines"][0]._ ?? 0) - 1;
   }
   override draw() {
     const handleLigature = (
@@ -74,11 +71,7 @@ export class Stave extends Sheet.Stave {
                           ? {
                               $$: { ["bar-style"]: [{ _: "light-heavy" }] },
                             }
-                          : this.barline
-                            ? this.barline
-                            : {
-                                $$: { ["bar-style"]: [{ _: "regular" }] },
-                              }
+                          : this.bar.masterbar.barline
                       );
                       return glyphName
                         ? new SMUFL.Glyph(glyphName, glyph.type, glyph.line)

@@ -12,17 +12,15 @@ export class Note extends Core.Event {
       velocity: this.velocity,
     };
   }
-  constructor({
-    trackId,
-    pitch,
-    velocity,
-    ...event
-  }: {
-    trackId: number;
-    velocity: number;
-    pitch: Core.Units.MidiNoteNumber;
-  } & ConstructorParameters<typeof Core.Event>[0]) {
-    super(event);
+  constructor(
+    note: {
+      trackId: number;
+      velocity: number;
+      pitch: Core.Units.MidiNoteNumber;
+    } & ConstructorParameters<typeof Core.Event>[0]
+  ) {
+    const { trackId, pitch, velocity } = note;
+    super(note);
     this.trackId = trackId;
     this.pitch = pitch;
     this.velocity = velocity;
