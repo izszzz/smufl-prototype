@@ -234,6 +234,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                     .with({ $$: { beam: [] } }, doNothing)
                     .otherwise((note) => {
                       note.$$.beam?.forEach((beam) => {
+                        const level = Number(beam.$?.number) - 1;
                         match(beam._)
                           .with("begin", () => {
                             acc?.push({
@@ -242,14 +243,12 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                               staveId:
                                 (prop(cur, "$$", "staff", 0, "_") ?? 1) - 1,
                               trackId,
-                              level: Number(beam.$?.number),
+                              level,
                             });
                           })
                           .with(P.union("continue", "end"), () => {
                             acc
-                              ?.findLast(
-                                ({ level }) => level === Number(beam.$?.number)
-                              )
+                              ?.findLast((beam) => beam.level === level)
                               ?.noteIds.push(noteId);
                           })
                           .exhaustive();

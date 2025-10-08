@@ -6,6 +6,12 @@ export class Beam {
   voice;
   level;
   score!: Sheet.Score;
+  get firstNote() {
+    return this.notes[0]!;
+  }
+  get lastNote() {
+    return this.notes.at(-1)!;
+  }
   get params() {
     return {
       trackId: this.trackId,
