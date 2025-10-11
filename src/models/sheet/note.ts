@@ -60,7 +60,7 @@ export class Note extends Core.Note {
         .otherwise(() => 0);
     }
     return (
-      (this.stave.resolveClef().$$.line?.[0]?._ ?? 0) -
+      (this.stave.resolveClefs()[0]?.$$.line?.[0]?._ ?? 0) -
       this.stave
         .getClefScientificPitchNotation()
         .getDegree(
@@ -88,7 +88,7 @@ export class Note extends Core.Note {
   }
   // FIXME:
   get legerLine() {
-    return match(this.stave.resolveClef().$$.sign?.[0]._)
+    return match(this.stave.resolveClefs()[0]?.$$.sign?.[0]._)
       .with("G", () => this.pitch.value > 80 || this.pitch.value <= 60)
       .with("F", () => 60 >= this.pitch.value || this.pitch.value <= 43)
       .exhaustive()

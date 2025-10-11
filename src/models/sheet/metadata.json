@@ -6,6 +6,9 @@
     "note": {
       "left": 0,
       "right": 2
+    },
+    "stave": {
+      "spaceing": 6.5
     }
   },
   "defaultValue": {

@@ -186,6 +186,7 @@ export class Score<
         };
       })
     );
+    // 必要以上にbarを生成する場合がありそう
     param.bars ??= core.tracks.flatMap((track) =>
       param.masterbars!.map((masterbar) => ({
         ...masterbar,
@@ -193,12 +194,12 @@ export class Score<
       }))
     );
     if (isNullish(param.bars) || isEmpty(param.bars))
-      param.bars = param.tracks.map((_, trackId) => ({
+      param.bars ??= param.tracks.map((_, trackId) => ({
         id: 0,
         trackId,
       }));
 
-    param.staves = core.tracks
+    param.staves ??= core.tracks
       .flatMap((track) =>
         param.masterbars!.flatMap((masterbar) =>
           match(track.preset.toName())
@@ -206,29 +207,31 @@ export class Score<
               return [
                 <ConstructorParameters<typeof Sheet.Stave>[0]>{
                   id: 0,
-                  barId: masterbar.id,
+                  barId: masterbar.id, //ここ間違えてね？masterbarIdもいりそう
                   trackId: track.id,
-                  clef: {
-                    $$: {
-                      sign: [{ _: "G" }],
-                      line: [{ _: 2 }],
-                      "clef-octave-change": [{ _: 0 }],
+                  clefs: [
+                    {
+                      $$: {
+                        sign: [{ _: "G" }],
+                        line: [{ _: 2 }],
+                        "clef-octave-change": [{ _: 0 }],
+                      },
                     },
-                    $: {},
-                  },
+                  ],
                 },
                 <ConstructorParameters<typeof Sheet.Stave>[0]>{
                   id: 1,
                   barId: masterbar.id,
                   trackId: track.id,
-                  clef: {
-                    $$: {
-                      sign: [{ _: "F" }],
-                      line: [{ _: 4 }],
-                      "clef-octave-change": [{ _: 0 }],
+                  clefs: [
+                    {
+                      $$: {
+                        sign: [{ _: "F" }],
+                        line: [{ _: 4 }],
+                        "clef-octave-change": [{ _: 0 }],
+                      },
                     },
-                    $: {},
-                  },
+                  ],
                 },
               ];
             })
@@ -238,14 +241,16 @@ export class Score<
                   id: 0,
                   barId: masterbar.id,
                   trackId: track.id,
-                  clef: {
-                    $$: {
-                      sign: [{ _: "G" }] as const,
-                      line: [{ _: 4 }],
-                      "clef-octave-change": [{ _: 0 }],
+                  clefs: [
+                    {
+                      $$: {
+                        sign: [{ _: "G" }] as const,
+                        line: [{ _: 4 }],
+                        "clef-octave-change": [{ _: 0 }],
+                      },
+                      $: {},
                     },
-                    $: {},
-                  },
+                  ],
                 },
               ];
             })
@@ -268,13 +273,12 @@ export class Score<
               ...note,
               id,
               trackId,
-              voice: 1,
               pitch: new Core.Units.MidiNoteNumber(note.pitch),
               ...pipe(
                 { start, duration, end },
                 entries(),
                 filter(piped(last, isDefined)),
-                mapToObj(([key, value]) => [key, new Core.Units.Beat(value)])
+                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
               ),
             })
         )
@@ -297,7 +301,7 @@ export class Score<
               { start, duration, end },
               entries(),
               filter(piped(last, isDefined)),
-              mapToObj(([key, value]) => [key, new Core.Units.Beat(value)])
+              mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
             ),
           })
       ),
@@ -309,7 +313,7 @@ export class Score<
               { start, duration, end },
               entries(),
               filter(piped(last, isDefined)),
-              mapToObj(([key, value]) => [key, new Core.Units.Beat(value)])
+              mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
             ),
           })
       ),

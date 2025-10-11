@@ -15,7 +15,7 @@ export class Track extends Core.Track {
     return this.bars.reduce((acc, cur) => acc + cur.height, 0);
   }
   get y(): number {
-    return ((this.prev?.height ?? 0) + 6.5) * this.id;
+    return this.prev ? this.prev.y + this.height + 6.5 : 0;
   }
   get prev() {
     return this.score.tracks[this.id - 1];

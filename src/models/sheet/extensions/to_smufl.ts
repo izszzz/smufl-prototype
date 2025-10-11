@@ -38,6 +38,8 @@ Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
         ),
       ],
     })),
+    bars: this.bars.map(({ params }) => params),
+    staves: this.staves.map(({ params }) => params),
     beams: this.beams.map(({ params }) => params),
     keysignatures: this.keysignatures.map(({ params }) => params),
     timesignatures: this.timesignatures.map(({ params }) => params),

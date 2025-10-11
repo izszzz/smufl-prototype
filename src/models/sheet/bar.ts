@@ -1,19 +1,13 @@
-import {
-  defaultTo,
-  firstBy,
-  identity,
-  last,
-  map,
-  pipe,
-  piped,
-  prop,
-} from "remeda";
+import { defaultTo, firstBy, identity, map, pipe, piped, prop } from "remeda";
 import * as Sheet from "sheet";
 
 export class Bar {
   readonly id;
   trackId;
   score!: Sheet.Score;
+  get params() {
+    return { id: this.id, trackId: this.trackId };
+  }
   get timesignature() {
     return this.score.timesignatures.find((timesignature) =>
       timesignature.isOverlapped(this.masterbar)
@@ -70,8 +64,10 @@ export class Bar {
     );
   }
   get height() {
-    const lastStave = last(this.staves);
-    return lastStave ? lastStave.height + lastStave.y : 0;
+    return (
+      this.staves.reduce((acc, cur) => acc + cur.height, 0) +
+      (this.staves.length - 1) * 6.5
+    );
   }
   get prev() {
     return this.track.bars[this.id - 1];

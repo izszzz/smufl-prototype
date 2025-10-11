@@ -16,7 +16,7 @@ export class Stave extends Sheet.Stave {
     return super.notes as SMUFL.Note[];
   }
   override get height() {
-    return Number(this.track.staffDetails.$$["staff-lines"][0]._ ?? 0) - 1;
+    return (this.track.staffDetails.$$["staff-lines"]?.[0]._ ?? 0) - 1;
   }
   override draw() {
     const handleLigature = (
@@ -37,7 +37,7 @@ export class Stave extends Sheet.Stave {
                   match(glyph.type)
                     .with(Sheet.GlyphType.Clef, () => {
                       const glyphName = SMUFL.Glyph.findClef(
-                        this.resolveClef()
+                        this.resolveClefs()[0]!
                       );
                       return glyphName
                         ? new SMUFL.Glyph(glyphName, glyph.type, glyph.line)
@@ -68,9 +68,7 @@ export class Stave extends Sheet.Stave {
                     .with(Sheet.GlyphType.Barline, () => {
                       const glyphName = SMUFL.Glyph.findBarline(
                         this.bar.masterbar.isLast
-                          ? {
-                              $$: { ["bar-style"]: [{ _: "light-heavy" }] },
-                            }
+                          ? { $$: { ["bar-style"]: [{ _: "light-heavy" }] } }
                           : this.bar.masterbar.barline
                       );
                       return glyphName

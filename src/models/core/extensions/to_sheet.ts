@@ -14,7 +14,7 @@ Core.Score.prototype.toSheet = function (this: Core.Score) {
     ...this.params,
     tracks: this.tracks.map((track) => ({
       ...track.params,
-      staffDetails: { $$: { "staff-lines": [{ _: "5" }] } },
+      staffDetails: { $$: { "staff-lines": [{ _: 5 }] } },
       notes: pipe(
         track.notes,
         map((note) => ({

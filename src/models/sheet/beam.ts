@@ -1,4 +1,5 @@
 import * as Sheet from "sheet";
+import { entries, groupBy, first, map, pipe } from "remeda";
 export class Beam {
   trackId;
   staveId;
@@ -7,10 +8,17 @@ export class Beam {
   level;
   score!: Sheet.Score;
   get firstNote() {
-    return this.notes[0]!;
+    return this.groupedNotes[0]!;
   }
   get lastNote() {
-    return this.notes.at(-1)!;
+    return this.groupedNotes.at(-1)!;
+  }
+  get groupedNotes() {
+    return pipe(
+      groupBy(this.notes, (note) => note.start.value),
+      entries(),
+      map(([, notes]) => first(notes))
+    );
   }
   get params() {
     return {
@@ -22,7 +30,12 @@ export class Beam {
     };
   }
   get notes() {
-    return this.score.notes.filter((note) => this.noteIds.includes(note.id));
+    return this.stave.bar.track.notes.filter((note) =>
+      this.noteIds.includes(note.id)
+    );
+  }
+  get stave() {
+    return this.score.staves.find((stave) => stave.id === this.staveId)!;
   }
   constructor({
     trackId,

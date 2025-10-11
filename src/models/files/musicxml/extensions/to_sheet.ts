@@ -48,44 +48,18 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
           notes: [],
           staffDetails: <StaffDetails>{
             $$: {
-              "staff-lines": [{ _: "5" }],
+              "staff-lines": [{ _: 5 }],
             },
           },
         });
-        const bars =
-          cur.$$.measure?.map((measure, barId) => {
-            const musicData = measure.$$;
+        // divisionが維持されない
+        const { bars } = cur.$$.measure?.reduce(
+          (measureAcc, cur, barId) => {
+            const musicData = cur.$$;
             const attributes = prop(musicData, "attributes") ?? [];
             const staffDetails = attributes[0]?.$$["staff-details"]?.[0];
-            if (partAcc.tracks[trackId])
-              partAcc.tracks[trackId].staffDetails = staffDetails ?? {
-                $$: { "staff-lines": [{ _: "5" }] },
-              };
             const time = attributes[0]?.$$.time?.[0];
             const key = attributes[0]?.$$.key?.[0];
-            const denominator = Number(
-              prop(time?.$$, "beat-type", "0", "_") ?? 4
-            );
-            const numerator = Number(prop(time?.$$, "beats", "0", "_") ?? 4);
-            const accidental = prop(key?.$$, "fifths", "0", "_") ?? 0;
-            const tonality =
-              prop(key?.$$, "mode", "at", "_") === "minor"
-                ? Core.Enums.Tonality.Minor
-                : Core.Enums.Tonality.Major;
-            const timesignature = {
-              denominator,
-              numerator,
-              start: numerator * barId,
-              duration: numerator,
-            };
-
-            if (trackId === 0) partAcc.timesignatures?.push(timesignature);
-            const keysignature = {
-              accidental,
-              tonality,
-              start: numerator * barId,
-              duration: numerator,
-            };
             const tempo = prop(
               musicData,
               "direction",
@@ -96,11 +70,35 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
               "$",
               "tempo"
             );
-            const divistion = (attributes[0]?.$$?.divisions?.[0]?._ ??
-              1) as number;
-            const bpm = tempo
-              ? { value: tempo, start: numerator * barId, duration: numerator }
-              : undefined;
+            const division = attributes[0]?.$$?.divisions?.[0]?._ as number;
+            if (partAcc.tracks[trackId])
+              partAcc.tracks[trackId].staffDetails = staffDetails ?? {
+                $$: { "staff-lines": [{ _: 5 }] },
+              };
+            if (time) {
+              partAcc.timesignatures?.push({
+                denominator: Number(prop(time.$$, "beat-type", "0", "_")),
+                numerator: Number(prop(time.$$, "beats", "0", "_")),
+                start: Number(prop(time.$$, "beats", "0", "_")) * barId,
+              });
+            }
+            if (key) {
+              partAcc.keysignatures?.push({
+                accidental: prop(key.$$, "fifths", "0", "_") ?? 0,
+                tonality:
+                  prop(key.$$, "mode", "at", "_") === "minor"
+                    ? Core.Enums.Tonality.Minor
+                    : Core.Enums.Tonality.Major,
+                start: partAcc.timesignatures!.at(-1)!.numerator * barId,
+              });
+            }
+            if (tempo) {
+              partAcc.tempos?.push({
+                value: tempo,
+                start: partAcc.timesignatures!.at(-1)!.numerator * barId,
+              });
+            }
+            if (division) measureAcc.division = division;
             const notes = pipe(
               prop(musicData, "note") ?? [],
               groupBy(piped(prop("$$", "staff", 0, "_"), defaultTo(1))),
@@ -118,7 +116,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                     (acc, cur, i, array) => {
                       const duration =
                         (prop(cur.$$, "duration", "0", "_") as number) /
-                        divistion;
+                        measureAcc.division;
                       const rest = isDefined(prop(cur.$$, "rest", "0"));
                       const param = {
                         staveId: (prop(cur, "$$", "staff", 0, "_") ?? 1) - 1,
@@ -182,7 +180,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                                 "0",
                                 "_"
                               ) as number) /
-                                divistion
+                                measureAcc.division
                             );
                           }, 0),
                           add(
@@ -216,7 +214,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                       return acc;
                     },
                     {
-                      start: numerator * barId,
+                      start: partAcc.timesignatures!.at(-1)!.numerator * barId,
                       notes: [] as Parameters<
                         typeof Sheet.Score.create
                       >[0]["tracks"][number]["notes"],
@@ -273,18 +271,24 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                   id: staveId,
                   barId,
                   trackId,
-                  clef: attributes[0]?.$$?.clef?.find(
+                  clefs: attributes[0]?.$$?.clef?.filter(
                     (clef) => (clef.$?.number ?? 1) === staveId + 1
                   ),
                 });
               }
             );
-            partAcc.keysignatures?.push(keysignature);
             partAcc.staves?.push(...staves);
-            if (bpm) partAcc.tempos?.push(bpm);
             if (beams) partAcc.beams?.push(...beams);
-            return { id: barId, trackId };
-          }) ?? [];
+            measureAcc.bars.push({ id: barId, trackId });
+            return measureAcc;
+          },
+          {
+            bars: [] as NonNullable<
+              Parameters<typeof Sheet.Score.create>[0]["bars"]
+            >,
+            division: -1,
+          }
+        ) ?? { bars: [] };
         partAcc.bars?.push(...bars);
         return partAcc;
       },

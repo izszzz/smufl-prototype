@@ -19,7 +19,7 @@ export class Controller {
   constructor(
     public score: Score,
     public layoutType: LayoutType,
-    public scale: number = 1
+    public scale: number
   ) {
     this.layoutType = layoutType;
     this.layout(layoutType);
