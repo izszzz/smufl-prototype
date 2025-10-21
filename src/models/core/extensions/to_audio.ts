@@ -9,7 +9,7 @@ declare module "core" {
 }
 
 Core.Score.prototype.toAudio = function (this: Core.Score) {
-  return Audio.Score.create({
+  const audio = Audio.Score.create({
     ...this.params,
     tracks: this.tracks.map((track) => ({
       ...track.params,
@@ -17,4 +17,6 @@ Core.Score.prototype.toAudio = function (this: Core.Score) {
     })),
     keysignatures: this.keysignatures.map(({ params }) => params),
   });
+  console.log({ audio });
+  return audio;
 };

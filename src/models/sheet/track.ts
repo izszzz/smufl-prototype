@@ -1,4 +1,5 @@
 import * as Core from "core";
+import { firstBy, prop } from "remeda";
 import * as Sheet from "sheet";
 import { StaffDetails } from "src/const/musicxml/4.0/musicxml";
 
@@ -12,7 +13,7 @@ export class Track extends Core.Track {
     return this.score.bars.filter((bar) => bar.trackId === this.id);
   }
   get height() {
-    return this.bars.reduce((acc, cur) => acc + cur.height, 0);
+    return firstBy(this.bars, [prop("height"), "desc"])!.height;
   }
   get y(): number {
     return this.prev ? this.prev.y + this.height + 6.5 : 0;

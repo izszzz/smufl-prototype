@@ -108,7 +108,8 @@ export class Score<
       defaultValue: PartialDeep<
         LiteralToPrimitiveDeep<typeof Core.Metadata.defaultValue>
       >;
-    } = { defaultValue: {} }
+      insertRests?: boolean;
+    } = { defaultValue: {}, insertRests: true }
   ) {
     const core = super.create(
       {
@@ -214,7 +215,6 @@ export class Score<
                       $$: {
                         sign: [{ _: "G" }],
                         line: [{ _: 2 }],
-                        "clef-octave-change": [{ _: 0 }],
                       },
                     },
                   ],
@@ -228,7 +228,6 @@ export class Score<
                       $$: {
                         sign: [{ _: "F" }],
                         line: [{ _: 4 }],
-                        "clef-octave-change": [{ _: 0 }],
                       },
                     },
                   ],
@@ -246,7 +245,6 @@ export class Score<
                       $$: {
                         sign: [{ _: "G" }] as const,
                         line: [{ _: 4 }],
-                        "clef-octave-change": [{ _: 0 }],
                       },
                       $: {},
                     },
@@ -329,57 +327,57 @@ export class Score<
     ] as const)
       score[key].at(-1)!.setEnd(score.masterbars.at(-1)!.end);
 
-    // insert rest
-    pipe(
-      score.staves,
-      flatMap((stave) => {
-        return pipe(
-          [
-            new Core.Event({
-              start: stave.bar.masterbar.start,
-              end: stave.bar.masterbar.start,
-            }) as Sheet.Note,
-            ...stave.events,
-            new Core.Event({
-              start: stave.bar.masterbar.end,
-              end: stave.bar.masterbar.end,
-            }) as Sheet.Note,
-          ],
-          reduce(
-            (acc, cur, i) => {
-              if (acc && acc.end.value < cur.start.value) {
-                const note = new Sheet.Note({
-                  id: score.notes.length + i,
-                  velocity: 102,
-                  start: acc.end,
-                  end: cur.start,
-                  staveId: stave.id,
-                  trackId: stave.trackId,
-                  pitch: new Core.Units.MidiNoteNumber(-1),
-                  stem: undefined,
-                  rest: true,
-                  voice: 1,
-                });
-                note.score = score;
-                score.notes.splice(
-                  pipe(
-                    score.notes,
-                    filter(piped(prop("rest"), isDefined)),
-                    length(),
-                    add(i),
-                    subtract(1)
-                  ),
-                  0,
-                  note
-                );
-              }
-              return cur;
-            },
-            null as Core.Event | null
-          )
-        );
-      })
-    );
+    if (options.insertRests)
+      pipe(
+        score.staves,
+        flatMap((stave) => {
+          return pipe(
+            [
+              new Core.Event({
+                start: stave.bar.masterbar.start,
+                end: stave.bar.masterbar.start,
+              }) as Sheet.Note,
+              ...stave.events,
+              new Core.Event({
+                start: stave.bar.masterbar.end,
+                end: stave.bar.masterbar.end,
+              }) as Sheet.Note,
+            ],
+            reduce(
+              (acc, cur, i) => {
+                if (acc && acc.end.value < cur.start.value) {
+                  const note = new Sheet.Note({
+                    id: score.notes.length + i,
+                    velocity: 102,
+                    start: acc.end,
+                    end: cur.start,
+                    staveId: stave.id,
+                    trackId: stave.trackId,
+                    pitch: new Core.Units.MidiNoteNumber(-1),
+                    stem: undefined,
+                    rest: true,
+                    voice: 1,
+                  });
+                  note.score = score;
+                  score.notes.splice(
+                    pipe(
+                      score.notes,
+                      filter(piped(prop("rest"), isDefined)),
+                      length(),
+                      add(i),
+                      subtract(1)
+                    ),
+                    0,
+                    note
+                  );
+                }
+                return cur;
+              },
+              null as Core.Event | null
+            )
+          );
+        })
+      );
     if (process.env.NODE_ENV === "development") console.log({ sheet: score });
     return score;
   }

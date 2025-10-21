@@ -4,6 +4,15 @@ import { Note } from "./note";
 import { Track } from "./track";
 import { Merge } from "type-fest";
 import { Synth } from "./synth";
+import {
+  entries,
+  filter,
+  isDefined,
+  last,
+  mapToObj,
+  pipe,
+  piped,
+} from "remeda";
 export class Score extends Audio.Score<Note, Track> {
   gain: GainNode;
   constructor({
@@ -21,19 +30,22 @@ export class Score extends Audio.Score<Note, Track> {
       ...param,
       ...core,
       tracks: core.tracks.map(
-        (track) =>
-          new Track({
-            gain: param.tracks[track.id]!.gain,
-            ...track,
-          })
+        (track) => new Track({ gain: param.tracks[track.id]!.gain, ...track })
       ),
-      notes: core.tracks.flatMap((track, trackId) =>
+      notes: param.tracks.flatMap((track, trackId) =>
         track.notes.map(
-          (note, noteId) =>
+          ({ start, duration, end, ...note }, noteId) =>
             new Note({
               ...note,
-              synth: new Synth(param.tracks[trackId]!.notes[noteId]!.synth),
               trackId,
+              synth: new Synth(param.tracks[trackId]!.notes[noteId]!.synth),
+              pitch: new Core.Units.MidiNoteNumber(note.pitch),
+              ...pipe(
+                { start, duration, end },
+                entries(),
+                filter(piped(last, isDefined)),
+                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
+              ),
             })
         )
       ),
@@ -52,7 +64,11 @@ type Parameter = Merge<
           Parameters<
             typeof Core.Score.create
           >[0]["tracks"][number]["notes"][number],
-          { synth: ConstructorParameters<typeof Synth>[0] }
+          {
+            synth: ConstructorParameters<typeof Synth>[0];
+            velocity: number;
+            pitch: number;
+          }
         >[];
       }
     >[];

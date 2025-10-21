@@ -10,8 +10,9 @@ import {
   map,
   pipe,
   piped,
-  prop,
   last,
+  isDefined,
+  isArray,
 } from "remeda";
 
 export class Stave {
@@ -98,23 +99,40 @@ export class Stave {
             ? filter([this.bar.timesignature.ligature], isTruthy)
             : null,
           pipe(
-            this.events,
+            this.notes,
             groupByProp("voice"),
             entries(),
             map(
               piped(
                 last(),
-                map(prop("ligature")),
-                filter(isTruthy),
+                (notes) => {
+                  return notes.reduce(
+                    (acc, note) => {
+                      if (isDefined(note.chordId)) {
+                        const last = acc.at(-1);
+                        if (isArray(last)) last.push(note);
+                        else acc.push([note]);
+                      } else acc.push(note);
+                      return acc;
+                    },
+                    [] as (Sheet.Note | Sheet.Note[])[]
+                  );
+                },
+                map((noteOrChord) =>
+                  Array.isArray(noteOrChord)
+                    ? noteOrChord.map((note) => note.ligature!)
+                    : [noteOrChord.ligature!]
+                ),
                 (ligatures) =>
-                  new Sheet.Ligature(ligatures.map((ligature) => [ligature]))
+                  new Sheet.Ligature(ligatures, undefined, { type: "voice" })
               )
             )
           ),
         ],
         isTruthy
       ),
-      0
+      0,
+      { type: "stave" }
     );
   }
   resolveClefs(): Clef[] {

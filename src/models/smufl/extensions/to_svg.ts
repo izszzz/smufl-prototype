@@ -267,6 +267,7 @@ SMUFL.Score.prototype.toSVG = function (
         "transform",
         `translate(${ligature.boundingBox.x}, ${-ligature.line})`
       )
+      .attr("test", JSON.stringify(ligature.test))
       .attr("width", ligature.width);
     ligature.glyphLists.flat().forEach((glyphOrLigature) => {
       match(glyphOrLigature)

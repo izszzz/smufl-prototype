@@ -119,7 +119,7 @@ export class Score<
               { start, duration, end },
               entries(),
               filter(piped(last, isDefined)),
-              mapToObj(([key, value]) => [key, new Core.Units.Beat(value)])
+              mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
             ),
           })
       ) as [Core.Timesignature, ...Core.Timesignature[]],
@@ -131,7 +131,7 @@ export class Score<
               { start, duration, end },
               entries(),
               filter(piped(last, isDefined)),
-              mapToObj(([key, value]) => [key, new Core.Units.Beat(value)])
+              mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
             ),
           })
       ) as [Core.Keysignature, ...Core.Keysignature[]],
@@ -143,7 +143,7 @@ export class Score<
               { start, duration, end },
               entries(),
               filter(piped(last, isDefined)),
-              mapToObj(([key, value]) => [key, new Core.Units.Beat(value)])
+              mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
             ),
           })
       ) as [Core.Tempo, ...Core.Tempo[]],
@@ -159,7 +159,7 @@ export class Score<
                 { start, duration, end },
                 entries(),
                 filter(piped(last, isDefined)),
-                mapToObj(([key, value]) => [key, new Core.Units.Beat(value)])
+                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
               ),
             })
         )
@@ -176,7 +176,7 @@ export class Score<
               { start, duration, end },
               entries(),
               filter(piped(last, isDefined)),
-              mapToObj(([key, value]) => [key, new Core.Units.Beat(value)])
+              mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
             ),
           })
       ),

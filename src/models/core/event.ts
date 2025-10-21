@@ -7,15 +7,12 @@ export class Event {
   get start(): Beat {
     return this._start ?? this.end.subtract(this.duration);
   }
-
   get duration(): Beat {
     return this._duration ?? this.end.subtract(this.start);
   }
-
   get end(): Beat {
     return this._end ?? this.start.add(this.duration);
   }
-
   get params() {
     return {
       start: this.start.value,

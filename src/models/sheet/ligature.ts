@@ -16,7 +16,9 @@ import { Element } from "./element";
 export class Ligature<T extends Glyph = Glyph> extends Element {
   constructor(
     public glyphLists: (T | Ligature<T>)[][],
-    public line: number = 0
+    public line: number = 0,
+
+    public test: Record<string, string> = {}
   ) {
     super();
   }

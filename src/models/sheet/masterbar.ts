@@ -27,7 +27,10 @@ export class Masterbar extends Core.Event {
     );
   }
   get height() {
-    return this.bars.reduce((acc, cur) => acc + cur.height, 0);
+    return (
+      this.bars.reduce((acc, cur) => acc + cur.height, 0) +
+      (this.bars.length - 1) * 13
+    );
   }
   get isRowFirst() {
     return this.row.masterbars[0]?.id === this.id;
