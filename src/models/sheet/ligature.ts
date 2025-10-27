@@ -17,10 +17,9 @@ export class Ligature<T extends Glyph = Glyph> extends Element {
   constructor(
     public glyphLists: (T | Ligature<T>)[][],
     public line: number = 0,
-
-    public test: Record<string, string> = {}
+    ...elementArgs: ConstructorParameters<typeof Element>
   ) {
-    super();
+    super(...elementArgs);
   }
   override get minWidth(): number {
     return pipe(

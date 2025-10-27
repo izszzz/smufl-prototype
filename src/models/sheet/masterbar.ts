@@ -54,11 +54,7 @@ export class Masterbar extends Core.Event {
     return this.score.bars.filter((bar) => bar.id === this.id);
   }
   get beams() {
-    return this.score.beams.filter((beam) =>
-      this.notes
-        .map((note) => note.id)
-        .some((noteId) => beam.noteIds.includes(noteId))
-    );
+    return this.score.beams.filter((beam) => beam.barId === this.id);
   }
   get notes() {
     return this.score.notes.filter((note) => note.isOverlapped(this));

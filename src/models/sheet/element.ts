@@ -16,4 +16,5 @@ export class Element {
   get right() {
     return this.width + this.boundingBox.x;
   }
+  constructor(public attributes: Record<string, string> = {}) {}
 }

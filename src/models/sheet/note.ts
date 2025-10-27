@@ -133,23 +133,23 @@ export class Note extends Core.Note {
       filter(
         [
           this.accidental
-            ? [new Sheet.Glyph(Sheet.GlyphType.Accidental, 0)]
+            ? [new Sheet.Glyph(Sheet.ElementType.Accidental, 0)]
             : null,
           [
             ...(this.legerLine
               ? times(
                   this.legerLine,
-                  () => new Sheet.Glyph(Sheet.GlyphType.LegerLine, 0)
+                  () => new Sheet.Glyph(Sheet.ElementType.LegerLine, 0)
                 )
               : []),
             this.rest
-              ? new Sheet.Glyph(Sheet.GlyphType.Rest, 0)
+              ? new Sheet.Glyph(Sheet.ElementType.Rest, 0)
               : new Sheet.Ligature(
                   filter(
                     [
-                      [new Sheet.Glyph(Sheet.GlyphType.Notehead, 0)],
+                      [new Sheet.Glyph(Sheet.ElementType.Notehead, 0)],
                       this.stem
-                        ? [new Sheet.Glyph(Sheet.GlyphType.Stem, 0)]
+                        ? [new Sheet.Glyph(Sheet.ElementType.Stem, 0)]
                         : null,
                     ],
                     isTruthy
@@ -157,7 +157,7 @@ export class Note extends Core.Note {
                   0
                 ),
           ],
-          ...times(this.dot, () => [new Sheet.Glyph(Sheet.GlyphType.Dot, 0)]),
+          ...times(this.dot, () => [new Sheet.Glyph(Sheet.ElementType.Dot, 0)]),
         ],
         isTruthy
       ),

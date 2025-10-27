@@ -25,7 +25,7 @@ export enum AccidentalType {
   Natural,
 }
 
-export enum GlyphType {
+export enum ElementType {
   Clef,
   Numerator,
   Denominator,

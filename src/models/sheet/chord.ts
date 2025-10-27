@@ -8,6 +8,15 @@ export class Chord extends Core.Event {
   voice;
   score!: Sheet.Score;
   ligature: Sheet.Ligature | null = null;
+  get params() {
+    return {
+      ...super.params,
+      id: this.id,
+      staveId: this.staveId,
+      trackId: this.trackId,
+      voice: this.voice,
+    };
+  }
   get notes() {
     return this.score.notes.filter((note) => note.chordId === this.id);
   }

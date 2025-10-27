@@ -35,7 +35,7 @@ export class Stave extends Sheet.Stave {
                 P.when((x): x is Sheet.Glyph => x.constructor === Sheet.Glyph),
                 (glyph) =>
                   match(glyph.type)
-                    .with(Sheet.GlyphType.Clef, () => {
+                    .with(Sheet.ElementType.Clef, () => {
                       const glyphName = SMUFL.Glyph.findClef(
                         this.resolveClefs()[0]!
                       );
@@ -44,7 +44,7 @@ export class Stave extends Sheet.Stave {
                         : null;
                     })
                     .with(
-                      Sheet.GlyphType.Accidental,
+                      Sheet.ElementType.Accidental,
                       () =>
                         new SMUFL.Glyph(
                           SMUFL.Glyph.find("standardAccidentals12Edo", (v) =>
@@ -65,7 +65,7 @@ export class Stave extends Sheet.Stave {
                           glyph.line
                         )
                     )
-                    .with(Sheet.GlyphType.Barline, () => {
+                    .with(Sheet.ElementType.Barline, () => {
                       const glyphName = SMUFL.Glyph.findBarline(
                         this.bar.masterbar.isLast
                           ? { $$: { ["bar-style"]: [{ _: "light-heavy" }] } }

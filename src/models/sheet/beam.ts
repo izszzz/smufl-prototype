@@ -1,12 +1,23 @@
-import * as Sheet from "sheet";
 import { entries, groupBy, first, map, pipe } from "remeda";
+import { Score } from "./score";
 export class Beam {
   trackId;
+  barId;
   staveId;
   noteIds;
   voice;
   level;
-  score!: Sheet.Score;
+  score!: Score;
+  get params() {
+    return {
+      trackId: this.trackId,
+      staveId: this.staveId,
+      barId: this.barId,
+      noteIds: this.noteIds,
+      voice: this.voice,
+      level: this.level,
+    };
+  }
   get firstNote() {
     return this.groupedNotes[0]!;
   }
@@ -20,15 +31,6 @@ export class Beam {
       map(([, notes]) => first(notes))
     );
   }
-  get params() {
-    return {
-      trackId: this.trackId,
-      staveId: this.staveId,
-      noteIds: this.noteIds,
-      voice: this.voice,
-      level: this.level,
-    };
-  }
   get notes() {
     return this.stave.bar.track.notes.filter((note) =>
       this.noteIds.includes(note.id)
@@ -39,6 +41,7 @@ export class Beam {
   }
   constructor({
     trackId,
+    barId,
     staveId,
     noteIds,
     voice,
@@ -46,11 +49,13 @@ export class Beam {
   }: {
     level: number;
     trackId: number;
+    barId: number;
     staveId: number;
     noteIds: number[];
     voice: number;
   }) {
     this.trackId = trackId;
+    this.barId = barId;
     this.staveId = staveId;
     this.noteIds = noteIds;
     this.voice = voice;

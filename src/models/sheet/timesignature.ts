@@ -1,7 +1,7 @@
 import * as Core from "core";
 import { Ligature } from "./ligature";
 import { Glyph } from "./glyph";
-import { GlyphType } from "sheet";
+import { ElementType } from "sheet";
 
 export class Timesignature extends Core.Timesignature {
   ligature: Ligature | null = null;
@@ -9,8 +9,8 @@ export class Timesignature extends Core.Timesignature {
     this.ligature = new Ligature(
       [
         [
-          new Glyph(GlyphType.Numerator, 4),
-          new Glyph(GlyphType.Denominator, 2),
+          new Glyph(ElementType.Numerator, 4),
+          new Glyph(ElementType.Denominator, 2),
         ],
       ],
       0

@@ -18,11 +18,11 @@ import {
   mapToObj,
   last,
   firstBy,
-  isArray,
   first,
   isTruthy,
   map,
   identity,
+  flat,
 } from "remeda";
 import { LiteralToPrimitiveDeep, Merge, PartialDeep } from "type-fest";
 import { match } from "ts-pattern";
@@ -102,14 +102,13 @@ export class Score<
       data.score = this;
   }
 
-  static create(
+  static override create(
     param: Parameter,
     options: {
       defaultValue: PartialDeep<
         LiteralToPrimitiveDeep<typeof Core.Metadata.defaultValue>
       >;
-      insertRests?: boolean;
-    } = { defaultValue: {}, insertRests: true }
+    }
   ) {
     const core = super.create(
       {
@@ -158,35 +157,53 @@ export class Score<
           barline: { $$: {} },
         },
       ];
-    param.chords ??= param.tracks.flatMap((track, trackId) =>
-      track.notes.filter(isArray).map((notes, chordId) => {
-        for (const note of notes) note.chordId = chordId;
-        return {
-          id: chordId,
-          trackId,
-          staveId: pipe(notes, first(), prop("staveId"))!,
-          voice: pipe(notes, first(), prop("voice"))!,
-          start: pipe(
-            notes,
-            map(prop("start")),
-            filter(isTruthy),
-            firstBy(identity())
-          ),
-          duration: pipe(
-            notes,
-            map(prop("duration")),
-            filter(isTruthy),
-            firstBy([identity(), "desc"])
-          ),
-          end: pipe(
-            notes,
-            map(prop("duration")),
-            filter(isTruthy),
-            firstBy([identity(), "desc"])
-          ),
-        };
-      })
+    param.chords ??= pipe(
+      param.tracks,
+      map(
+        piped(prop("notes"), (notes) =>
+          notes.reduce((acc, cur, i, array) => {
+            if (cur.chord)
+              if (array[i - 1]?.chord) acc.at(-1)!.push(cur);
+              else acc.push([array[i - 1]!, cur]);
+            return acc;
+          }, [] as NoteParameter[][])
+        )
+      ),
+      map((chords, trackId) =>
+        pipe(
+          chords,
+          map((notes, chordId) => {
+            for (const note of notes) note.chordId = chordId;
+            return {
+              id: chordId,
+              trackId,
+              staveId: pipe(notes, first(), prop("staveId")),
+              voice: pipe(notes, first(), prop("voice")),
+              start: pipe(
+                notes,
+                map(prop("start")),
+                filter(isTruthy),
+                firstBy(identity())
+              ),
+              duration: pipe(
+                notes,
+                map(prop("duration")),
+                filter(isTruthy),
+                firstBy([identity(), "desc"])
+              ),
+              end: pipe(
+                notes,
+                map(prop("duration")),
+                filter(isTruthy),
+                firstBy([identity(), "desc"])
+              ),
+            };
+          })
+        )
+      ),
+      flat()
     );
+
     // 必要以上にbarを生成する場合がありそう
     param.bars ??= core.tracks.flatMap((track) =>
       param.masterbars!.map((masterbar) => ({
@@ -265,7 +282,7 @@ export class Score<
         (keysignature) => new Sheet.Keysignature(keysignature)
       ) as [Sheet.Keysignature, ...Sheet.Keysignature[]],
       notes: param.tracks.flatMap((track, trackId) =>
-        track.notes.flat().map(
+        track.notes.map(
           ({ start, duration, end, ...note }, id) =>
             new Sheet.Note({
               ...note,
@@ -327,57 +344,57 @@ export class Score<
     ] as const)
       score[key].at(-1)!.setEnd(score.masterbars.at(-1)!.end);
 
-    if (options.insertRests)
-      pipe(
-        score.staves,
-        flatMap((stave) => {
-          return pipe(
-            [
-              new Core.Event({
-                start: stave.bar.masterbar.start,
-                end: stave.bar.masterbar.start,
-              }) as Sheet.Note,
-              ...stave.events,
-              new Core.Event({
-                start: stave.bar.masterbar.end,
-                end: stave.bar.masterbar.end,
-              }) as Sheet.Note,
-            ],
-            reduce(
-              (acc, cur, i) => {
-                if (acc && acc.end.value < cur.start.value) {
-                  const note = new Sheet.Note({
-                    id: score.notes.length + i,
-                    velocity: 102,
-                    start: acc.end,
-                    end: cur.start,
-                    staveId: stave.id,
-                    trackId: stave.trackId,
-                    pitch: new Core.Units.MidiNoteNumber(-1),
-                    stem: undefined,
-                    rest: true,
-                    voice: 1,
-                  });
-                  note.score = score;
-                  score.notes.splice(
-                    pipe(
-                      score.notes,
-                      filter(piped(prop("rest"), isDefined)),
-                      length(),
-                      add(i),
-                      subtract(1)
-                    ),
-                    0,
-                    note
-                  );
-                }
-                return cur;
-              },
-              null as Core.Event | null
-            )
-          );
-        })
-      );
+    // insert rests
+    pipe(
+      score.staves,
+      flatMap((stave) => {
+        return pipe(
+          [
+            new Core.Event({
+              start: stave.bar.masterbar.start,
+              end: stave.bar.masterbar.start,
+            }) as Sheet.Note,
+            ...stave.events,
+            new Core.Event({
+              start: stave.bar.masterbar.end,
+              end: stave.bar.masterbar.end,
+            }) as Sheet.Note,
+          ],
+          reduce(
+            (acc, cur, i) => {
+              if (acc && acc.end.value < cur.start.value) {
+                const note = new Sheet.Note({
+                  id: score.notes.length + i,
+                  velocity: 102,
+                  start: acc.end,
+                  end: cur.start,
+                  staveId: stave.id,
+                  trackId: stave.trackId,
+                  pitch: new Core.Units.MidiNoteNumber(-1),
+                  stem: undefined,
+                  rest: true,
+                  voice: 1,
+                });
+                note.score = score;
+                score.notes.splice(
+                  pipe(
+                    score.notes,
+                    filter(piped(prop("rest"), isDefined)),
+                    length(),
+                    add(i),
+                    subtract(1)
+                  ),
+                  0,
+                  note
+                );
+              }
+              return cur;
+            },
+            null as Core.Event | null
+          )
+        );
+      })
+    );
     if (process.env.NODE_ENV === "development") console.log({ sheet: score });
     return score;
   }
@@ -389,7 +406,7 @@ type EventParameter = {
 };
 type NoteParameter = Merge<
   Omit<ConstructorParameters<typeof Sheet.Note>[0], "id" | "trackId">,
-  EventParameter & { pitch: number }
+  EventParameter & { pitch: number; chord: boolean }
 >;
 type Parameter = Merge<
   Parameters<typeof Core.Score.create>[0],
@@ -397,7 +414,7 @@ type Parameter = Merge<
     tracks: Merge<
       Parameters<typeof Core.Score.create>[0]["tracks"][number],
       {
-        notes: (NoteParameter | NoteParameter[])[];
+        notes: NoteParameter[];
         staffDetails: StaffDetails;
       }
     >[];

@@ -12,8 +12,8 @@ export class Timesignature extends Sheet.Timesignature {
               Glyph.find("timeSignatures", (v) =>
                 v.toLocaleLowerCase().includes(
                   match(glyph.type)
-                    .with(Sheet.GlyphType.Numerator, () => this.numerator)
-                    .with(Sheet.GlyphType.Denominator, () => this.denominator)
+                    .with(Sheet.ElementType.Numerator, () => this.numerator)
+                    .with(Sheet.ElementType.Denominator, () => this.denominator)
                     .run()
                     .toString()
                 )

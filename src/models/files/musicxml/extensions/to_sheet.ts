@@ -5,7 +5,6 @@ import { match, P } from "ts-pattern";
 import {
   flatMap,
   add,
-  isArray,
   pipe,
   prop,
   reduce,
@@ -117,6 +116,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                         rest,
                         stem: cur.$$.stem?.[0],
                         beam: cur.$$.beam,
+                        chord: isDefined(prop(cur.$$, "chord")),
                         pitch: rest
                           ? new MidiNoteNumber(-1).value
                           : new Core.Units.ScientificPitchNotation(
@@ -158,37 +158,26 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                         start: pipe(
                           array,
                           take(i + 1),
-                          reduce((acc, cur, i, array) => {
-                            if (
+                          reduce(
+                            (acc, cur, i, array) =>
                               isNullish(array[i - 1]) ||
                               isDefined(prop(cur.$$, "chord"))
-                            )
-                              return acc;
-                            return (
-                              acc +
-                              (prop(
-                                array[i - 1]!.$$,
-                                "duration",
-                                "0",
-                                "_"
-                              ) as number) /
-                                measureAcc.division
-                            );
-                          }, 0),
+                                ? acc
+                                : acc +
+                                  (prop(
+                                    array[i - 1]!.$$,
+                                    "duration",
+                                    "0",
+                                    "_"
+                                  ) as number) /
+                                    measureAcc.division,
+                            0
+                          ),
                           add(partAcc.timesignatures!.at(-1)!.numerator * barId)
                         ),
                         duration,
                       };
-
-                      if (isDefined(prop(cur.$$, "chord"))) {
-                        const last = acc.notes.at(-1);
-                        if (isArray(last)) last.push(param);
-                        else if (last)
-                          acc.notes[acc.notes.length - 1] = [last, param];
-                      } else {
-                        acc.notes.push(param);
-                      }
-
+                      acc.notes.push(param);
                       return acc;
                     },
                     {
@@ -214,6 +203,7 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
                         match(beam._)
                           .with("begin", () => {
                             acc?.push({
+                              barId,
                               voice: Number(cur.$$.voice?.[0]._ ?? 0),
                               noteIds: [noteId],
                               staveId:
@@ -301,5 +291,5 @@ MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
     beams,
   };
 
-  return Sheet.Score.create(params, { defaultValue: {}, insertRests: false });
+  return Sheet.Score.create(params, { defaultValue: {} });
 };

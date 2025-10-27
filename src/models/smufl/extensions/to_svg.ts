@@ -20,7 +20,6 @@ SMUFL.Score.prototype.toSVG = function (
   height,
   options
 ) {
-  console.log(this);
   const svg = d3
     .create("svg")
     .attr("font-size", options.ratio)
@@ -175,6 +174,13 @@ SMUFL.Score.prototype.toSVG = function (
                             .data(stave.beams)
                             .join("g")
                             .attr("type", "beam")
+                            .attr(
+                              "transform",
+                              createTranslate(
+                                stave.metadataLigature?.width ?? 0,
+                                0
+                              )
+                            )
                             .each(function (beam) {
                               const g = d3.select(this);
                               g.append("path")
@@ -267,7 +273,7 @@ SMUFL.Score.prototype.toSVG = function (
         "transform",
         `translate(${ligature.boundingBox.x}, ${-ligature.line})`
       )
-      .attr("test", JSON.stringify(ligature.test))
+      .attr("test", JSON.stringify(ligature.attributes))
       .attr("width", ligature.width);
     ligature.glyphLists.flat().forEach((glyphOrLigature) => {
       match(glyphOrLigature)

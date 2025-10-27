@@ -17,22 +17,22 @@ export class Note extends Sheet.Note {
               (glyph) =>
                 new SMUFL.Glyph(
                   match(glyph.type)
-                    .with(Sheet.GlyphType.Accidental, () =>
+                    .with(Sheet.ElementType.Accidental, () =>
                       SMUFL.Glyph.findAccidental(this.accidental!)
                     )
-                    .with(Sheet.GlyphType.LegerLine, () =>
+                    .with(Sheet.ElementType.LegerLine, () =>
                       SMUFL.Glyph.find("staves", (v) => v === "legerLine")
                     )
-                    .with(Sheet.GlyphType.Rest, () =>
+                    .with(Sheet.ElementType.Rest, () =>
                       SMUFL.Glyph.findRest(this.type)
                     )
-                    .with(Sheet.GlyphType.Notehead, () =>
+                    .with(Sheet.ElementType.Notehead, () =>
                       SMUFL.Glyph.findNotehead(this.type)
                     )
-                    .with(Sheet.GlyphType.Stem, () =>
+                    .with(Sheet.ElementType.Stem, () =>
                       SMUFL.Glyph.find("stems", (v) => v.includes("stem"))
                     )
-                    .with(Sheet.GlyphType.Dot, () =>
+                    .with(Sheet.ElementType.Dot, () =>
                       SMUFL.Glyph.find("individualNotes", (v) =>
                         v.includes("Dot")
                       )

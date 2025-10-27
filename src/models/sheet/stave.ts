@@ -22,6 +22,7 @@ export class Stave {
   clefs;
   score!: Sheet.Score;
   ligature: Sheet.Ligature | null = null;
+  metadataLigature: Sheet.Ligature | null = null;
   get params() {
     return {
       id: this.id,
@@ -73,13 +74,13 @@ export class Stave {
     this.clefs = clef;
   }
   draw() {
-    this.ligature = new Sheet.Ligature(
+    this.metadataLigature = new Sheet.Ligature(
       filter(
         [
           this.bar.masterbar.isRowFirst
             ? [
                 new Sheet.Glyph(
-                  Sheet.GlyphType.Clef,
+                  Sheet.ElementType.Clef,
                   this.resolveClefs()[0]?.$$.line?.[0]?._ ?? 0
                 ),
               ]
@@ -98,6 +99,14 @@ export class Stave {
           this.bar.masterbar.isFirst
             ? filter([this.bar.timesignature.ligature], isTruthy)
             : null,
+        ],
+        isTruthy
+      )
+    );
+    this.ligature = new Sheet.Ligature(
+      filter(
+        [
+          ...this.metadataLigature.glyphLists,
           pipe(
             this.notes,
             groupByProp("voice"),

@@ -1,11 +1,12 @@
-import { GlyphType } from "sheet";
+import { ElementType } from "sheet";
 import { Element } from "./element";
 
 export class Glyph extends Element {
   constructor(
-    public type: GlyphType,
-    public line: number
+    public type: ElementType,
+    public line: number = 0,
+    ...element: ConstructorParameters<typeof Element>
   ) {
-    super();
+    super(...element);
   }
 }

@@ -1,17 +1,17 @@
 import { Beat } from "./units/beat";
 
 export class Event {
-  _start;
-  _duration;
-  _end;
+  #start;
+  #duration;
+  #end;
   get start(): Beat {
-    return this._start ?? this.end.subtract(this.duration);
+    return this.#start ?? this.end.subtract(this.duration);
   }
   get duration(): Beat {
-    return this._duration ?? this.end.subtract(this.start);
+    return this.#duration ?? this.end.subtract(this.start);
   }
   get end(): Beat {
-    return this._end ?? this.start.add(this.duration);
+    return this.#end ?? this.start.add(this.duration);
   }
   get params() {
     return {
@@ -29,13 +29,13 @@ export class Event {
     duration?: Beat;
     end?: Beat;
   }) {
-    this._start = start;
-    this._duration = duration;
-    this._end = end;
+    this.#start = start;
+    this.#duration = duration;
+    this.#end = end;
   }
   setEnd(end: Beat) {
-    this._end = end;
-    if (this._start) this._duration = this._end.subtract(this._start);
+    this.#end = end;
+    if (this.#start) this.#duration = this.#end.subtract(this.#start);
   }
   isOverflow(event: Event) {
     return (

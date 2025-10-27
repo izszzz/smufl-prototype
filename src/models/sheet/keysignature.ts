@@ -1,7 +1,7 @@
 import * as Core from "core";
 import { Ligature } from "./ligature";
 import { Glyph } from "./glyph";
-import { GlyphType } from "sheet";
+import { ElementType } from "sheet";
 import { pipe } from "remeda";
 import musicTheory from "../../const/music-theory.json";
 import { PitchClassName } from "../core/units";
@@ -13,7 +13,7 @@ export class Keysignature extends Core.Keysignature {
       [
         ...this.accidentalPitchClasses.map((pitchClass) => [
           new Glyph(
-            GlyphType.Accidental,
+            ElementType.Accidental,
             pipe(pitchClass.toPitchClassName(this.tonality).toneIndex, (n) => {
               return (
                 match(this.tonality)
