@@ -1,7 +1,7 @@
 import * as Core from "core";
 import * as Sheet from "sheet";
 import { Clef } from "src/const/musicxml/4.0/musicxml";
-import { match } from "ts-pattern";
+import { match, P } from "ts-pattern";
 import {
   entries,
   filter,
@@ -13,6 +13,7 @@ import {
   last,
   isDefined,
   isArray,
+  reduce,
 } from "remeda";
 
 export class Stave {
@@ -43,7 +44,24 @@ export class Stave {
     return this.bar.chords.filter((chord) => chord.staveId === this.id);
   }
   get beams() {
-    return this.bar.beams.filter((beam) => beam.staveId === this.id);
+    return pipe(
+      this.notes,
+      reduce(
+        (acc, cur) => {
+          for (const beam of cur.beam ?? []) {
+            const level = Number(beam.$?.number) - 1;
+            match(beam._)
+              .with("begin", () => acc.push({ level, notes: [cur] }))
+              .with(P.union("continue", "end"), () => {
+                acc.findLast((beam) => beam.level === level)?.notes.push(cur);
+              })
+              .exhaustive();
+          }
+          return acc;
+        },
+        [] as { level: number; notes: Sheet.Note[] }[]
+      )
+    );
   }
   get events() {
     return this.bar.events.filter((event) => event.staveId === this.id);

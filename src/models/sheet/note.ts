@@ -25,6 +25,7 @@ export class Note extends Core.Note {
       chordId: this.chordId,
       staveId: this.staveId,
       stem: this.stem,
+      beam: this.beam,
       rest: this.rest,
       voice: this.voice,
     };
@@ -33,7 +34,9 @@ export class Note extends Core.Note {
     return this.score.tracks.find((track) => track.id === this.trackId)!;
   }
   get stave() {
-    return this.score.staves.find((stave) => stave.id === this.staveId)!;
+    return this.score.staves.find(
+      (stave) => stave.trackId === this.trackId && stave.id === this.staveId
+    )!;
   }
   get keysignature() {
     return this.score.keysignatures.find((keysignature) =>

@@ -39,14 +39,12 @@ export class Score<
   Keysignature extends Sheet.Keysignature = Sheet.Keysignature,
   Tempo extends Core.Tempo = Core.Tempo,
   Chord extends Sheet.Chord = Sheet.Chord,
-  Beam extends Sheet.Beam = Sheet.Beam,
 > extends Core.Score<Note, Track, Timesignature, Keysignature, Tempo> {
   masterbars;
   rows;
   bars;
   staves;
   chords;
-  beams;
   get events() {
     return [
       ...pipe(this.notes, filter(piped(prop("chordId"), isNullish))),
@@ -71,7 +69,6 @@ export class Score<
     masterbars,
     rows,
     chords,
-    beams,
     ...score
   }: {
     staves: Stave[];
@@ -79,7 +76,6 @@ export class Score<
     masterbars: Masterbar[];
     rows: Row[];
     chords: Chord[];
-    beams: Beam[];
   } & ConstructorParameters<
     typeof Core.Score<Note, Track, Timesignature, Keysignature, Tempo>
   >[0]) {
@@ -89,7 +85,6 @@ export class Score<
     this.rows = rows;
     this.masterbars = masterbars;
     this.chords = chords;
-    this.beams = beams;
     for (const data of [
       ...this.notes,
       ...this.staves,
@@ -97,7 +92,6 @@ export class Score<
       ...this.masterbars,
       ...this.rows,
       ...this.chords,
-      ...this.beams,
     ])
       data.score = this;
   }
@@ -307,7 +301,6 @@ export class Score<
       ),
       staves: param.staves.map((stave) => new Sheet.Stave(stave)),
       bars: param.bars.map((bar) => new Sheet.Bar(bar)),
-      beams: param.beams?.map((beam) => new Sheet.Beam(beam)) ?? [],
       masterbars: param.masterbars.map(
         ({ start, duration, end, ...masterbar }) =>
           new Sheet.Masterbar({
@@ -320,18 +313,19 @@ export class Score<
             ),
           })
       ),
-      chords: param.chords.map(
-        ({ start, duration, end, ...chord }) =>
-          new Sheet.Chord({
-            ...chord,
-            ...pipe(
-              { start, duration, end },
-              entries(),
-              filter(piped(last, isDefined)),
-              mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
-            ),
-          })
-      ),
+      chords:
+        param.chords?.map(
+          ({ start, duration, end, ...chord }) =>
+            new Sheet.Chord({
+              ...chord,
+              ...pipe(
+                { start, duration, end },
+                entries(),
+                filter(piped(last, isDefined)),
+                mapToObj(([key, value]) => [key, new Core.Units.Beat(value!)])
+              ),
+            })
+        ) ?? [],
       rows: [],
     });
 
@@ -428,6 +422,5 @@ type Parameter = Merge<
       ConstructorParameters<typeof Sheet.Chord>[0],
       EventParameter
     >[];
-    beams?: ConstructorParameters<typeof Sheet.Beam>[0][];
   }
 >;

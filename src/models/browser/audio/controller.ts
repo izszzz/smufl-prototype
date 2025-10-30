@@ -1,17 +1,12 @@
-import * as Audio from "../../audio";
 import * as BrowserAudio from ".";
 
-export class Controller extends Audio.Controller {
-  audioContext;
+export class Controller {
   score;
   isPlaying = false;
-  constructor(score: BrowserAudio.Score, audioContext: AudioContext) {
-    super();
-    this.audioContext = audioContext;
+  constructor(score: BrowserAudio.Score) {
     this.score = score;
   }
-  play() {
-    const startTime = this.audioContext.currentTime;
+  play(startTime: number) {
     for (const note of this.score.notes) {
       note.synth.noteOn(startTime + note.start.toSeconds(note.tempo.value));
       note.synth.noteOff(startTime + note.end.toSeconds(note.tempo.value));

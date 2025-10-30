@@ -4,6 +4,8 @@ export class Score<
   Note extends Audio.Note = Audio.Note,
   Track extends Audio.Track = Audio.Track,
 > extends Core.Score<Note, Track> {
+  gain = 1;
+  onChangeGain?: (gain: number) => void;
   constructor(
     params: ConstructorParameters<typeof Core.Score<Note, Track>>[0]
   ) {
@@ -19,5 +21,9 @@ export class Score<
       ),
       tracks: core.tracks.map((track) => new Audio.Track(track)),
     });
+  }
+  setGain(value: number) {
+    this.gain = value;
+    this.onChangeGain?.(value);
   }
 }

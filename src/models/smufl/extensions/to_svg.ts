@@ -3,6 +3,7 @@ import * as R from "remeda";
 import * as SMUFL from "smufl";
 import * as Sheet from "sheet";
 import { match, P } from "ts-pattern";
+import { first, last } from "remeda";
 
 declare module "smufl" {
   interface Score {
@@ -14,25 +15,28 @@ declare module "smufl" {
   }
 }
 
+let svg: d3.Selection<SVGSVGElement, undefined, null, undefined> | null = null;
 SMUFL.Score.prototype.toSVG = function (
   this: SMUFL.Score,
   width,
   height,
   options
 ) {
-  const svg = d3
-    .create("svg")
+  svg ??= d3.create("svg");
+  svg
     .attr("font-size", options.ratio)
     .attr("viewBox", `0 0 ${width / options.scale} ${height / options.scale}`)
     .attr("height", height)
-    .attr("width", width);
-  svg
-    .append("g")
+    .attr("width", width)
+    .selectAll("g[type=score]")
+    .data([this])
+    .join("g")
     .attr("type", "score")
     .attr("transform", createTranslate(0, 17))
-    .call((g) => {
+    .each(function (score) {
+      const g = d3.select(this);
       g.selectAll("g[type=row]")
-        .data(this.rows)
+        .data(score.rows)
         .join("g")
         .attr("type", "row")
         .attr("transform", (row) => createTranslate(0, row.y))
@@ -58,11 +62,16 @@ SMUFL.Score.prototype.toSVG = function (
                     .attr("type", "bar")
                     .each(function (bar) {
                       const g = d3.select(this);
-                      g.append("g")
+                      g.selectAll("g[type=barline]")
+                        .data([null])
+                        .join("g")
                         .attr("type", "barline")
                         .attr("transform", createTranslate(0, -11.5))
-                        .call((g) => {
-                          g.append("path")
+                        .each(function () {
+                          const g = d3.select(this);
+                          g.selectAll("path")
+                            .data([null])
+                            .join("path")
                             .attr(
                               "transform",
                               createTranslate(
@@ -85,7 +94,9 @@ SMUFL.Score.prototype.toSVG = function (
                               ])
                             );
                           if (masterbar.isRowLast) {
-                            g.append("path")
+                            g.selectAll("path")
+                              .data([null])
+                              .join("path")
                               .attr(
                                 "transform",
                                 createTranslate(
@@ -111,7 +122,9 @@ SMUFL.Score.prototype.toSVG = function (
                               );
                           }
                           if (masterbar.isLast) {
-                            g.append("path")
+                            g.selectAll("path")
+                              .data([null])
+                              .join("path")
                               .attr(
                                 "transform",
                                 createTranslate(
@@ -133,7 +146,9 @@ SMUFL.Score.prototype.toSVG = function (
                                   [masterbar.width, bar.height],
                                 ])
                               );
-                            g.append("path")
+                            g.selectAll("path")
+                              .data([null])
+                              .join("path")
                               .attr(
                                 "transform",
                                 createTranslate(
@@ -183,7 +198,9 @@ SMUFL.Score.prototype.toSVG = function (
                             )
                             .each(function (beam) {
                               const g = d3.select(this);
-                              g.append("path")
+                              g.selectAll("path")
+                                .data([beam])
+                                .join("path")
                                 .attr(
                                   "transform",
                                   createTranslate(
@@ -204,9 +221,11 @@ SMUFL.Score.prototype.toSVG = function (
                                   "d",
                                   d3.line()([
                                     [
-                                      beam.firstNote.ligature?.boundingBox.toInset()
+                                      first(
+                                        beam.notes
+                                      )!.ligature?.boundingBox.toInset()
                                         .right ?? 0,
-                                      -beam.firstNote.line +
+                                      -first(beam.notes)!.line +
                                         beam.level *
                                           (SMUFL.BravuraMetadata
                                             .engravingDefaults.beamThickness +
@@ -214,9 +233,11 @@ SMUFL.Score.prototype.toSVG = function (
                                               .engravingDefaults.beamSpacing),
                                     ],
                                     [
-                                      beam.lastNote.ligature?.boundingBox.toInset()
+                                      last(
+                                        beam.notes
+                                      )!.ligature?.boundingBox.toInset()
                                         .right ?? 0,
-                                      -beam.lastNote.line +
+                                      -last(beam.notes)!.line +
                                         beam.level *
                                           (SMUFL.BravuraMetadata
                                             .engravingDefaults.beamThickness +
@@ -226,30 +247,30 @@ SMUFL.Score.prototype.toSVG = function (
                                   ])
                                 );
                             });
-                          g.append("g").call((g) => {
-                            g.append("g")
-                              .attr("type", "staff")
-                              .attr("transform", createTranslate(0, 0))
-                              .call((g) => {
-                                R.times(5, (i) => {
-                                  i++;
-                                  g.append("path")
-                                    .attr("stroke", "black")
-                                    .attr(
-                                      "stroke-width",
-                                      SMUFL.BravuraMetadata.engravingDefaults
-                                        .staffLineThickness
-                                    )
-                                    .attr(
-                                      "d",
-                                      d3.line()([
-                                        [0, -i],
-                                        [masterbar.width, -i],
-                                      ])
-                                    );
-                                });
-                              });
-                          });
+                          g.selectAll("g[type=staff]")
+                            .data(R.times(5, () => null))
+                            .join("g")
+                            .attr("type", "staff")
+                            .attr("transform", createTranslate(0, 0))
+                            .each(function (_, i) {
+                              const g = d3.select(this);
+                              g.selectAll("path")
+                                .data([null])
+                                .join("path")
+                                .attr("stroke", "black")
+                                .attr(
+                                  "stroke-width",
+                                  SMUFL.BravuraMetadata.engravingDefaults
+                                    .staffLineThickness
+                                )
+                                .attr(
+                                  "d",
+                                  d3.line()([
+                                    [0, -(i + 1)],
+                                    [masterbar.width, -(i + 1)],
+                                  ])
+                                );
+                            });
                         });
                     });
                 });
@@ -265,31 +286,41 @@ SMUFL.Score.prototype.toSVG = function (
     element: d3.BaseType | SVGGElement,
     ligature: Sheet.Ligature
   ) {
-    const group = d3
-      .select(element)
-      .append("g")
+    d3.select(element)
+      .selectAll("g[type=ligature]")
+      .data([ligature])
+      .join("g")
       .attr("type", "ligature")
       .attr(
         "transform",
         `translate(${ligature.boundingBox.x}, ${-ligature.line})`
       )
       .attr("test", JSON.stringify(ligature.attributes))
-      .attr("width", ligature.width);
-    ligature.glyphLists.flat().forEach((glyphOrLigature) => {
-      match(glyphOrLigature)
-        .with(P.instanceOf(SMUFL.Glyph), (glyph) =>
-          group
-            .append("text")
-            .attr("type", "glyph")
-            .attr("x", glyph.boundingBox.x)
-            .attr("y", -glyph.line)
-            .attr("width", glyph.width)
-            .text(String.fromCodePoint(glyph.codepoint))
-        )
-        .with(P.instanceOf(Sheet.Ligature), (childLigature) =>
-          ligatureToSVG(group.node() as SVGGElement, childLigature)
-        );
-    });
+      .attr("width", ligature.width)
+      .call((g) => {
+        g.selectAll("text[type=glyphOrLigature]")
+          .data(ligature.glyphLists.flat())
+          .join("g")
+          .attr("type", "glyphOrLigature")
+          .each(function (glyphOrLigature) {
+            const g = d3.select(this);
+            match(glyphOrLigature)
+              .with(P.instanceOf(SMUFL.Glyph), (glyph) =>
+                g
+                  .selectAll("text")
+                  .data([glyph])
+                  .join("text")
+                  .attr("type", "glyph")
+                  .attr("x", glyph.boundingBox.x)
+                  .attr("y", -glyph.line)
+                  .attr("width", glyph.width)
+                  .text(String.fromCodePoint(glyph.codepoint))
+              )
+              .with(P.instanceOf(Sheet.Ligature), (childLigature) =>
+                ligatureToSVG(g.node() as SVGGElement, childLigature)
+              );
+          });
+      });
   }
 
   return svg.node();
