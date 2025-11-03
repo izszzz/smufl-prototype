@@ -1,3 +1,9 @@
 {
-  "tracks": []
+  "tracks": [],
+  "timesignatures": [
+    {
+      "numerator": 4,
+      "denominator": 4
+    }
+  ]
 }

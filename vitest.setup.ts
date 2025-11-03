@@ -1,2 +1,3 @@
 import "./src/extensions/buffer/to_array_buffer.extensions";
-import "./src/extensions/svgsvgelement/create_svg_element.extensions";
+import "./src/models/files/musicxml/extensions/to_sheet";
+import "./src/models/core/extensions/to_sheet";

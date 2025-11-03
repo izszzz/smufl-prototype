@@ -15,9 +15,16 @@
       "extensions": [
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode",
-        "asvetliakov.vscode-neovim"
-      ]
+        "wayou.vscode-todo-highlight"
+      ],
+      "settings": {
+        "editor.codeActionsOnSave": {
+          "source.fixAll.eslint": "explicit"
+        },
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.codeLens": true,
+        "typescript.referencesCodeLens.enabled": true
+      }
     }
-  },
-  "postCreateCommand": "apk add --no-cache neovim"
+  }
 }

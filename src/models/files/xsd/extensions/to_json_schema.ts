@@ -156,11 +156,7 @@ type AttributeGroup = {
     ["xs:attributeGroup"]?: { $: { ref: string } }[];
   };
 };
-type Annotation = {
-  $$: {
-    ["xs:documentation"]: string[];
-  };
-};
+type Annotation = { $$: { ["xs:documentation"]: string[] } };
 type Group = {
   $: { name: string; ref?: string; minOccurs?: string; maxOccurs?: string };
   $$?: {
@@ -173,6 +169,7 @@ type Sequence = {
     ["xs:element"]?: Element[];
     ["xs:group"]?: Group[];
     ["xs:choice"]?: Choice[];
+    ["xs:sequence"]?: Sequence[];
   };
 };
 type Element = {
@@ -191,16 +188,8 @@ type Choice = {
     ["xs:choice"]?: Choice[];
   };
 };
-type SimpleContent = {
-  $$: {
-    "xs:extension": Extension[];
-  };
-};
-type ComplexContent = {
-  $$: {
-    "xs:extension": Extension[];
-  };
-};
+type SimpleContent = { $$: { "xs:extension": Extension[] } };
+type ComplexContent = { $$: { "xs:extension": Extension[] } };
 type Extension = {
   $: { base: string };
   $$?: {
@@ -340,8 +329,9 @@ function handleSequence({ $$ }: Sequence): JSONSchema {
   const elements = $$["xs:element"];
   const choices = $$["xs:choice"];
   const groups = $$["xs:group"];
+  const sequence = $$["xs:sequence"];
   return {
-    ...(elements || groups || choices
+    ...(elements || groups || choices || sequence
       ? {
           allOf: [
             ...(elements
@@ -362,6 +352,7 @@ function handleSequence({ $$ }: Sequence): JSONSchema {
               : []),
             ...R.pipe(groups ?? [], R.map(handleGroup)),
             ...R.pipe(choices ?? [], R.map(handleChoice)),
+            ...R.pipe(sequence ?? [], R.map(handleSequence)),
           ],
         }
       : {}),

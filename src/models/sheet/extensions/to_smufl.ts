@@ -8,20 +8,17 @@ declare module "sheet" {
 }
 
 Sheet.Score.prototype.toSMUFL = function (this: Sheet.Score) {
-  const score = new SMUFL.Score({
-    ...this,
-    tracks: this.tracks.map((row) => new SMUFL.Track(row)),
-    masterbars: this.masterbars.map(
-      (masterbar) => new SMUFL.Masterbar(masterbar)
-    ),
-    rows: this.rows.map((row) => new SMUFL.Row(row)),
-    notes: this.notes.map((note) => new SMUFL.Note(note)),
-    bars: this.bars.map((bar) => new SMUFL.Bar(bar)),
-    staves: this.staves.map(
-      (stave) => new SMUFL.Stave({ ...stave, clef: stave._clef })
-    ),
+  return SMUFL.Score.create({
+    ...this.params,
+    tracks: this.tracks.map((track) => ({
+      ...track.params,
+      notes: track.notes.map((note) => note.params),
+    })),
+    chords: this.chords.map(({ params }) => params),
+    bars: this.bars.map(({ params }) => params),
+    staves: this.staves.map(({ params }) => params),
+    keysignatures: this.keysignatures.map(({ params }) => params),
+    timesignatures: this.timesignatures.map(({ params }) => params),
+    tempos: this.tempos.map(({ params }) => params),
   });
-
-  if (process.env.NODE_ENV === "development") console.log({ smufl: score });
-  return score;
 };

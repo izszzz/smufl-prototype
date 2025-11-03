@@ -1,26 +1,22 @@
-import * as Audio from "../../browser/audio";
+import * as Audio from "../../audio";
 import * as Core from "core";
 import "../../../extensions/int16array/to_float32array.extensions";
 
 declare module "core" {
   interface Score {
-    toAudio: (audioContext: AudioContext) => Audio.Score;
+    toAudio(): Audio.Score;
   }
 }
 
-Core.Score.prototype.toAudio = function (
-  this: Core.Score,
-  audioContext: AudioContext
-) {
-  const score = new Audio.Score({
-    ...this,
-    tracks: this.tracks.map(
-      (track) =>
-        new Audio.Track({
-          ...track,
-          audioContext,
-        })
-    ),
+Core.Score.prototype.toAudio = function (this: Core.Score) {
+  const audio = Audio.Score.create({
+    ...this.params,
+    tracks: this.tracks.map((track) => ({
+      ...track.params,
+      notes: track.notes.map(({ params }) => params),
+    })),
+    keysignatures: this.keysignatures.map(({ params }) => params),
   });
-  return score;
+  console.log({ audio });
+  return audio;
 };

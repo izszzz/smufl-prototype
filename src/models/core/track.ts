@@ -1,4 +1,5 @@
 import * as Core from "core";
+import { firstBy, prop } from "remeda";
 
 export class Track extends Core.Event {
   readonly id;
@@ -8,18 +9,31 @@ export class Track extends Core.Event {
   get notes() {
     return this.score.notes.filter((note) => note.trackId === this.id);
   }
+  override get start() {
+    return firstBy(this.notes, [prop("start"), "asc"])!.start;
+  }
+  override get end() {
+    return firstBy(this.notes, [prop("end"), "desc"])!.end;
+  }
+  override get params() {
+    return {
+      ...super.params,
+      id: this.id,
+      name: this.name,
+      preset: this.preset.value,
+    };
+  }
   constructor({
     id,
-    name,
+    name = "",
     preset,
     ...event
   }: {
     id: number;
     name?: string;
-    preset: Core.Unit.Preset;
-  } & Core.EventConstructorParameter) {
-    if ("end" in event) super(event);
-    else super(event);
+    preset: Core.Units.Preset;
+  }) {
+    super(event);
     this.id = id;
     this.name = name;
     this.preset = preset;

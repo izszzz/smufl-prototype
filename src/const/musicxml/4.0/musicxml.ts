@@ -2257,6 +2257,42 @@ export type OptionalUniqueId30 = {
   id?: string;
 };
 /**
+ * Virtual instrument data can be part of either the score-instrument element at the start of a part, or an instrument-change element within a part.
+ */
+export type VirtualInstrumentData = {
+  /**
+   * The instrument-sound element describes the default timbre of the score-instrument. This description is independent of a particular virtual or MIDI instrument specification and allows playback to be shared more easily between applications and libraries.
+   *
+   * @minItems 0
+   */
+  "instrument-sound"?: {
+    _: string;
+  }[];
+  /**
+   * @minItems 0
+   */
+  "virtual-instrument"?: VirtualInstrument[];
+} & (
+  | {
+      /**
+       * The solo element is present if performance is intended by a solo instrument.
+       *
+       * @minItems 0
+       */
+      solo?: Empty[];
+    }
+  | {
+      /**
+       * The ensemble element is present if performance is intended by an ensemble such as an orchestral section. The text of the ensemble element contains the size of the section, or is empty if the ensemble size is not specified.
+       *
+       * @minItems 0
+       */
+      ensemble?: {
+        _: number | "";
+      }[];
+    }
+);
+/**
  * The editorial-voice-direction group supports the common combination of editorial and voice information for a direction element. It is separate from the editorial-voice element because extensions and restrictions might be different for directions than for the note and forward elements.
  */
 export type EditorialVoiceDirection = Footnote2 & Level3 & Voice1;
@@ -2589,6 +2625,24 @@ export type Tuning1 = {
   ];
 };
 /**
+ * The color attribute group indicates the color of an element.
+ */
+export type Color12 = {
+  color?: string;
+};
+/**
+ * The line-type attribute distinguishes between solid, dashed, dotted, and wavy lines.
+ */
+export type LineType5 = {
+  "line-type"?: "solid" | "dashed" | "dotted" | "wavy";
+};
+/**
+ * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
+ */
+export type PrintObject8 = {
+  "print-object"?: "yes" | "no";
+};
+/**
  * The font attribute group gathers together attributes for determining the font within a credit or direction. They are based on the text styles for Cascading Style Sheets. The font-family is a comma-separated list of font names.The font-style can be normal or italic. The font-size can be one of the CSS sizes or a numeric point size. The font-weight can be normal or bold. The default is application-dependent, but is a text font vs. a music font.
  */
 export type Font2 = {
@@ -2600,7 +2654,7 @@ export type Font2 = {
 /**
  * The color attribute group indicates the color of an element.
  */
-export type Color12 = {
+export type Color13 = {
   color?: string;
 };
 /**
@@ -2621,6 +2675,38 @@ export type Slash = {
   "except-voice"?: {
     _: string;
   }[];
+} & {
+  /**
+   * The slash-type element indicates the graphical note type to use for the display of repetition marks.
+   *
+   * @minItems 1
+   * @maxItems 1
+   */
+  "slash-type"?: [
+    {
+      _:
+        | "1024th"
+        | "512th"
+        | "256th"
+        | "128th"
+        | "64th"
+        | "32nd"
+        | "16th"
+        | "eighth"
+        | "quarter"
+        | "half"
+        | "whole"
+        | "breve"
+        | "long"
+        | "maxima";
+    }
+  ];
+  /**
+   * The slash-dot element is used to specify any augmentation dots in the note type used to display repetition marks.
+   *
+   * @minItems 0
+   */
+  "slash-dot"?: Empty[];
 };
 /**
  * The slash group combines elements used for more complete specification of the slash and beat-repeat measure-style elements. They have the same values as the type and dot elements, and define what the beat is for the display of repetition marks. If not present, the beat is based on the current time signature.
@@ -2634,6 +2720,38 @@ export type Slash2 = {
   "except-voice"?: {
     _: string;
   }[];
+} & {
+  /**
+   * The slash-type element indicates the graphical note type to use for the display of repetition marks.
+   *
+   * @minItems 1
+   * @maxItems 1
+   */
+  "slash-type"?: [
+    {
+      _:
+        | "1024th"
+        | "512th"
+        | "256th"
+        | "128th"
+        | "64th"
+        | "32nd"
+        | "16th"
+        | "eighth"
+        | "quarter"
+        | "half"
+        | "whole"
+        | "breve"
+        | "long"
+        | "maxima";
+    }
+  ];
+  /**
+   * The slash-dot element is used to specify any augmentation dots in the note type used to display repetition marks.
+   *
+   * @minItems 0
+   */
+  "slash-dot"?: Empty[];
 };
 /**
  * The editorial group specifies editorial information for a musical element.
@@ -2762,7 +2880,7 @@ export type Transpose2 = {
 /**
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
-export type PrintObject8 = {
+export type PrintObject9 = {
   "print-object"?: "yes" | "no";
 };
 /**
@@ -2840,7 +2958,7 @@ export type Position11 = {
 /**
  * The color attribute group indicates the color of an element.
  */
-export type Color13 = {
+export type Color14 = {
   color?: string;
 };
 /**
@@ -2871,7 +2989,7 @@ export type OptionalUniqueId38 = {
 /**
  * The color attribute group indicates the color of an element.
  */
-export type Color14 = {
+export type Color15 = {
   color?: string;
 };
 /**
@@ -2925,13 +3043,13 @@ export type HarmonyChord = {
 /**
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
-export type PrintObject9 = {
+export type PrintObject10 = {
   "print-object"?: "yes" | "no";
 };
 /**
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
-export type PrintObject10 = {
+export type PrintObject11 = {
   "print-object"?: "yes" | "no";
 };
 /**
@@ -3046,7 +3164,7 @@ export type OptionalUniqueId40 = {
 /**
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
-export type PrintObject11 = {
+export type PrintObject12 = {
   "print-object"?: "yes" | "no";
 };
 /**
@@ -3138,7 +3256,7 @@ export type LeftRightMargins1 = {
 /**
  * The print-object attribute specifies whether or not to print an object (e.g. a note or a rest). It is yes by default.
  */
-export type PrintObject12 = {
+export type PrintObject13 = {
   "print-object"?: "yes" | "no";
 };
 /**
@@ -3374,7 +3492,7 @@ export type LinkAttributes2 = {
 /**
  * Virtual instrument data can be part of either the score-instrument element at the start of a part, or an instrument-change element within a part.
  */
-export type VirtualInstrumentData = {
+export type VirtualInstrumentData1 = {
   /**
    * The instrument-sound element describes the default timbre of the score-instrument. This description is independent of a particular virtual or MIDI instrument specification and allows playback to be shared more easily between applications and libraries.
    *
@@ -3704,8 +3822,44 @@ export interface TimeModification {
         _: number;
       }
     ];
+  } & {
+    /**
+     * If the type associated with the number in the normal-notes element is different than the current note type (e.g., a quarter note within an eighth note triplet), then the normal-notes type (e.g. eighth) is specified in the normal-type and normal-dot elements.
+     *
+     * @minItems 1
+     * @maxItems 1
+     */
+    "normal-type"?: [
+      {
+        _:
+          | "1024th"
+          | "512th"
+          | "256th"
+          | "128th"
+          | "64th"
+          | "32nd"
+          | "16th"
+          | "eighth"
+          | "quarter"
+          | "half"
+          | "whole"
+          | "breve"
+          | "long"
+          | "maxima";
+      }
+    ];
+    /**
+     * The normal-dot element is used to specify dotted normal tuplet types.
+     *
+     * @minItems 0
+     */
+    "normal-dot"?: Empty[];
   };
 }
+/**
+ * The empty type represents an empty element with no attributes.
+ */
+export interface Empty {}
 /**
  * Stems can be down, up, none, or double. For down and up stems, the position attributes can be used to specify stem length. The relative values specify the end of the stem relative to the program default. Default values specify an absolute end stem position. Negative values of relative-y that would flip a stem instead of shortening it are ignored. A stem element associated with a rest refers to a stemlet.
  */
@@ -4899,10 +5053,6 @@ export interface Harmonic {
     );
 }
 /**
- * The empty type represents an empty element with no attributes.
- */
-export interface Empty {}
-/**
  * Fingering is typically indicated 1,2,3,4,5. Multiple fingerings may be given, typically to substitute fingerings in the middle of a note. The substitution and alternate values are "no" if the attribute is not present. For guitar and other fretted instruments, the fingering element represents the fretting finger; the pluck element represents the plucking finger.
  */
 export interface Fingering {
@@ -5770,7 +5920,7 @@ export interface Lyric {
            */
           humming?: [Empty];
         }
-      | {
+      | ({
           /**
            * @minItems 0
            */
@@ -5786,7 +5936,25 @@ export interface Lyric {
            * @minItems 0
            */
           extend?: Extend[];
-        }
+        } & ({
+          /**
+           * @minItems 1
+           * @maxItems 1
+           */
+          text?: [TextElementData];
+        } & {
+          /**
+           * @minItems 1
+           * @maxItems 1
+           */
+          elision?: [Elision];
+          /**
+           * @minItems 0
+           */
+          syllabic?: {
+            _: "single" | "begin" | "end" | "middle";
+          }[];
+        }))
     );
 }
 /**
@@ -5833,6 +6001,23 @@ export interface TextElementData {
     "letter-spacing"?: number | "normal";
   } & {
     dir?: "ltr" | "rtl" | "lro" | "rlo";
+  };
+  required?: ["_", "$"];
+}
+/**
+ * The elision type represents an elision between lyric syllables. The text content specifies the symbol used to display the elision. Common values are a no-break space (Unicode 00A0), an underscore (Unicode 005F), or an undertie (Unicode 203F). If the text content is empty, the smufl attribute is used to specify the symbol to use. Its value is a SMuFL canonical glyph name that starts with lyrics. The SMuFL attribute is ignored if the elision glyph is already specified by the text content. If neither text content nor a smufl attribute are present, the elision glyph is application-specific.
+ */
+export interface Elision {
+  _: string;
+  $?: {
+    smufl?: unknown;
+  } & {
+    "font-family"?: unknown;
+    "font-style"?: "normal" | "italic";
+    "font-size"?: number | ("xx-small" | "x-small" | "small" | "medium" | "large" | "x-large" | "xx-large");
+    "font-weight"?: "normal" | "bold";
+  } & {
+    color?: string;
   };
   required?: ["_", "$"];
 }
@@ -6409,7 +6594,7 @@ export interface Metronome {
               "beat-unit-tied"?: BeatUnitTied[];
             } & BeatUnit2)
         ))
-    | {
+    | ({
         /**
          * If the metronome-arrows element is present, it indicates that metric modulation arrows are displayed on both sides of the metronome mark.
          *
@@ -6417,7 +6602,20 @@ export interface Metronome {
          */
         "metronome-arrows"?: Empty[];
         "metronome-note"?: MetronomeNote[];
-      };
+      } & {
+        /**
+         * The metronome-relation element describes the relationship symbol that goes between the two sets of metronome-note elements. The currently allowed value is equals, but this may expand in future versions. If the element is empty, the equals value is used.
+         *
+         * @minItems 1
+         * @maxItems 1
+         */
+        "metronome-relation"?: [
+          {
+            _: string;
+          }
+        ];
+        "metronome-note"?: MetronomeNote[];
+      });
 }
 /**
  * The beat-unit-tied type indicates a beat-unit within a metronome mark that is tied to the preceding beat-unit. This allows two or more tied notes to be associated with a per-minute value in a metronome mark, whereas the metronome-tied element is restricted to metric relationship marks.
@@ -7155,6 +7353,23 @@ export interface Sound {
      * @minItems 0
      */
     offset?: Offset[];
+  } & {
+    /**
+     * @minItems 0
+     */
+    "instrument-change"?: InstrumentChange[];
+    /**
+     * @minItems 0
+     */
+    "midi-device"?: MidiDevice[];
+    /**
+     * @minItems 0
+     */
+    "midi-instrument"?: MidiInstrument[];
+    /**
+     * @minItems 0
+     */
+    play?: Play[];
   };
 }
 /**
@@ -7213,6 +7428,123 @@ export interface Swing {
         }[];
       }
   );
+}
+/**
+ * The instrument-change element type represents a change to the virtual instrument sound for a given score-instrument. The id attribute refers to the score-instrument affected by the change. All instrument-change child elements can also be initially specified within the score-instrument element.
+ */
+export interface InstrumentChange {
+  $?: {
+    id?: string;
+  };
+  $$: VirtualInstrumentData;
+}
+/**
+ * The virtual-instrument element defines a specific virtual instrument used for an instrument sound.
+ */
+export interface VirtualInstrument {
+  $$: {
+    /**
+     * The virtual-library element indicates the virtual instrument library name.
+     *
+     * @minItems 0
+     */
+    "virtual-library"?: {
+      _: string;
+    }[];
+    /**
+     * The virtual-name element indicates the library-specific name for the virtual instrument.
+     *
+     * @minItems 0
+     */
+    "virtual-name"?: {
+      _: string;
+    }[];
+  };
+}
+/**
+ * The midi-device type corresponds to the DeviceName meta event in Standard MIDI Files. The optional port attribute is a number from 1 to 16 that can be used with the unofficial MIDI 1.0 port (or cable) meta event. Unlike the DeviceName meta event, there can be multiple midi-device elements per MusicXML part. The optional id attribute refers to the score-instrument assigned to this device. If missing, the device assignment affects all score-instrument elements in the score-part.
+ */
+export interface MidiDevice {
+  _: string;
+  $?: {
+    port?: number;
+    id?: string;
+  };
+  required?: ["_", "$"];
+}
+/**
+ * The midi-instrument type defines MIDI 1.0 instrument playback. The midi-instrument element can be a part of either the score-instrument element at the start of a part, or the sound element within a part. The id attribute refers to the score-instrument affected by the change.
+ */
+export interface MidiInstrument {
+  $?: {
+    id?: string;
+  };
+  $$: {
+    /**
+     * The midi-channel element specifies a MIDI 1.0 channel numbers ranging from 1 to 16.
+     *
+     * @minItems 0
+     */
+    "midi-channel"?: {
+      _: number;
+    }[];
+    /**
+     * The midi-name element corresponds to a ProgramName meta-event within a Standard MIDI File.
+     *
+     * @minItems 0
+     */
+    "midi-name"?: {
+      _: string;
+    }[];
+    /**
+     * The midi-bank element specifies a MIDI 1.0 bank number ranging from 1 to 16,384.
+     *
+     * @minItems 0
+     */
+    "midi-bank"?: {
+      _: number;
+    }[];
+    /**
+     * The midi-program element specifies a MIDI 1.0 program number ranging from 1 to 128.
+     *
+     * @minItems 0
+     */
+    "midi-program"?: {
+      _: number;
+    }[];
+    /**
+     * For unpitched instruments, the midi-unpitched element specifies a MIDI 1.0 note number ranging from 1 to 128. It is usually used with MIDI banks for percussion. Note that MIDI 1.0 note numbers are generally specified from 0 to 127 rather than the 1 to 128 numbering used in this element.
+     *
+     * @minItems 0
+     */
+    "midi-unpitched"?: {
+      _: number;
+    }[];
+    /**
+     * The volume element value is a percentage of the maximum ranging from 0 to 100, with decimal values allowed. This corresponds to a scaling value for the MIDI 1.0 channel volume controller.
+     *
+     * @minItems 0
+     */
+    volume?: {
+      _: number;
+    }[];
+    /**
+     * The pan and elevation elements allow placing of sound in a 3-D space relative to the listener. Both are expressed in degrees ranging from -180 to 180. For pan, 0 is straight ahead, -90 is hard left, 90 is hard right, and -180 and 180 are directly behind the listener.
+     *
+     * @minItems 0
+     */
+    pan?: {
+      _: number;
+    }[];
+    /**
+     * The elevation and pan elements allow placing of sound in a 3-D space relative to the listener. Both are expressed in degrees ranging from -180 to 180. For elevation, 0 is level with the listener, 90 is directly above, and -90 is directly below.
+     *
+     * @minItems 0
+     */
+    elevation?: {
+      _: number;
+    }[];
+  };
 }
 /**
  * The listen and listening types, new in Version 4.0, specify different ways that a score following or machine listening application can interact with a performer. The listening type handles interactions that change the state of the listening application from the specified point in the performance onward. If multiple child elements of the same type are present, they should have distinct player and/or time-only attributes.
@@ -7580,6 +7912,22 @@ export interface StaffDetails {
      * @minItems 0
      */
     "staff-size"?: StaffSize[];
+  } & {
+    /**
+     * The staff-lines element specifies the number of lines and is usually used for a non 5-line staff. If the staff-lines element is present, the appearance of each line may be individually specified with a line-detail element.
+     *
+     * @minItems 1
+     * @maxItems 1
+     */
+    "staff-lines"?: [
+      {
+        _: number;
+      }
+    ];
+    /**
+     * @minItems 0
+     */
+    "line-detail"?: LineDetail[];
   };
 }
 /**
@@ -7604,13 +7952,24 @@ export interface StaffSize {
   required?: ["_", "$"];
 }
 /**
+ * If the staff-lines element is present, the appearance of each line may be individually specified with a line-detail type. Staff lines are numbered from bottom to top. The print-object attribute allows lines to be hidden within a staff. This is used in special situations such as a widely-spaced percussion staff where a note placed below the higher line is distinct from a note placed above the lower line. Hidden staff lines are included when specifying clef lines and determining display-step / display-octave values, but are not counted as lines for the purposes of the system-layout and staff-layout elements.
+ */
+export interface LineDetail {
+  $?: Color12 &
+    LineType5 &
+    PrintObject8 & {
+      line?: number;
+      width?: number;
+    };
+}
+/**
  * A measure-style indicates a special way to print partial to multiple measures within a part. This includes multiple rests over several measures, repeats of beats, single, or multiple measures, and use of slash notation.
  *
  * The multiple-rest and measure-repeat elements indicate the number of measures covered in the element content. The beat-repeat and slash elements can cover partial measures. All but the multiple-rest element use a type attribute to indicate starting and stopping the use of the style. The optional number attribute specifies the staff number from top to bottom on the system, as with clef.
  */
 export interface MeasureStyle {
   $?: Font2 &
-    Color12 &
+    Color13 &
     OptionalUniqueId34 & {
       number?: number;
     };
@@ -7757,7 +8116,7 @@ export interface PartTranspose {
  * The print-object attribute controls whether or not anything is printed due to the harmony element. The print-frame attribute controls printing of a frame or fretboard diagram. The print-style attribute group sets the default for the harmony, but individual elements can override this with their own print-style values. The arrangement attribute specifies how multiple harmony-chord groups are arranged relative to each other. Harmony-chords with vertical arrangement are separated by horizontal lines. Harmony-chords with diagonal or horizontal arrangement are separated by diagonal lines or slashes.
  */
 export interface Harmony {
-  $?: PrintObject8 &
+  $?: PrintObject9 &
     PrintStyle13 &
     Placement18 &
     SystemRelation1 &
@@ -7784,7 +8143,7 @@ export interface Harmony {
  */
 export interface Frame {
   $?: Position11 &
-    Color13 &
+    Color14 &
     Halign &
     ValignImage &
     OptionalUniqueId38 & {
@@ -7862,7 +8221,7 @@ export interface FrameNote {
  * The barre element indicates placing a finger over multiple strings on a single fret. The type is "start" for the lowest pitched string (e.g., the string with the highest MusicXML number) and is "stop" for the highest pitched string.
  */
 export interface Barre {
-  $?: Color14 & {
+  $?: Color15 & {
     type?: "start" | "stop";
   };
 }
@@ -8066,7 +8425,7 @@ export interface HarmonyAlter {
  * A harmony of kind "other" can be spelled explicitly by using a series of degree elements together with a root.
  */
 export interface Degree {
-  $?: PrintObject9;
+  $?: PrintObject10;
   $$: {
     /**
      * @minItems 1
@@ -8240,7 +8599,7 @@ export interface NumeralRoot {
  * The numeral-key type is used when the key for the numeral is different than the key specified by the key signature. The numeral-fifths element specifies the key in the same way as the fifths element. The numeral-mode element specifies the mode similar to the mode element, but with a restricted set of values
  */
 export interface NumeralKey {
-  $?: PrintObject10;
+  $?: PrintObject11;
   $$: {
     /**
      * @minItems 1
@@ -8386,7 +8745,7 @@ export interface MeasureNumbering {
  * The name-display type is used for exact formatting of multi-font text in part and group names to the left of the system. The print-object attribute can be used to determine what, if anything, is printed at the start of each system. Enclosure for the display-text element is none by default. Language for the display-text element is Italian ("it") by default.
  */
 export interface NameDisplay {
-  $?: PrintObject11;
+  $?: PrintObject12;
   $$:
     | {
         /**
@@ -8415,6 +8774,25 @@ export interface PageLayout {
      * @maxItems 2
      */
     "page-margins"?: [] | [PageMargins] | [PageMargins, PageMargins];
+  } & {
+    /**
+     * @minItems 1
+     * @maxItems 1
+     */
+    "page-height"?: [
+      {
+        _: number;
+      }
+    ];
+    /**
+     * @minItems 1
+     * @maxItems 1
+     */
+    "page-width"?: [
+      {
+        _: number;
+      }
+    ];
   };
 }
 /**
@@ -8488,7 +8866,7 @@ export interface SystemDividers {
  * The empty-print-style-align-object type represents an empty element with print-object and print-style-align attribute groups.
  */
 export interface EmptyPrintObjectStyleAlign {
-  $?: PrintObject12 & PrintStyleAlign13;
+  $?: PrintObject13 & PrintStyleAlign13;
 }
 /**
  * Staff layout includes the vertical distance from the bottom line of the previous staff in this system to the top line of the staff specified by the number attribute. The optional number attribute refers to staff numbers within the part, from top to bottom on the system. A value of 1 is used if not present.
@@ -9035,7 +9413,7 @@ export interface Credit {
          */
         "credit-image"?: [Image];
       }
-    | (
+    | ((
         | {
             /**
              * @minItems 1
@@ -9050,7 +9428,32 @@ export interface Credit {
              */
             "credit-symbol"?: [FormattedSymbolId];
           }
-      )
+      ) &
+        ({
+          /**
+           * @minItems 0
+           */
+          link?: Link[];
+          /**
+           * @minItems 0
+           */
+          bookmark?: Bookmark[];
+        } & (
+          | {
+              /**
+               * @minItems 1
+               * @maxItems 1
+               */
+              "credit-words"?: [FormattedTextId];
+            }
+          | {
+              /**
+               * @minItems 1
+               * @maxItems 1
+               */
+              "credit-symbol"?: [FormattedSymbolId];
+            }
+        )))
   );
 }
 /**
@@ -9204,6 +9607,15 @@ export interface ScorePart1 {
      * @minItems 0
      */
     player?: Player[];
+  } & {
+    /**
+     * @minItems 0
+     */
+    "midi-device"?: MidiDevice[];
+    /**
+     * @minItems 0
+     */
+    "midi-instrument"?: MidiInstrument[];
   };
 }
 /**
@@ -9289,30 +9701,7 @@ export interface ScoreInstrument {
     "instrument-abbreviation"?: {
       _: string;
     }[];
-  } & VirtualInstrumentData;
-}
-/**
- * The virtual-instrument element defines a specific virtual instrument used for an instrument sound.
- */
-export interface VirtualInstrument {
-  $$: {
-    /**
-     * The virtual-library element indicates the virtual instrument library name.
-     *
-     * @minItems 0
-     */
-    "virtual-library"?: {
-      _: string;
-    }[];
-    /**
-     * The virtual-name element indicates the library-specific name for the virtual instrument.
-     *
-     * @minItems 0
-     */
-    "virtual-name"?: {
-      _: string;
-    }[];
-  };
+  } & VirtualInstrumentData1;
 }
 /**
  * The player type allows for multiple players per score-part for use in listening applications. One player may play multiple instruments, while a single instrument may include multiple players in divisi sections.

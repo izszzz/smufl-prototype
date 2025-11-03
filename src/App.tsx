@@ -2,11 +2,13 @@ import { ChangeEvent, useEffect, useRef, useState } from "react";
 import Soundfont2 from "soundfont2";
 import * as Browser from "./models/browser";
 import * as Sheet from "./models/sheet";
-import * as Audio from "./models/browser/audio/controller";
-
+import * as Audio from "./models/browser/audio";
+import { WebMidi } from "webmidi";
+import { MidiNoteNumber } from "./models/core/units";
+const audioContext = new AudioContext();
 function App() {
   const [sheetController, setSheetController] = useState<Sheet.Controller>();
-  const [audioPlayer, setAudioPlayer] = useState<Audio.Controller>();
+  const [audioController, setAudioController] = useState<Audio.Controller>();
   const [soundfont2, setSoundfont2] = useState<Soundfont2>();
 
   const ref = useRef<SVGSVGElement>(null);
@@ -15,31 +17,45 @@ function App() {
     (async () => {
       const buffer = await fetch("/A320U.sf2").then((res) => res.arrayBuffer());
       setSoundfont2(Soundfont2.create(new Uint8Array(buffer)));
+      const preset = soundfont2?.getPreset(0);
+      WebMidi.enable().then(() => {
+        WebMidi.inputs.forEach((input) => {
+          if (!preset) return;
+          const synths: Audio.Synth[] = [];
+          input.addListener("noteon", (e) => {
+            const synth = new Audio.Synth({
+              audioContext,
+              preset,
+              pitch: new MidiNoteNumber(e.note.number),
+            });
+            synth.gain.connect(audioContext.destination);
+            synth.noteOn();
+            synths.push(synth);
+          });
+          input.addListener("noteoff", (e) => {
+            const index = synths.findLastIndex(
+              (synth) => synth.pitch.value === e.note.number
+            );
+            synths[index]?.noteOff();
+            synths.splice(index, 1);
+          });
+        });
+      });
     })();
   }, []);
-  const layouting = () => {
+  const layouting = (sheetController: Sheet.Controller | undefined) => {
     if (!sheetController) return;
     sheetController.layout(sheetController.layoutType);
-    sheetController.score.rows
-      .flatMap((row) =>
-        row.masterbars.flatMap((masterbar) =>
-          masterbar.bars.flatMap((bar) => bar.staves)
-        )
-      )
-      .map((stave) => {
-        stave.setGroup();
-        stave.group.order();
-      });
 
-    if (ref.current) {
-      while (ref.current.firstChild)
-        ref.current.removeChild(ref.current.firstChild);
-      const svg = sheetController.score.toSVG(500, 500, {
+    const svg = sheetController.score.toSVG(
+      window.innerWidth,
+      window.innerHeight,
+      {
         ratio: 4,
         scale: sheetController.scale,
-      });
-      if (svg) ref.current.appendChild(svg);
-    }
+      }
+    );
+    if (!ref.current?.hasChildNodes()) ref.current?.appendChild(svg);
   };
 
   const handleFileChange = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -50,33 +66,32 @@ function App() {
       if (!file) return;
       const importer = new Browser.Importer();
       const score = await importer.import(file);
-      const ctx = new AudioContext();
       const sheetController = new Sheet.Controller(
         score!.toSMUFL(),
         Sheet.LayoutType.Horizontal
       );
+
+      window.addEventListener("resize", () => {
+        layouting(sheetController);
+      });
       setSheetController(sheetController);
 
-      setAudioPlayer(
-        new Audio.Controller(score!.toAudio(ctx), soundfont2, ctx)
+      setAudioController(
+        new Audio.Controller(
+          score!.toAudio().toBrowserAudio(audioContext, soundfont2)
+        )
       );
-      layouting();
+      layouting(sheetController);
     }
   };
 
   return (
     <div>
       <h3>{sheetController?.score.name}</h3>
-      <div
-        ref={ref}
-        className="bravura"
-        style={{ height: "70vh", overflow: "auto" }}
-      />
+      <div ref={ref} className="bravura" style={{ overflow: "auto" }} />
       <button
         type="button"
-        onClick={() => {
-          audioPlayer?.play();
-        }}
+        onClick={() => audioController?.play(audioContext.currentTime)}
       >
         play
       </button>
@@ -102,10 +117,10 @@ function App() {
         scale
         <input
           type="number"
-          defaultValue={30}
+          defaultValue={1}
           onChange={(e) => {
             if (sheetController) sheetController.scale = Number(e.target.value);
-            layouting();
+            layouting(sheetController);
           }}
         />
       </label>
@@ -116,7 +131,7 @@ function App() {
           onChange={(e) => {
             if (sheetController)
               sheetController.layoutType = Number(e.target.value);
-            layouting();
+            layouting(sheetController);
           }}
         >
           <option value={Sheet.LayoutType.Horizontal}>horizontal</option>

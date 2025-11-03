@@ -1,3 +1,4 @@
+import * as Core from "core";
 import * as Sheet from "sheet";
 import * as SMUFL from "smufl";
 
@@ -8,9 +9,9 @@ export class Score<
   Bar extends SMUFL.Bar = SMUFL.Bar,
   Masterbar extends SMUFL.Masterbar = SMUFL.Masterbar,
   Row extends SMUFL.Row = SMUFL.Row,
-  Timesignature extends Sheet.Timesignature = Sheet.Timesignature,
+  Timesignature extends SMUFL.Timesignature = SMUFL.Timesignature,
   Keysignature extends Sheet.Keysignature = Sheet.Keysignature,
-  Bpm extends Sheet.Bpm = Sheet.Bpm,
+  Tempo extends Core.Tempo = Core.Tempo,
 > extends Sheet.Score<
   Note,
   Track,
@@ -20,5 +21,24 @@ export class Score<
   Row,
   Timesignature,
   Keysignature,
-  Bpm
-> {}
+  Tempo
+> {
+  static override create(...params: Parameters<typeof Sheet.Score.create>) {
+    const sheet = super.create(...params);
+    const score = new SMUFL.Score({
+      ...sheet,
+      tracks: sheet.tracks.map((track) => new SMUFL.Track(track)),
+      masterbars: sheet.masterbars.map(
+        (masterbar) => new SMUFL.Masterbar(masterbar)
+      ),
+      notes: sheet.notes.map((note) => new SMUFL.Note(note)),
+      bars: sheet.bars.map((bar) => new SMUFL.Bar(bar)),
+      staves: sheet.staves.map((stave) => new SMUFL.Stave(stave)),
+      timesignatures: sheet.timesignatures.map(
+        (timesignature) => new SMUFL.Timesignature(timesignature)
+      ) as [SMUFL.Timesignature, ...SMUFL.Timesignature[]],
+    });
+    if (process.env.NODE_ENV === "development") console.log({ smufl: score });
+    return score;
+  }
+}

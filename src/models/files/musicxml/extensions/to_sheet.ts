@@ -1,7 +1,26 @@
-import * as R from "remeda";
 import * as Core from "core";
 import * as Sheet from "sheet";
 import * as MusicXML from "musicxml";
+import { match } from "ts-pattern";
+import {
+  flatMap,
+  add,
+  pipe,
+  prop,
+  reduce,
+  take,
+  map,
+  isNullish,
+  isDefined,
+  last,
+  piped,
+  groupBy,
+  defaultTo,
+  entries,
+  times,
+} from "remeda";
+import { MidiNoteNumber } from "../../../core/units";
+import { StaffDetails } from "src/const/musicxml/4.0/musicxml";
 
 declare module "musicxml" {
   interface MXL {
@@ -9,137 +28,229 @@ declare module "musicxml" {
   }
 }
 MusicXML.MXL.prototype.toSheet = function (this: MusicXML.MXL) {
-  console.log(this);
-  const { notes, tracks, bars, staves, maxBarLength } = this.mxl[
-    "score-partwise"
-  ].$$.part?.reduce(
-    (acc, cur, trackId) => {
-      const bars =
-        cur.$$.measure?.map((measure, barId) => {
-          const musicData = measure.$$;
-          const notes = R.pipe(
-            "note" in musicData && musicData.note ? musicData.note : [],
-            R.map(
-              (note, id) =>
-                new Sheet.Note({
-                  id,
-                  staveId: -1 /* will be set later */,
+  if (process.env.NODE_ENV === "development") console.log({ mxl: this });
+  const { keysignatures, timesignatures, tracks, bars, staves, tempos } =
+    this.mxl["score-partwise"].$$.part?.reduce(
+      (partAcc, cur, trackId) => {
+        const scorePart = this.mxl["score-partwise"].$$["part-list"]?.[0].$$[
+          "score-part"
+        ]?.find((scorePart) => scorePart.$?.id === cur.$?.id);
+        const partName = scorePart?.$$["part-name"]?.[0];
+        partAcc.tracks.push({
+          name: partName?.$?.["print-object"] === "no" ? "" : partName?._ ?? "",
+          preset: 0,
+          notes: [],
+          staffDetails: <StaffDetails>{
+            $$: {
+              "staff-lines": [{ _: 5 }],
+            },
+          },
+        });
+        const { bars } = cur.$$.measure?.reduce(
+          (measureAcc, cur, barId) => {
+            const musicData = cur.$$;
+            const attributes = prop(musicData, "attributes") ?? [];
+            const division = attributes[0]?.$$?.divisions?.[0]?._ as number;
+            const staffDetails = attributes[0]?.$$["staff-details"]?.[0];
+            const time = attributes[0]?.$$.time?.[0];
+            const key = attributes[0]?.$$.key?.[0];
+            const tempo = prop(
+              musicData,
+              "direction",
+              0,
+              "$$",
+              "sound",
+              0,
+              "$",
+              "tempo"
+            );
+            if (partAcc.tracks[trackId])
+              partAcc.tracks[trackId].staffDetails = staffDetails ?? {
+                $$: { "staff-lines": [{ _: 5 }] },
+              };
+            if (time)
+              partAcc.timesignatures?.push({
+                denominator: Number(prop(time.$$, "beat-type", "0", "_")),
+                numerator: Number(prop(time.$$, "beats", "0", "_")),
+                start: Number(prop(time.$$, "beats", "0", "_")) * barId,
+              });
+            if (key)
+              partAcc.keysignatures?.push({
+                accidental: prop(key.$$, "fifths", "0", "_") ?? 0,
+                tonality:
+                  prop(key.$$, "mode", "at", "_") === "minor"
+                    ? Core.Enums.Tonality.Minor
+                    : Core.Enums.Tonality.Major,
+                start: partAcc.timesignatures!.at(-1)!.numerator * barId,
+              });
+            if (tempo)
+              partAcc.tempos?.push({
+                value: tempo,
+                start: partAcc.timesignatures!.at(-1)!.numerator * barId,
+              });
+            if (division) measureAcc.division = division;
+            const notes = pipe(
+              prop(musicData, "note") ?? [],
+              groupBy(piped(prop("$$", "staff", 0, "_"), defaultTo(1))),
+              entries(),
+              flatMap(
+                piped(
+                  last(),
+                  groupBy(piped(prop("$$", "voice", 0, "_"))),
+                  entries()
+                )
+              ),
+              map(
+                piped(last(), (last) =>
+                  last.reduce(
+                    (acc, cur, i, array) => {
+                      const duration =
+                        (prop(cur.$$, "duration", "0", "_") as number) /
+                        measureAcc.division;
+                      const rest = isDefined(prop(cur.$$, "rest", "0"));
+                      const param = {
+                        staveId: (prop(cur, "$$", "staff", 0, "_") ?? 1) - 1,
+                        velocity: 102,
+                        voice: Number(cur.$$.voice?.[0]._ ?? 1),
+                        rest,
+                        stem: cur.$$.stem?.[0],
+                        beam: cur.$$.beam,
+                        chord: isDefined(prop(cur.$$, "chord")),
+                        pitch: rest
+                          ? new MidiNoteNumber(-1).value
+                          : new Core.Units.ScientificPitchNotation(
+                              `${
+                                prop(
+                                  cur.$$,
+                                  "pitch",
+                                  "0",
+                                  "$$",
+                                  "step",
+                                  "0",
+                                  "_"
+                                ) ?? "C"
+                              }${match(
+                                prop(
+                                  cur.$$,
+                                  "pitch",
+                                  "0",
+                                  "$$",
+                                  "alter",
+                                  "at",
+                                  "_"
+                                ) ?? 0
+                              )
+                                .with(1, () => "#")
+                                .with(-1, () => "b")
+                                .otherwise(() => "")}${
+                                prop(
+                                  cur.$$,
+                                  "pitch",
+                                  "0",
+                                  "$$",
+                                  "octave",
+                                  "0",
+                                  "_"
+                                ) ?? 0
+                              }`
+                            ).toMidiNoteNumber().value,
+                        start: pipe(
+                          array,
+                          take(i + 1),
+                          reduce(
+                            (acc, cur, i, array) =>
+                              isNullish(array[i - 1]) ||
+                              isDefined(prop(cur.$$, "chord"))
+                                ? acc
+                                : acc +
+                                  (prop(
+                                    array[i - 1]!.$$,
+                                    "duration",
+                                    "0",
+                                    "_"
+                                  ) as number) /
+                                    measureAcc.division,
+                            0
+                          ),
+                          add(partAcc.timesignatures!.at(-1)!.numerator * barId)
+                        ),
+                        duration,
+                      };
+                      acc.notes.push(param);
+                      return acc;
+                    },
+                    {
+                      start: partAcc.timesignatures!.at(-1)!.numerator * barId,
+                      notes: [] as Parameters<
+                        typeof Sheet.Score.create
+                      >[0]["tracks"][number]["notes"],
+                    }
+                  )
+                )
+              ),
+              flatMap(prop("notes"))
+            );
+
+            partAcc.tracks[trackId]?.notes.push(...notes);
+
+            const staves = times(
+              attributes[0]?.$$?.staves?.[0]?._ ?? 1,
+              (staveId) => {
+                const staveNotes = notes
+                  .flat()
+                  .filter((note) => note.staveId === staveId);
+                for (const note of staveNotes) note.staveId = staveId;
+                return new Sheet.Stave({
+                  id: staveId,
                   barId,
                   trackId,
-                  voice: note.$$.voice,
-                  rest: "rest" in note.$$ ? note.$$.rest?.[0] : undefined,
-                  chord: "chord" in note.$$,
-                  type: note.$$.type?.[0],
-                  stem: note.$$.stem?.[0],
-                  staff: note.$$.staff,
-                  pitch: new MusicXML.Unit.Pitch({
-                    step:
-                      "pitch" in note.$$ && note.$$.pitch?.[0].$$.step?.[0]._
-                        ? note.$$.pitch[0].$$.step[0]._
-                        : "C",
-                    octave:
-                      "pitch" in note.$$ && note.$$.pitch?.[0].$$.octave?.[0]._
-                        ? note.$$.pitch[0].$$.octave[0]._
-                        : 0,
-                  }).toCore(),
-                  start: 0,
-                  duration:
-                    "duration" in note.$$ ? Number(note.$$.duration?.[0]._) : 0,
-                  end: 0,
-                })
-            )
-          );
-          acc.notes.push(...notes);
-
-          const attributes =
-            "attributes" in musicData ? musicData.attributes : [];
-          const time = attributes?.[0]?.$$.time?.[0];
-          const denominator = Number(
-            (time?.$$ && "beat-type" in time.$$
-              ? time.$$["beat-type"]?.[0]._
-              : 4) ?? 4
-          );
-          const numerator = Number(
-            (time?.$$ && "beats" in time.$$ ? time.$$.beats?.[0]._ : 4) ?? 4
-          );
-          const timesignature = new Sheet.Timesignature({
-            denominator,
-            numerator,
-            start: 0,
-            duration: 0,
-            end: 0,
-          });
-          const staves = R.times(
-            attributes?.[0]?.$$?.staves?.[0]?._ ?? 1,
-            (staveId) => {
-              const staveNotes = notes.filter(
-                (note) => (note.staff?.[0]._ ?? 1) - 1 === staveId
-              );
-              for (const note of staveNotes) note.staveId = staveId;
-              return new Sheet.Stave({
-                id: staveId,
-                barId,
-                trackId,
-                clef: attributes?.[0]?.$$?.clef?.find(
-                  (clef) => (clef.$?.number ?? 1) === staveId + 1
-                ),
-                barline:
-                  "barline" in musicData ? musicData.barline?.[0] : undefined,
-              });
-            }
-          );
-          acc.staves.push(...staves);
-          return new Sheet.Bar({
-            id: barId,
-            trackId,
-            masterbarId: barId,
-            timesignature,
-            staffLines: 5,
-            start: 0,
-            duration: 0,
-            end: 0,
-          });
-        }) ?? [];
-      if (acc.maxBarLength < bars.length) acc.maxBarLength = bars.length;
-      acc.bars.push(...bars);
-      acc.tracks.push(
-        new Sheet.Track({
-          id: trackId,
-          name: cur.$?.id ?? "",
-          preset: new Core.Unit.Preset(0),
-          staffLines: 5,
-          start: 0,
-          duration: 0,
-          end: 0,
-        })
-      );
-      return acc;
-    },
-    { notes: [], bars: [], tracks: [], staves: [], maxBarLength: 0 } as {
-      notes: Sheet.Note[];
-      bars: Sheet.Bar[];
-      tracks: Sheet.Track[];
-      staves: Sheet.Stave[];
-      maxBarLength: number;
-    }
-  ) ?? { notes: [], bars: [], tracks: [], staves: [], maxBarLength: 0 };
-  const score = new Sheet.Score({
+                  clefs: attributes[0]?.$$?.clef?.filter(
+                    (clef) => (clef.$?.number ?? 1) === staveId + 1
+                  ),
+                });
+              }
+            );
+            partAcc.staves?.push(...staves);
+            measureAcc.bars.push({ id: barId, trackId });
+            return measureAcc;
+          },
+          {
+            bars: [] as NonNullable<
+              Parameters<typeof Sheet.Score.create>[0]["bars"]
+            >,
+            division: -1,
+          }
+        ) ?? { bars: [] };
+        partAcc.bars?.push(...bars);
+        return partAcc;
+      },
+      {
+        bars: [],
+        tracks: [],
+        staves: [],
+        timesignatures: [],
+        keysignatures: [],
+        tempos: [],
+      } as Parameters<typeof Sheet.Score.create>[0]
+    ) ?? {
+      bars: [],
+      tracks: [],
+      staves: [],
+      timesignatures: [],
+      keysignatures: [],
+      tempos: [],
+    };
+  const params = {
     name:
       this.mxl["score-partwise"].$$.work?.[0]?.$$?.["work-title"]?.[0]?._ ?? "",
-    timesignatures: [],
-    keysignatures: [],
-    bpms: [],
+    keysignatures,
+    timesignatures,
+    bpms: tempos,
     rows: [],
     staves,
-    notes,
     tracks,
     bars,
-    masterbars: R.times(maxBarLength, (i) => new Sheet.Masterbar({ id: i })),
-    start: 0,
-    duration: 0,
-    end: 0,
-  });
+  };
 
-  if (process.env.NODE_ENV === "development") console.log({ sheet: score });
-  return score;
+  return Sheet.Score.create(params, { defaultValue: {} });
 };

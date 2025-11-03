@@ -1,23 +1,28 @@
 import * as Core from "core";
 
 export class Note extends Core.Event {
-  readonly id;
   trackId;
   pitch;
-  constructor({
-    id,
-    trackId,
-    pitch,
-    ...event
-  }: {
-    id: number;
-    trackId: number;
-    pitch: Core.Unit.Pitch;
-  } & Core.EventConstructorParameter) {
-    if ("end" in event) super(event);
-    else super(event);
-    this.id = id;
+  velocity;
+  override get params() {
+    return {
+      ...super.params,
+      trackId: this.trackId,
+      pitch: this.pitch.value,
+      velocity: this.velocity,
+    };
+  }
+  constructor(
+    note: {
+      trackId: number;
+      velocity: number;
+      pitch: Core.Units.MidiNoteNumber;
+    } & ConstructorParameters<typeof Core.Event>[0]
+  ) {
+    const { trackId, pitch, velocity } = note;
+    super(note);
     this.trackId = trackId;
     this.pitch = pitch;
+    this.velocity = velocity;
   }
 }

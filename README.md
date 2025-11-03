@@ -1,5 +1,5 @@
-- generate metadata type from ts-json-as-const
+- generate json as const
 
 ```
-npx ts-json-as-const ./src/models/core/metadata.json
+echo -E "export default $(cat ./src/models/core/metadata.json) as const;" > ./src/models/core/metadata.json.d.ts
 ```

@@ -1,57 +1,176 @@
+import * as Core from "core";
 import * as Sheet from "sheet";
-import { Barline, Clef } from "src/const/musicxml/4.0/musicxml";
+import { Clef } from "src/const/musicxml/4.0/musicxml";
+import { match, P } from "ts-pattern";
+import {
+  entries,
+  filter,
+  groupByProp,
+  isTruthy,
+  map,
+  pipe,
+  piped,
+  last,
+  isDefined,
+  isArray,
+  reduce,
+} from "remeda";
 
 export class Stave {
   readonly id;
   barId;
   trackId;
-  barlines;
-  _clef;
+  clefs;
   score!: Sheet.Score;
+  ligature: Sheet.Ligature | null = null;
+  metadataLigature: Sheet.Ligature | null = null;
+  get params() {
+    return {
+      id: this.id,
+      barId: this.barId,
+      trackId: this.trackId,
+      clefs: this.clefs,
+    };
+  }
   get bar() {
-    return this.score.bars.find((bar) => bar.id === this.barId)!;
+    return this.score.bars.find(
+      (bar) => bar.trackId === this.trackId && bar.id === this.barId
+    )!;
   }
   get notes() {
-    return this.score.notes.filter(
-      (note) =>
-        note.staveId === this.id &&
-        note.barId === this.barId &&
-        note.trackId === this.trackId
+    return this.bar.notes.filter((note) => note.staveId === this.id);
+  }
+  get chords() {
+    return this.bar.chords.filter((chord) => chord.staveId === this.id);
+  }
+  get beams() {
+    return pipe(
+      this.notes,
+      reduce(
+        (acc, cur) => {
+          for (const beam of cur.beam ?? []) {
+            const level = Number(beam.$?.number) - 1;
+            match(beam._)
+              .with("begin", () => acc.push({ level, notes: [cur] }))
+              .with(P.union("continue", "end"), () => {
+                acc.findLast((beam) => beam.level === level)?.notes.push(cur);
+              })
+              .exhaustive();
+          }
+          return acc;
+        },
+        [] as { level: number; notes: Sheet.Note[] }[]
+      )
     );
   }
-  get width() {
-    return -1;
+  get events() {
+    return this.bar.events.filter((event) => event.staveId === this.id);
   }
   get height() {
     return -1;
   }
   get y() {
-    return (this.height + 6.5) * this.id;
+    return this.id * this.height + (this.id - 1) * 6.5;
   }
   get prev() {
     return this.bar.prev?.staves[this.id];
   }
-  get clef(): Clef {
-    return this._clef ? this._clef : this.prev!.clef;
-  }
-
   constructor({
     id,
     barId,
     trackId,
-    clef,
-    barline,
+    clefs: clef,
   }: {
     id: number;
     barId: number;
     trackId: number;
-    clef?: Clef;
-    barline?: Barline;
+    clefs?: Clef[];
   }) {
     this.id = id;
     this.barId = barId;
     this.trackId = trackId;
-    this._clef = clef;
-    this.barlines = barline;
+    this.clefs = clef;
+  }
+  draw() {
+    this.metadataLigature = new Sheet.Ligature(
+      filter(
+        [
+          this.bar.masterbar.isRowFirst
+            ? [
+                new Sheet.Glyph(
+                  Sheet.ElementType.Clef,
+                  this.resolveClefs()[0]?.$$.line?.[0]?._ ?? 0
+                ),
+              ]
+            : null,
+          this.bar.masterbar.isFirst
+            ? [
+                new Sheet.Ligature(
+                  this.bar.keysignature.ligature.glyphLists,
+                  match(this.resolveClefs()[0]?.$$.sign?.[0]._)
+                    .with("G", () => 0)
+                    .with("F", () => -1)
+                    .exhaustive()
+                ),
+              ]
+            : null,
+          this.bar.masterbar.isFirst
+            ? filter([this.bar.timesignature.ligature], isTruthy)
+            : null,
+        ],
+        isTruthy
+      )
+    );
+    this.ligature = new Sheet.Ligature(
+      filter(
+        [
+          ...this.metadataLigature.glyphLists,
+          pipe(
+            this.notes,
+            groupByProp("voice"),
+            entries(),
+            map(
+              piped(
+                last(),
+                (notes) => {
+                  return notes.reduce(
+                    (acc, note) => {
+                      if (isDefined(note.chordId)) {
+                        const last = acc.at(-1);
+                        if (isArray(last)) last.push(note);
+                        else acc.push([note]);
+                      } else acc.push(note);
+                      return acc;
+                    },
+                    [] as (Sheet.Note | Sheet.Note[])[]
+                  );
+                },
+                map((noteOrChord) =>
+                  Array.isArray(noteOrChord)
+                    ? noteOrChord.map((note) => note.ligature!)
+                    : [noteOrChord.ligature!]
+                ),
+                (ligatures) =>
+                  new Sheet.Ligature(ligatures, undefined, { type: "voice" })
+              )
+            )
+          ),
+        ],
+        isTruthy
+      ),
+      0,
+      { type: "stave" }
+    );
+  }
+  resolveClefs(): Clef[] {
+    return this.clefs ?? this.prev!.resolveClefs();
+  }
+  getClefScientificPitchNotation() {
+    return new Core.Units.ScientificPitchNotation(
+      match(this.resolveClefs()[0]?.$$.sign?.[0]._)
+        .with("G", (value) => `${value}4`)
+        .with("F", (value) => `${value}3`)
+        .exhaustive()
+    );
   }
 }
